@@ -11,6 +11,17 @@ services:
     ports:
       - 3000:3000
 
+  admin-frontend:
+    build: ./admin-frontend
+    volumes:
+      - ./admin-frontend:/admin-frontend
+      - /admin-frontend/node_modules
+    command: npm run start
+    ports:
+      - 5000:3000
+    depends_on:
+      - backend
+
 
   db:
     image: postgres:11
