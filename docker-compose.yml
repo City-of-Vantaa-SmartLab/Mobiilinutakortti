@@ -11,6 +11,16 @@ services:
     ports:
       - 3000:3000
 
+  frontend:
+    build: ./frontend
+    command: npm run start
+    volumes: 
+      - ./frontend/src:/frontend/src
+      - ./frontend/public:/frontend/public
+    links:
+      - backend
+    ports:
+      - 3001:3001
 
   db:
     image: postgres:11
