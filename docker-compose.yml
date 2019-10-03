@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backend:
+    build: ./backend
+    command: npm run start:dev
+    volumes:
+      - ./backend:/backend
+      - /backend/node_modules
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+
+
+  db:
+    image: postgres:11
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nuta
+volumes:
+  db-data:
