@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   backend:
     build: ./backend
@@ -14,13 +14,24 @@ services:
   frontend:
     build: ./frontend
     command: npm run start
-    volumes: 
+    volumes:
       - ./frontend/src:/frontend/src
       - ./frontend/public:/frontend/public
     links:
       - backend
     ports:
       - 3001:3001
+
+  admin-frontend:
+    build: ./admin-frontend
+    volumes:
+      - ./admin-frontend:/admin-frontend
+      - /admin-frontend/node_modules
+    command: npm run start
+    ports:
+      - 5000:3000
+    depends_on:
+      - backend
 
   db:
     image: postgres:11
