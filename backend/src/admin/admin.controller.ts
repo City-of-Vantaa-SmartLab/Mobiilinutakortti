@@ -1,24 +1,35 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
-import { AuthenticationService } from '../authentication/authentication.service';
-
+import { AuthGuard } from '@nestjs/passport';
 @Controller('admin')
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
-    private readonly authenticationService: AuthenticationService,
   ) { }
 
   @UsePipes(new ValidationPipe())
   @Post('register')
   async create(@Body() userData: RegisterAdminDto) {
-    return this.authenticationService.registerAdmin(userData);
+    return this.adminService.register(userData);
   }
 
   @UsePipes(new ValidationPipe())
   @Post('login')
   async login(@Body() userData: LoginAdminDto) {
-    return this.authenticationService.loginAdmin(userData);
+    return this.adminService.login(userData);
   }
+
+  // TEST CODE AHOY
+  @Get('t1')
+  async getAll() {
+    return this.adminService.getAll1();
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('t2')
+  async getAll2() {
+    return this.adminService.getAll2();
+  }
+
 }

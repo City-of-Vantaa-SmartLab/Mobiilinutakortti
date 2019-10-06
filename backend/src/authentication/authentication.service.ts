@@ -1,36 +1,35 @@
-import { Injectable, Dependencies, HttpStatus, HttpException } from '@nestjs/common';
-import { Admin } from '../admin/admin.entity';
-import { compare, hash } from 'bcrypt';
+import { Injectable, ConflictException, BadRequestException, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { AdminService } from '../admin/admin.service';
-import { LoginAdminDto, RegisterAdminDto } from '../admin/dto/index';
+import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
+import { hash, compare } from 'bcrypt';
+import { saltRounds } from './authentication.consts';
+import { Admin } from '../admin/admin.entity';
 import { JwtService } from '@nestjs/jwt';
-import { saltRounds } from './constants';
 
 @Injectable()
-@Dependencies(AdminService)
 export class AuthenticationService {
     constructor(
+        @Inject(forwardRef(() => AdminService))
         private readonly adminService: AdminService,
-        private readonly jwtService: JwtService) {
-    }
+        private readonly jwtService: JwtService) { }
 
-    async registerAdmin(registerDto: RegisterAdminDto): Promise<string> {
-        const userExists = await this.adminService.getUser(registerDto.email);
-        if (userExists) { throw new HttpException(`${registerDto.email} already exists`, HttpStatus.CONFLICT); }
-        const hashedPassword = await hash(registerDto.password, saltRounds);
+    async registerAdmin(registrationData: RegisterAdminDto): Promise<any> {
+        const userExists = await this.adminService.getUser(registrationData.email);
+        if (userExists) { throw new ConflictException(); }
+        const hashedPassword = await hash(registrationData.password, saltRounds);
         const admin = {
-            firstName: registerDto.firstName, lastName: registerDto.lastName,
-            email: registerDto.email, password: hashedPassword,
+            firstName: registrationData.firstName, lastName: registrationData.lastName,
+            email: registrationData.email, password: hashedPassword,
         } as Admin;
         await this.adminService.createUser(admin);
-        return `${registerDto.email} created.`;
+        return `${registrationData.email} created.`;
     }
 
-    async loginAdmin(loginDto: LoginAdminDto): Promise<any> {
-        const user = await this.adminService.getUser(loginDto.email);
-        if (!user) { throw new HttpException('Username does not exist', HttpStatus.BAD_REQUEST); }
-        const passwordCheck = await compare(loginDto.password, user.password);
-        if (!passwordCheck) { throw new HttpException('Invalid Login', HttpStatus.UNAUTHORIZED); }
+    async loginAdmin(loginData: LoginAdminDto): Promise<any> {
+        const user = await this.adminService.getUser(loginData.email);
+        if (!user) { throw new BadRequestException(); }
+        const passwordMatches = await compare(loginData.password, user.password);
+        if (!passwordMatches) { throw new UnauthorizedException(); }
         return { access_token: this.jwtService.sign({ user: user.email, sub: user.id }) };
     }
 }
