@@ -1,10 +1,10 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
-import { AdminService } from '../admin/admin.service';
-import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
+import { Injectable, Inject, forwardRef, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
 import { saltRounds } from './authentication.consts';
 import { Admin } from '../admin/admin.entity';
-import { JwtService } from '@nestjs/jwt';
+import { AdminService } from '../admin/admin.service';
+import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
 
 @Injectable()
 export class AuthenticationService {

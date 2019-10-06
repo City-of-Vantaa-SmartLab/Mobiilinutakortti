@@ -1,7 +1,8 @@
 import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
-import { AuthGuard } from '@nestjs/passport';
+
 @Controller('admin')
 export class AdminController {
   constructor(
@@ -20,7 +21,7 @@ export class AdminController {
     return this.adminService.login(userData);
   }
 
-  // TEST CODE AHOY
+  /** TEST CODE STARTS */
   @Get('t1')
   async getAll() {
     return this.adminService.getAll1();
@@ -32,4 +33,5 @@ export class AdminController {
     return this.adminService.getAll2();
   }
 
+  // TEST CODE ENDS
 }

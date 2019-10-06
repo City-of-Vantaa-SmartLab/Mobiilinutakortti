@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly appService: AppService) { }
 
   @Get()
-  status(): string {
-    return `API is running`;
+  getStatus(): string {
+    return this.appService.getStatus();
   }
 }

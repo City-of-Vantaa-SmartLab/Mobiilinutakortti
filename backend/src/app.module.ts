@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Connection } from 'typeorm';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
