@@ -8,6 +8,7 @@ const Wrapper = styled.section`
 const App: React.FC = () => {
   return (
     <Wrapper>
+      Vantaa PWA React Frontend
     </Wrapper>
   );
 }
