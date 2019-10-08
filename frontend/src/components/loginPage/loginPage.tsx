@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { actions } from '../../actions/auth'
-import { actionTypes } from '../../actions/actionTypes'
-import { AppState } from '../../reducers'
+import { authTypes, authActions } from '../../types/authTypes';
+import { AppState } from '../../reducers';
 
 const Form = styled.form`
     display: flex;
@@ -83,10 +82,10 @@ const mapStateToProps = (state:AppState) => ({
         authReducer: state.auth 
     });
 
-const mapDispatchToProps = (dispatch: Dispatch<actions>) => {
+const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
     return {
         auth: (phone: string, password: string) => {
-            dispatch({type: actionTypes.AUTH_ATTEMPT, 
+            dispatch({type: authTypes.AUTH_ATTEMPT, 
                       payload: {phone, password}});
         }
     }

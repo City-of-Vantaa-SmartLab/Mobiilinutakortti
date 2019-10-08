@@ -1,23 +1,19 @@
-import { actionTypes } from '../actions/actionTypes';
-import { actions } from '../actions/auth'
+import { authTypes, authActions, authState } from '../types/authTypes';
 
-export interface authState {
-    loggedIn: boolean,
-    token: string,
-    error: string
-}
+
+const userToken:string | null = localStorage.getItem('token') ? localStorage.getItem('token') : ''
 
 const initialState:authState = {
     loggedIn: false,
-    token: '',
+    token: userToken ? userToken : '',
     error: ''
 }
 
-export default (state=initialState, action: actions):authState => {
+export default (state=initialState, action: authActions):authState => {
     switch(action.type) {
-        case actionTypes.AUTH_SUCCESS:
+        case authTypes.AUTH_SUCCESS:
             return {...state, loggedIn: true, token: action.payload, error: ''};
-        case actionTypes.AUTH_FAIL: 
+        case authTypes.AUTH_FAIL: 
             return {...state, error: action.payload}
         default: 
             return state;
