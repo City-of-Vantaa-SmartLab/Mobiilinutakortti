@@ -71,12 +71,12 @@ describe('AuthenticationService', () => {
         expect((await adminService.getUser(testRegister.email)).password).not.toEqual(testRegister.password);
       }),
       it('should thrown a Conflict if the username already exists', async () => {
-        const error = new BadRequestException();
+        const error = new ConflictException();
         try {
           await service.registerAdmin(testRegister);
           fail();
         } catch (e) {
-          expect(e.name === error.name);
+          expect(e.response === error.getResponse());
         }
       });
   });
@@ -92,7 +92,7 @@ describe('AuthenticationService', () => {
           await service.loginAdmin(testData);
           fail();
         } catch (e) {
-          expect(e.name === error.name);
+          expect(e.response === error.getResponse());
         }
       }),
       it('should throw a Unauthorized if the password is incorrect', async () => {
@@ -102,7 +102,7 @@ describe('AuthenticationService', () => {
           await service.loginAdmin(testData);
           fail();
         } catch (e) {
-          expect(e.name === error.name);
+          expect(e.response === error.getResponse());
         }
       });
   });
