@@ -22,7 +22,7 @@ export class AuthenticationService {
             email: registrationData.email, password: hashedPassword,
         } as Admin;
         await this.adminService.createUser(admin);
-        return `${registrationData.email} created.`;
+        return `${registrationData.email} luotu.`;
     }
 
     async loginAdmin(loginData: LoginAdminDto): Promise<any> {
