@@ -9,11 +9,12 @@ import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 
 @Module({
-  imports: [forwardRef(() => AdminModule), PassportModule,
+  imports: [forwardRef(() => AdminModule), forwardRef(() => JuniorModule),
+    PassportModule,
   JwtModule.register({
     secret: jwt.secret,
     signOptions: { expiresIn: jwt.expiry },
-  }), JuniorModule],
+  })],
   providers: [AuthenticationService, JwtStrategy],
   exports: [AuthenticationService],
 })

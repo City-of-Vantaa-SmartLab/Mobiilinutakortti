@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';

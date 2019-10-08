@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
@@ -13,6 +13,7 @@ export class AdminService {
     constructor(
         @InjectRepository(Admin)
         private readonly adminRepo: Repository<Admin>,
+        @Inject(forwardRef(() => AuthenticationService))
         private readonly authenticationService: AuthenticationService,
     ) { }
 
