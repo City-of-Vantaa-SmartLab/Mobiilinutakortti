@@ -88,7 +88,7 @@ describe('AdminController (e2e)', () => {
                     .expect(409);
             }),
             it('returns an Bad Request if invalid data is entered', () => {
-                let testData = { firstName: 'Bob', lastName: 'Bobby' };
+                const testData = { firstName: 'Bob', lastName: 'Bobby' };
                 return request(app.getHttpServer())
                     .post('/admin/register/junior')
                     .set('Authorization', `Bearer ${token}`)
