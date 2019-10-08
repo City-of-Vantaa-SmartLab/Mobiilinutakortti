@@ -6,7 +6,7 @@ const getHeaders = async () => {
     return headers;
 };
 
-const baseURL = window.location.protocol + '//' + window.location.host;
+const baseURL = process.env.REACT_APP_ENDPOINT;
 
 export const post = async (uri: string, params?: object):Promise<any> => {
     const url:URL = new URL(`${baseURL}${uri}`);

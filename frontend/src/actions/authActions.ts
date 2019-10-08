@@ -14,7 +14,7 @@ export function* rootSaga() {
 
 function* auth(action: AuthAttempt) {
     try {
-        const response = yield call(post, '/auth', action.payload);
+        const response = yield call(post, '/youth/login', action.payload);
         yield put({ type: authTypes.AUTH_SUCCESS,  payload: response.access_token });
 
         localStorage.setItem('token', response.access_token);
