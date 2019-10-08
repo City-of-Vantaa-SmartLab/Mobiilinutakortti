@@ -1,0 +1,7 @@
+{
+    "AdminAlreadyExists": "An account for that email already exists.",
+    "Created": "luotu.",
+    "DataIncorrect": "The data provided is either incorrect or missing.",
+    "FailedLogin": "Login failed.",
+    "UserNotFound": "User not found."
+}
