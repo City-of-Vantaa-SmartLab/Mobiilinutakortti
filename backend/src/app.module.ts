@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { JuniorModule } from './junior/junior.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
       synchronize: true,
     }),
     AdminModule,
+    JuniorModule,
     AuthenticationModule,
   ],
   controllers: [AppController, AdminController],

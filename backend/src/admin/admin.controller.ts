@@ -1,7 +1,9 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
+import { RegisterJuniorDto } from '../junior/dto';
+import { Admin } from './admin.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -10,7 +12,7 @@ export class AdminController {
   ) { }
 
   @UsePipes(new ValidationPipe())
-  @Post('register')
+  @Post('register/admin')
   async create(@Body() userData: RegisterAdminDto) {
     return this.adminService.register(userData);
   }
@@ -21,17 +23,12 @@ export class AdminController {
     return this.adminService.login(userData);
   }
 
-  /** TEST CODE STARTS */
-  @Get('t1')
-  async getAll() {
-    return this.adminService.getAll1();
-  }
-
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('jwt'))
-  @Get('t2')
-  async getAll2() {
-    return this.adminService.getAll2();
+  @Post('register/junior')
+  async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
+    // TODO: replace with authguard
+    await this.adminService.verifyIsAdmin(payload.user);
+    return await this.adminService.registerJunior(userData);
   }
-
-  // TEST CODE ENDS
 }
