@@ -16,26 +16,25 @@ export class AdminService {
     ) { }
 
     // This will be handed to a guard once a clear workflow is provided for admin login.
-    verifyIsAdmin = async (email: string) => { if (!(await this.getUser(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
+    verifyIsAdmin = async (email: string) => { if (!(await this.getAdmin(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
 
-    async getUser(email: string): Promise<Admin> {
-        return await this.adminRepo.findOne({ email: email.toLowerCase() });
+    async getAdmin(email: string): Promise<Admin> {
+        return await this.adminRepo.findOne({ email });
     }
 
-    async createUser(details: Admin) {
-        details.email = details.email.toLowerCase();
+    async createAdmin(details: Admin) {
         await this.adminRepo.save(details);
     }
 
-    async registerAdmin(registrationData: RegisterAdminDto): Promise<any> {
-        const userExists = await this.getUser(registrationData.email);
+    async registerAdmin(registrationData: RegisterAdminDto): Promise<string> {
+        const userExists = await this.getAdmin(registrationData.email);
         if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
         const hashedPassword = await hash(registrationData.password, saltRounds);
         const admin = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
             email: registrationData.email, password: hashedPassword,
         } as Admin;
-        await this.createUser(admin);
+        await this.createAdmin(admin);
         return `${registrationData.email} ${content.Created}`;
     }
 

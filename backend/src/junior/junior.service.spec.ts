@@ -9,13 +9,8 @@ import { Connection } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
-import { JwtModule } from '@nestjs/jwt';
-import { jwt } from '../authentication/authentication.consts';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { JwtStrategy } from '../authentication/jwt.strategy';
 import { Admin } from '../admin/admin.entity';
-import { AdminService } from '../admin/admin.service';
-import { forwardRef, ConflictException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto } from './dto';
 
 describe('JuniorService', () => {
@@ -24,7 +19,7 @@ describe('JuniorService', () => {
   let connection: Connection;
 
   const testRegisterYouth = {
-    phoneNumber: '+4407805140073', firstName: 'Auth jr', lastName: 'Senior',
+    phoneNumber: '04122345618', firstName: 'Auth jr', lastName: 'Senior',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
 
@@ -63,7 +58,7 @@ describe('JuniorService', () => {
       expect(testLoginYouth.pin).toBeDefined();
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getUser(testRegisterYouth.phoneNumber);
+        const response = await service.getJunior(testRegisterYouth.phoneNumber);
         expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
           response.firstName === testRegisterYouth.firstName &&
           response.lastName === testRegisterYouth.lastName).toBeTruthy();

@@ -34,7 +34,7 @@ describe('AuthenticationService', () => {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,
   } as LoginAdminDto;
   const testRegisterYouth = {
-    phoneNumber: '+4407805160073', firstName: 'Auth jr', lastName: 'Senior',
+    phoneNumber: '04122345178', firstName: 'Auth jr', lastName: 'Senior',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
 
@@ -116,7 +116,7 @@ describe('AuthenticationService', () => {
       it('should throw a Unauthorized if the pin is incorrect', async () => {
         const error = new BadRequestException();
         try {
-          const testData = { phoneNumber: '4407805160079', pin: testLoginYouth.pin } as LoginJuniorDto;
+          const testData = { phoneNumber: '04113345678', pin: testLoginYouth.pin } as LoginJuniorDto;
           await service.loginJunior(testData);
           fail();
         } catch (e) {

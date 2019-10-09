@@ -17,7 +17,7 @@ describe('JuniorController (e2e)', () => {
     } as RegisterAdminDto;
 
     const testJuniorRegister = {
-        phoneNumber: '+441234567809',
+        phoneNumber: '04122345671',
         firstName: 'Testy jr the second', lastName: 'e2e2',
     } as RegisterJuniorDto;
 
@@ -62,7 +62,7 @@ describe('JuniorController (e2e)', () => {
     describe('/junior/register', () => {
         it('returns a pin (temporary) if a new user is created', async () => {
             const testData = {
-                phoneNumber: '+441234567741',
+                phoneNumber: '04112345677',
                 firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
             } as RegisterJuniorDto;
             return request(app.getHttpServer())
@@ -108,7 +108,7 @@ describe('JuniorController (e2e)', () => {
                 });
         }),
             it('returns a Bad Request if the phone number does not exist', () => {
-                const testData = { phoneNumber: '440234567896', pin: testJuniorLogin.pin } as LoginJuniorDto;
+                const testData = { phoneNumber: '04122345670', pin: testJuniorLogin.pin } as LoginJuniorDto;
                 return request(app.getHttpServer())
                     .post('/junior/login')
                     .send(testData)

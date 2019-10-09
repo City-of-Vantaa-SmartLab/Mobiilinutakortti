@@ -1,8 +1,6 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
-import { Admin } from './admin.decorator';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 @Controller('admin')
@@ -12,16 +10,16 @@ export class AdminController {
     private readonly authenticationService: AuthenticationService,
   ) { }
 
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   async login(@Body() userData: LoginAdminDto) {
-    return this.authenticationService.loginAdmin(userData);
+    return await this.authenticationService.loginAdmin(userData);
   }
 
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   async create(@Body() userData: RegisterAdminDto) {
-    return this.adminService.registerAdmin(userData);
+    return await this.adminService.registerAdmin(userData);
   }
 
 }

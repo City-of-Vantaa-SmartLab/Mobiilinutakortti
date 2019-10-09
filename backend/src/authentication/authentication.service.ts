@@ -1,14 +1,12 @@
 import { Injectable, Inject, forwardRef, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { hash, compare } from 'bcrypt';
-import { saltRounds } from './authentication.consts';
-import { Admin } from '../admin/admin.entity';
+import { compare } from 'bcrypt';
 import { AdminService } from '../admin/admin.service';
-import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
+import { LoginAdminDto } from '../admin/dto';
 import * as content from '../content.json';
-import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
+import { LoginJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
-import { Junior } from '../junior/junior.entity';
+import { JWTToken } from './jwt.model';
 
 @Injectable()
 export class AuthenticationService {
@@ -19,8 +17,8 @@ export class AuthenticationService {
         private readonly juniorService: JuniorService,
         private readonly jwtService: JwtService) { }
 
-    async loginAdmin(loginData: LoginAdminDto): Promise<any> {
-        const user = await this.adminService.getUser(loginData.email);
+    async loginAdmin(loginData: LoginAdminDto): Promise<JWTToken> {
+        const user = await this.adminService.getAdmin(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
             providedPassword: loginData.password, hashedPassword: user.password,
@@ -29,8 +27,8 @@ export class AuthenticationService {
         });
     }
 
-    async loginJunior(loginData: LoginJuniorDto): Promise<any> {
-        const user = await this.juniorService.getUser(loginData.phoneNumber);
+    async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
+        const user = await this.juniorService.getJunior(loginData.phoneNumber);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
             providedPassword: loginData.pin, hashedPassword: user.pin,
@@ -39,10 +37,10 @@ export class AuthenticationService {
         });
     }
 
-    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: { id: number, identity: string }): Promise<any> {
+    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: { id: number, identity: string }): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.providedPassword, attempt.hashedPassword);
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ user: user.identity, sub: user.id }) };
+        return { access_token: this.jwtService.sign({ user: user.identity, sub: user.id }) } as JWTToken;
     }
 
 }
