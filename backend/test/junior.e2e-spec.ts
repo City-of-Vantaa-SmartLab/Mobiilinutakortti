@@ -9,6 +9,7 @@ import { RegisterJuniorDto, LoginJuniorDto } from '../src/junior/dto';
 describe('JuniorController (e2e)', () => {
     let app;
     let connection: Connection;
+    let token: string;
 
     const testAdminRegister = {
         email: 'Testy.McTempFace@gofore.com', password: 'Password',
@@ -40,13 +41,13 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/admin/register/admin')
+            .post('/admin/register')
             .send(testAdminRegister);
-        const token = (await request(app.getHttpServer())
+        token = (await request(app.getHttpServer())
             .post('/admin/login')
             .send(testAdminLogin)).body.access_token;
         const pin = (await request(app.getHttpServer())
-            .post('/admin/register/junior')
+            .post('/junior/register')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
             .send(testJuniorRegister));
@@ -56,6 +57,44 @@ describe('JuniorController (e2e)', () => {
     afterAll(async () => {
         await connection.close();
         await app.close();
+    });
+
+    describe('/junior/register', () => {
+        it('returns a pin (temporary) if a new user is created', async () => {
+            const testData = {
+                phoneNumber: '+441234567741',
+                firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
+            } as RegisterJuniorDto;
+            return request(app.getHttpServer())
+                .post('/junior/register')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Accept', 'application/json')
+                .send(testData)
+                .expect(201);
+        }),
+            it('returns a Conflict if the user already exists', async () => {
+                return request(app.getHttpServer())
+                    .post('/junior/register')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .send(testJuniorRegister)
+                    .expect(409);
+            }),
+            it('returns an Bad Request if invalid data is entered', () => {
+                const testData = { firstName: 'Bob', lastName: 'Bobby' };
+                return request(app.getHttpServer())
+                    .post('/junior/register')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(400);
+            }),
+            it('returns an Unauthorized if no JWT token is provided', () => {
+                return request(app.getHttpServer())
+                    .post('/junior/register')
+                    .send(testJuniorRegister)
+                    .expect(401);
+            });
     });
 
     describe('/junior/login', () => {

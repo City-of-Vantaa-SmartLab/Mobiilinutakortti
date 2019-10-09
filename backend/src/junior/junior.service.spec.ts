@@ -15,13 +15,18 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { Admin } from '../admin/admin.entity';
 import { AdminService } from '../admin/admin.service';
-import { forwardRef } from '@nestjs/common';
+import { forwardRef, ConflictException } from '@nestjs/common';
+import { RegisterJuniorDto, LoginJuniorDto } from './dto';
 
 describe('JuniorService', () => {
   let module: TestingModule;
   let service: JuniorService;
   let connection: Connection;
-  let adminService: AdminService;
+
+  const testRegisterYouth = {
+    phoneNumber: '+4407805140073', firstName: 'Auth jr', lastName: 'Senior',
+  } as RegisterJuniorDto;
+  let testLoginYouth: LoginJuniorDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -39,7 +44,6 @@ describe('JuniorService', () => {
       .compile();
 
     service = module.get<JuniorService>(JuniorService);
-    adminService = module.get<AdminService>(AdminService);
   });
 
   afterAll(async () => {
@@ -49,5 +53,29 @@ describe('JuniorService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('Register Youth', () => {
+    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
+      testLoginYouth = {
+        phoneNumber: testRegisterYouth.phoneNumber, pin: await service.registerJunior(testRegisterYouth),
+      };
+      expect(testLoginYouth.pin).toBeDefined();
+    }),
+      it('should add the user to the database following a succesful registration', async () => {
+        const response = await service.getUser(testRegisterYouth.phoneNumber);
+        expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
+          response.firstName === testRegisterYouth.firstName &&
+          response.lastName === testRegisterYouth.lastName).toBeTruthy();
+      }),
+      it('should thrown a Conflict if the phone number already exists', async () => {
+        const error = new ConflictException();
+        try {
+          await service.registerJunior(testRegisterYouth);
+          fail();
+        } catch (e) {
+          expect(e.response === error.getResponse());
+        }
+      });
   });
 });

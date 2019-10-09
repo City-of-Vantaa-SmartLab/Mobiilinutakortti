@@ -19,36 +19,6 @@ export class AuthenticationService {
         private readonly juniorService: JuniorService,
         private readonly jwtService: JwtService) { }
 
-    async registerAdmin(registrationData: RegisterAdminDto): Promise<any> {
-        const userExists = await this.adminService.getUser(registrationData.email);
-        if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
-        const hashedPassword = await hash(registrationData.password, saltRounds);
-        const admin = {
-            firstName: registrationData.firstName, lastName: registrationData.lastName,
-            email: registrationData.email, password: hashedPassword,
-        } as Admin;
-        await this.adminService.createUser(admin);
-        return `${registrationData.email} ${content.Created}`;
-    }
-
-    /**
-      Currently this returns the pin as we need pass that back to frontend.
-      Will be corrected when relevant workflow is introduced.
-     */
-    async registerJunior(registrationData: RegisterJuniorDto): Promise<string> {
-        const userExists = await this.juniorService.getUser(registrationData.phoneNumber);
-        if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
-        const pin = this.juniorService.generatePin();
-        const hashedPassword = await hash(pin, saltRounds);
-        const junior = {
-            firstName: registrationData.firstName, lastName: registrationData.lastName,
-            phoneNumber: registrationData.phoneNumber, pin: hashedPassword,
-        } as Junior;
-        await this.juniorService.createUser(junior);
-        // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;
-        return pin.toString();
-    }
-
     async loginAdmin(loginData: LoginAdminDto): Promise<any> {
         const user = await this.adminService.getUser(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }

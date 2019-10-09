@@ -4,22 +4,15 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { RegisterJuniorDto } from '../src/junior/dto';
 
 describe('AdminController (e2e)', () => {
     let app;
     let connection: Connection;
-    let token: string;
 
     const testAdminRegister = {
         email: 'Testy.McTestFace@gofore.com', password: 'Password',
         firstName: 'Testy', lastName: 'McTestFace',
     } as RegisterAdminDto;
-
-    const testJuniorRegister = {
-        phoneNumber: '+441234567896',
-        firstName: 'Testy jr', lastName: 'e2e',
-    } as RegisterJuniorDto;
 
     const testAdminLogin = {
         email: testAdminRegister.email, password: testAdminRegister.password,
@@ -44,63 +37,24 @@ describe('AdminController (e2e)', () => {
         await app.close();
     });
 
-    describe('/admin/register/admin', () => {
+    describe('/admin/register', () => {
         it('returns a Created if a new user is created', async () => {
             return request(app.getHttpServer())
-                .post('/admin/register/admin')
+                .post('/admin/register')
                 .send(testAdminRegister)
                 .expect(201);
         }),
             it('returns a Conflict if the user already exists', async () => {
                 return request(app.getHttpServer())
-                    .post('/admin/register/admin')
+                    .post('/admin/register')
                     .send(testAdminRegister)
                     .expect(409);
             }),
             it('returns an Bad Request if invalid data is entered', () => {
                 return request(app.getHttpServer())
-                    .post('/admin/register/admin')
+                    .post('/admin/register')
                     .send(testAdminLogin)
                     .expect(400);
-            });
-    });
-
-    describe('/admin/register/junior', () => {
-        beforeAll(async () => {
-            token = (await request(app.getHttpServer())
-                .post('/admin/login')
-                .send(testAdminLogin)).body.access_token;
-        }),
-            it('returns a pin (temporary) if a new user is created', async () => {
-                return request(app.getHttpServer())
-                    .post('/admin/register/junior')
-                    .set('Authorization', `Bearer ${token}`)
-                    .set('Accept', 'application/json')
-                    .send(testJuniorRegister)
-                    .expect(201);
-            }),
-            it('returns a Conflict if the user already exists', async () => {
-                return request(app.getHttpServer())
-                    .post('/admin/register/junior')
-                    .set('Authorization', `Bearer ${token}`)
-                    .set('Accept', 'application/json')
-                    .send(testJuniorRegister)
-                    .expect(409);
-            }),
-            it('returns an Bad Request if invalid data is entered', () => {
-                const testData = { firstName: 'Bob', lastName: 'Bobby' };
-                return request(app.getHttpServer())
-                    .post('/admin/register/junior')
-                    .set('Authorization', `Bearer ${token}`)
-                    .set('Accept', 'application/json')
-                    .send(testData)
-                    .expect(400);
-            }),
-            it('returns an Unauthorized if no JWT token is provided', () => {
-                return request(app.getHttpServer())
-                    .post('/admin/register/junior')
-                    .send(testJuniorRegister)
-                    .expect(401);
             });
     });
 

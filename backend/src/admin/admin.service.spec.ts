@@ -13,6 +13,8 @@ import { getTestDB } from '../../test/testdb';
 import { AdminModule } from './admin.module';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
+import { RegisterAdminDto } from './dto';
+import { ConflictException } from '@nestjs/common';
 
 describe('AdminService', () => {
   let module: TestingModule;
@@ -22,6 +24,11 @@ describe('AdminService', () => {
   } as Admin;
   let connection: Connection;
   let service: AdminService;
+
+  const testRegisterAdmin = {
+    email: 'Admin2@service.test', firstName: 'Auth',
+    lastName: 'Tication', password: 'Hush',
+  } as RegisterAdminDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -76,6 +83,30 @@ describe('AdminService', () => {
       }),
       it('Should return undefined if the user already exists', async () => {
         expect(await service.createUser(testUser)).toBe(undefined);
+      });
+  });
+
+  describe('Register admin', () => {
+    it('should state that the registration is succesful', async () => {
+      expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
+    }),
+      it('should add the user to the database following a succesful registration', async () => {
+        const response = await service.getUser(testRegisterAdmin.email);
+        expect(response.email === testRegisterAdmin.email.toLowerCase() &&
+          response.firstName === testRegisterAdmin.firstName &&
+          response.lastName === testRegisterAdmin.lastName).toBeTruthy();
+      }),
+      it('should store passwords in a non-plaintext manner', async () => {
+        expect((await service.getUser(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
+      }),
+      it('should thrown a Conflict if the username already exists', async () => {
+        const error = new ConflictException();
+        try {
+          await service.registerAdmin(testRegisterAdmin);
+          fail();
+        } catch (e) {
+          expect(e.response === error.getResponse());
+        }
       });
   });
 });

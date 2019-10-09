@@ -5,7 +5,6 @@ import { AuthenticationService } from './authentication.service';
 import { AdminModule } from '../admin/admin.module';
 import { jwt } from './authentication.consts';
 import { JwtStrategy } from './jwt.strategy';
-import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 
 @Module({

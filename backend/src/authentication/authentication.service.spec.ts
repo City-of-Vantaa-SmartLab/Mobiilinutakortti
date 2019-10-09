@@ -59,6 +59,9 @@ describe('AuthenticationService', () => {
     service = module.get<AuthenticationService>(AuthenticationService);
     adminService = module.get<AdminService>(AdminService);
     juniorService = module.get<JuniorService>(JuniorService);
+
+    await adminService.registerAdmin(testRegisterAdmin);
+    testLoginYouth = { phoneNumber: testRegisterYouth.phoneNumber, pin: await juniorService.registerJunior(testRegisterYouth) };
   });
 
   afterAll(async () => {
@@ -68,30 +71,6 @@ describe('AuthenticationService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  describe('Register admin', () => {
-    it('should state that the registration is succesful', async () => {
-      expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
-    }),
-      it('should add the user to the database following a succesful registration', async () => {
-        const response = await adminService.getUser(testRegisterAdmin.email);
-        expect(response.email === testRegisterAdmin.email.toLowerCase() &&
-          response.firstName === testRegisterAdmin.firstName &&
-          response.lastName === testRegisterAdmin.lastName).toBeTruthy();
-      }),
-      it('should store passwords in a non-plaintext manner', async () => {
-        expect((await adminService.getUser(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
-      }),
-      it('should thrown a Conflict if the username already exists', async () => {
-        const error = new ConflictException();
-        try {
-          await service.registerAdmin(testRegisterAdmin);
-          fail();
-        } catch (e) {
-          expect(e.response === error.getResponse());
-        }
-      });
   });
 
   describe('Login admin', () => {
@@ -113,30 +92,6 @@ describe('AuthenticationService', () => {
         try {
           const testData = { email: testLoginAdmin.email, password: 'doubleHush' } as LoginAdminDto;
           await service.loginAdmin(testData);
-          fail();
-        } catch (e) {
-          expect(e.response === error.getResponse());
-        }
-      });
-  });
-
-  describe('Register Youth', () => {
-    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
-      testLoginYouth = {
-        phoneNumber: testRegisterYouth.phoneNumber, pin: await service.registerJunior(testRegisterYouth),
-      };
-      expect(testLoginYouth.pin).toBeDefined();
-    }),
-      it('should add the user to the database following a succesful registration', async () => {
-        const response = await juniorService.getUser(testRegisterYouth.phoneNumber);
-        expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
-          response.firstName === testRegisterYouth.firstName &&
-          response.lastName === testRegisterYouth.lastName).toBeTruthy();
-      }),
-      it('should thrown a Conflict if the phone number already exists', async () => {
-        const error = new ConflictException();
-        try {
-          await service.registerJunior(testRegisterYouth);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());

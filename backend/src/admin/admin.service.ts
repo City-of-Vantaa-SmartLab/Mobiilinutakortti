@@ -1,11 +1,11 @@
-import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, forwardRef, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { RegisterAdminDto, LoginAdminDto } from './dto';
-import { RegisterJuniorDto } from '../junior/dto';
 import * as content from '../content.json';
+import { RegisterAdminDto } from './dto';
+import { hash } from 'bcrypt';
+import { saltRounds } from '../authentication/authentication.consts';
 
 @Injectable()
 export class AdminService {
@@ -13,13 +13,7 @@ export class AdminService {
     constructor(
         @InjectRepository(Admin)
         private readonly adminRepo: Repository<Admin>,
-        @Inject(forwardRef(() => AuthenticationService))
-        private readonly authenticationService: AuthenticationService,
     ) { }
-
-    register = async (registrationData: RegisterAdminDto) => this.authenticationService.registerAdmin(registrationData);
-    login = async (loginData: LoginAdminDto) => this.authenticationService.loginAdmin(loginData);
-    registerJunior = async (registrationData: RegisterJuniorDto) => this.authenticationService.registerJunior(registrationData);
 
     // This will be handed to a guard once a clear workflow is provided for admin login.
     verifyIsAdmin = async (email: string) => { if (!(await this.getUser(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
@@ -32,4 +26,17 @@ export class AdminService {
         details.email = details.email.toLowerCase();
         await this.adminRepo.save(details);
     }
+
+    async registerAdmin(registrationData: RegisterAdminDto): Promise<any> {
+        const userExists = await this.getUser(registrationData.email);
+        if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
+        const hashedPassword = await hash(registrationData.password, saltRounds);
+        const admin = {
+            firstName: registrationData.firstName, lastName: registrationData.lastName,
+            email: registrationData.email, password: hashedPassword,
+        } as Admin;
+        await this.createUser(admin);
+        return `${registrationData.email} ${content.Created}`;
+    }
+
 }
