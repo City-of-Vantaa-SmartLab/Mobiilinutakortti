@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
+import { RegisterJuniorDto } from '../junior/dto';
+import * as content from '../content.json';
 
 @Injectable()
 export class AdminService {
@@ -16,6 +18,10 @@ export class AdminService {
 
     register = async (registrationData: RegisterAdminDto) => this.authenticationService.registerAdmin(registrationData);
     login = async (loginData: LoginAdminDto) => this.authenticationService.loginAdmin(loginData);
+    registerJunior = async (registrationData: RegisterJuniorDto) => this.authenticationService.registerJunior(registrationData);
+
+    // TODO:  This will be handed to a guard once a clear workflow is provided for admin login.
+    verifyIsAdmin = async (email: string) => { if (!(await this.getUser(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
 
     async getUser(email: string): Promise<Admin> {
         return await this.adminRepo.findOne({ email: email.toLowerCase() });
@@ -25,9 +31,4 @@ export class AdminService {
         details.email = details.email.toLowerCase();
         await this.adminRepo.save(details);
     }
-
-    /** TEST CODE STARTS */
-    getAll1 = async () => (await this.adminRepo.find()).map(r => r.firstName);
-    getAll2 = async () => (await this.adminRepo.find()).map(r => `${r.firstName} ${r.lastName}`);
-    /** TEST CODE ENDS */
 }

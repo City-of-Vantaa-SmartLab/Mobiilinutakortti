@@ -12,6 +12,7 @@ import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
 import { AdminModule } from './admin.module';
 import { AppModule } from '../app.module';
+import { JuniorModule } from '../junior/junior.module';
 
 describe('AdminService', () => {
   let module: TestingModule;
@@ -25,7 +26,7 @@ describe('AdminService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, AdminModule, AppModule, JwtModule.register({
+      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, JwtModule.register({
         secret: jwt.secret,
         signOptions: { expiresIn: jwt.expiry },
       })],

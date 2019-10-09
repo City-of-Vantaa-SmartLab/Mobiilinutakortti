@@ -7,11 +7,13 @@ import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigHelper } from './configHandler';
+import { JuniorModule } from './junior/junior.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ConfigHelper.getDatabaseConnection()),
     AdminModule,
+    JuniorModule,
     AuthenticationModule,
   ],
   controllers: [AppController, AdminController],
