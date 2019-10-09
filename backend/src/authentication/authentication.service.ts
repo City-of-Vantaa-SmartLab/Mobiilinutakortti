@@ -31,12 +31,13 @@ export class AuthenticationService {
     }
 
     /**
+    TODO: 
       Currently this returns the pin as we need pass that back to frontend.
       Will be corrected when relevant workflow is introduced.
      */
     async registerJunior(registrationData: RegisterJuniorDto): Promise<string> {
         const userExists = await this.juniorService.getUser(registrationData.phoneNumber);
-        if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
+        if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const pin = this.juniorService.generatePin();
         const hashedPassword = await hash(pin, saltRounds);
         const junior = {

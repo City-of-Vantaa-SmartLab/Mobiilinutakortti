@@ -27,6 +27,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'))
   @Post('register/junior')
   async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
+    // TODO: replace with authguard
     await this.adminService.verifyIsAdmin(payload.user);
     return await this.adminService.registerJunior(userData);
   }

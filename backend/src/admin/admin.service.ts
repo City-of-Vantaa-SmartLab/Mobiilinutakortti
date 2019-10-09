@@ -20,7 +20,7 @@ export class AdminService {
     login = async (loginData: LoginAdminDto) => this.authenticationService.loginAdmin(loginData);
     registerJunior = async (registrationData: RegisterJuniorDto) => this.authenticationService.registerJunior(registrationData);
 
-    // This will be handed to a guard once a clear workflow is provided for admin login.
+    // TODO:  This will be handed to a guard once a clear workflow is provided for admin login.
     verifyIsAdmin = async (email: string) => { if (!(await this.getUser(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
 
     async getUser(email: string): Promise<Admin> {
