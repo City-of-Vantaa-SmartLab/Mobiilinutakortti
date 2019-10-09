@@ -15,6 +15,7 @@ export class Junior {
     @Column()
     pin: string;
 
+    // Todo: change to FI if needed depedant on SMS provider.
     @IsPhoneNumber(null)
     @Column({ unique: true })
     phoneNumber: string;

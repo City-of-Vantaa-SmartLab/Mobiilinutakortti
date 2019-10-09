@@ -6,21 +6,13 @@ import { AppService } from './app.service';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { ConfigHelper } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'db',
-      port: 5432,
-      username: 'postgres',
-      password: 'password',
-      database: 'nuta',
-      entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(ConfigHelper.getDatabaseConnection()),
     AdminModule,
     JuniorModule,
     AuthenticationModule,
