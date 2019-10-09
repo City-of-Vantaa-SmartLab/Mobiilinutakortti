@@ -26,7 +26,8 @@
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "aws s3 sync build/ s3://vantaa-youth-pwa-frontend-dev"
   },
   "eslintConfig": {
     "extends": "react-app"

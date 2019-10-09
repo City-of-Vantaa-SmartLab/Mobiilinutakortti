@@ -49,15 +49,17 @@ $ npm run start:prod
 
 ## Test
 
+Tests should be ran outside of the Docker container.
+When testing a sqlite database will be spawned and deleted if all tests are passed. Otherwise this database can be investigated. To re-test the database will need to be deleted from test/testdb.sql
+
+As we have decided that controllers should only contain routes, e2e tests should suffice for controller tests during this project.
+
 ```bash
 # unit tests
 $ npm run test
 
 # e2e tests
 $ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
 ## Support
