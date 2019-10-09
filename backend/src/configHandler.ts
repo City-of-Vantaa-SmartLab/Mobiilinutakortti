@@ -15,22 +15,22 @@ export class ConfigHelper {
         if (this.isLive()) {
             dbOptions = {
                 type: 'postgres',
-                host: 'db',
-                port: 5432,
-                username: 'postgres',
-                password: 'password',
-                database: 'nuta',
+                host: process.env.RDS_HOSTNAME,
+                port: +process.env.RDS_PORT,
+                username: process.env.RDS_USERNAME,
+                password: process.env.RDS_PASSWORD,
+                database: 'vantaa-pwa',
                 entities: ['dist/**/*.entity{.ts,.js}'],
                 synchronize: true,
             };
         } else {
             dbOptions = {
                 type: 'postgres',
-                host: process.env.RDS_HOSTNAME,
-                port: +process.env.RDS_PORT,
-                username: process.env.RDS_USERNAME,
-                password: process.env.RDS_PASSWORD,
-                database: 'vantaa-pwa',
+                host: 'db',
+                port: 5432,
+                username: 'postgres',
+                password: 'password',
+                database: 'nuta',
                 entities: ['dist/**/*.entity{.ts,.js}'],
                 synchronize: true,
             };
