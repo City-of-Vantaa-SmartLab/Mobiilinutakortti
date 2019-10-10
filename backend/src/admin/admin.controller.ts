@@ -1,34 +1,25 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, Get, UseGuards, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
-import { RegisterJuniorDto } from '../junior/dto';
-import { Admin } from './admin.decorator';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Controller('admin')
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
+    private readonly authenticationService: AuthenticationService,
   ) { }
 
-  @UsePipes(new ValidationPipe())
-  @Post('register/admin')
-  async create(@Body() userData: RegisterAdminDto) {
-    return this.adminService.register(userData);
-  }
-
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   async login(@Body() userData: LoginAdminDto) {
-    return this.adminService.login(userData);
+    return await this.authenticationService.loginAdmin(userData);
   }
 
-  @UsePipes(new ValidationPipe())
-  @UseGuards(AuthGuard('jwt'))
-  @Post('register/junior')
-  async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
-    // TODO: replace with authguard
-    await this.adminService.verifyIsAdmin(payload.user);
-    return await this.adminService.registerJunior(userData);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('register')
+  async create(@Body() userData: RegisterAdminDto) {
+    return await this.adminService.registerAdmin(userData);
   }
+
 }

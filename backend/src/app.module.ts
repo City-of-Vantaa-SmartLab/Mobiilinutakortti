@@ -8,6 +8,7 @@ import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigHelper } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
+import { JuniorController } from './junior/junior.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { JuniorModule } from './junior/junior.module';
     JuniorModule,
     AuthenticationModule,
   ],
-  controllers: [AppController, AdminController],
+  controllers: [AppController, AdminController, JuniorController],
   providers: [AppService],
 })
 export class AppModule {
