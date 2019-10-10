@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
-import { ProtectedRoute }  from './ProtectedRoute';
+import ProtectedRoute  from './ProtectedRoute';
 
 const Wrapper = styled.section`
 `;

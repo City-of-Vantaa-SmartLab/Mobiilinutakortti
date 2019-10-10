@@ -33,12 +33,8 @@ const Error = styled.p`
 
 
 interface LoginProps {
-    auth: (phone: string, password: string) => void;
-    authReducer: {
-        loggedIn: boolean,
-        token: string,
-        error: string
-    }
+    auth: (phone: string, password: string) => void,
+    authError: string
 }
 
 const LoginPage: React.FC<LoginProps> = (props) => {
@@ -57,7 +53,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
         <Form onSubmit={e => {e.preventDefault();
                               handleSubmit()}}>
             <FormHeader>Kirjaudu sisään</FormHeader>
-            <Error active = {props.authReducer.error !== ''}>{props.authReducer.error}</Error>
+            <Error active = {props.authError !== ''}>{props.authError}</Error>
             <Input 
                 onChange={e => {
                     setPhone(e.target.value)
@@ -79,7 +75,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 }
 
 const mapStateToProps = (state:AppState) => ({
-        authReducer: state.auth 
+        authError: state.auth.error 
     });
 
 const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {

@@ -4,10 +4,21 @@ import rootReducer, { AppState } from '../reducers';
 import { rootSaga } from '../actions/authActions';
 
 
+const userToken:string | null = localStorage.getItem('token') ? localStorage.getItem('token') : ''
+const isLogged:boolean = (userToken === null);
+
+const persistedState = {
+    auth: {
+        loggedIn: isLogged,
+        token: userToken,
+        error: ''
+    }
+}
+
 export function configureStore(): Store<AppState> {
 
     const sagaMiddleware = createSagaMiddleware();
-    const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+    const store = createStore(rootReducer, persistedState, applyMiddleware(sagaMiddleware));
 
     sagaMiddleware.run(rootSaga);
 

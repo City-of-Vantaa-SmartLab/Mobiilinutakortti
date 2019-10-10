@@ -30,6 +30,6 @@ export type authActions = AuthAttempt | AuthSuccess | AuthFail;
 
 export interface authState {
     loggedIn: boolean,
-    token: string,
+    token: string | null,
     error: string
 }

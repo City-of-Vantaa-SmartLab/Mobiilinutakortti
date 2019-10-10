@@ -1,11 +1,9 @@
 import { authTypes, authActions, authState } from '../types/authTypes';
 
 
-const userToken:string | null = localStorage.getItem('token') ? localStorage.getItem('token') : ''
-
 const initialState:authState = {
     loggedIn: false,
-    token: userToken ? userToken : '',
+    token: '',
     error: ''
 }
 
