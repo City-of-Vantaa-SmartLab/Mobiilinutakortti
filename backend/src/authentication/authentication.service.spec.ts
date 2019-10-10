@@ -17,7 +17,7 @@ import { ConflictException, BadRequestException, UnauthorizedException } from '@
 import { Junior } from '../junior/junior.entity';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
-import { RegisterJuniorDto } from 'src/junior/dto';
+import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
@@ -34,8 +34,9 @@ describe('AuthenticationService', () => {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,
   } as LoginAdminDto;
   const testRegisterYouth = {
-    phoneNumber: '+4407805160073', firstName: 'Auth jr', lastName: 'Senior',
+    phoneNumber: '04122345178', firstName: 'Auth jr', lastName: 'Senior',
   } as RegisterJuniorDto;
+  let testLoginYouth: LoginJuniorDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -58,6 +59,9 @@ describe('AuthenticationService', () => {
     service = module.get<AuthenticationService>(AuthenticationService);
     adminService = module.get<AdminService>(AdminService);
     juniorService = module.get<JuniorService>(JuniorService);
+
+    await adminService.registerAdmin(testRegisterAdmin);
+    testLoginYouth = { phoneNumber: testRegisterYouth.phoneNumber, pin: await juniorService.registerJunior(testRegisterYouth) };
   });
 
   afterAll(async () => {
@@ -67,30 +71,6 @@ describe('AuthenticationService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  describe('Register admin', () => {
-    it('should state that the registration is succesful', async () => {
-      expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
-    }),
-      it('should add the user to the database following a succesful registration', async () => {
-        const response = await adminService.getUser(testRegisterAdmin.email);
-        expect(response.email === testRegisterAdmin.email.toLowerCase() &&
-          response.firstName === testRegisterAdmin.firstName &&
-          response.lastName === testRegisterAdmin.lastName).toBeTruthy();
-      }),
-      it('should store passwords in a non-plaintext manner', async () => {
-        expect((await adminService.getUser(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
-      }),
-      it('should thrown a Conflict if the username already exists', async () => {
-        const error = new ConflictException();
-        try {
-          await service.registerAdmin(testRegisterAdmin);
-          fail();
-        } catch (e) {
-          expect(e.response === error.getResponse());
-        }
-      });
   });
 
   describe('Login admin', () => {
@@ -119,20 +99,25 @@ describe('AuthenticationService', () => {
       });
   });
 
-  describe('Register Youth', () => {
-    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
-      expect(await service.registerJunior(testRegisterYouth)).toBeDefined();
+  describe('Login Youth', () => {
+    it('should return a access token token if login is succseful', async () => {
+      expect((await service.loginJunior(testLoginYouth)).access_token).toBeDefined();
     }),
-      it('should add the user to the database following a succesful registration', async () => {
-        const response = await juniorService.getUser(testRegisterYouth.phoneNumber);
-        expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
-          response.firstName === testRegisterYouth.firstName &&
-          response.lastName === testRegisterYouth.lastName).toBeTruthy();
-      }),
-      it('should thrown a Conflict if the phone number already exists', async () => {
-        const error = new ConflictException();
+      it('should throw a Bad Request if the user does not exist', async () => {
+        const error = new BadRequestException();
         try {
-          await service.registerJunior(testRegisterYouth);
+          const testData = { phoneNumber: testLoginYouth.phoneNumber, pin: '12345' } as LoginJuniorDto;
+          await service.loginJunior(testData);
+          fail();
+        } catch (e) {
+          expect(e.response === error.getResponse());
+        }
+      }),
+      it('should throw a Unauthorized if the pin is incorrect', async () => {
+        const error = new BadRequestException();
+        try {
+          const testData = { phoneNumber: '04113345678', pin: testLoginYouth.pin } as LoginJuniorDto;
+          await service.loginJunior(testData);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());

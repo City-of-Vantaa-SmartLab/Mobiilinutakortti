@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ValueTransformer } from 'typeorm';
 import { IsEmail } from 'class-validator';
+import { lowercase } from '../../common/transformers';
 
 @Entity()
 export class Admin {
+
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -16,6 +18,6 @@ export class Admin {
     password: string;
 
     @IsEmail()
-    @Column({ unique: true })
+    @Column({ unique: true, transformer: lowercase })
     email: string;
 }

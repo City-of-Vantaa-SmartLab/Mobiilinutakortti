@@ -1,14 +1,11 @@
 import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
 
-export class RegisterJuniorDto {
+export class LoginJuniorDto {
 
     @IsPhoneNumber('FI')
     @IsNotEmpty()
     readonly phoneNumber: string;
 
     @IsNotEmpty()
-    readonly firstName: string;
-
-    @IsNotEmpty()
-    readonly lastName: string;
+    readonly pin: string;
 }
