@@ -20,6 +20,6 @@ export class ConfigHelper {
             database: process.env.RDS_DB_NAME || 'nuta',
             entities: ['dist/**/*.entity{.ts,.js}'],
             synchronize: true,
-        };;
+        };
     }
 }
