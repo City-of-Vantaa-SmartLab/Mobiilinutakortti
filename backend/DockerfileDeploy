@@ -1,7 +1,4 @@
 FROM node:10
-# ADD . /backend
-# RUN npm install
-# EXPOSE 3000
 WORKDIR /backend
 COPY . .
 RUN npm install
