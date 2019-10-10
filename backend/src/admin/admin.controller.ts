@@ -16,7 +16,10 @@ export class AdminController {
     return await this.authenticationService.loginAdmin(userData);
   }
 
-  @UsePipes(new ValidationPipe({ transform: true }))
+  // Todo, require the above before live. leaving during dev so that we can create admins easily.
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Allowed(Roles.ADMIN)
+  // @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   async create(@Body() userData: RegisterAdminDto) {
     return await this.adminService.registerAdmin(userData);

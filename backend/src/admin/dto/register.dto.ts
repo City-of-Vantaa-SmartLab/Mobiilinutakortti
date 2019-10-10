@@ -4,6 +4,7 @@ export class RegisterAdminDto {
 
     @IsEmail()
     @IsNotEmpty()
+    @IsLowercase()
     readonly email: string;
 
     @IsNotEmpty()
@@ -14,4 +15,6 @@ export class RegisterAdminDto {
 
     @IsNotEmpty()
     readonly lastName: string;
+
+    readonly isSuperUser: boolean = false;
 }

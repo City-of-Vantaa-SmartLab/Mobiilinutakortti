@@ -4,6 +4,7 @@ export class LoginAdminDto {
 
     @IsNotEmpty()
     @IsEmail()
+    @IsLowercase()
     readonly email: string;
 
     @IsNotEmpty()
