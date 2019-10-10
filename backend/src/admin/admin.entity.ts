@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ValueTransformer } from 'typeorm';
 import { IsEmail } from 'class-validator';
-import { lowercase } from '../../common/Transformers';
+import { lowercase } from '../../common/transformers';
 
 @Entity()
 export class Admin {
