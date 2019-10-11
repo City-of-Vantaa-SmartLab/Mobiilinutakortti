@@ -48,7 +48,7 @@ export class JuniorService {
         return (Math.floor(1000 + Math.random() * 9000)).toString();
     }
 
-    async editAdmin(details: EditJuniorDto): Promise<string> {
+    async editJunior(details: EditJuniorDto): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (details.phoneNumber === user.phoneNumber && details.firstName === user.firstName &&

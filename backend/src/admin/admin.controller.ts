@@ -41,7 +41,7 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   async edit(@Body() userData: EditAdminDto) {
-    this.adminService.editAdmin(userData);
+    return await this.adminService.editAdmin(userData);
   }
 
 }

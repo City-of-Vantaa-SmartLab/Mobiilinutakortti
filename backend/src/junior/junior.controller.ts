@@ -13,11 +13,9 @@ import { EditJuniorDto } from './dto/edit.dto';
 @Controller('junior')
 export class JuniorController {
 
-    // Todo remove admin dependancy once guards are in place.
     constructor(
         private readonly juniorService: JuniorService,
         private readonly authenticationService: AuthenticationService,
-        private readonly adminService: AdminService,
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -25,7 +23,6 @@ export class JuniorController {
     @Allowed(Roles.ADMIN)
     @Post('register')
     async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
-        await this.adminService.verifyIsAdmin(payload.user);
         return await this.juniorService.registerJunior(userData);
     }
 
@@ -38,8 +35,8 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Allowed(Roles.ADMIN)
     @UsePipes(new ValidationPipe({ transform: true }))
-    @Post('register')
+    @Post('edit')
     async edit(@Body() userData: EditJuniorDto) {
-        this.juniorService.editAdmin(userData);
+        this.juniorService.editJunior(userData);
     }
 }
