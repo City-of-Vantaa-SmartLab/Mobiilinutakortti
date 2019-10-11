@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, ConflictException } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, ConflictException, BadRequestException } from '@nestjs/common';
 import { Junior } from './junior.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { RegisterJuniorDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
+import { EditJuniorDto } from './dto/edit.dto';
 
 @Injectable()
 export class JuniorService {
@@ -45,5 +46,16 @@ export class JuniorService {
     // This will be moved to its own service when the pin workflow is produced.
     generatePin(): string {
         return (Math.floor(1000 + Math.random() * 9000)).toString();
+    }
+
+    async editAdmin(details: EditJuniorDto): Promise<string> {
+        const user = await this.juniorRepo.findOne(details.id);
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
+        if (details.phoneNumber === user.phoneNumber && details.firstName === user.firstName &&
+            details.lastName === user.lastName) {
+            throw new BadRequestException(content.DataNotChanged);
+        }
+        await this.juniorRepo.save(user);
+        return `${details.phoneNumber} ${content.Updated}`;
     }
 }

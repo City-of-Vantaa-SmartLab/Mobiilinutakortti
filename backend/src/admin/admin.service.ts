@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Inject, forwardRef, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, forwardRef, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
@@ -6,6 +6,7 @@ import * as content from '../content.json';
 import { RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
+import { EditAdminDto } from './dto/edit.dto';
 
 @Injectable()
 export class AdminService {
@@ -38,4 +39,14 @@ export class AdminService {
         return `${registrationData.email} ${content.Created}`;
     }
 
+    async editAdmin(details: EditAdminDto): Promise<string> {
+        const user = await this.adminRepo.findOne(details.id);
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
+        if (details.email === user.email && details.firstName === user.firstName &&
+            details.lastName === user.lastName && details.isSuperUser === user.isSuperUser) {
+            throw new BadRequestException(content.DataNotChanged);
+        }
+        await this.adminRepo.save(user);
+        return `${details.email} ${content.Updated}`;
+    }
 }

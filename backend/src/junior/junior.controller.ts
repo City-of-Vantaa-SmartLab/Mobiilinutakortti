@@ -8,6 +8,7 @@ import { AdminService } from '../admin/admin.service';
 import { Allowed } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
+import { EditJuniorDto } from './dto/edit.dto';
 
 @Controller('junior')
 export class JuniorController {
@@ -32,5 +33,13 @@ export class JuniorController {
     @Post('login')
     async login(@Body() userData: LoginJuniorDto) {
         return await this.authenticationService.loginJunior(userData);
+    }
+
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Allowed(Roles.ADMIN)
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @Post('register')
+    async edit(@Body() userData: EditJuniorDto) {
+        this.juniorService.editAdmin(userData);
     }
 }
