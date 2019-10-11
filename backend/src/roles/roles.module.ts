@@ -1,6 +1,5 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
 import { RolesGuard } from './roles.guard';
 import { Junior } from '../junior/junior.entity';
 import { Admin } from '../admin/admin.entity';

@@ -36,7 +36,7 @@ export class RolesGuard implements CanActivate {
             if (admin) {
                 roles.push(Roles.ADMIN);
                 if (admin.isSuperUser) {
-                    roles.push(Roles.SUPERUSER)
+                    roles.push(Roles.SUPERUSER);
                 }
             }
         }
