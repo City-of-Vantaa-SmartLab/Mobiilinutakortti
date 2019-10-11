@@ -3,8 +3,8 @@ import { IsPhoneNumber } from 'class-validator';
 
 @Entity()
 export class Junior {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     firstName: string;

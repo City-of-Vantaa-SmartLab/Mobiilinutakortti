@@ -37,7 +37,7 @@ export class AuthenticationService {
         });
     }
 
-    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: { id: number, identity: string }): Promise<JWTToken> {
+    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: { id: string, identity: string }): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.providedPassword, attempt.hashedPassword);
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
         return { access_token: this.jwtService.sign({ user: user.identity, sub: user.id }) } as JWTToken;

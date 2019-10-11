@@ -4,9 +4,10 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { Admin } from './admin.entity';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { Junior } from '../junior/junior.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Admin]),
+  imports: [TypeOrmModule.forFeature([Admin, Junior]),
   forwardRef(() => AuthenticationModule)],
   controllers: [AdminController],
   providers: [AdminService],

@@ -5,6 +5,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { Admin } from '../admin/admin.decorator';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AdminService } from '../admin/admin.service';
+import { AllowedRoles } from '../roles/roles.decorator';
+import { Roles } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 
 @Controller('junior')
 export class JuniorController {
@@ -17,7 +20,8 @@ export class JuniorController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Post('register')
     async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
         await this.adminService.verifyIsAdmin(payload.user);

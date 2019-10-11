@@ -32,7 +32,7 @@ export class AdminService {
         const hashedPassword = await hash(registrationData.password, saltRounds);
         const admin = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
-            email: registrationData.email, password: hashedPassword,
+            email: registrationData.email, password: hashedPassword, isSuperUser: registrationData.isSuperUser,
         } as Admin;
         await this.createAdmin(admin);
         return `${registrationData.email} ${content.Created}`;

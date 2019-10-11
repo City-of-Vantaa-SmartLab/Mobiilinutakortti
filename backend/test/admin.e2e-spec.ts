@@ -8,10 +8,20 @@ import { getTestDB } from './testdb';
 describe('AdminController (e2e)', () => {
     let app;
     let connection: Connection;
+    let superToken: string;
+
+    const testSuperRegister = {
+        email: 'anEmail@gofore.com', password: 'Password',
+        firstName: 'Testy', lastName: 'McTestFace', isSuperUser: true,
+    } as RegisterAdminDto;
+
+    const testSuperLogin = {
+        email: testSuperRegister.email, password: testSuperRegister.password,
+    } as LoginAdminDto;
 
     const testAdminRegister = {
         email: 'Testy.McTestFace@gofore.com', password: 'Password',
-        firstName: 'Testy', lastName: 'McTestFace',
+        firstName: 'Testy', lastName: 'McTestFace', isSuperUser: false,
     } as RegisterAdminDto;
 
     const testAdminLogin = {
@@ -30,6 +40,13 @@ describe('AdminController (e2e)', () => {
 
         app = moduleFixture.createNestApplication();
         await app.init();
+
+        await request(app.getHttpServer())
+            .post('/admin/registerTemp')
+            .send(testSuperRegister);
+        superToken = (await request(app.getHttpServer())
+            .post('/admin/login')
+            .send(testSuperLogin)).body.access_token;
     });
 
     afterAll(async () => {
@@ -41,20 +58,43 @@ describe('AdminController (e2e)', () => {
         it('returns a Created if a new user is created', async () => {
             return request(app.getHttpServer())
                 .post('/admin/register')
+                .set('Authorization', `Bearer ${superToken}`)
+                .set('Accept', 'application/json')
                 .send(testAdminRegister)
                 .expect(201);
         }),
             it('returns a Conflict if the user already exists', async () => {
                 return request(app.getHttpServer())
                     .post('/admin/register')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
                     .send(testAdminRegister)
                     .expect(409);
             }),
             it('returns an Bad Request if invalid data is entered', () => {
                 return request(app.getHttpServer())
                     .post('/admin/register')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
                     .send(testAdminLogin)
                     .expect(400);
+            }),
+            it('should reject an attempt from non-super users', async () => {
+                const testData = {
+                    email: 'another@test.com',
+                    firstName: testAdminRegister.firstName,
+                    lastName: testAdminRegister.lastName,
+                    password: testAdminRegister.password, isSuperUser: false,
+                } as RegisterAdminDto;
+                const token = (await request(app.getHttpServer())
+                    .post('/admin/login')
+                    .send(testAdminLogin)).body.access_token;
+                return request(app.getHttpServer())
+                    .post('/admin/register')
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(403);
             });
     });
 
