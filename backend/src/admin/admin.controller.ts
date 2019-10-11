@@ -4,7 +4,7 @@ import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
-import { Allowed } from '../roles/roles.decorator';
+import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { EditAdminDto } from './dto/edit.dto';
 
@@ -29,7 +29,7 @@ export class AdminController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Allowed(Roles.SUPERUSER)
+  @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   async create(@Body() userData: RegisterAdminDto) {
