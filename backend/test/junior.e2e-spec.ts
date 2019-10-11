@@ -13,7 +13,7 @@ describe('JuniorController (e2e)', () => {
 
     const testAdminRegister = {
         email: 'Testy.McTempFace@gofore.com', password: 'Password',
-        firstName: 'Testy', lastName: 'McTestFace',
+        firstName: 'Testy', lastName: 'McTestFace', isSuperUser: true,
     } as RegisterAdminDto;
 
     const testJuniorRegister = {
@@ -41,7 +41,7 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/admin/register')
+            .post('/admin/registerTemp')
             .send(testAdminRegister);
         token = (await request(app.getHttpServer())
             .post('/admin/login')

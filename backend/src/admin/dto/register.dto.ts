@@ -4,7 +4,6 @@ export class RegisterAdminDto {
 
     @IsEmail()
     @IsNotEmpty()
-    @IsLowercase()
     readonly email: string;
 
     @IsNotEmpty()
