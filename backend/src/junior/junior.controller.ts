@@ -33,7 +33,7 @@ export class JuniorController {
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Allowed(Roles.ADMIN)
+    @AllowedRoles(Roles.ADMIN)
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('edit')
     async edit(@Body() userData: EditJuniorDto) {

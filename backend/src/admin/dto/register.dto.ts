@@ -15,5 +15,6 @@ export class RegisterAdminDto {
     @IsNotEmpty()
     readonly lastName: string;
 
-    readonly isSuperUser: boolean = false;
+    @IsNotEmpty()
+    readonly isSuperUser: boolean;
 }

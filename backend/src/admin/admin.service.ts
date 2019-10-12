@@ -7,6 +7,7 @@ import { RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import { EditAdminDto } from './dto/edit.dto';
+import { AdminUserViewModel } from './vm/admin.vm';
 
 @Injectable()
 export class AdminService {
@@ -16,8 +17,9 @@ export class AdminService {
         private readonly adminRepo: Repository<Admin>,
     ) { }
 
-    // This will be handed to a guard once a clear workflow is provided for admin login.
-    verifyIsAdmin = async (email: string) => { if (!(await this.getAdmin(email))) { throw new UnauthorizedException(content.NotAnAdmin); } };
+    async listAllAdmins(): Promise<AdminUserViewModel[]> {
+        return (await this.adminRepo.find()).map(e => new AdminUserViewModel(e));
+    }
 
     async getAdmin(email: string): Promise<Admin> {
         return await this.adminRepo.findOne({ email });
@@ -42,10 +44,12 @@ export class AdminService {
     async editAdmin(details: EditAdminDto): Promise<string> {
         const user = await this.adminRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        if (details.email === user.email && details.firstName === user.firstName &&
-            details.lastName === user.lastName && details.isSuperUser === user.isSuperUser) {
-            throw new BadRequestException(content.DataNotChanged);
-        }
+        user.email = details.email;
+        user.firstName = details.firstName;
+        user.lastName = details.lastName;
+        user.isSuperUser = details.isSuperUser;
+        await this.adminRepo.save(user);
+        return `${details.email} ${content.Updated}`;
         await this.adminRepo.save(user);
         return `${details.email} ${content.Updated}`;
     }

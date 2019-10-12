@@ -6,15 +6,11 @@ export class EditAdminDto {
     readonly id: string;
 
     @IsEmail()
-    @IsNotEmpty()
-    readonly email: string;
+    email: string;
 
-    @IsNotEmpty()
-    readonly firstName: string;
+    firstName: string;
 
-    @IsNotEmpty()
-    readonly lastName: string;
+    lastName: string;
 
-    @IsNotEmpty()
-    readonly isSuperUser: boolean;
+    isSuperUser: boolean;
 }
