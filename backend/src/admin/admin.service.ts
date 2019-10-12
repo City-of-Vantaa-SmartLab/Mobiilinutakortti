@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Inject, forwardRef, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
@@ -48,8 +48,6 @@ export class AdminService {
         user.firstName = details.firstName;
         user.lastName = details.lastName;
         user.isSuperUser = details.isSuperUser;
-        await this.adminRepo.save(user);
-        return `${details.email} ${content.Updated}`;
         await this.adminRepo.save(user);
         return `${details.email} ${content.Updated}`;
     }

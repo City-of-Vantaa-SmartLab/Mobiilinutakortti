@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { Junior } from './junior.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
 import { EditJuniorDto } from './dto/edit.dto';
+import { JuniorUserViewModel } from './vm/junior.vm';
 
 @Injectable()
 export class JuniorService {
@@ -15,6 +16,10 @@ export class JuniorService {
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
     ) { }
+
+    async listAllJuniors(): Promise<JuniorUserViewModel[]> {
+        return (await this.juniorRepo.find()).map(e => new JuniorUserViewModel(e));
+    }
 
     async getJunior(phoneNumber: string): Promise<Junior> {
         return await this.juniorRepo.findOne({ phoneNumber });
@@ -51,10 +56,8 @@ export class JuniorService {
     async editJunior(details: EditJuniorDto): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        if (details.phoneNumber === user.phoneNumber && details.firstName === user.firstName &&
-            details.lastName === user.lastName) {
-            throw new BadRequestException(content.DataNotChanged);
-        }
+        user.firstName = details.phoneNumber;
+        user.lastName = details.lastName;
         await this.juniorRepo.save(user);
         return `${details.phoneNumber} ${content.Updated}`;
     }

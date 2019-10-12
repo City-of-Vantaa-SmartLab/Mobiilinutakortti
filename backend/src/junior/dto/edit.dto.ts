@@ -6,12 +6,9 @@ export class EditJuniorDto {
     readonly id: string;
 
     @IsPhoneNumber('FI')
-    @IsNotEmpty()
-    readonly phoneNumber: string;
+    phoneNumber: string;
 
-    @IsNotEmpty()
-    readonly firstName: string;
+    firstName: string;
 
-    @IsNotEmpty()
-    readonly lastName: string;
+    lastName: string;
 }

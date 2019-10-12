@@ -41,7 +41,7 @@ export class AdminController {
   @AllowedRoles(Roles.SUPERUSER)
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('register')
+  @Post('edit')
   async edit(@Body() userData: EditAdminDto) {
     return await this.adminService.editAdmin(userData);
   }
