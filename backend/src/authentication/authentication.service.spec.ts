@@ -28,7 +28,7 @@ describe('AuthenticationService', () => {
 
   const testRegisterAdmin = {
     email: 'Authentication@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush',
+    lastName: 'Tication', password: 'Hush', isSuperUser: true,
   } as RegisterAdminDto;
   const testLoginAdmin = {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,

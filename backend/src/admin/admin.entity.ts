@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { IsEmail } from 'class-validator';
-import { lowercase, stringToBoolean } from '../common/transformers';
+import { lowercase, jsonDataToBoolean } from '../common/transformers';
 
 @Entity()
 export class Admin {
@@ -21,6 +21,6 @@ export class Admin {
     @Column({ unique: true, transformer: lowercase })
     email: string;
 
-    @Column({ default: false, transformer: stringToBoolean })
+    @Column({ default: false, transformer: jsonDataToBoolean })
     isSuperUser: boolean;
 }

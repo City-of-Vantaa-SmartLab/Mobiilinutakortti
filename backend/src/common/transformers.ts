@@ -5,7 +5,7 @@ export const lowercase: ValueTransformer = {
     from: (str: string) => str,
 };
 
-export const stringToBoolean: ValueTransformer = {
-    to: (str: string) => str.toLocaleLowerCase() === 'true',
+export const jsonDataToBoolean: ValueTransformer = {
+    to: (str: string | boolean) => typeof str === 'string' ? str.toLocaleLowerCase() === 'true' : str,
     from: (bool: boolean) => bool,
 };

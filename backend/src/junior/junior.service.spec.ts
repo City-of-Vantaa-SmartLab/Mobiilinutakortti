@@ -12,6 +12,7 @@ import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
 import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto } from './dto';
+import { EditJuniorDto } from './dto/edit.dto';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -22,6 +23,7 @@ describe('JuniorService', () => {
     phoneNumber: '04122345618', firstName: 'Auth jr', lastName: 'Senior',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
+  let juniorToEdit: EditJuniorDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -71,6 +73,32 @@ describe('JuniorService', () => {
         } catch (e) {
           expect(e.response === error.getResponse());
         }
+      });
+  });
+
+  describe('Get All Juniors', () => {
+    it('Should return an array containing all juniors', async () => {
+      const response = await service.listAllJuniors();
+      const isAnArray = Array.isArray(response);
+      const containsAdmins = response.some(e => e.phoneNumber === testLoginYouth.phoneNumber);
+      expect(isAnArray && containsAdmins).toBeTruthy();
+    });
+  });
+
+  describe('Edit Admin', () => {
+    beforeAll(async () => {
+      juniorToEdit = (await service.listAllJuniors())[0];
+    }),
+      it(' should change values if valid data is provided', async () => {
+        const dto = {
+          id: juniorToEdit.id, firstName: juniorToEdit.firstName, lastName: juniorToEdit.lastName,
+          phoneNumber: '04122045618',
+        } as EditJuniorDto;
+        await service.editJunior(dto);
+        const updatedAdmin = await service.getJunior(dto.phoneNumber);
+        const updatedList = await service.listAllJuniors();
+        expect(updatedAdmin.phoneNumber === dto.phoneNumber
+          && (!updatedList.some(e => e.phoneNumber === juniorToEdit.phoneNumber.toLowerCase()))).toBeTruthy();
       });
   });
 });
