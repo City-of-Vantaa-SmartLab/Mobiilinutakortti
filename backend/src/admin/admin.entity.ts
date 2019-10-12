@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ValueTransformer } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { lowercase, stringToBoolean } from '../common/transformers';
 

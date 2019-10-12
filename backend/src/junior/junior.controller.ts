@@ -2,9 +2,7 @@ import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterce
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Admin } from '../admin/admin.decorator';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { AdminService } from '../admin/admin.service';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
@@ -23,7 +21,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('register')
-    async registerJunior(@Admin() payload: any, @Body() userData: RegisterJuniorDto) {
+    async registerJunior(@Body() userData: RegisterJuniorDto) {
         return await this.juniorService.registerJunior(userData);
     }
 
