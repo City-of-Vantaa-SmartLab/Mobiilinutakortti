@@ -23,6 +23,14 @@ export class AdminController {
     return await this.adminService.registerAdmin(userData);
   }
 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('login')
+  async autoLogin() {
+    // This is a simple route the frontend can hit to verify a valid JWT.
+    return true;
+  }
+
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   async login(@Body() userData: LoginAdminDto) {

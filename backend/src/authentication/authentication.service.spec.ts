@@ -61,7 +61,7 @@ describe('AuthenticationService', () => {
     juniorService = module.get<JuniorService>(JuniorService);
 
     await adminService.registerAdmin(testRegisterAdmin);
-    testLoginYouth = { phoneNumber: testRegisterYouth.phoneNumber, pin: await juniorService.registerJunior(testRegisterYouth) };
+    testLoginYouth = { id: testRegisterYouth.phoneNumber, pin: await juniorService.registerJunior(testRegisterYouth) };
   });
 
   afterAll(async () => {
@@ -106,7 +106,7 @@ describe('AuthenticationService', () => {
       it('should throw a Bad Request if the user does not exist', async () => {
         const error = new BadRequestException();
         try {
-          const testData = { phoneNumber: testLoginYouth.phoneNumber, pin: '12345' } as LoginJuniorDto;
+          const testData = { id: testLoginYouth.id, pin: '12345' } as LoginJuniorDto;
           await service.loginJunior(testData);
           fail();
         } catch (e) {
@@ -116,7 +116,7 @@ describe('AuthenticationService', () => {
       it('should throw a Unauthorized if the pin is incorrect', async () => {
         const error = new BadRequestException();
         try {
-          const testData = { phoneNumber: '04113345678', pin: testLoginYouth.pin } as LoginJuniorDto;
+          const testData = { id: '04113345678', pin: testLoginYouth.pin } as LoginJuniorDto;
           await service.loginJunior(testData);
           fail();
         } catch (e) {

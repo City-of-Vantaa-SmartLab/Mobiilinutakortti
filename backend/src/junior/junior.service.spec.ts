@@ -55,12 +55,12 @@ describe('JuniorService', () => {
   describe('Register Youth', () => {
     it('should return a value (currently pin whilst waiting for further workflow)', async () => {
       testLoginYouth = {
-        phoneNumber: testRegisterYouth.phoneNumber, pin: await service.registerJunior(testRegisterYouth),
+        id: testRegisterYouth.phoneNumber, pin: await service.registerJunior(testRegisterYouth),
       };
       expect(testLoginYouth.pin).toBeDefined();
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getJunior(testRegisterYouth.phoneNumber);
+        const response = await service.getJuniorByPhoneNumer(testRegisterYouth.phoneNumber);
         expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
           response.firstName === testRegisterYouth.firstName &&
           response.lastName === testRegisterYouth.lastName).toBeTruthy();
@@ -80,7 +80,7 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsJuniors = response.some(e => e.phoneNumber === testLoginYouth.phoneNumber);
+      const containsJuniors = response.some(e => e.phoneNumber === testLoginYouth.id);
       expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
@@ -95,7 +95,7 @@ describe('JuniorService', () => {
           phoneNumber: '04122345610',
         } as EditJuniorDto;
         await service.editJunior(dto);
-        const updatedJunior = await service.getJunior(dto.phoneNumber);
+        const updatedJunior = await service.getJuniorByPhoneNumer(dto.phoneNumber);
         const updatedList = await service.listAllJuniors();
         expect(updatedJunior.phoneNumber === dto.phoneNumber
           && (!updatedList.some(e => e.phoneNumber === juniorToEdit.phoneNumber.toLowerCase()))).toBeTruthy();

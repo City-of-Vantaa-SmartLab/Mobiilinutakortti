@@ -21,20 +21,22 @@ export class AuthenticationService {
         const user = await this.adminService.getAdmin(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
-            providedPassword: loginData.password, hashedPassword: user.password,
+            provided: loginData.password, expected: user.password,
         }, user.id);
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
-        const user = await this.juniorService.getJunior(loginData.phoneNumber);
+        const user = await this.juniorService.getJunior(loginData.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
-            providedPassword: loginData.pin, hashedPassword: user.pin,
+            provided: loginData.challenge,
         }, user.id);
     }
 
-    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: string): Promise<JWTToken> {
-        const passwordMatch = await compare(attempt.providedPassword, attempt.hashedPassword);
+    async validateUser(attempt: { provided: string, expected?: string }, user: string): Promise<JWTToken> {
+        const passwordMatch = attempt.expected ? await compare(attempt.provided, attempt.expected) :
+            await this.juniorService.attemptChallenge(user, attempt.provided);
+
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
         return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
     }

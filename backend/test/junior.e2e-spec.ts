@@ -51,7 +51,7 @@ describe('JuniorController (e2e)', () => {
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
             .send(testJuniorRegister));
-        testJuniorLogin = { phoneNumber: testJuniorRegister.phoneNumber, pin: pin.text };
+        testJuniorLogin = { id: testJuniorRegister.phoneNumber, pin: pin.text };
     });
 
     afterAll(async () => {
@@ -108,21 +108,21 @@ describe('JuniorController (e2e)', () => {
                 });
         }),
             it('returns a Bad Request if the phone number does not exist', () => {
-                const testData = { phoneNumber: '04122345670', pin: testJuniorLogin.pin } as LoginJuniorDto;
+                const testData = { id: '04122345670', pin: testJuniorLogin.pin } as LoginJuniorDto;
                 return request(app.getHttpServer())
                     .post('/junior/login')
                     .send(testData)
                     .expect(400);
             }),
             it('returns Unauthorized if an invalid pin is provided', () => {
-                const testData = { phoneNumber: testJuniorLogin.phoneNumber, pin: '12345' } as LoginJuniorDto;
+                const testData = { id: testJuniorLogin.id, pin: '12345' } as LoginJuniorDto;
                 return request(app.getHttpServer())
                     .post('/junior/login')
                     .send(testData)
                     .expect(401);
             }),
             it('returns a Bad Request if invalid data is entered', () => {
-                const testData = { phoneNumber: testJuniorLogin.phoneNumber };
+                const testData = { phoneNumber: testJuniorLogin.id };
                 return request(app.getHttpServer())
                     .post('/junior/login')
                     .send(testData)

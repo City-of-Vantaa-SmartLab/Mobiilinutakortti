@@ -1,11 +1,10 @@
-import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class LoginJuniorDto {
 
-    @IsPhoneNumber('FI')
     @IsNotEmpty()
-    readonly phoneNumber: string;
+    readonly id: string;
 
     @IsNotEmpty()
-    readonly pin: string;
+    readonly challenge: string;
 }
