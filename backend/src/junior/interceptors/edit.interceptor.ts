@@ -1,9 +1,9 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Junior } from '../junior.entity';
+import { Junior } from '../entities/junior.entity';
 import { Repository } from 'typeorm';
-import { EditJuniorDto } from '../dto/edit.dto';
+import { EditJuniorDto } from '../dto/index';
 import * as content from '../../content.json';
 
 @Injectable()

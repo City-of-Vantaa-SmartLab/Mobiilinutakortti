@@ -1,4 +1,4 @@
-import { Junior } from '../junior.entity';
+import { Junior } from '../entities/index';
 
 export class JuniorUserViewModel {
     id: string;

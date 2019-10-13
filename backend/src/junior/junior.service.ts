@@ -1,14 +1,12 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
-import { Junior } from './junior.entity';
+import { Junior, Challenge } from './entities/index';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegisterJuniorDto } from './dto';
+import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
-import { EditJuniorDto } from './dto/edit.dto';
 import { JuniorUserViewModel } from './vm/junior.vm';
-import { Challenge } from './challenge.entity';
 
 @Injectable()
 export class JuniorService {

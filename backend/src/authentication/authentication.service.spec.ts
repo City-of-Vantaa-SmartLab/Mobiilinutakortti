@@ -14,7 +14,7 @@ import { AdminModule } from '../admin/admin.module';
 import { AppModule } from '../app.module';
 import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { Junior } from '../junior/junior.entity';
+import { Junior } from '../junior/entities/junior.entity';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';

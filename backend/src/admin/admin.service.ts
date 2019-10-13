@@ -3,10 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
 import * as content from '../content.json';
-import { RegisterAdminDto } from './dto';
+import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
-import { EditAdminDto } from './dto/edit.dto';
 import { AdminUserViewModel } from './vm/admin.vm';
 
 @Injectable()

@@ -13,10 +13,8 @@ import { getTestDB } from '../../test/testdb';
 import { AdminModule } from './admin.module';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
-import { RegisterAdminDto } from './dto';
+import { RegisterAdminDto, EditAdminDto } from './dto';
 import { ConflictException } from '@nestjs/common';
-import { EditAdminDto } from './dto/edit.dto';
-import { async } from 'rxjs/internal/scheduler/async';
 
 describe('AdminService', () => {
   let module: TestingModule;

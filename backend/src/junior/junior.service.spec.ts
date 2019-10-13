@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JuniorService } from './junior.service';
 import { JuniorModule } from './junior.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Junior } from './junior.entity';
+import { Junior } from './entities/junior.entity';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AppModule } from '../app.module';
 import { Connection } from 'typeorm';
@@ -11,8 +11,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
 import { ConflictException } from '@nestjs/common';
-import { RegisterJuniorDto, LoginJuniorDto } from './dto';
-import { EditJuniorDto } from './dto/edit.dto';
+import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 
 describe('JuniorService', () => {
   let module: TestingModule;

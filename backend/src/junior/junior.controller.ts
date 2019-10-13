@@ -1,14 +1,12 @@
 import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get } from '@nestjs/common';
 import { JuniorService } from './junior.service';
-import { LoginJuniorDto, RegisterJuniorDto } from './dto';
+import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
-import { EditJuniorDto } from './dto/edit.dto';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
-import { ResetJuniorDto } from './dto/reset.dto';
 
 @Controller('junior')
 export class JuniorController {

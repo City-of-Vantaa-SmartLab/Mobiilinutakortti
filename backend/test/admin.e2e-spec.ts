@@ -2,10 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
-import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
+import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { AdminUserViewModel } from 'src/admin/vm/admin.vm';
-import { EditAdminDto } from 'src/admin/dto/edit.dto';
 
 describe('AdminController (e2e)', () => {
     let app;
