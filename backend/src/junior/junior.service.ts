@@ -56,7 +56,12 @@ export class JuniorService {
     async editJunior(details: EditJuniorDto): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        user.firstName = details.phoneNumber;
+        if (user.phoneNumber === details.phoneNumber) {
+            const phoneNumberInUse = await this.getJunior(details.phoneNumber);
+            if (phoneNumberInUse) { throw new ConflictException(content.JuniorAlreadyExists); }
+        }
+        user.phoneNumber = details.phoneNumber;
+        user.firstName = details.firstName;
         user.lastName = details.lastName;
         await this.juniorRepo.save(user);
         return `${details.phoneNumber} ${content.Updated}`;

@@ -80,24 +80,24 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsAdmins = response.some(e => e.phoneNumber === testLoginYouth.phoneNumber);
-      expect(isAnArray && containsAdmins).toBeTruthy();
+      const containsJuniors = response.some(e => e.phoneNumber === testLoginYouth.phoneNumber);
+      expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
 
-  describe('Edit Admin', () => {
+  describe('Edit Junior', () => {
     beforeAll(async () => {
       juniorToEdit = (await service.listAllJuniors())[0];
     }),
       it(' should change values if valid data is provided', async () => {
         const dto = {
           id: juniorToEdit.id, firstName: juniorToEdit.firstName, lastName: juniorToEdit.lastName,
-          phoneNumber: '04122045618',
+          phoneNumber: '04122345610',
         } as EditJuniorDto;
         await service.editJunior(dto);
-        const updatedAdmin = await service.getJunior(dto.phoneNumber);
+        const updatedJunior = await service.getJunior(dto.phoneNumber);
         const updatedList = await service.listAllJuniors();
-        expect(updatedAdmin.phoneNumber === dto.phoneNumber
+        expect(updatedJunior.phoneNumber === dto.phoneNumber
           && (!updatedList.some(e => e.phoneNumber === juniorToEdit.phoneNumber.toLowerCase()))).toBeTruthy();
       });
   });

@@ -44,6 +44,10 @@ export class AdminService {
     async editAdmin(details: EditAdminDto): Promise<string> {
         const user = await this.adminRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
+        if (user.email !== details.email.toLowerCase()) {
+            const emailInUse = await this.getAdmin(details.email);
+            if (emailInUse) { throw new ConflictException(content.AdminAlreadyExists); }
+        }
         user.email = details.email;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
