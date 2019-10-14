@@ -28,7 +28,8 @@ export class RolesGuard implements CanActivate {
 
     private async getUserRoles(id: string): Promise<Roles[]> {
         const roles = [];
-        if (await this.juniorRepo.findOne(id)) {
+        const isJunior = await this.juniorRepo.findOne(id);
+        if (isJunior) {
             roles.push(Roles.JUNIOR);
         } else {
             const admin = await this.adminRepo.findOne(id);

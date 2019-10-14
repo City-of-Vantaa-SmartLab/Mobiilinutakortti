@@ -37,7 +37,7 @@ export class JuniorService {
     async attemptChallenge(juniorId: string, challenge: string): Promise<boolean> {
         const entry = await this.challengeRepo.findOne(juniorId);
         // Returning false could be more benefical than providing an exception in terms of security.
-        if (!challenge) { return false; }
+        if (!entry) { return false; }
         if (challenge !== entry.challenge) { return false; }
         await this.challengeRepo.remove(entry);
         return true;
@@ -75,7 +75,7 @@ export class JuniorService {
     async editJunior(details: EditJuniorDto): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        if (user.phoneNumber === details.phoneNumber) {
+        if (user.phoneNumber !== details.phoneNumber) {
             const phoneNumberInUse = await this.getJuniorByPhoneNumber(details.phoneNumber);
             if (phoneNumberInUse) { throw new ConflictException(content.JuniorAlreadyExists); }
         }

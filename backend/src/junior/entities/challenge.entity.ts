@@ -2,8 +2,8 @@ import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Challenge {
-    @PrimaryColumn()
-    @Column({ unique: true })
+
+    @PrimaryColumn({ unique: true })
     id: string;
 
     @Column()

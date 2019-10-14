@@ -18,7 +18,7 @@ export class AuthenticationService {
         private readonly jwtService: JwtService) { }
 
     async loginAdmin(loginData: LoginAdminDto): Promise<JWTToken> {
-        const user = await this.adminService.getAdmin(loginData.email);
+        const user = await this.adminService.getAdminByEmail(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
             provided: loginData.password, expected: user.password,

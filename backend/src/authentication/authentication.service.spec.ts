@@ -18,6 +18,7 @@ import { Junior } from '../junior/entities/junior.entity';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
+import { Challenge } from '../junior/entities';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
@@ -33,10 +34,10 @@ describe('AuthenticationService', () => {
   const testLoginAdmin = {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,
   } as LoginAdminDto;
-  const testRegisterYouth = {
+  const testRegisterJunior = {
     phoneNumber: '04122345178', firstName: 'Auth jr', lastName: 'Senior',
   } as RegisterJuniorDto;
-  let testLoginYouth: LoginJuniorDto;
+  let testLoginJunior: LoginJuniorDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -51,6 +52,10 @@ describe('AuthenticationService', () => {
       }, {
           provide: getRepositoryToken(Junior),
           useFactory: repositoryMockFactory,
+        },
+        {
+          provide: getRepositoryToken(Challenge),
+          useFactory: repositoryMockFactory,
         }, JwtStrategy],
     }).overrideProvider(Connection)
       .useValue(connection)
@@ -61,7 +66,9 @@ describe('AuthenticationService', () => {
     juniorService = module.get<JuniorService>(JuniorService);
 
     await adminService.registerAdmin(testRegisterAdmin);
-    testLoginYouth = { id: testRegisterYouth.phoneNumber, pin: await juniorService.registerJunior(testRegisterYouth) };
+    const juniorCahllege = await juniorService.registerJunior(testRegisterJunior);
+    const newJunior = await juniorService.getJuniorByPhoneNumber(testRegisterJunior.phoneNumber);
+    testLoginJunior = { id: newJunior.id, challenge: juniorCahllege };
   });
 
   afterAll(async () => {
@@ -101,22 +108,21 @@ describe('AuthenticationService', () => {
 
   describe('Login Youth', () => {
     it('should return a access token token if login is succseful', async () => {
-      expect((await service.loginJunior(testLoginYouth)).access_token).toBeDefined();
+      expect((await service.loginJunior(testLoginJunior)).access_token).toBeDefined();
     }),
-      it('should throw a Bad Request if the user does not exist', async () => {
-        const error = new BadRequestException();
+      it('should throw an error if the challenge provided has alread been used', async () => {
+        const error = new UnauthorizedException();
         try {
-          const testData = { id: testLoginYouth.id, pin: '12345' } as LoginJuniorDto;
-          await service.loginJunior(testData);
+          await service.loginJunior(testLoginJunior);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());
         }
       }),
-      it('should throw a Unauthorized if the pin is incorrect', async () => {
+      it('should throw a Bad Request if the user does not exist', async () => {
         const error = new BadRequestException();
         try {
-          const testData = { id: '04113345678', pin: testLoginYouth.pin } as LoginJuniorDto;
+          const testData = { id: `${testLoginJunior.id}estetse`, challenge: testLoginJunior.challenge } as LoginJuniorDto;
           await service.loginJunior(testData);
           fail();
         } catch (e) {

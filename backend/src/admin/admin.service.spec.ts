@@ -62,26 +62,26 @@ describe('AdminService', () => {
 
   describe('Get user', () => {
     it('Should return the user if they exist', async () => {
-      const response = await service.getAdmin(testUser.email);
+      const response = await service.getAdminByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName).toBeTruthy();
     }),
       it('Should return undefined if the user does not exist', async () => {
-        expect(await service.getAdmin('Bob')).toBe(undefined);
+        expect(await service.getAdminByEmail('Bob')).toBe(undefined);
       });
   });
 
   describe('Create user', () => {
     it('Should add a user to the database if valid credentials are provided', async () => {
-      const response = await service.getAdmin(testUser.email);
+      const response = await service.getAdminByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName &&
         response.isSuperUser === testUser.isSuperUser).toBeTruthy();
     }),
       it('Should add emails as lowercase.', async () => {
-        const response = await service.getAdmin(testUser.email);
+        const response = await service.getAdminByEmail(testUser.email);
         expect(response.email === testUser.email.toLowerCase()).toBeTruthy();
       }),
       it('Should return undefined if the user already exists', async () => {
@@ -94,13 +94,13 @@ describe('AdminService', () => {
       expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getAdmin(testRegisterAdmin.email);
+        const response = await service.getAdminByEmail(testRegisterAdmin.email);
         expect(response.email === testRegisterAdmin.email.toLowerCase() &&
           response.firstName === testRegisterAdmin.firstName &&
           response.lastName === testRegisterAdmin.lastName).toBeTruthy();
       }),
       it('should store passwords in a non-plaintext manner', async () => {
-        expect((await service.getAdmin(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
+        expect((await service.getAdminByEmail(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
       }),
       it('should thrown a Conflict if the username already exists', async () => {
         const error = new ConflictException();
@@ -132,7 +132,7 @@ describe('AdminService', () => {
           email: 'NewEmail@groovy.com', isSuperUser: false,
         } as EditAdminDto;
         await service.editAdmin(dto);
-        const updatedAdmin = await service.getAdmin(dto.email);
+        const updatedAdmin = await service.getAdminByEmail(dto.email);
         const updatedList = await service.listAllAdmins();
         expect(updatedAdmin.email === dto.email.toLowerCase() && updatedAdmin.isSuperUser === dto.isSuperUser
           && (!updatedList.some(e => e.email === adminToEdit.email.toLowerCase()))).toBeTruthy();
