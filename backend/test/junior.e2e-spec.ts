@@ -4,7 +4,7 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from '../src/junior/dto';
+import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm/junior.vm';
 
 describe('JuniorController (e2e)', () => {
@@ -170,7 +170,7 @@ describe('JuniorController (e2e)', () => {
             });
     });
 
-    describe('/admin/edit', () => {
+    describe('/junior/edit', () => {
         it('Should return a 201 when completed with valid data', async () => {
             const testData = { id: juniorList[0].id, firstName: 'John' } as EditJuniorDto;
             return request(app.getHttpServer())
@@ -234,5 +234,17 @@ describe('JuniorController (e2e)', () => {
                     .send(testData)
                     .expect(400);
             });
+    });
+
+    describe('/junior/reset', () => {
+        it('Should return a 200 when completed with a new challenge', async () => {
+            const testData = { phoneNumber: testJuniorRegister.phoneNumber } as ResetJuniorDto;
+            return request(app.getHttpServer())
+                .post('/junior/reset')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Accept', 'application/json')
+                .send(testData)
+                .expect(201);
+        });
     });
 });
