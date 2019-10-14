@@ -13,7 +13,7 @@ import { getTestDB } from '../../test/testdb';
 import { AdminModule } from '../admin/admin.module';
 import { AppModule } from '../app.module';
 import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
-import { ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Junior } from '../junior/junior.entity';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
@@ -28,7 +28,7 @@ describe('AuthenticationService', () => {
 
   const testRegisterAdmin = {
     email: 'Authentication@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush',
+    lastName: 'Tication', password: 'Hush', isSuperUser: true,
   } as RegisterAdminDto;
   const testLoginAdmin = {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,

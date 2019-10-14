@@ -15,6 +15,8 @@ import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterAdminDto } from './dto';
 import { ConflictException } from '@nestjs/common';
+import { EditAdminDto } from './dto/edit.dto';
+import { async } from 'rxjs/internal/scheduler/async';
 
 describe('AdminService', () => {
   let module: TestingModule;
@@ -27,8 +29,10 @@ describe('AdminService', () => {
 
   const testRegisterAdmin = {
     email: 'Admin2@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush',
+    lastName: 'Tication', password: 'Hush', isSuperUser: true,
   } as RegisterAdminDto;
+
+  let adminToEdit: EditAdminDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -75,7 +79,8 @@ describe('AdminService', () => {
       const response = await service.getAdmin(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
-        response.lastName === testUser.lastName).toBeTruthy();
+        response.lastName === testUser.lastName &&
+        response.isSuperUser === testUser.isSuperUser).toBeTruthy();
     }),
       it('Should add emails as lowercase.', async () => {
         const response = await service.getAdmin(testUser.email);
@@ -107,6 +112,32 @@ describe('AdminService', () => {
         } catch (e) {
           expect(e.response === error.getResponse());
         }
+      });
+  });
+
+  describe('Get All Admins', () => {
+    it('Should return an array containing all admins', async () => {
+      const response = await service.listAllAdmins();
+      const isAnArray = Array.isArray(response);
+      const containsAdmins = response.some(e => e.email === testUser.email.toLowerCase());
+      expect(isAnArray && containsAdmins).toBeTruthy();
+    });
+  });
+
+  describe('Edit Admin', () => {
+    beforeAll(async () => {
+      adminToEdit = (await service.listAllAdmins())[0];
+    }),
+      it(' should change values if valid data is provided', async () => {
+        const dto = {
+          id: adminToEdit.id, firstName: adminToEdit.firstName, lastName: adminToEdit.lastName,
+          email: 'NewEmail@groovy.com', isSuperUser: false,
+        } as EditAdminDto;
+        await service.editAdmin(dto);
+        const updatedAdmin = await service.getAdmin(dto.email);
+        const updatedList = await service.listAllAdmins();
+        expect(updatedAdmin.email === dto.email.toLowerCase() && updatedAdmin.isSuperUser === dto.isSuperUser
+          && (!updatedList.some(e => e.email === adminToEdit.email.toLowerCase()))).toBeTruthy();
       });
   });
 });

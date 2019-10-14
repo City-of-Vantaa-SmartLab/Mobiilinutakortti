@@ -2,8 +2,10 @@
     "AdminAlreadyExists": "An account for that email already exists.",
     "NotAnAdmin": "You must be a youth worker to carry out this request.",
     "Created": "luotu.",
+    "DataNotChanged": "No data change requested.",
     "DataIncorrect": "The data provided is either incorrect or missing.",
     "FailedLogin": "Login failed.",
     "JuniorAlreadyExists": "An account for that phone number already exists.",
+    "Updated": "updated.",
     "UserNotFound": "User not found."
 }

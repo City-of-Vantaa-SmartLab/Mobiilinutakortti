@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
@@ -6,6 +6,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
+import { EditAdminDto } from './dto/edit.dto';
+import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 
 @Controller('admin')
 export class AdminController {
@@ -33,6 +35,22 @@ export class AdminController {
   @Post('register')
   async create(@Body() userData: RegisterAdminDto) {
     return await this.adminService.registerAdmin(userData);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.SUPERUSER)
+  @UseInterceptors(AdminEditInterceptor)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('edit')
+  async edit(@Body() userData: EditAdminDto) {
+    return await this.adminService.editAdmin(userData);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.SUPERUSER)
+  @Get('list')
+  async getAllAdmins() {
+    return await this.adminService.listAllAdmins();
   }
 
 }

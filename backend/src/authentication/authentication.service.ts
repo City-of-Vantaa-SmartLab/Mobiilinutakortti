@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { AdminService } from '../admin/admin.service';
@@ -22,9 +22,7 @@ export class AuthenticationService {
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
             providedPassword: loginData.password, hashedPassword: user.password,
-        }, {
-            id: user.id, identity: user.email,
-        });
+        }, user.id);
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
@@ -32,15 +30,13 @@ export class AuthenticationService {
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
             providedPassword: loginData.pin, hashedPassword: user.pin,
-        }, {
-            id: user.id, identity: user.pin,
-        });
+        }, user.id);
     }
 
-    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: { id: string, identity: string }): Promise<JWTToken> {
+    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: string): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.providedPassword, attempt.hashedPassword);
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ user: user.identity, sub: user.id }) } as JWTToken;
+        return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
     }
 
 }

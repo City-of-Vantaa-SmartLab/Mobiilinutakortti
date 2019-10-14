@@ -4,11 +4,15 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
+import { AdminUserViewModel } from 'src/admin/vm/admin.vm';
+import { EditAdminDto } from 'src/admin/dto/edit.dto';
 
 describe('AdminController (e2e)', () => {
     let app;
     let connection: Connection;
     let superToken: string;
+    let standardToken: string;
+    let adminList: AdminUserViewModel[];
 
     const testSuperRegister = {
         email: 'anEmail@gofore.com', password: 'Password',
@@ -86,12 +90,12 @@ describe('AdminController (e2e)', () => {
                     lastName: testAdminRegister.lastName,
                     password: testAdminRegister.password, isSuperUser: false,
                 } as RegisterAdminDto;
-                const token = (await request(app.getHttpServer())
+                standardToken = (await request(app.getHttpServer())
                     .post('/admin/login')
                     .send(testAdminLogin)).body.access_token;
                 return request(app.getHttpServer())
                     .post('/admin/register')
-                    .set('Authorization', `Bearer ${token}`)
+                    .set('Authorization', `Bearer ${standardToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
                     .expect(403);
@@ -126,6 +130,82 @@ describe('AdminController (e2e)', () => {
                 const testData = { email: testAdminLogin.email };
                 return request(app.getHttpServer())
                     .post('/admin/login')
+                    .send(testData)
+                    .expect(400);
+            });
+    });
+
+    describe('/admin/list', () => {
+        it('Should return a list containing details of all admins', async () => {
+            const response = await request(app.getHttpServer())
+                .get('/admin/list')
+                .set('Authorization', `Bearer ${superToken}`)
+                .set('Accept', 'application/json');
+            adminList = response.body as AdminUserViewModel[];
+            return response.status === 200 && adminList.find(e => e.email === testAdminLogin.email.toLowerCase()) &&
+                adminList.find(e => e.email === testAdminLogin.email.toLowerCase());
+        }),
+            it('Should reject non-super users', async () => {
+                return request(app.getHttpServer())
+                    .get('/admin/list')
+                    .set('Authorization', `Bearer ${standardToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(403);
+            });
+    });
+
+    describe('/admin/edit', () => {
+        it('Should return a 201 when completed with valid data', async () => {
+            const testData = { id: adminList[0].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditAdminDto;
+            return request(app.getHttpServer())
+                .post('/admin/edit')
+                .set('Authorization', `Bearer ${superToken}`)
+                .set('Accept', 'application/json')
+                .send(testData)
+                .expect(201);
+        }),
+            it('Should reject non-super users', async () => {
+                const testData = { id: adminList[0].id, email: 'SuperCoolNewEmail@anEmail.fi' } as EditAdminDto;
+                return request(app.getHttpServer())
+                    .post('/admin/edit')
+                    .set('Authorization', `Bearer ${standardToken}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(403);
+            }),
+            it('Should throw an error if invalid data is provided.', async () => {
+                const testData = { id: adminList[0].id, email: 'NotAnEmail' } as EditAdminDto;
+                return request(app.getHttpServer())
+                    .post('/admin/edit')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(400);
+            }),
+            it('Should throw an error if the user does not exist', async () => {
+                const testData = { id: '014833', email: 'SuperCoolNewEmail@anEmail.com' } as EditAdminDto;
+                return request(app.getHttpServer())
+                    .post('/admin/edit')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(400);
+            }),
+            it('Should throw an error if the an email change is request, but the email is in use.', async () => {
+                const testData = { id: adminList[1].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditAdminDto;
+                return request(app.getHttpServer())
+                    .post('/admin/edit')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .send(testData)
+                    .expect(409);
+            }),
+            it('Should throw an error if no data is changed.', async () => {
+                const testData = { id: adminList[0].id } as EditAdminDto;
+                return request(app.getHttpServer())
+                    .post('/admin/edit')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
                     .send(testData)
                     .expect(400);
             });

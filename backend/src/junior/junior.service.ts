@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { Junior } from './junior.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,8 @@ import { RegisterJuniorDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
+import { EditJuniorDto } from './dto/edit.dto';
+import { JuniorUserViewModel } from './vm/junior.vm';
 
 @Injectable()
 export class JuniorService {
@@ -14,6 +16,10 @@ export class JuniorService {
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
     ) { }
+
+    async listAllJuniors(): Promise<JuniorUserViewModel[]> {
+        return (await this.juniorRepo.find()).map(e => new JuniorUserViewModel(e));
+    }
 
     async getJunior(phoneNumber: string): Promise<Junior> {
         return await this.juniorRepo.findOne({ phoneNumber });
@@ -45,5 +51,19 @@ export class JuniorService {
     // This will be moved to its own service when the pin workflow is produced.
     generatePin(): string {
         return (Math.floor(1000 + Math.random() * 9000)).toString();
+    }
+
+    async editJunior(details: EditJuniorDto): Promise<string> {
+        const user = await this.juniorRepo.findOne(details.id);
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
+        if (user.phoneNumber === details.phoneNumber) {
+            const phoneNumberInUse = await this.getJunior(details.phoneNumber);
+            if (phoneNumberInUse) { throw new ConflictException(content.JuniorAlreadyExists); }
+        }
+        user.phoneNumber = details.phoneNumber;
+        user.firstName = details.firstName;
+        user.lastName = details.lastName;
+        await this.juniorRepo.save(user);
+        return `${details.phoneNumber} ${content.Updated}`;
     }
 }

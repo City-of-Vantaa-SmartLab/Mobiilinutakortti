@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmail, IsLowercase } from 'class-validator';
+import { IsNotEmpty, IsEmail } from 'class-validator';
 
 export class RegisterAdminDto {
 
@@ -15,5 +15,6 @@ export class RegisterAdminDto {
     @IsNotEmpty()
     readonly lastName: string;
 
-    readonly isSuperUser: boolean = false;
+    @IsNotEmpty()
+    readonly isSuperUser: boolean;
 }
