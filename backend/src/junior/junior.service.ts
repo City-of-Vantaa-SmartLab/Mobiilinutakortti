@@ -56,7 +56,9 @@ export class JuniorService {
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
-            phoneNumber: registrationData.phoneNumber,
+            phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
+            parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
+            gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
         await this.createJunior(junior);
         // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;

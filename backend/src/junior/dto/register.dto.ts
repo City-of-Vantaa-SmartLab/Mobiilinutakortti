@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
 
 export class RegisterJuniorDto {
 
@@ -11,4 +11,24 @@ export class RegisterJuniorDto {
 
     @IsNotEmpty()
     readonly lastName: string;
+
+    @IsNotEmpty()
+    readonly postCode: string;
+
+    @IsNotEmpty()
+    readonly parentsName: string;
+
+    @IsPhoneNumber('FI')
+    @IsNotEmpty()
+    readonly parentsPhoneNumber: string;
+
+    @Length(1, 1)
+    @IsNotEmpty()
+    readonly gender: string;
+
+    @IsNotEmpty()
+    readonly age: number;
+
+    @IsNotEmpty()
+    readonly homeYouthClub: string;
 }
