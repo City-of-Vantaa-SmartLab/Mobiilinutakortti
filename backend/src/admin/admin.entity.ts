@@ -23,4 +23,7 @@ export class Admin {
 
     @Column({ default: false, transformer: jsonDataToBoolean })
     isSuperUser: boolean;
+
+    @Column({ default: '', nullable: true })
+    mainYouthClub: string;
 }
