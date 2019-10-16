@@ -87,6 +87,12 @@ export class JuniorService {
         user.phoneNumber = details.phoneNumber;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
+        user.age = details.age;
+        user.parentsName = details.parentsName;
+        user.parentsPhoneNumber = details.parentsPhoneNumber;
+        user.postCode = details.postCode;
+        user.homeYouthClub = details.homeYouthClub;
+        user.gender = details.gender;
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
