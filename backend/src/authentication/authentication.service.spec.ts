@@ -65,9 +65,8 @@ describe('AuthenticationService', () => {
     juniorService = module.get<JuniorService>(JuniorService);
 
     await adminService.registerAdmin(testRegisterAdmin);
-    const juniorCahllege = await juniorService.registerJunior(testRegisterJunior);
-    const newJunior = await juniorService.getJuniorByPhoneNumber(testRegisterJunior.phoneNumber);
-    testLoginJunior = { id: newJunior.id, challenge: juniorCahllege };
+    const juniorChallenge = await juniorService.registerJunior(testRegisterJunior);
+    testLoginJunior = { id: juniorChallenge.id, challenge: juniorChallenge.challenge };
   });
 
   afterAll(async () => {

@@ -56,11 +56,10 @@ describe('JuniorService', () => {
   });
 
   describe('Register Youth', () => {
-    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
+    it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
       const challenge = await service.registerJunior(testRegisterYouth);
-      const id = (await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber)).id;
       testLoginYouth = {
-        id, challenge,
+        id: challenge.id, challenge: challenge.challenge,
       };
       expect(testLoginYouth.challenge).toBeDefined();
     }),

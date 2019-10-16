@@ -1,10 +1,15 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Junior } from './junior.entity';
 
 @Entity()
 export class Challenge {
 
-    @PrimaryColumn({ unique: true })
+    @PrimaryGeneratedColumn('uuid')
     id: string;
+
+    @OneToOne((type) => Junior)
+    @JoinColumn()
+    junior: Junior;
 
     @Column()
     challenge: string;
