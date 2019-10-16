@@ -53,13 +53,8 @@ describe('JuniorController (e2e)', () => {
             .post('/junior/register')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
-            .send(testJuniorRegister));
-        const tempList = (await request(app.getHttpServer())
-            .get('/junior/list')
-            .set('Authorization', `Bearer ${token}`)
-            .set('Accept', 'application/json')).body as JuniorUserViewModel[];
-        const tempId = tempList.find(e => e.phoneNumber === testJuniorRegister.phoneNumber).id;
-        testJuniorLogin = { id: tempId, challenge: challenge.text };
+            .send(testJuniorRegister)).body;
+        testJuniorLogin = { id: challenge.id, challenge: challenge.challenge };
     });
 
     afterAll(async () => {
@@ -112,12 +107,12 @@ describe('JuniorController (e2e)', () => {
                 .send(testJuniorLogin)).body.access_token;
             expect(juniorToken);
         }),
-            it('returns a Bad Request if the id does not exist', async () => {
+            it('returns an unauthorized if the id does not exist', async () => {
                 const testData = { id: '1', challenge: testJuniorLogin.challenge } as LoginJuniorDto;
                 return request(app.getHttpServer())
                     .post('/junior/login')
                     .send(testData)
-                    .expect(400);
+                    .expect(401);
             }),
             it('returns exception if an invalid challenge is provided', async () => {
                 const testData = { id: testJuniorLogin.id, challenge: '12345' } as LoginJuniorDto;

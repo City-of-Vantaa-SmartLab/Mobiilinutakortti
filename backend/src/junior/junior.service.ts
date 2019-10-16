@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
-import { Junior, Challenge } from './entities/index';
+import { Junior, Challenge } from './entities';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
@@ -34,13 +34,15 @@ export class JuniorService {
         await this.juniorRepo.save(details);
     }
 
-    async attemptChallenge(juniorId: string, challenge: string): Promise<boolean> {
-        const entry = await this.challengeRepo.findOne(juniorId);
+    async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
+        const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
-        if (!entry) { return false; }
-        if (challenge !== entry.challenge) { return false; }
+        if (!entry) { return undefined; }
+        if (challenge !== entry.challenge) { return undefined; }
+        const user = entry.junior;
+        if (!user) { return undefined; }
         await this.challengeRepo.remove(entry);
-        return true;
+        return user.id;
     }
 
     /**
@@ -48,7 +50,7 @@ export class JuniorService {
      * Currently this returns the challenge as we need pass that back to frontend.
      * Will be corrected when relevant workflow is introduced.
      */
-    async registerJunior(registrationData: RegisterJuniorDto): Promise<string> {
+    async registerJunior(registrationData: RegisterJuniorDto): Promise<Challenge> {
         const userExists = await this.getJuniorByPhoneNumber(registrationData.phoneNumber);
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
@@ -64,10 +66,10 @@ export class JuniorService {
      * TODO:
      * affected by the same issue as registerJunior.
      */
-    async resetLogin(phoneNumber: string): Promise<string> {
+    async resetLogin(phoneNumber: string): Promise<Challenge> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
-        const activeChallenge = await this.challengeRepo.findOne(user.id);
+        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
         if (activeChallenge) { this.challengeRepo.remove(activeChallenge); }
         return await this.setChallenge(phoneNumber);
     }
@@ -86,11 +88,13 @@ export class JuniorService {
         return `${details.phoneNumber} ${content.Updated}`;
     }
 
-    private async setChallenge(phoneNumber: string): Promise<string> {
+    // Modified to return challenge, this will be improved upon SMS intergration.
+    private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const valueToHash = (Math.floor(1000 + Math.random() * 9000)).toString();
-        const challengeHash = encodeURI(await hash(valueToHash, saltRounds));
-        const challengeData = { id: (await this.getJuniorByPhoneNumber(phoneNumber)).id, challenge: challengeHash } as Challenge;
+        const challenge = encodeURI(await hash(valueToHash, saltRounds));
+        const junior = await this.getJuniorByPhoneNumber(phoneNumber);
+        const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
-        return challengeHash;
+        return await this.challengeRepo.findOne({ junior });
     }
 }

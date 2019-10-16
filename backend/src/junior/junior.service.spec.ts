@@ -11,7 +11,7 @@ import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
 import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
-import { Challenge, Junior } from './entities/index';
+import { Challenge, Junior } from './entities';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -56,11 +56,10 @@ describe('JuniorService', () => {
   });
 
   describe('Register Youth', () => {
-    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
+    it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
       const challenge = await service.registerJunior(testRegisterYouth);
-      const id = (await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber)).id;
       testLoginYouth = {
-        id, challenge,
+        id: challenge.id, challenge: challenge.challenge,
       };
       expect(testLoginYouth.challenge).toBeDefined();
     }),

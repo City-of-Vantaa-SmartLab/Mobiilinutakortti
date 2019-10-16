@@ -26,19 +26,17 @@ export class AuthenticationService {
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
-        const user = await this.juniorService.getJunior(loginData.id);
-        if (!user) { throw new BadRequestException(content.UserNotFound); }
-        return await this.validateUser({
-            provided: loginData.challenge,
-        }, user.id);
+        const challengeResponse = await this.juniorService.attemptChallenge(loginData.id, loginData.challenge);
+        if (!challengeResponse) { throw new UnauthorizedException(content.FailedLogin); }
+        return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
     }
 
-    async validateUser(attempt: { provided: string, expected?: string }, user: string): Promise<JWTToken> {
-        const passwordMatch = attempt.expected ? await compare(attempt.provided, attempt.expected) :
-            await this.juniorService.attemptChallenge(user, attempt.provided);
+    // This function is being kept as it might be useful when parents are added.
+    async validateUser(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+        const passwordMatch = await compare(attempt.provided, attempt.expected);
 
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
+        return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 
 }
