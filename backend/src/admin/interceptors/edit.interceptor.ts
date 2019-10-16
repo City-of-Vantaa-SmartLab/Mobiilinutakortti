@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from './../admin.entity';
 import { Repository } from 'typeorm';
-import { EditAdminDto } from '../dto/index';
+import { EditAdminDto } from '../dto';
 import * as content from '../../content.json';
 
 @Injectable()

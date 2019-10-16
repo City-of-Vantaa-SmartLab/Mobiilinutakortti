@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
-import { Junior, Challenge } from './entities/index';
+import { Junior, Challenge } from './entities';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';

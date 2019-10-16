@@ -11,7 +11,7 @@ import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
 import { GuardsModule } from './roles/roles.module';
 import { Admin } from './admin/admin.entity';
-import { Junior } from './junior/entities/junior.entity';
+import { Junior } from './junior/entities';
 
 @Module({
   imports: [

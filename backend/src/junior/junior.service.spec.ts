@@ -11,7 +11,7 @@ import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
 import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
-import { Challenge, Junior } from './entities/index';
+import { Challenge, Junior } from './entities';
 
 describe('JuniorService', () => {
   let module: TestingModule;

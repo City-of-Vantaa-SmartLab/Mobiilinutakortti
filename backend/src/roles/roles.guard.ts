@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Roles } from './roles.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Junior } from '../junior/entities/index';
+import { Junior } from '../junior/entities';
 import { Repository } from 'typeorm';
 import { Admin } from '../admin/admin.entity';
 @Injectable()

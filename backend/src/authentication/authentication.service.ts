@@ -33,12 +33,12 @@ export class AuthenticationService {
         }, user.id);
     }
 
-    async validateUser(attempt: { provided: string, expected?: string }, user: string): Promise<JWTToken> {
+    async validateUser(attempt: { provided: string, expected?: string }, userId: string): Promise<JWTToken> {
         const passwordMatch = attempt.expected ? await compare(attempt.provided, attempt.expected) :
-            await this.juniorService.attemptChallenge(user, attempt.provided);
+            await this.juniorService.attemptChallenge(userId, attempt.provided);
 
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
+        return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 
 }

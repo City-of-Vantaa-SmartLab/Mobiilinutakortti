@@ -14,11 +14,10 @@ import { AdminModule } from '../admin/admin.module';
 import { AppModule } from '../app.module';
 import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { Junior } from '../junior/entities/junior.entity';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
-import { Challenge } from '../junior/entities';
+import { Challenge, Junior } from '../junior/entities';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
