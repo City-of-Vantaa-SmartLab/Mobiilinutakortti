@@ -1,8 +1,8 @@
 import React from 'react';
-import { List, Datagrid, TextField, SelectField, NumberField, EditButton, Create, SimpleForm, TextInput, SelectInput, NumberInput, Edit, DisabledInput } from 'react-admin';
+import { List, Datagrid, TextField, SelectField, NumberField, FunctionField, EditButton, Create, SimpleForm, TextInput, SelectInput, NumberInput, Edit, DisabledInput } from 'react-admin';
 
-const choices = [
-    { id: 'm', name: 'Uros' },
+const genderChoices = [
+    { id: 'm', name: 'Mies' },
     { id: 'f', name: 'Nainen' },
     { id: 'o', name: 'Muut' }
 ];
@@ -10,15 +10,14 @@ const choices = [
 export const JuniorList = (props) => (
     <List {...props} >
         <Datagrid>
-            <TextField source="phoneNumber" />
-            <TextField source="lastName" />
-            <TextField source="firstName" />
-            <SelectField source="gender" choices={choices} />
-            <NumberField source="age" />
-            <TextField source="homeYouthClub" />
-            <TextField source="postCode" />
-            <TextField source="parentsName" />
-            <TextField source="parentsPhoneNumber" />
+            <TextField label="Puhelinnumero" source="phoneNumber" />
+            <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+            <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
+            <NumberField label="Ikä" source="age" />
+            <TextField label="Kotinuorisotalo Multioption" source="homeYouthClub" />
+            <TextField label="Postinumero" source="postCode" />
+            <TextField label="Huoltajan nimi" source="parentsName" />
+            <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
             <EditButton />
         </Datagrid>
     </List>
@@ -27,15 +26,15 @@ export const JuniorList = (props) => (
 export const JuniorCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput source="phoneNumber" />
-            <TextInput source="lastName" />
-            <TextInput source="firstName" />
-            <SelectInput source="gender" choices={choices} />
-            <NumberInput source="age" />
-            <TextInput source="homeYouthClub" />
-            <TextInput source="postCode" />
-            <TextInput source="parentsName" />
-            <TextInput source="parentsPhoneNumber" />
+            <TextInput label="Puhelinnumero" source="phoneNumber" />
+            <TextInput label="Sukunimi" source="lastName" />
+            <TextInput label="Etunimi" source="firstName" />
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
+            <NumberInput label="Ikä" source="age" />
+            <TextInput label="Kotinuorisotalo Multioption" source="homeYouthClub" />
+            <TextInput label="Postinumero" source="postCode" />
+            <TextInput label="Huoltajan nimi" source="parentsName" />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
         </SimpleForm>
     </Create>
 );
@@ -44,26 +43,15 @@ export const JuniorEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
             <DisabledInput label="Id" source="id" />
-            <TextInput source="phoneNumber" />
-            <TextInput source="lastName" />
-            <TextInput source="firstName" />
-            <SelectInput source="gender" choices={choices} />
-            <NumberInput source="age" />
-            <TextInput source="homeYouthClub" />
-            <TextInput source="postCode" />
-            <TextInput source="parentsName" />
-            <TextInput source="parentsPhoneNumber" />
-            {/* <TextInput source="title" validate={required()} />
-            <LongTextInput source="teaser" validate={required()} />
-            <RichTextInput source="body" validate={required()} />
-            <DateInput label="Publication date" source="published_at" />
-            <ReferenceManyField label="Comments" reference="comments" target="post_id">
-                <Datagrid>
-                    <TextField source="body" />
-                    <DateField source="created_at" />
-                    <EditButton />
-                </Datagrid>
-            </ReferenceManyField> */}
+            <TextInput label="Puhelinnumero" source="phoneNumber" />
+            <TextInput label="Sukunimi" source="lastName" />
+            <TextInput label="Etunimi" source="firstName" />
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
+            <NumberInput label="Ikä" source="age" />
+            <TextInput label="Kotinuorisotalo Multioption" source="homeYouthClub" />
+            <TextInput label="Postinumero" source="postCode" />
+            <TextInput label="Huoltajan nimi" source="parentsName" />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
         </SimpleForm>
     </Edit>
 );
