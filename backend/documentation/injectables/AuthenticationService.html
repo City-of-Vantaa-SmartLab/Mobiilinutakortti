@@ -338,15 +338,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>validateUser(attempt: literal type, user: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>validateUser(attempt: literal type, userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="36"
-                            class="link-to-prism">src/authentication/authentication.service.ts:36</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="35"
+                            class="link-to-prism">src/authentication/authentication.service.ts:35</a></div>
                 </td>
             </tr>
 
@@ -378,7 +378,7 @@
 
                                 </tr>
                                 <tr>
-                                    <td>user</td>
+                                    <td>userId</td>
                                     <td>
                                                 <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                     </td>
@@ -439,19 +439,17 @@ export class AuthenticationService {
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise&lt;JWTToken&gt; {
-        const user &#x3D; await this.juniorService.getJunior(loginData.id);
-        if (!user) { throw new BadRequestException(content.UserNotFound); }
-        return await this.validateUser({
-            provided: loginData.challenge,
-        }, user.id);
+        const challengeResponse &#x3D; await this.juniorService.attemptChallenge(loginData.id, loginData.challenge);
+        if (!challengeResponse) { throw new UnauthorizedException(content.FailedLogin); }
+        return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
     }
 
-    async validateUser(attempt: { provided: string, expected?: string }, user: string): Promise&lt;JWTToken&gt; {
-        const passwordMatch &#x3D; attempt.expected ? await compare(attempt.provided, attempt.expected) :
-            await this.juniorService.attemptChallenge(user, attempt.provided);
+    // This function is being kept as it might be useful when parents are added.
+    async validateUser(attempt: { provided: string, expected: string }, userId: string): Promise&lt;JWTToken&gt; {
+        const passwordMatch &#x3D; await compare(attempt.provided, attempt.expected);
 
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
+        return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 
 }

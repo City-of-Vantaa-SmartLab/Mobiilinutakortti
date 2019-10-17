@@ -182,7 +182,7 @@ import { AdminController } from &#x27;./admin.controller&#x27;;
 import { AdminService } from &#x27;./admin.service&#x27;;
 import { Admin } from &#x27;./admin.entity&#x27;;
 import { AuthenticationModule } from &#x27;../authentication/authentication.module&#x27;;
-import { Junior } from &#x27;../junior/entities/index&#x27;;
+import { Junior } from &#x27;../junior/entities&#x27;;
 
 @Module({
   imports: [TypeOrmModule.forFeature([Admin, Junior]),
@@ -191,6 +191,9 @@ import { Junior } from &#x27;../junior/entities/index&#x27;;
   providers: [AdminService],
   exports: [AdminService],
 })
+/**
+ * The Admin module.
+ */
 export class AdminModule { }
 </code></pre>
     </div>

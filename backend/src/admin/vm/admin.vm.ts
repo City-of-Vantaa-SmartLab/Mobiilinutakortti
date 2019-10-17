@@ -1,5 +1,8 @@
 import { Admin } from '../admin.entity';
 
+/**
+ * The model returned to the frontend for Admins.
+ */
 export class AdminUserViewModel {
     id: string;
     email: string;
@@ -7,6 +10,9 @@ export class AdminUserViewModel {
     lastName: string;
     isSuperUser: boolean;
 
+    /**
+     * @param entity - the Admin to convert to a VM.
+     */
     constructor(entity: Admin) {
         this.id = entity.id;
         this.email = entity.email;

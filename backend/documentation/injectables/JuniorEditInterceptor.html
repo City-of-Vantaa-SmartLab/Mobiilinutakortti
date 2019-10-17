@@ -102,7 +102,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/junior/interceptors/edit.interceptor.ts:11</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/junior/interceptors/edit.interceptor.ts:10</a></div>
                             </td>
                         </tr>
 
@@ -169,8 +169,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="16"
-                            class="link-to-prism">src/junior/interceptors/edit.interceptor.ts:16</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="15"
+                            class="link-to-prism">src/junior/interceptors/edit.interceptor.ts:15</a></div>
                 </td>
             </tr>
 
@@ -238,11 +238,10 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from &#x27;@nestjs/common&#x27;;
 import { Observable } from &#x27;rxjs&#x27;;
 import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
-import { Junior } from &#x27;../entities/junior.entity&#x27;;
+import { Junior } from &#x27;../entities&#x27;;
 import { Repository } from &#x27;typeorm&#x27;;
-import { EditJuniorDto } from &#x27;../dto/index&#x27;;
+import { EditJuniorDto } from &#x27;../dto/&#x27;;
 import * as content from &#x27;../../content.json&#x27;;
-import { Validator } from &#x27;class-validator&#x27;;
 
 @Injectable()
 export class JuniorEditInterceptor implements NestInterceptor {
@@ -259,8 +258,6 @@ export class JuniorEditInterceptor implements NestInterceptor {
         body.phoneNumber ? dataChanged &#x3D; dataChanged || body.phoneNumber !&#x3D;&#x3D; userToEdit.phoneNumber : body.phoneNumber &#x3D; userToEdit.phoneNumber;
         body.firstName ? dataChanged &#x3D; dataChanged || body.firstName !&#x3D;&#x3D; userToEdit.firstName : body.firstName &#x3D; userToEdit.firstName;
         body.lastName ? dataChanged &#x3D; dataChanged || body.lastName !&#x3D;&#x3D; userToEdit.lastName : body.lastName &#x3D; userToEdit.lastName;
-        // Additional check here as the ORM seems not to be checking this on update.
-        if (!(new Validator()).isPhoneNumber(body.phoneNumber, &#x27;FI&#x27;)) { throw new BadRequestException(content.DataIncorrect); }
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); }
         return next.handle();
     }

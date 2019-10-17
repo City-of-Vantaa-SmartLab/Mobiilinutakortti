@@ -59,6 +59,13 @@
             <code>src/admin/interceptors/edit.interceptor.ts</code>
         </p>
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>An interceptor designed to provide accurate models when editting an admin.</p>
+
+            </p>
 
 
 
@@ -102,7 +109,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/admin/interceptors/edit.interceptor.ts:10</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/admin/interceptors/edit.interceptor.ts:13</a></div>
                             </td>
                         </tr>
 
@@ -116,6 +123,7 @@
                                                 <td>Name</td>
                                                     <td>Type</td>
                                                 <td>Optional</td>
+                                                    <td>Description</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -130,6 +138,12 @@
                                                             No
                                                     </td>
                                                     
+                                                        <td>
+                                                                <code><ul>
+<li>the Admin repository.</li>
+</ul>
+</code>
+                                                        </td>
                                                 </tr>
                                         </tbody>
                                     </table>
@@ -169,14 +183,16 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="15"
-                            class="link-to-prism">src/admin/interceptors/edit.interceptor.ts:15</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="28"
+                            class="link-to-prism">src/admin/interceptors/edit.interceptor.ts:28</a></div>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                    <div class="io-description"><p>A method to check the dto data found within the current context. Will error if no data has changed.</p>
+</div>
 
                     <div class="io-description">
                         <b>Parameters :</b>
@@ -240,15 +256,28 @@ import { Observable } from &#x27;rxjs&#x27;;
 import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
 import { Admin } from &#x27;./../admin.entity&#x27;;
 import { Repository } from &#x27;typeorm&#x27;;
-import { EditAdminDto } from &#x27;../dto/index&#x27;;
+import { EditAdminDto } from &#x27;../dto&#x27;;
 import * as content from &#x27;../../content.json&#x27;;
 
+/**
+ * An interceptor designed to provide accurate models when editting an admin.
+ */
 @Injectable()
 export class AdminEditInterceptor implements NestInterceptor {
+
+    /**
+     * @param adminRepo - the Admin repository.
+     */
     constructor(
         @InjectRepository(Admin)
         private readonly adminRepo: Repository&lt;Admin&gt;) { }
 
+    /**
+     * A method to check the dto data found within the current context. Will error if no data has changed.
+     *
+     * @param context
+     * @param next
+     */
     async intercept(context: ExecutionContext, next: CallHandler): Promise&lt;Observable&lt;any&gt;&gt; {
         const request &#x3D; context.switchToHttp().getRequest();
         const body &#x3D; request.body as EditAdminDto;

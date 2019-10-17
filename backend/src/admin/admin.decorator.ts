@@ -1,3 +1,6 @@
 import { createParamDecorator } from '@nestjs/common';
-// TODO remove this if no longer needed, currently keeping incase we find future use.
+
+/**
+ * A cleaner decorator to Access data from request.
+ */
 export const Admin = createParamDecorator((data, req) => req.user);

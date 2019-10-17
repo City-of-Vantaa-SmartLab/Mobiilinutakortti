@@ -8,26 +8,46 @@ import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import { AdminUserViewModel } from './vm/admin.vm';
 
+/**
+ * A service designed to deal with Admin actions.
+ */
 @Injectable()
 export class AdminService {
 
+    /**
+     * @param adminRepo - The admin repository.
+     */
     constructor(
         @InjectRepository(Admin)
         private readonly adminRepo: Repository<Admin>,
     ) { }
 
+    /**
+     * @returns AdminUserViewModel[] - a List of all admins in ViewModel form.
+     */
     async listAllAdmins(): Promise<AdminUserViewModel[]> {
         return (await this.adminRepo.find()).map(e => new AdminUserViewModel(e));
     }
 
+    /**
+     * @param email - the email of the admin.
+     * @returns Promise<Admin> - the Admin entity being searched for.
+     */
     async getAdminByEmail(email: string): Promise<Admin> {
         return await this.adminRepo.findOne({ email });
     }
 
+    /**
+     * @param details - the Admin data to add.
+     */
     async createAdmin(details: Admin) {
         await this.adminRepo.save(details);
     }
 
+    /**
+     * @param registrationData - the details to register.
+     * @returns Promise<string> - a success message.
+     */
     async registerAdmin(registrationData: RegisterAdminDto): Promise<string> {
         const userExists = await this.getAdminByEmail(registrationData.email);
         if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
@@ -40,6 +60,10 @@ export class AdminService {
         return `${registrationData.email} ${content.Created}`;
     }
 
+    /**
+     * @param details the details to change, including the ID of the user in question.
+     * @return Promise<string>  a success message.
+     */
     async editAdmin(details: EditAdminDto): Promise<string> {
         const user = await this.adminRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
