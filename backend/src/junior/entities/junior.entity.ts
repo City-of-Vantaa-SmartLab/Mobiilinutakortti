@@ -12,9 +12,6 @@ export class Junior {
     @Column()
     lastName: string;
 
-    @Column()
-    pin: string;
-
     @IsPhoneNumber('FI')
     @Column({ unique: true })
     phoneNumber: string;

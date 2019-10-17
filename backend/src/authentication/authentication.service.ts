@@ -18,25 +18,25 @@ export class AuthenticationService {
         private readonly jwtService: JwtService) { }
 
     async loginAdmin(loginData: LoginAdminDto): Promise<JWTToken> {
-        const user = await this.adminService.getAdmin(loginData.email);
+        const user = await this.adminService.getAdminByEmail(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         return await this.validateUser({
-            providedPassword: loginData.password, hashedPassword: user.password,
+            provided: loginData.password, expected: user.password,
         }, user.id);
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
-        const user = await this.juniorService.getJunior(loginData.phoneNumber);
-        if (!user) { throw new BadRequestException(content.UserNotFound); }
-        return await this.validateUser({
-            providedPassword: loginData.pin, hashedPassword: user.pin,
-        }, user.id);
+        const challengeResponse = await this.juniorService.attemptChallenge(loginData.id, loginData.challenge);
+        if (!challengeResponse) { throw new UnauthorizedException(content.FailedLogin); }
+        return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
     }
 
-    async validateUser(attempt: { providedPassword: string, hashedPassword: string }, user: string): Promise<JWTToken> {
-        const passwordMatch = await compare(attempt.providedPassword, attempt.hashedPassword);
+    // This function is being kept as it might be useful when parents are added.
+    async validateUser(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+        const passwordMatch = await compare(attempt.provided, attempt.expected);
+
         if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ sub: user }) } as JWTToken;
+        return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 
 }

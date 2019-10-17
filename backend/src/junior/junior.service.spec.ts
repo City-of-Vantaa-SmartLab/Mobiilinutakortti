@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JuniorService } from './junior.service';
 import { JuniorModule } from './junior.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Junior } from './junior.entity';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AppModule } from '../app.module';
 import { Connection } from 'typeorm';
@@ -11,8 +10,8 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
 import { ConflictException } from '@nestjs/common';
-import { RegisterJuniorDto, LoginJuniorDto } from './dto';
-import { EditJuniorDto } from './dto/edit.dto';
+import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
+import { Challenge, Junior } from './entities';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -35,6 +34,10 @@ describe('JuniorService', () => {
       }, {
           provide: getRepositoryToken(Junior),
           useFactory: repositoryMockFactory,
+        },
+        {
+          provide: getRepositoryToken(Challenge),
+          useFactory: repositoryMockFactory,
         }],
     }).overrideProvider(Connection)
       .useValue(connection)
@@ -53,14 +56,15 @@ describe('JuniorService', () => {
   });
 
   describe('Register Youth', () => {
-    it('should return a value (currently pin whilst waiting for further workflow)', async () => {
+    it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
+      const challenge = await service.registerJunior(testRegisterYouth);
       testLoginYouth = {
-        phoneNumber: testRegisterYouth.phoneNumber, pin: await service.registerJunior(testRegisterYouth),
+        id: challenge.id, challenge: challenge.challenge,
       };
-      expect(testLoginYouth.pin).toBeDefined();
+      expect(testLoginYouth.challenge).toBeDefined();
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getJunior(testRegisterYouth.phoneNumber);
+        const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
         expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
           response.firstName === testRegisterYouth.firstName &&
           response.lastName === testRegisterYouth.lastName).toBeTruthy();
@@ -80,7 +84,7 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsJuniors = response.some(e => e.phoneNumber === testLoginYouth.phoneNumber);
+      const containsJuniors = response.some(e => e.phoneNumber === testRegisterYouth.phoneNumber);
       expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
@@ -95,7 +99,7 @@ describe('JuniorService', () => {
           phoneNumber: '04122345610',
         } as EditJuniorDto;
         await service.editJunior(dto);
-        const updatedJunior = await service.getJunior(dto.phoneNumber);
+        const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);
         const updatedList = await service.listAllJuniors();
         expect(updatedJunior.phoneNumber === dto.phoneNumber
           && (!updatedList.some(e => e.phoneNumber === juniorToEdit.phoneNumber.toLowerCase()))).toBeTruthy();

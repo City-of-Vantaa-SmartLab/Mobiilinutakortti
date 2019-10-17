@@ -2,10 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
-import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
+import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { AdminUserViewModel } from 'src/admin/vm/admin.vm';
-import { EditAdminDto } from 'src/admin/dto/edit.dto';
+import { AdminUserViewModel } from '../src/admin/vm/admin.vm';
 
 describe('AdminController (e2e)', () => {
     let app;
@@ -102,7 +101,7 @@ describe('AdminController (e2e)', () => {
             });
     });
 
-    describe('/admin/login', () => {
+    describe('/admin/login (POST)', () => {
         it('returns a JWT token on a succesful login', () => {
             return request(app.getHttpServer())
                 .post('/admin/login')
@@ -132,6 +131,23 @@ describe('AdminController (e2e)', () => {
                     .post('/admin/login')
                     .send(testData)
                     .expect(400);
+            });
+    });
+
+    describe('/admin/login (Get)', () => {
+        it('return a 200 if a valid Admin Token is provided', async () => {
+            return request(app.getHttpServer())
+                .get('/admin/login')
+                .set('Authorization', `Bearer ${standardToken}`)
+                .set('Accept', 'application/json')
+                .expect(200);
+        }),
+            it('returns an error in the case of an invalid token is provided', async () => {
+                return request(app.getHttpServer())
+                    .get('/admin/login')
+                    .set('Authorization', `Bearer ${standardToken}1`)
+                    .set('Accept', 'application/json')
+                    .expect(401);
             });
     });
 

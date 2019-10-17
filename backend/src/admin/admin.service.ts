@@ -3,10 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './admin.entity';
 import * as content from '../content.json';
-import { RegisterAdminDto } from './dto';
+import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
-import { EditAdminDto } from './dto/edit.dto';
 import { AdminUserViewModel } from './vm/admin.vm';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class AdminService {
         return (await this.adminRepo.find()).map(e => new AdminUserViewModel(e));
     }
 
-    async getAdmin(email: string): Promise<Admin> {
+    async getAdminByEmail(email: string): Promise<Admin> {
         return await this.adminRepo.findOne({ email });
     }
 
@@ -30,7 +29,7 @@ export class AdminService {
     }
 
     async registerAdmin(registrationData: RegisterAdminDto): Promise<string> {
-        const userExists = await this.getAdmin(registrationData.email);
+        const userExists = await this.getAdminByEmail(registrationData.email);
         if (userExists) { throw new ConflictException(content.AdminAlreadyExists); }
         const hashedPassword = await hash(registrationData.password, saltRounds);
         const admin = {
@@ -45,7 +44,7 @@ export class AdminService {
         const user = await this.adminRepo.findOne(details.id);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.email !== details.email.toLowerCase()) {
-            const emailInUse = await this.getAdmin(details.email);
+            const emailInUse = await this.getAdminByEmail(details.email);
             if (emailInUse) { throw new ConflictException(content.AdminAlreadyExists); }
         }
         user.email = details.email;

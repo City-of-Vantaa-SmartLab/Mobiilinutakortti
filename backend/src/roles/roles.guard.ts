@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Roles } from './roles.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Junior } from '../junior/junior.entity';
+import { Junior } from '../junior/entities';
 import { Repository } from 'typeorm';
 import { Admin } from '../admin/admin.entity';
 @Injectable()
@@ -28,7 +28,8 @@ export class RolesGuard implements CanActivate {
 
     private async getUserRoles(id: string): Promise<Roles[]> {
         const roles = [];
-        if (await this.juniorRepo.findOne(id)) {
+        const isJunior = await this.juniorRepo.findOne(id);
+        if (isJunior) {
             roles.push(Roles.JUNIOR);
         } else {
             const admin = await this.adminRepo.findOne(id);
