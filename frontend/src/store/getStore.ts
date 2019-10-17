@@ -11,7 +11,6 @@ const persistedState = {
     auth: {
         loggedIn: isLogged,
         token: userToken,
-        error: ''
     }
 }
 

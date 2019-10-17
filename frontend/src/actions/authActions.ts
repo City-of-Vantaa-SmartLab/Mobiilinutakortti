@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import { post } from '../apis';
-import { authTypes, AuthAttempt } from '../types/authTypes';
+import { authTypes, AuthAttempt, LinkRequest } from '../types/authTypes';
 
 import { push } from 'react-router-redux';
 
@@ -8,6 +8,7 @@ import { push } from 'react-router-redux';
 
 export function* rootSaga() {
     yield takeLatest(authTypes.AUTH_ATTEMPT, auth);
+    yield takeLatest(authTypes.LINK_REQUEST, requestLink);
 }
 
 //sagas
@@ -18,13 +19,21 @@ function setAuthToken(token:object) {
 
 function* auth(action: AuthAttempt) {
     try {
-        const response = yield call(post, '/youth/login', action.payload);
+        const response = yield call(post, '/junior/register', action.payload);
         yield call(setAuthToken, response.access_token);
         yield put({ type: authTypes.AUTH_SUCCESS,  payload: response.access_token });
         yield put(push('/'));
 
     } catch (error) {
-        yield put({ type: authTypes.AUTH_FAIL, payload: error.message });
+        yield put({ type: authTypes.AUTH_FAIL });
+    }
+}
+
+function* requestLink(action: LinkRequest) {
+    try {
+        const response = yield call(post, '/junior/reset', action.payload);
+    } catch (error) {
+        
     }
 }
 

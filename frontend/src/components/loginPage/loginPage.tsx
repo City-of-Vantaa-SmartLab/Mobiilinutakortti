@@ -1,88 +1,124 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { RouteComponentProps } from 'react-router-dom';
 
 import { authTypes, authActions } from '../../types/authTypes';
 import { AppState } from '../../reducers';
+import LoginBackground from '../loginBackground';
+import LoginForm from '../loginForm/loginForm';
 
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    padding: 2rem;
+const Wrapper = styled.div`
+    height: 100%;
 `;
 
-const Input = styled.input`
-    border: 0.1rem solid black;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
+const LoginWrapper = styled.section`
+    padding: 0 2.5rem;
+    position: relative;
+    z-index: 10;
 `;
 
-const Button = styled.button`
-    background: yellow;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
+const Header = styled.h1`
+    color: rgb(249, 229, 30);
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: bold;
 `;
 
-const FormHeader = styled.h3`
+
+const Message = styled.div<{active: boolean, error: boolean}>` 
+    display: ${(props) => props.active ? "flex" : "None"};
+    flex-direction: row;
+    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
+    width: 100%;
+    border-bottom: 2px solid ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
+    padding: 0;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+    align-items: center;
+
 `;
 
-const Error = styled.p` 
-    display: ${(props: {active:boolean}) => props.active ? "block" : "None"};
-`
+const ErrorMessageIcon = styled.div<{visible: boolean}>`
+    font-size: 2rem;
+    padding-right: 0.5rem;
+    display: ${(props) => props.visible ? "block" : "None"};
+`;
 
+const MessageText = styled.p`
 
-interface LoginProps {
-    auth: (phone: string, password: string) => void,
-    authError: string
+`;
+
+interface LoginProps extends RouteComponentProps {
+    auth: (challenge: string, id: string) => void,
+    linkRequest: (phone: string) => void,
+    authError: boolean,
+    loggingIn: boolean
 }
 
-const LoginPage: React.FC<LoginProps> = (props) => {
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
+const LoginPage: React.FC<LoginProps> = (props) => {  
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState(false);
 
-    const handleSubmit = () => {
-        if (phone && password) {
-            props.auth(phone, password);
-            setPhone('');
-            setPassword('');
+    useEffect(() => {
+        const query = new URLSearchParams(props.location.search);
+        const challenge = query.get('challenge')
+        const id = query.get('id')
+        if (challenge && id) {
+            props.auth(challenge, id);
         }
+    }, [])
+
+    useEffect(() => {
+        if (props.authError && !error) {
+            setError(true);
+            setMessage('Authentication failed, use the form below to request a new link');
+        }
+    })
+
+    const sendLink = (phoneNumber: string, error: boolean) => {
+        if (error) {
+            setError(true);
+            setMessage('Invalid input, please try again');
+        } else {
+            setError(false);
+            props.linkRequest(phoneNumber);
+            setMessage('');
+        }
+        props.history.push('/login');
     }
 
     return (
-        <Form onSubmit={e => {e.preventDefault();
-                              handleSubmit()}}>
-            <FormHeader>Kirjaudu sisään</FormHeader>
-            <Error active = {props.authError !== ''}>{props.authError}</Error>
-            <Input 
-                onChange={e => {
-                    setPhone(e.target.value)
-                    }
-                } 
-                value={phone} 
-                placeholder='puhelinnumero'/>
-            <Input 
-                onChange={e => {
-                    setPassword(e.target.value)
-                    }
-                } 
-                value = {password} 
-                type='password' 
-                placeholder='salasana'/>
-            <Button type='submit'>Kirjaudu</Button>
-        </Form>
+        <Wrapper>
+            <LoginBackground/>
+            <LoginWrapper>
+                <Header>Nuta-mobiili</Header>
+                <Message active={message !== ''} error={error}>
+                    <ErrorMessageIcon visible={error}>&#9888;</ErrorMessageIcon>
+                    <MessageText>{message}</MessageText>
+                </Message>
+                <LoginForm onSubmit={sendLink} disabled={props.loggingIn}/>
+            </LoginWrapper>
+        </Wrapper>
     )
 }
 
 const mapStateToProps = (state:AppState) => ({
-        authError: state.auth.error 
+        authError: state.auth.error, 
+        loggingIn: state.auth.loggingIn 
     });
 
 const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
     return {
-        auth: (phone: string, password: string) => {
+        auth: (challenge: string, id: string) => {
             dispatch({type: authTypes.AUTH_ATTEMPT, 
-                      payload: {phone, password}});
+                      payload: {challenge, id}});
+        },
+        linkRequest: (phoneNumber: string) => {
+            dispatch({type: authTypes.LINK_REQUEST, 
+                      payload: {phoneNumber}});
         }
     }
 }

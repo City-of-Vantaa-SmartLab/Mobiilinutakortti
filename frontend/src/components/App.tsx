@@ -6,6 +6,7 @@ import QRPage from './QRPage/QRPage';
 import ProtectedRoute  from './ProtectedRoute';
 
 const Wrapper = styled.section`
+  height: 100%;
 `;
 
 

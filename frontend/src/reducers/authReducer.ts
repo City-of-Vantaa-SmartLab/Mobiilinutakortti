@@ -2,17 +2,22 @@ import { authTypes, authActions, authState } from '../types/authTypes';
 
 
 const initialState:authState = {
+    loggingIn: false,
     loggedIn: false,
     token: '',
-    error: ''
+    error: false,
 }
 
 export default (state=initialState, action: authActions):authState => {
     switch(action.type) {
+        case authTypes.AUTH_ATTEMPT:
+        return {...state, loggingIn: true, error: false};
         case authTypes.AUTH_SUCCESS:
-            return {...state, loggedIn: true, token: action.payload, error: ''};
+            return {...state, loggingIn: false, loggedIn: true, token: action.payload, error: false};
         case authTypes.AUTH_FAIL: 
-            return {...state, error: action.payload}
+            return {...state, loggingIn: false, error: true}
+        case authTypes.LINK_REQUEST: 
+            return {...state, error: false}
         default: 
             return state;
     }
