@@ -34,7 +34,15 @@ describe('AuthenticationService', () => {
     email: testRegisterAdmin.email, password: testRegisterAdmin.password,
   } as LoginAdminDto;
   const testRegisterJunior = {
-    phoneNumber: '04122345178', firstName: 'Auth jr', lastName: 'Senior',
+    phoneNumber: '04122345618',
+    firstName: 'Auth jr',
+    lastName: 'Senior',
+    postCode: '02130',
+    parentsName: 'Auth Senior',
+    parentsPhoneNumber: '0411234567',
+    gender: 'M',
+    age: 10,
+    homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginJunior: LoginJuniorDto;
 
