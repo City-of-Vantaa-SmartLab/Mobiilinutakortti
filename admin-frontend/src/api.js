@@ -1,8 +1,12 @@
 const base = process.env.REACT_APP_ENDPOINT
 
 export default {
-  adminLogin: `${base}/admin/login`,
-  juniorCreate: `${base}/junior/register`,
-  juniorEdit: `${base}/junior/edit`,
-  juniorList: `${base}/junior/list`
+  junior: {
+    create: `${base}/junior/register`,
+    edit: `${base}/junior/edit`,
+    list: `${base}/junior/list`
+  },
+  auth: {
+    login: `${base}/admin/login`
+  }
 }

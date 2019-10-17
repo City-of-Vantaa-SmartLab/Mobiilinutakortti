@@ -1,7 +1,10 @@
 import defaultHttpClient from '../httpClient';
+import { juniorProvider } from './juniorProvider';
 
-export default (apiUrl, httpClient = defaultHttpClient) => {
-  return (type, resource, params) => {
-    return httpClient(apiUrl);
+export const dataProvider = (type, resource, params) => {
+  switch (resource) {
+    case 'junior': {
+      return juniorProvider(type, params, defaultHttpClient);
+    }
   }
 };
