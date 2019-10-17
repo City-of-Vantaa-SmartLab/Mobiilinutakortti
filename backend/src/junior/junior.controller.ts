@@ -1,4 +1,4 @@
-import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get } from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -7,6 +7,7 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
+import { JuniorUserViewModel } from './vm/junior.vm';
 
 @Controller('junior')
 export class JuniorController {
@@ -38,11 +39,13 @@ export class JuniorController {
         return await this.authenticationService.loginJunior(userData);
     }
 
+    @UsePipes(new ValidationPipe({ transform: true }))
     @Post('reset')
     async resetLogin(@Body() userData: ResetJuniorDto) {
         return await this.juniorService.resetLogin(userData.phoneNumber);
     }
 
+    @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
@@ -51,10 +54,20 @@ export class JuniorController {
         return await this.juniorService.editJunior(userData);
     }
 
+    @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
-    async getAllAdmins() {
+    async getAllJuniors() {
         return await this.juniorService.listAllJuniors();
     }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Get(':id')
+    async getOneJunior(@Param('id') id: string) {
+        return new JuniorUserViewModel(await this.juniorService.getJunior(id));
+    }
+
 }

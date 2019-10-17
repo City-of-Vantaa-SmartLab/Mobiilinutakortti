@@ -20,6 +20,10 @@ export class AdminService {
         return (await this.adminRepo.find()).map(e => new AdminUserViewModel(e));
     }
 
+    async getAdmin(id: string): Promise<Admin> {
+        return await this.adminRepo.findOne(id);
+    }
+
     async getAdminByEmail(email: string): Promise<Admin> {
         return await this.adminRepo.findOne({ email });
     }

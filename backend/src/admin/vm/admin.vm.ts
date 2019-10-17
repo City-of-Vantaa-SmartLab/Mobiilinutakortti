@@ -6,6 +6,7 @@ export class AdminUserViewModel {
     firstName: string;
     lastName: string;
     isSuperUser: boolean;
+    mainYouthClub: string;
 
     constructor(entity: Admin) {
         this.id = entity.id;
@@ -13,5 +14,6 @@ export class AdminUserViewModel {
         this.firstName = entity.firstName;
         this.lastName = entity.lastName;
         this.isSuperUser = entity.isSuperUser;
+        this.mainYouthClub = entity.mainYouthClub;
     }
 }

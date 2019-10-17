@@ -1,5 +1,5 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get } from '@nestjs/common';
-import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
+import { RegisterAdminDto, LoginAdminDto, EditAdminDto, GetAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -7,6 +7,8 @@ import { RolesGuard } from '../roles/roles.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
+import { AdminUserViewModel } from './vm/admin.vm';
+import { Admin } from './admin.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -58,6 +60,22 @@ export class AdminController {
   @Get('list')
   async getAllAdmins() {
     return await this.adminService.listAllAdmins();
+  }
+
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.SUPERUSER)
+  @Get(':id')
+  async getOneAdmin(@Param('id') id: string) {
+    return new AdminUserViewModel(await this.adminService.getAdmin(id));
+  }
+
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('getSelf')
+  async getSelf(@Admin() adminData: any) {
+    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
   }
 
 }

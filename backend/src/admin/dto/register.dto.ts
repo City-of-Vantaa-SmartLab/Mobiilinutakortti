@@ -17,4 +17,6 @@ export class RegisterAdminDto {
 
     @IsNotEmpty()
     readonly isSuperUser: boolean;
+
+    readonly mainYouthClub: string;
 }
