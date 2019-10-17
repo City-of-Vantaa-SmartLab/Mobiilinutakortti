@@ -7,6 +7,7 @@ import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
 import { JuniorUserViewModel } from './vm/junior.vm';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class JuniorService {
@@ -84,6 +85,10 @@ export class JuniorService {
         user.phoneNumber = details.phoneNumber;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
+        const errors = await validate(user);
+        if (errors.length > 0) {
+            throw new BadRequestException(errors);
+        }
         await this.juniorRepo.save(user);
         return `${details.phoneNumber} ${content.Updated}`;
     }
