@@ -1,4 +1,3 @@
-
 export class Check {
     result: boolean;
 
