@@ -16,4 +16,6 @@ export class EditAdminDto {
     lastName: string;
 
     isSuperUser: boolean;
+
+    mainYouthClub: string;
 }

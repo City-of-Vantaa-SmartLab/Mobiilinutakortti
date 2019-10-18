@@ -56,7 +56,9 @@ export class JuniorService {
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
-            phoneNumber: registrationData.phoneNumber,
+            phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
+            parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
+            gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
         await this.createJunior(junior);
         // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;
@@ -85,6 +87,12 @@ export class JuniorService {
         user.phoneNumber = details.phoneNumber;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
+        user.age = details.age;
+        user.parentsName = details.parentsName;
+        user.parentsPhoneNumber = details.parentsPhoneNumber;
+        user.postCode = details.postCode;
+        user.homeYouthClub = details.homeYouthClub;
+        user.gender = details.gender;
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);

@@ -30,6 +30,14 @@ export class AdminService {
     }
 
     /**
+     * @param id - the id of the admin.
+     * @returns Promise<Admin> - the Admin entity being searched for.
+     */
+    async getAdmin(id: string): Promise<Admin> {
+        return await this.adminRepo.findOne(id);
+    }
+
+    /**
      * @param email - the email of the admin.
      * @returns Promise<Admin> - the Admin entity being searched for.
      */

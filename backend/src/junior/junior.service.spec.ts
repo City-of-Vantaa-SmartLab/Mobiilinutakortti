@@ -19,7 +19,15 @@ describe('JuniorService', () => {
   let connection: Connection;
 
   const testRegisterYouth = {
-    phoneNumber: '04122345618', firstName: 'Auth jr', lastName: 'Senior',
+    phoneNumber: '04122345618',
+    firstName: 'Auth jr',
+    lastName: 'Senior',
+    postCode: '02130',
+    parentsName: 'Auth Senior',
+    parentsPhoneNumber: '0411234567',
+    gender: 'M',
+    age: 10,
+    homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
   let juniorToEdit: EditJuniorDto;
@@ -95,7 +103,7 @@ describe('JuniorService', () => {
     }),
       it(' should change values if valid data is provided', async () => {
         const dto = {
-          id: juniorToEdit.id, firstName: juniorToEdit.firstName, lastName: juniorToEdit.lastName,
+          ...juniorToEdit,
           phoneNumber: '04122345610',
         } as EditJuniorDto;
         await service.editJunior(dto);

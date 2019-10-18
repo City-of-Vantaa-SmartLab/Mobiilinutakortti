@@ -9,6 +9,7 @@ export class AdminUserViewModel {
     firstName: string;
     lastName: string;
     isSuperUser: boolean;
+    mainYouthClub: string;
 
     /**
      * @param entity - the Admin to convert to a VM.
@@ -19,5 +20,6 @@ export class AdminUserViewModel {
         this.firstName = entity.firstName;
         this.lastName = entity.lastName;
         this.isSuperUser = entity.isSuperUser;
+        this.mainYouthClub = entity.mainYouthClub;
     }
 }
