@@ -14,7 +14,9 @@ import {
     NumberInput,
     required,
     number,
-    choices
+    choices,
+    EditButton,
+    Edit,
  } from 'react-admin';
 
 const genderChoices = [
@@ -38,6 +40,7 @@ export const JuniorList = (props) => (
             <TextField label="Postinumero" source="postCode" />
             <TextField label="Huoltajan nimi" source="parentsName" />
             <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+            <EditButton />
         </Datagrid>
     </List>
 );
@@ -59,4 +62,23 @@ export const JuniorCreate = (props) => (
             </FormTab>
         </TabbedForm>
     </Create>
+);
+export const JuniorEdit = (props) => (
+    <Edit title={<JuniorEditTitle />} {...props}>
+        <TabbedForm>
+            <FormTab label="Nuori">
+                <TextInput label="Etunimi" source="firstName" />
+                <TextInput label="Sukunimi" source="lastName" />
+                <TextInput label="Puhelinnumero" source="phoneNumber" />
+                <NumberInput label="Ikä" source="age" />
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
+                <TextInput label="Kotinuorisotalo" source="homeYouthClub" />
+                <TextInput label="Postinumero" source="postCode" />
+            </FormTab>
+            <FormTab label="Huoltaja">
+                <TextInput label="Huoltajan nimi" source="parentsName" />
+                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+            </FormTab>
+        </TabbedForm>
+    </Edit>
 );
