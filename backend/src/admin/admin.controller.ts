@@ -9,7 +9,15 @@ import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
+import { JWTToken } from 'src/authentication/jwt.model';
 
+/**
+ * This controller contains all actions to be carried out on the '/admin' route.
+ * All returns consider the body returned in the case of success, please note:
+ * - successful GETS return a 200.
+ * - successful POSTS return a 201.
+ * - all errors return a status code and message relevant to the issue.
+ */
 @Controller('admin')
 export class AdminController {
   constructor(
@@ -17,48 +25,82 @@ export class AdminController {
     private readonly authenticationService: AuthenticationService,
   ) { }
 
-  // TODO remove this before Live, only provided to allow simplified testing.
+  /**
+   * TODO: This is a test route and should be removed before going live.
+   *
+   * This is currently used to inject a new super user.
+   * @param userData - RegisterAdminDto
+   * @returns - string success message
+   */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
-  async createTest(@Body() userData: RegisterAdminDto) {
+  async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
     return await this.adminService.registerAdmin(userData);
   }
 
+  /**
+   * A simple route that allows the frontend to tell whether the current token is valid, and belongs to an Admin/Super Admin
+   *
+   * @returns - true if successful, false otherwise.
+   */
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
-  async autoLogin() {
+  async autoLogin(): Promise<boolean> {
     // This is a simple route the frontend can hit to verify a valid JWT.
     return true;
   }
 
+  /**
+   * A route that attempts to log an admin into the system (generating a JWT).
+   *
+   * @param userData - LoginAdminDto
+   * @returns - { access_token }
+   */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
-  async login(@Body() userData: LoginAdminDto) {
+  async login(@Body() userData: LoginAdminDto): Promise<JWTToken> {
     return await this.authenticationService.loginAdmin(userData);
   }
 
+  /**
+   * A route used to register new admins.
+   *
+   * @param userData - RegisterAdminDto
+   * @returns string - success message
+   */
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
-  async create(@Body() userData: RegisterAdminDto) {
+  async create(@Body() userData: RegisterAdminDto): Promise<string> {
     return await this.adminService.registerAdmin(userData);
   }
 
+  /**
+   * A route used to allow superusers to edit other admins.
+   *
+   * @param userData - EditAdminDto
+   * @return string - success message.
+   */
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('edit')
-  async edit(@Body() userData: EditAdminDto) {
+  async edit(@Body() userData: EditAdminDto): Promise<string> {
     return await this.adminService.editAdmin(userData);
   }
 
+  /**
+   * A route used to allow superusers to list other admins.
+   *
+   * @return AdminUserViewModel[] - a list of all admins
+   */
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get('list')
-  async getAllAdmins() {
+  async getAllAdmins(): Promise<AdminUserViewModel[]> {
     return await this.adminService.listAllAdmins();
   }
 
@@ -66,7 +108,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get(':id')
-  async getOneAdmin(@Param('id') id: string) {
+  async getOneAdmin(@Param('id') id: string): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(id));
   }
 
@@ -74,7 +116,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
-  async getSelf(@Admin() adminData: any) {
+  async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
   }
 

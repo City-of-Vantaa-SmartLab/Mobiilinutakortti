@@ -5,6 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "compodoc": "npx compodoc -s",
+    "compodoc:build": "npx compodoc -p ./tsconfig.json -n 'API'",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -38,6 +40,7 @@
     "typeorm": "^0.2.19"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.11",
     "@nestjs/cli": "^6.9.0",
     "@nestjs/schematics": "^6.7.0",
     "@nestjs/testing": "^6.8.2",

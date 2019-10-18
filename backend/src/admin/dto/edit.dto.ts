@@ -1,5 +1,8 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
+/**
+ * The dto to be used when editing an admin.
+ */
 export class EditAdminDto {
 
     @IsNotEmpty()

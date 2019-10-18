@@ -2,6 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { lowercase, jsonDataToBoolean } from '../common/transformers';
 
+/**
+ * Entity model for Admin.
+ */
 @Entity()
 export class Admin {
 

@@ -13,4 +13,7 @@ import { Junior } from '../junior/entities';
   providers: [AdminService],
   exports: [AdminService],
 })
+/**
+ * The Admin module.
+ */
 export class AdminModule { }
