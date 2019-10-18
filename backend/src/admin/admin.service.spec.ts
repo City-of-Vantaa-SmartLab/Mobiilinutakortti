@@ -13,7 +13,7 @@ import { getTestDB } from '../../test/testdb';
 import { AdminModule } from './admin.module';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
-import { RegisterAdminDto } from './dto';
+import { RegisterAdminDto, EditAdminDto } from './dto';
 import { ConflictException } from '@nestjs/common';
 
 describe('AdminService', () => {
@@ -27,8 +27,10 @@ describe('AdminService', () => {
 
   const testRegisterAdmin = {
     email: 'Admin2@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush',
+    lastName: 'Tication', password: 'Hush', isSuperUser: true,
   } as RegisterAdminDto;
+
+  let adminToEdit: EditAdminDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
@@ -60,25 +62,26 @@ describe('AdminService', () => {
 
   describe('Get user', () => {
     it('Should return the user if they exist', async () => {
-      const response = await service.getAdmin(testUser.email);
+      const response = await service.getAdminByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName).toBeTruthy();
     }),
       it('Should return undefined if the user does not exist', async () => {
-        expect(await service.getAdmin('Bob')).toBe(undefined);
+        expect(await service.getAdminByEmail('Bob')).toBe(undefined);
       });
   });
 
   describe('Create user', () => {
     it('Should add a user to the database if valid credentials are provided', async () => {
-      const response = await service.getAdmin(testUser.email);
+      const response = await service.getAdminByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
-        response.lastName === testUser.lastName).toBeTruthy();
+        response.lastName === testUser.lastName &&
+        response.isSuperUser === testUser.isSuperUser).toBeTruthy();
     }),
       it('Should add emails as lowercase.', async () => {
-        const response = await service.getAdmin(testUser.email);
+        const response = await service.getAdminByEmail(testUser.email);
         expect(response.email === testUser.email.toLowerCase()).toBeTruthy();
       }),
       it('Should return undefined if the user already exists', async () => {
@@ -91,13 +94,13 @@ describe('AdminService', () => {
       expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getAdmin(testRegisterAdmin.email);
+        const response = await service.getAdminByEmail(testRegisterAdmin.email);
         expect(response.email === testRegisterAdmin.email.toLowerCase() &&
           response.firstName === testRegisterAdmin.firstName &&
           response.lastName === testRegisterAdmin.lastName).toBeTruthy();
       }),
       it('should store passwords in a non-plaintext manner', async () => {
-        expect((await service.getAdmin(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
+        expect((await service.getAdminByEmail(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
       }),
       it('should thrown a Conflict if the username already exists', async () => {
         const error = new ConflictException();
@@ -107,6 +110,32 @@ describe('AdminService', () => {
         } catch (e) {
           expect(e.response === error.getResponse());
         }
+      });
+  });
+
+  describe('Get All Admins', () => {
+    it('Should return an array containing all admins', async () => {
+      const response = await service.listAllAdmins();
+      const isAnArray = Array.isArray(response);
+      const containsAdmins = response.some(e => e.email === testUser.email.toLowerCase());
+      expect(isAnArray && containsAdmins).toBeTruthy();
+    });
+  });
+
+  describe('Edit Admin', () => {
+    beforeAll(async () => {
+      adminToEdit = (await service.listAllAdmins())[0];
+    }),
+      it(' should change values if valid data is provided', async () => {
+        const dto = {
+          id: adminToEdit.id, firstName: adminToEdit.firstName, lastName: adminToEdit.lastName,
+          email: 'NewEmail@groovy.com', isSuperUser: false,
+        } as EditAdminDto;
+        await service.editAdmin(dto);
+        const updatedAdmin = await service.getAdminByEmail(dto.email);
+        const updatedList = await service.listAllAdmins();
+        expect(updatedAdmin.email === dto.email.toLowerCase() && updatedAdmin.isSuperUser === dto.isSuperUser
+          && (!updatedList.some(e => e.email === adminToEdit.email.toLowerCase()))).toBeTruthy();
       });
   });
 });

@@ -1,9 +1,11 @@
 {
-    "AdminAlreadyExists": "An account for that email already exists.",
-    "NotAnAdmin": "You must be a youth worker to carry out this request.",
+    "AdminAlreadyExists": "Käyttäjätili on jo luotu tällä sähköpostilla.",
+    "NotAnAdmin": "Ainoastaan nuorisotyöntekijät voivat suorittaa pyynnön.",
     "Created": "luotu.",
-    "DataIncorrect": "The data provided is either incorrect or missing.",
-    "FailedLogin": "Login failed.",
-    "JuniorAlreadyExists": "An account for that phone number already exists.",
-    "UserNotFound": "User not found."
+    "DataNotChanged": "Tietoja ei muutettu.",
+    "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
+    "FailedLogin": "Kirjautuminen epäonnistui.",
+    "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
+    "Updated": "Päivitetty.",
+    "UserNotFound": "Käyttäjää ei löydy."
 }

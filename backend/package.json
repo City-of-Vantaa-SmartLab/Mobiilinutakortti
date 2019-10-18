@@ -5,6 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "compodoc": "npx compodoc -s",
+    "compodoc:build": "npx compodoc -p ./tsconfig.json -n 'API'",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -13,7 +15,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "jest --runInBand && rm ./test/testdb.sql",
+    "test": "rm ./test/testdb.sql || true && jest --runInBand && rm ./test/testdb.sql",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -38,6 +40,7 @@
     "typeorm": "^0.2.19"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.11",
     "@nestjs/cli": "^6.9.0",
     "@nestjs/schematics": "^6.7.0",
     "@nestjs/testing": "^6.8.2",

@@ -1,14 +1,23 @@
 import React from 'react';
-import { Admin } from 'react-admin';
-import fakeDataProvider from 'ra-data-fakerest'; //React-admin requires a data provider to be able to run. This should be removed once a real data provider is implemented.
-const dataProvider = fakeDataProvider({
-  user: [
-    {id: 0, name: "foo"},
-    {id: 1, name: "bar"}
-  ]
-})
+import { Admin, Resource } from 'react-admin';
+import finnishMessages from 'ra-language-finnish';
+import { authProvider, dataProvider} from './providers';
+import { JuniorList, JuniorCreate } from './components/junior';
+import ChildCareIcon from '@material-ui/icons/ChildCare';
 
+const messages = {
+    'fi': finnishMessages,
+};
 
-const App = () => <Admin dataProvider ={dataProvider} />;
+const i18nProvider = locale => messages[locale];
+
+const App = () =>
+    <Admin locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider}>
+        {permissions => [
+            permissions === 'SUPERADMIN' || permissions === ' ADMIN'
+            ? <Resource name="junior" list={JuniorList} create={JuniorCreate}icon={ChildCareIcon} />
+            : null
+        ]}
+    </Admin>;
 
 export default App;
