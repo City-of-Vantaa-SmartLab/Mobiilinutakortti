@@ -76,7 +76,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
             setError(true);
             setMessage('Authentication failed, use the form below to request a new link');
         }
-    })
+    }, [props.authError, error])
 
     const sendLink = (phoneNumber: string, error: boolean) => {
         if (error) {

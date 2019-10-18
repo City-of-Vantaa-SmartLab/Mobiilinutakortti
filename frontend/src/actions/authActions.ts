@@ -31,6 +31,7 @@ function* auth(action: AuthAttempt) {
 
 function* requestLink(action: LinkRequest) {
     try {
+        //not used and doesn't affect the app for now
         const response = yield call(post, '/junior/reset', action.payload);
     } catch (error) {
         
