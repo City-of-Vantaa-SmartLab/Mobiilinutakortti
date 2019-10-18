@@ -8,6 +8,7 @@ import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel } from './vm/junior.vm';
+import { JWTToken } from 'src/authentication/jwt.model';
 
 @Controller('junior')
 export class JuniorController {
@@ -28,14 +29,14 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
     @Get('login')
-    async autoLogin() {
+    async autoLogin(): Promise<boolean> {
         // This is a simple route the frontend can hit to verify a valid JWT.
         return true;
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('login')
-    async login(@Body() userData: LoginJuniorDto) {
+    async login(@Body() userData: LoginJuniorDto): Promise<JWTToken> {
         return await this.authenticationService.loginJunior(userData);
     }
 
@@ -50,7 +51,7 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
-    async edit(@Body() userData: EditJuniorDto) {
+    async edit(@Body() userData: EditJuniorDto): Promise<string> {
         return await this.juniorService.editJunior(userData);
     }
 
@@ -58,7 +59,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
-    async getAllJuniors() {
+    async getAllJuniors(): Promise<JuniorUserViewModel[]> {
         return await this.juniorService.listAllJuniors();
     }
 
@@ -66,7 +67,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get(':id')
-    async getOneJunior(@Param('id') id: string) {
+    async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
 

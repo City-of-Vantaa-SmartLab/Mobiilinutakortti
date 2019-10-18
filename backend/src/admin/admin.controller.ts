@@ -9,6 +9,7 @@ import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
+import { JWTToken } from 'src/authentication/jwt.model';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -33,7 +34,7 @@ export class AdminController {
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
-  async createTest(@Body() userData: RegisterAdminDto) {
+  async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
     return await this.adminService.registerAdmin(userData);
   }
 
@@ -45,7 +46,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
-  async autoLogin() {
+  async autoLogin(): Promise<boolean> {
     // This is a simple route the frontend can hit to verify a valid JWT.
     return true;
   }
@@ -58,7 +59,7 @@ export class AdminController {
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
-  async login(@Body() userData: LoginAdminDto) {
+  async login(@Body() userData: LoginAdminDto): Promise<JWTToken> {
     return await this.authenticationService.loginAdmin(userData);
   }
 
@@ -72,7 +73,7 @@ export class AdminController {
   @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
-  async create(@Body() userData: RegisterAdminDto) {
+  async create(@Body() userData: RegisterAdminDto): Promise<string> {
     return await this.adminService.registerAdmin(userData);
   }
 
@@ -87,7 +88,7 @@ export class AdminController {
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('edit')
-  async edit(@Body() userData: EditAdminDto) {
+  async edit(@Body() userData: EditAdminDto): Promise<string> {
     return await this.adminService.editAdmin(userData);
   }
 
@@ -99,7 +100,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get('list')
-  async getAllAdmins() {
+  async getAllAdmins(): Promise<AdminUserViewModel[]> {
     return await this.adminService.listAllAdmins();
   }
 
@@ -107,7 +108,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get(':id')
-  async getOneAdmin(@Param('id') id: string) {
+  async getOneAdmin(@Param('id') id: string): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(id));
   }
 
@@ -115,7 +116,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
-  async getSelf(@Admin() adminData: any) {
+  async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
   }
 
