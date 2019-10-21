@@ -38,7 +38,7 @@ export const JuniorList = (props) => (
     </List>
 );
 export const JuniorCreate = (props) => (
-    <Create {...props}>
+    <Create {...props} undoable={false}>
         <TabbedForm>
             <FormTab label="Junior">
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={ required() }/>

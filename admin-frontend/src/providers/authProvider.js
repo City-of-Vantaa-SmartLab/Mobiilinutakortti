@@ -13,7 +13,7 @@ export const authProvider = (type, params) => {
         return defaultHttpClient(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
-                    throw new Error(response.statusText);
+                    throw new Error(response.message);
                 }
                 return response;
             })

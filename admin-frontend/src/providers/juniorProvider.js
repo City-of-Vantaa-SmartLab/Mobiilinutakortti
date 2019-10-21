@@ -13,7 +13,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new Error(response.statusText);
+                        throw new Error(response.message);
                     }
                     return { data: response, total: response.length };
                 });
@@ -38,8 +38,8 @@ export const juniorProvider = (type, params, httpClient) => {
             };
             return httpClient(url, options)
                 .then(response => {
-                    if (response.status < 200 || response.status >= 300) {
-                        throw new Error(response.statusText);
+                    if (response.statusCode < 200 || response.statusCode >= 300) {
+                        throw new Error(response.message);
                     }
                     return {data: {id: ''}} //React-admin expects this format from from CREATE. Hacky and ugly, but works.
                 });
