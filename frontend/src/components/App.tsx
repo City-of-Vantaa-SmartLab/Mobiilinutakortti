@@ -15,7 +15,7 @@ const App: React.FC = () => {
     <Wrapper>
       <Switch>
         <Route path='/login' component={LoginPage}/>
-        <ProtectedRoute exact path='/' component={QRPage}/>
+        <Route exact path='/' component={QRPage}/>
       </Switch>
     </Wrapper>
   );
