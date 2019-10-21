@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, Inject, InternalServerErrorException } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
 import { JuniorUserViewModel } from './vm/junior.vm';
 import { validate } from 'class-validator';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class JuniorService {
@@ -17,6 +18,7 @@ export class JuniorService {
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Challenge)
         private readonly challengeRepo: Repository<Challenge>,
+        private readonly smsService: SmsService,
     ) { }
 
     async listAllJuniors(): Promise<JuniorUserViewModel[]> {
@@ -51,7 +53,7 @@ export class JuniorService {
      * Currently this returns the challenge as we need pass that back to frontend.
      * Will be corrected when relevant workflow is introduced.
      */
-    async registerJunior(registrationData: RegisterJuniorDto): Promise<Challenge> {
+    async registerJunior(registrationData: RegisterJuniorDto): Promise<string> {
         const userExists = await this.getJuniorByPhoneNumber(registrationData.phoneNumber);
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
@@ -61,20 +63,26 @@ export class JuniorService {
             gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
         await this.createJunior(junior);
-        // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;
-        return await this.setChallenge(junior.phoneNumber);
+        const challenge = await this.setChallenge(junior.phoneNumber);
+        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        return `${registrationData.phoneNumber} ${content.Created}`;
     }
 
     /**
      * TODO:
      * affected by the same issue as registerJunior.
      */
-    async resetLogin(phoneNumber: string): Promise<Challenge> {
+    async resetLogin(phoneNumber: string): Promise<string> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
         const activeChallenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
-        if (activeChallenge) { this.challengeRepo.remove(activeChallenge); }
-        return await this.setChallenge(phoneNumber);
+        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
+        const challenge = await this.setChallenge(phoneNumber);
+        const junior = await this.juniorRepo.findOne({ phoneNumber });
+        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        return `${phoneNumber} ${content.Reset}`;
     }
 
     async editJunior(details: EditJuniorDto): Promise<string> {
@@ -104,9 +112,9 @@ export class JuniorService {
     // Modified to return challenge, this will be improved upon SMS intergration.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const valueToHash = (Math.floor(1000 + Math.random() * 9000)).toString();
-        const challenge = encodeURI(await hash(valueToHash, saltRounds));
+        //const challenge = (encodeURI(await hash(valueToHash, saltRounds))).substr(9, 15);
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
-        const challengeData = { junior, challenge };
+        const challengeData = { junior, challenge: valueToHash };
         await this.challengeRepo.save(challengeData);
         return await this.challengeRepo.findOne({ junior });
     }

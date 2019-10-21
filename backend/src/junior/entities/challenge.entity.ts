@@ -4,7 +4,7 @@ import { Junior } from './junior.entity';
 @Entity()
 export class Challenge {
 
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn()
     id: string;
 
     @OneToOne((type) => Junior)

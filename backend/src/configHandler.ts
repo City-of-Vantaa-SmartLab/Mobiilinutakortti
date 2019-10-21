@@ -22,4 +22,8 @@ export class ConfigHelper {
             synchronize: true,
         };
     }
+
+    static getFrontendPort(): string {
+        return process.env.FRONTEND || 'http://localhost:3001';
+    }
 }

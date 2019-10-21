@@ -12,6 +12,7 @@ import { AppService } from './app.service';
 import { GuardsModule } from './roles/roles.module';
 import { Admin } from './admin/admin.entity';
 import { Junior } from './junior/entities';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { Junior } from './junior/entities';
     JuniorModule,
     AuthenticationModule,
     GuardsModule,
+    SmsModule,
   ],
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController],
