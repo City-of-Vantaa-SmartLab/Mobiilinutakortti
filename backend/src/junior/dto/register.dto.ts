@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
+import * as content from '../../content.json';
 
 export class RegisterJuniorDto {
 
-    @IsPhoneNumber('FI')
+    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
     @IsNotEmpty()
     readonly phoneNumber: string;
 
@@ -18,7 +19,7 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly parentsName: string;
 
-    @IsPhoneNumber('FI')
+    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
     @IsNotEmpty()
     readonly parentsPhoneNumber: string;
 

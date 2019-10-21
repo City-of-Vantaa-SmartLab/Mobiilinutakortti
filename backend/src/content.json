@@ -6,6 +6,7 @@
     "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
     "FailedLogin": "Kirjautuminen epäonnistui.",
     "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
+    "PhoneNumbersMustBeFinnish": "Phone Numbers must be Finnish numbers.",
     "Updated": "Päivitetty.",
     "UserNotFound": "Käyttäjää ei löydy."
 }
