@@ -86,4 +86,10 @@ export class AdminService {
         await this.adminRepo.save(user);
         return `${details.email} ${content.Updated}`;
     }
+
+    async deleteAdmin(id: string) {
+        const admin = await this.getAdmin(id);
+        if (!admin) { throw new ConflictException(content.UserNotFound); }
+        this.adminRepo.remove(admin);
+    }
 }

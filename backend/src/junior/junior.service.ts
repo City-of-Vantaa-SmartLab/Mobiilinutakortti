@@ -101,6 +101,12 @@ export class JuniorService {
         return `${details.phoneNumber} ${content.Updated}`;
     }
 
+    async deleteJunior(id: string) {
+        const junior = await this.getJunior(id);
+        if (!junior) { throw new ConflictException(content.UserNotFound); }
+        this.juniorRepo.remove(junior);
+    }
+
     // Modified to return challenge, this will be improved upon SMS intergration.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const valueToHash = (Math.floor(1000 + Math.random() * 9000)).toString();
