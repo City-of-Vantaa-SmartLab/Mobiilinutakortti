@@ -87,9 +87,13 @@ export class AdminService {
         return `${details.email} ${content.Updated}`;
     }
 
+    /**
+     * This method deletes the provided admin.
+     * @param id the id of the user to delete.
+     */
     async deleteAdmin(id: string) {
         const admin = await this.getAdmin(id);
-        if (!admin) { throw new ConflictException(content.UserNotFound); }
+        if (!admin) { throw new BadRequestException(content.UserNotFound); }
         this.adminRepo.remove(admin);
     }
 }

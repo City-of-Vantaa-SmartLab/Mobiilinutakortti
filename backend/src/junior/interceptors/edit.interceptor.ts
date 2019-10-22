@@ -28,6 +28,7 @@ export class JuniorEditInterceptor implements NestInterceptor {
         body.age ? dataChanged = dataChanged || body.age !== userToEdit.age : body.age = userToEdit.age;
         body.homeYouthClub ? dataChanged = dataChanged || body.homeYouthClub !== userToEdit.homeYouthClub
             : body.homeYouthClub = userToEdit.homeYouthClub;
+        body.gender ? dataChanged = dataChanged || body.gender !== userToEdit.gender : body.gender = userToEdit.gender;
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); }
         return next.handle();

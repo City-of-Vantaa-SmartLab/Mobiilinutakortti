@@ -138,4 +138,16 @@ describe('AdminService', () => {
           && (!updatedList.some(e => e.email === adminToEdit.email.toLowerCase()))).toBeTruthy();
       });
   });
+
+  describe('Delete Admin', () => {
+    let adminToDelete: string;
+    beforeAll(async () => {
+      adminToDelete = (await service.listAllAdmins())[0].id;
+    }),
+      it('Should delete the user provided', async () => {
+        await service.deleteAdmin(adminToDelete);
+        const adminList = await service.listAllAdmins();
+        expect(adminList.findIndex(a => a.id === adminToDelete) < 0);
+      });
+  });
 });

@@ -101,9 +101,13 @@ export class JuniorService {
         return `${details.phoneNumber} ${content.Updated}`;
     }
 
+    /**
+     * This method deletes the provided junior.
+     * @param id the id of the user to delete.
+     */
     async deleteJunior(id: string) {
         const junior = await this.getJunior(id);
-        if (!junior) { throw new ConflictException(content.UserNotFound); }
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
         this.juniorRepo.remove(junior);
     }
 

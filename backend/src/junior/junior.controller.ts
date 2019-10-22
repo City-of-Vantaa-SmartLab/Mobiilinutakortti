@@ -71,6 +71,10 @@ export class JuniorController {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
 
+    /**
+     * Deletes the junior account associated to the id provided.
+     * @param id - the id of the junior to delete
+     */
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
