@@ -16,7 +16,7 @@ export default (state=initialState, action: authActions):authState => {
             return {...state, loggingIn: false, loggedIn: true, token: action.payload, error: false};
         case authTypes.AUTH_FAIL: 
             return {...state, loggingIn: false, error: true}
-        case authTypes.LINK_REQUEST: 
+        case authTypes.AUTH_LINK_REQUEST: 
             return {...state, error: false}
         default: 
             return state;

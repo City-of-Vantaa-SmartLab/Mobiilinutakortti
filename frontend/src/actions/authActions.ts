@@ -1,14 +1,16 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { post } from '../apis';
-import { authTypes, AuthAttempt, LinkRequest } from '../types/authTypes';
+import { post, get } from '../apis';
+import { authTypes, AuthAttempt, LinkRequest, AuthSuccess } from '../types/authTypes';
+import { userTypes } from '../types/userTypes';
 
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 
 
 export function* rootSaga() {
     yield takeLatest(authTypes.AUTH_ATTEMPT, auth);
-    yield takeLatest(authTypes.LINK_REQUEST, requestLink);
+    yield takeLatest(authTypes.AUTH_LINK_REQUEST, requestLink);
+    yield takeLatest(authTypes.AUTH_SUCCESS, getUserInfo);
 }
 
 //sagas
@@ -17,9 +19,18 @@ function setAuthToken(token:object) {
     localStorage.setItem('token', JSON.stringify(token))
   }
 
+ function* getUserInfo(action: AuthSuccess) {
+    try {
+        const response = yield call(get, '/junior/getSelf', action.payload);
+        yield put({ type: userTypes.GET_SELF_SUCCESS,  payload: response });
+    } catch (error) {
+        // yield put({ type: userTypes.GET_SELF_FAIL });
+    }
+ } 
+
 function* auth(action: AuthAttempt) {
     try {
-        const response = yield call(post, '/junior/register', action.payload);
+        const response = yield call(post, '/junior/login', action.payload);
         yield call(setAuthToken, response.access_token);
         yield put({ type: authTypes.AUTH_SUCCESS,  payload: response.access_token });
         yield put(push('/'));

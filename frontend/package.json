@@ -13,6 +13,7 @@
     "@types/react-router-dom": "^5.1.0",
     "@types/react-router-redux": "^5.0.18",
     "@types/styled-components": "^4.1.19",
+    "connected-react-router": "^6.5.2",
     "qrcode.react": "^0.9.3",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",

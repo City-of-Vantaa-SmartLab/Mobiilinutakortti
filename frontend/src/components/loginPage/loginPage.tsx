@@ -117,7 +117,7 @@ const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
                       payload: {challenge, id}});
         },
         linkRequest: (phoneNumber: string) => {
-            dispatch({type: authTypes.LINK_REQUEST, 
+            dispatch({type: authTypes.AUTH_LINK_REQUEST, 
                       payload: {phoneNumber}});
         }
     }

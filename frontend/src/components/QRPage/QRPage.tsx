@@ -2,7 +2,8 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 import Measure from 'react-measure'
-
+import { connect } from 'react-redux';
+import { AppState } from '../../reducers';
 
 const Wrapper=styled.section`
     height: 100%;
@@ -47,19 +48,21 @@ const Title=styled.h1`
     font-weight: bold;
     color: rgb(249, 229, 30);
     text-align: center;
-    font-size: 2.4rem;
+    font-size: 10vw;
     position: absolute;
     width: 100%;
     padding-top: 2rem;
-
+    @media(min-width: 600px) {
+        font-size: 3rem;
+    }
 `;
 
 interface QRPageProps {
-    
-
+    id: string,
+    name: string,
 } 
 
-const QRPage: React.FC = () => {
+const QRPage: React.FC<QRPageProps> = (props) => {
     const [size, setSize] = useState(0);
 
     return (
@@ -86,4 +89,11 @@ const QRPage: React.FC = () => {
     );
 }
 
-export default QRPage;
+
+const mapStateToProps = (state:AppState) => ({
+    id: state.user.id,
+    name: state.user.name
+});
+
+
+export default connect(mapStateToProps)(QRPage);
