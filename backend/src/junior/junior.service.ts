@@ -6,7 +6,7 @@ import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds } from '../authentication/authentication.consts';
 import * as content from '../content.json';
-import { JuniorUserViewModel } from './vm/junior.vm';
+import { JuniorUserViewModel } from './vm';
 import { validate } from 'class-validator';
 
 @Injectable()
