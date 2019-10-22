@@ -29,6 +29,13 @@ export class JuniorController {
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
+    @Get('getSelf')
+    async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
+        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.id));
+    }
+
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.JUNIOR)
     @Get('login')
     async autoLogin(): Promise<boolean> {
         // This is a simple route the frontend can hit to verify a valid JWT.
@@ -70,12 +77,5 @@ export class JuniorController {
     @Get(':id')
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
-    }
-
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.JUNIOR)
-    @Get('getSelf')
-    async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
-        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.id));
     }
 }
