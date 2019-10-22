@@ -9,9 +9,10 @@ import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
 import { Admin } from '../admin/admin.entity';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, HttpModule } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';
+import { SmsModule } from '../sms/sms.module';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -35,7 +36,7 @@ describe('JuniorService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, AdminModule, AuthenticationModule],
+      imports: [AppModule, JuniorModule, AdminModule, AuthenticationModule, SmsModule, HttpModule],
       providers: [JuniorService, {
         provide: getRepositoryToken(Admin),
         useFactory: repositoryMockFactory,
@@ -65,7 +66,8 @@ describe('JuniorService', () => {
 
   describe('Register Youth', () => {
     it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
-      const challenge = await service.registerJunior(testRegisterYouth);
+      await service.registerJunior(testRegisterYouth);
+      const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
       testLoginYouth = {
         id: challenge.id, challenge: challenge.challenge,
       };

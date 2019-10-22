@@ -1,11 +1,9 @@
-import { Injectable, InternalServerErrorException, HttpService, Inject } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, HttpService } from '@nestjs/common';
 import { Recipient, TeliaMessageRequest } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
 import * as content from '../content.json';
 import { ConfigHelper } from '../configHandler';
-import { map } from 'rxjs/operators';
-import { response } from 'express';
 
 @Injectable()
 export class SmsService {
@@ -14,6 +12,7 @@ export class SmsService {
         private readonly httpService: HttpService) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
+        if (!ConfigHelper.isLive()) { return true; }
         const settings = SMSConfig.getTeliaConfig();
         if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         const oneTimeLink = this.getOneTimeLink(challenge);
@@ -34,25 +33,8 @@ export class SmsService {
         try {
             // tslint:disable-next-line: no-console
             console.log(`Sending SMS to ${messageRequest.to[0]}`);
-            console.log(teliaEndPoint);
-            console.log(messageRequest);
-            // return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
-            //     map((response) => {
-            //         console.log(response);
-            //         if (response.data.accepted[0].to === messageRequest.to[0].slice(1)) {
-            //             // tslint:disable-next-line: no-console
-            //             console.log(`SMS send to ${messageRequest.to[0]}`);
-            //             return true;
-            //         } else {
-            //             // tslint:disable-next-line: no-console
-            //             console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
-            //             return false;
-            //         }
-            //     }),
-            // ).toPromise();
             await this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
                 response => {
-                    console.log(response);
                     if (response.data.accepted[0].to === messageRequest.to[0].slice(1)) {
                         // tslint:disable-next-line: no-console
                         console.log(`SMS send to ${messageRequest.to[0]}`);
@@ -63,6 +45,7 @@ export class SmsService {
                         return false;
                     }
                 }).catch(error => {
+                    // tslint:disable-next-line: no-console
                     console.log(error.response);
                 });
         } catch (e) {

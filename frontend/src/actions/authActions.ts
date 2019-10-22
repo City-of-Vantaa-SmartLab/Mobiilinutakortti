@@ -13,15 +13,15 @@ export function* rootSaga() {
 
 //sagas
 
-function setAuthToken(token:object) {
+function setAuthToken(token: object) {
     localStorage.setItem('token', JSON.stringify(token))
-  }
+}
 
 function* auth(action: AuthAttempt) {
     try {
-        const response = yield call(post, '/junior/register', action.payload);
+        const response = yield call(post, '/junior/login', action.payload);
         yield call(setAuthToken, response.access_token);
-        yield put({ type: authTypes.AUTH_SUCCESS,  payload: response.access_token });
+        yield put({ type: authTypes.AUTH_SUCCESS, payload: response.access_token });
         yield put(push('/'));
 
     } catch (error) {
@@ -34,7 +34,7 @@ function* requestLink(action: LinkRequest) {
         //not used and doesn't affect the app for now
         const response = yield call(post, '/junior/reset', action.payload);
     } catch (error) {
-        
+
     }
 }
 

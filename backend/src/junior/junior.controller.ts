@@ -1,4 +1,4 @@
-import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param, BadRequestException } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,7 +8,10 @@ import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel } from './vm/junior.vm';
-import { JWTToken } from 'src/authentication/jwt.model';
+import { JWTToken } from '../authentication/jwt.model';
+import { Challenge } from './entities';
+import { ConfigHelper } from '../configHandler';
+import * as content from '../content.json';
 
 @Controller('junior')
 export class JuniorController {
@@ -69,6 +72,17 @@ export class JuniorController {
     @Get(':id')
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
+    }
+
+    /**
+     * This is non prod route, only to be used in development.
+     * @param phoneNumber phoneNumber to check.
+     */
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @Get('getChallenge/:phoneNumber')
+    async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
+        if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
+        return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
     }
 
 }

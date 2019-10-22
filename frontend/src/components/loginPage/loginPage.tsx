@@ -66,8 +66,6 @@ const LoginPage: React.FC<LoginProps> = (props) => {
         const query = new URLSearchParams(props.location.search);
         const challenge = query.get('challenge')
         const id = query.get('id')
-        console.log(id);
-        console.log(challenge);
         if (challenge && id) {
             props.auth(challenge, id);
         }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param, BadRequestException } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto, GetAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
@@ -9,7 +9,9 @@ import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
-import { JWTToken } from 'src/authentication/jwt.model';
+import { JWTToken } from '../authentication/jwt.model';
+import { ConfigHelper } from '../configHandler';
+import * as content from '../content.json';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -26,7 +28,7 @@ export class AdminController {
   ) { }
 
   /**
-   * TODO: This is a test route and should be removed before going live.
+   * This is a test route.
    *
    * This is currently used to inject a new super user.
    * @param userData - RegisterAdminDto
@@ -35,6 +37,7 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
   async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
+    if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
     return await this.adminService.registerAdmin(userData);
   }
 

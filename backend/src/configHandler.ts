@@ -2,7 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export class ConfigHelper {
 
-    private static isLive() {
+    static isLive() {
         return process.env.NODE_ENV === 'production';
     }
 

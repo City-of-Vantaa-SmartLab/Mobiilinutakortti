@@ -5,6 +5,7 @@
     "DataNotChanged": "Tietoja ei muutettu.",
     "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
     "FailedLogin": "Kirjautuminen epäonnistui.",
+    "NonProdFeature": "This feature is not available in production.",
     "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
     "Reset": "reset link sent.",
     "Updated": "Päivitetty.",
