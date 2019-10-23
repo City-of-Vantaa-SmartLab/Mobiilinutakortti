@@ -33,6 +33,8 @@ describe('JuniorService', () => {
   let testLoginYouth: LoginJuniorDto;
   let juniorToEdit: EditJuniorDto;
 
+  const phoneNumberTransformer = (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str;
+
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
@@ -75,7 +77,7 @@ describe('JuniorService', () => {
     }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
-        expect(response.phoneNumber === testRegisterYouth.phoneNumber.toLowerCase() &&
+        expect(response.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber.toLowerCase()) &&
           response.firstName === testRegisterYouth.firstName &&
           response.lastName === testRegisterYouth.lastName).toBeTruthy();
       }),
@@ -94,7 +96,7 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsJuniors = response.some(e => e.phoneNumber === testRegisterYouth.phoneNumber);
+      const containsJuniors = response.some(e => e.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber));
       expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
@@ -111,8 +113,8 @@ describe('JuniorService', () => {
         await service.editJunior(dto);
         const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);
         const updatedList = await service.listAllJuniors();
-        expect(updatedJunior.phoneNumber === dto.phoneNumber
-          && (!updatedList.some(e => e.phoneNumber === juniorToEdit.phoneNumber.toLowerCase()))).toBeTruthy();
+        expect(updatedJunior.phoneNumber === phoneNumberTransformer(dto.phoneNumber)
+          && (!updatedList.some(e => e.phoneNumber === phoneNumberTransformer(juniorToEdit.phoneNumber.toLowerCase())))).toBeTruthy();
       });
   });
 });

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsPhoneNumber, Length, IsPositive } from 'class-validator';
-import { jsonDataToNumber } from '../../common/transformers';
+import { IsPhoneNumber, Length, IsPositive, IsMobilePhone } from 'class-validator';
+import { jsonDataToNumber, makePhoneNumberInternational } from '../../common/transformers';
 
 @Entity()
 export class Junior {
@@ -14,7 +14,7 @@ export class Junior {
     lastName: string;
 
     @IsPhoneNumber('FI')
-    @Column({ unique: true })
+    @Column({ unique: true, transformer: makePhoneNumberInternational })
     phoneNumber: string;
 
     @Column()
@@ -24,7 +24,7 @@ export class Junior {
     parentsName: string;
 
     @IsPhoneNumber('FI')
-    @Column()
+    @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
 
     @Column()
