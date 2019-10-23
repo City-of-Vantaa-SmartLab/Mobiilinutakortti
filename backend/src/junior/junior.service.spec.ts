@@ -117,4 +117,16 @@ describe('JuniorService', () => {
           && (!updatedList.some(e => e.phoneNumber === phoneNumberTransformer(juniorToEdit.phoneNumber.toLowerCase())))).toBeTruthy();
       });
   });
+
+  describe('Delete Junior', () => {
+    let juniorToDelete: string;
+    beforeAll(async () => {
+      juniorToDelete = (await service.listAllJuniors())[0].id;
+    }),
+      it('Should delete the user provided', async () => {
+        await service.deleteJunior(juniorToDelete);
+        const juniorList = await service.listAllJuniors();
+        expect(juniorList.findIndex(j => j.id === juniorToDelete) < 0);
+      });
+  });
 });

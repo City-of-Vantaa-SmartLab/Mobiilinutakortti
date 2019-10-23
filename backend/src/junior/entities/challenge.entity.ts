@@ -7,7 +7,7 @@ export class Challenge {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne((type) => Junior)
+    @OneToOne((type) => Junior, { onDelete: 'CASCADE' })
     @JoinColumn()
     junior: Junior;
 

@@ -1,4 +1,7 @@
-import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param, BadRequestException } from '@nestjs/common';
+import {
+    Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors,
+    Get, Param, BadRequestException, Delete,
+} from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -85,4 +88,16 @@ export class JuniorController {
         return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
     }
 
+    /**
+     * Deletes the junior account associated to the id provided.
+     * @param id - the id of the junior to delete
+     */
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Delete(':id')
+    async deleteJunior(@Param('id') id: string) {
+        await this.juniorService.deleteJunior(id);
+
+    }
 }

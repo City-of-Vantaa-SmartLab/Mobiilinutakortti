@@ -253,4 +253,36 @@ describe('JuniorController (e2e)', () => {
                 .expect(201);
         });
     });
+
+    describe('/junior/delete', () => {
+        let juniorToDelete;
+        beforeAll(async () => {
+            const response = await request(app.getHttpServer())
+                .get('/junior/list')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Accept', 'application/json');
+            juniorToDelete = response.body[0].id;
+        }),
+            it('Should return a 200 user when carried out by an Admin', async () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/${juniorToDelete}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .expect(200);
+            }),
+            it('Should reject the request for non-admins', () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/${juniorToDelete}`)
+                    .set('Authorization', `Bearer ${juniorToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(403);
+            }),
+            it('Should reject the reqest if the ID is invalid', () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/183461394613`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .expect(400);
+            });
+    });
 });
