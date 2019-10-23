@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param, Delete } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto, GetAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
@@ -36,6 +36,18 @@ export class AdminController {
   @Post('registerTemp')
   async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
     return await this.adminService.registerAdmin(userData);
+  }
+
+  /**
+   * This method will return an admin view model of the id associated with the JWT.
+   * @param adminData - the user data from the request
+   */
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('getSelf')
+  async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
+    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
   }
 
   /**
@@ -104,6 +116,10 @@ export class AdminController {
     return await this.adminService.listAllAdmins();
   }
 
+  /**
+   * Returns the view model of the admin who the id belongs to.
+   * @param id - the id of the admin to get the viewmodel of.
+   */
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
@@ -112,12 +128,16 @@ export class AdminController {
     return new AdminUserViewModel(await this.adminService.getAdmin(id));
   }
 
+  /**
+   * Deletes the admin account associated to the id provided.
+   * @param id - the id of the admin to delete
+   */
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @AllowedRoles(Roles.ADMIN)
-  @Get('getSelf')
-  async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
-    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
+  @AllowedRoles(Roles.SUPERUSER)
+  @Delete(':id')
+  async deleteAdmin(@Param('id') id: string) {
+    await this.adminService.deleteAdmin(id);
   }
 
 }

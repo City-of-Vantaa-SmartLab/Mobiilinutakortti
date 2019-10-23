@@ -226,4 +226,43 @@ describe('AdminController (e2e)', () => {
                     .expect(400);
             });
     });
+
+    describe('/admin/delete', () => {
+        let adminToDelete;
+        beforeAll(async () => {
+            const newAdminToDelete = {
+                email: 'delete@me.com', password: 'pwordsprhg',
+                firstName: 'qegqegqeg', lastName: 'paejq', isSuperUser: false,
+            } as RegisterAdminDto;
+            await request(app.getHttpServer())
+                .post('/admin/registerTemp')
+                .send(newAdminToDelete);
+            const response = (await request(app.getHttpServer())
+                .get('/admin/list')
+                .set('Authorization', `Bearer ${superToken}`)
+                .set('Accept', 'application/json')).body as AdminUserViewModel[];
+            adminToDelete = response.find(i => i.email === newAdminToDelete.email).id;
+        }),
+            it('Should return a 200 user when carried out by a SuperAdmin', async () => {
+                return request(app.getHttpServer())
+                    .delete(`/admin/${adminToDelete}`)
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(200);
+            }),
+            it('Should reject the request for non-admins', () => {
+                return request(app.getHttpServer())
+                    .delete(`/admin/${adminToDelete}`)
+                    .set('Authorization', `Bearer ${standardToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(403);
+            }),
+            it('Should reject the reqest if the ID is invalid', () => {
+                return request(app.getHttpServer())
+                    .delete(`/admin/183461394613`)
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(400);
+            });
+    });
 });
