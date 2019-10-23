@@ -3,7 +3,7 @@ import * as content from '../../content.json';
 
 export class RegisterJuniorDto {
 
-    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
+    @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
     @IsNotEmpty()
     readonly phoneNumber: string;
 
@@ -19,7 +19,7 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly parentsName: string;
 
-    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
+    @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
     @IsNotEmpty()
     readonly parentsPhoneNumber: string;
 

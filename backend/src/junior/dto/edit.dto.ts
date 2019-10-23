@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPhoneNumber, Length, ValidationArguments } from 'class-validator';
+import { IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
 import * as content from '../../content.json';
 
 export class EditJuniorDto {
@@ -6,7 +6,7 @@ export class EditJuniorDto {
     @IsNotEmpty()
     readonly id: string;
 
-    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
+    @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
     phoneNumber: string;
 
     firstName: string;
@@ -17,7 +17,7 @@ export class EditJuniorDto {
 
     parentsName: string;
 
-    @IsPhoneNumber('FI', { message: content.PhoneNumbersMustBeFinnish })
+    @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
     parentsPhoneNumber: string;
 
     @Length(1, 1)
