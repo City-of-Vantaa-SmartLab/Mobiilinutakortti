@@ -59,7 +59,7 @@ export const JuniorCreate = (props) => (
     </Create>
 );
 export const JuniorEdit = (props) => (
-    <Edit title={<JuniorEditTitle />} {...props}>
+    <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
         <SimpleForm>
             <TextInput label="Etunimi" source="firstName" />
             <TextInput label="Sukunimi" source="lastName" />

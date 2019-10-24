@@ -60,6 +60,10 @@ export class JuniorService {
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
+        const errors = await validate(junior);
+        if (errors.length > 0) {
+            throw new BadRequestException(errors);
+        }
         await this.createJunior(junior);
         // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;
         return await this.setChallenge(junior.phoneNumber);
