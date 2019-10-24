@@ -45,7 +45,7 @@ export const JuniorList = (props) => (
 );
 export const JuniorCreate = (props) => (
     <Create title="Rekisteröi nuori" {...props}>
-        <SimpleForm>
+        <SimpleForm redirect="list">
             <TextInput label="Etunimi" source="firstName" validate={ required() }/>
             <TextInput label="Sukunimi" source="lastName" validate={ required() }/>
             <SelectInput label="Sukupuoli" source="gender" choices={ genderChoices } validate={ [required(), choices(['m', 'f', 'o'])] } />
