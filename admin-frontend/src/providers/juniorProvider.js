@@ -68,7 +68,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new Error(parseErrorMessages(response.statusText));
+                        throw new Error(parseErrorMessages(response.message));
                     }
                     return { data } //React-admin expects this format from from UPDATE. Hacky and ugly, but works.
                 });
