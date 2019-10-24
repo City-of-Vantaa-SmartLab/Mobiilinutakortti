@@ -13,7 +13,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   width: 100%;
+  font-family: 'GT-Walsheim';
 }
+
+
+@font-face {
+  font-family: 'GT-Walsheim';
+  src: url('./assets/GT-Walsheim-Regular.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'GT-Walsheim';
+  src: url('./assets/GT-Walsheim-Bold.ttf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

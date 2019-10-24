@@ -7,8 +7,9 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
-import { JuniorUserViewModel } from './vm/junior.vm';
-import { JWTToken } from 'src/authentication/jwt.model';
+import { JuniorUserViewModel, JuniorQRViewModel } from './vm';
+import { JWTToken } from '../authentication/jwt.model';
+import { Junior } from './junior.decorator';
 
 @Controller('junior')
 export class JuniorController {
@@ -24,6 +25,13 @@ export class JuniorController {
     @Post('register')
     async registerJunior(@Body() userData: RegisterJuniorDto) {
         return await this.juniorService.registerJunior(userData);
+    }
+
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.JUNIOR)
+    @Get('getSelf')
+    async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
+        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.id));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
