@@ -10,5 +10,6 @@
     "Reset": "reset link sent.",
     "Updated": "Päivitetty.",
     "UserNotFound": "Käyttäjää ei löydy.",
-    "MessengerServiceNotAvailable": "The messaging service is currently unavailable, please try again later."
+    "MessengerServiceNotAvailable": "The messaging service is currently unavailable, please try again later.",
+    "SMSSender": "Vantaan nuorisopalvelut"
 }

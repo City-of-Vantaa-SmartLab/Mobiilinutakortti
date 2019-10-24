@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException, Inject, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import * as content from '../content.json';
 import { JuniorUserViewModel } from './vm/junior.vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
+// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
 
 @Injectable()
@@ -123,7 +124,8 @@ export class JuniorService {
      * @param phoneNumber - juniors phone number
      */
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
-        if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
+        // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
+        // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
         return await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });

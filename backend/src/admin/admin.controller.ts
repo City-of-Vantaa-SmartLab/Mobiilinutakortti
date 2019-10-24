@@ -13,6 +13,8 @@ import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
 import { JWTToken } from '../authentication/jwt.model';
+// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
+// The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 
@@ -40,7 +42,8 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
   async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
-    if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
+    // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
+    // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
     return await this.adminService.registerAdmin(userData);
   }
 

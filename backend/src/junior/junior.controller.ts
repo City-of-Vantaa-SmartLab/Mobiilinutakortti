@@ -13,6 +13,8 @@ import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel } from './vm/junior.vm';
 import { JWTToken } from '../authentication/jwt.model';
 import { Challenge } from './entities';
+// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
+// The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 
@@ -84,7 +86,8 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Get('getChallenge/:phoneNumber')
     async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
-        if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
+        // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
+        // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
         return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
     }
 

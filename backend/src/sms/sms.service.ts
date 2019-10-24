@@ -16,7 +16,7 @@ export class SmsService {
         const settings = SMSConfig.getTeliaConfig();
         if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.name, 'Mobiilinutakortti', oneTimeLink);
+        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
