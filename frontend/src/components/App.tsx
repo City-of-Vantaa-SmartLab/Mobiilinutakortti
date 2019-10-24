@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
-import ProtectedRoute  from './ProtectedRoute';
+import ProtectedRoute from './ProtectedRoute';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -24,16 +24,16 @@ interface AppProps {
 const App: React.FC<AppProps> = (props) => {
 
   useEffect(() => {
-    if(props.loggedIn) {
+    if (props.loggedIn) {
       props.getUser(props.token)
     }
-  }, [props.loggedIn, props.token])
+  }, [props.loggedIn, props.token]);
 
   return (
     <Wrapper>
       <Switch>
-        <Route path='/login' component={LoginPage}/>
-        <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage}/>
+        <Route path='/login' component={LoginPage} />
+        <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
       </Switch>
     </Wrapper>
   );
@@ -49,8 +49,10 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<userActions>) => {
   return {
     getUser: (token: string) => {
-        dispatch({type: userTypes.GET_USER, 
-                  payload: token})
+      dispatch({
+        type: userTypes.GET_USER,
+        payload: token
+      })
     }
   }
 };

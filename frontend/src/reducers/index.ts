@@ -5,12 +5,13 @@ import userReducer from './userReducer';
 import { userState } from '../types/userTypes';
 import { History } from 'history';
 
-import { connectRouter } from 'connected-react-router'
+import { connectRouter } from 'connected-react-router';
 
-export default (history: History) => combineReducers({ 
+export default (history: History) => combineReducers({
     router: connectRouter(history),
-    auth: authReducer, 
-    user: userReducer });
+    auth: authReducer,
+    user: userReducer
+});
 
 
 export interface AppState {

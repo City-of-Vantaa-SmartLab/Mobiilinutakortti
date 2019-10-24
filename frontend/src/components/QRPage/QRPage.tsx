@@ -6,7 +6,7 @@ import Title from '../Title/Title';
 import QR from '../QR/QR';
 
 
-const Wrapper=styled.div`
+const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -28,7 +28,7 @@ const Header = styled.section`
     }
 `;
 
-const Footer=styled.section`
+const Footer = styled.section`
     padding-top: 2rem;
     height: 100%
 `;
@@ -36,23 +36,23 @@ const Footer=styled.section`
 interface QRPageProps {
     id: string,
     name: string,
-} 
+}
 
 const QRPage: React.FC<QRPageProps> = (props) => {
 
     return (
         <Wrapper>
             <Header>
-                <Title title='Kirjaudu Nutalle' subtitle={props.name}/>
+                <Title title='Kirjaudu Nutalle' subtitle={props.name} />
             </Header>
-            <QR id={props.id}/>
-            <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotalolle</Footer>     
+            <QR id={props.id} />
+            <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotalolle</Footer>
         </Wrapper>
     );
 }
 
 
-const mapStateToProps = (state:AppState) => ({
+const mapStateToProps = (state: AppState) => ({
     id: state.user.id,
     name: state.user.name
 });

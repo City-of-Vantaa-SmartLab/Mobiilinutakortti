@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { validatePhone } from '../../utils';
 
@@ -49,7 +49,7 @@ const LoginForm: React.FC<LoginForm> = (props) => {
 
 
     const handleSubmit = () => {
-        if (validatePhone(phone)) {     
+        if (validatePhone(phone)) {
             props.onSubmit(phone, false)
         }
         else {
@@ -59,18 +59,20 @@ const LoginForm: React.FC<LoginForm> = (props) => {
     }
 
     return (
-        <Form onSubmit={e => {e.preventDefault();
-                    if (phone) handleSubmit()}}>
+        <Form onSubmit={e => {
+            e.preventDefault();
+            if (phone) handleSubmit()
+        }}>
             <FormHeader>Enter your number</FormHeader>
-            <Input 
+            <Input
                 onChange={e => {
                     setPhone(e.target.value)
-                    }
-                } 
-                value={phone} 
+                }
+                }
+                value={phone}
                 placeholder='Ex: 05051190912'
-                disabled= {props.disabled}/>
-            <Button type='submit' disabled= {props.disabled}>Lähetä uusi kirjautumislinkki</Button>
+                disabled={props.disabled} />
+            <Button type='submit' disabled={props.disabled}>Lähetä uusi kirjautumislinkki</Button>
         </Form>
     );
 }

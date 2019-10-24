@@ -11,7 +11,7 @@ export interface userState {
 
 export interface getSelfSuccess {
     type: userTypes.GET_SELF_SUCCESS,
-    payload: {id: string, name: string},
+    payload: { id: string, name: string },
 }
 
 export interface getSelfFail {

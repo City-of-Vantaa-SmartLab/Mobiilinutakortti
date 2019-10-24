@@ -7,7 +7,7 @@ interface TitleProps {
 }
 
 
-const Main=styled.h1`
+const Main = styled.h1`
     font-weight: bold; 
     font-size: 9vw;  
     padding: 0;
@@ -17,7 +17,7 @@ const Main=styled.h1`
     }
 `;
 
-const Sub=styled.h3`
+const Sub = styled.h3`
     font-size: 7vw;
     font-weight: 400;
     margin: 0;
@@ -38,4 +38,4 @@ const Title: React.FC<TitleProps> = (props) => {
     );
 }
 
-export default Title;        
+export default Title;

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -31,7 +31,7 @@ const Header = styled.h1`
 `;
 
 
-const Message = styled.div<{active: boolean, error: boolean}>` 
+const Message = styled.div<{ active: boolean, error: boolean }>` 
     display: ${(props) => props.active ? "flex" : "None"};
     align-items: center;
     flex-direction: row;
@@ -45,7 +45,7 @@ const Message = styled.div<{active: boolean, error: boolean}>`
 
 `;
 
-const ErrorMessageIcon = styled.div<{visible: boolean}>`
+const ErrorMessageIcon = styled.div<{ visible: boolean }>`
     font-size: 2rem;
     padding-right: 0.5rem;
     display: ${(props) => props.visible ? "block" : "None"};
@@ -63,31 +63,31 @@ interface LoginProps extends RouteComponentProps {
     loggedIn: boolean
 }
 
-const LoginPage: React.FC<LoginProps> = (props) => {  
+const LoginPage: React.FC<LoginProps> = (props) => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
 
     useEffect(() => {
         const query = new URLSearchParams(props.location.search);
-        const challenge = query.get('challenge')
-        const id = query.get('id')
+        const challenge = query.get('challenge');
+        const id = query.get('id');
         if (challenge && id) {
             props.auth(challenge, id);
         }
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (props.authError && !error) {
             setError(true);
             setMessage('Authentication failed, use the form below to request a new link');
         }
-    }, [props.authError, error])
+    }, [props.authError, error]);
 
     useEffect(() => {
         if (props.loggedIn) {
             props.history.push('/')
         }
-    }, [props.loggedIn, props.history])
+    }, [props.loggedIn, props.history]);
 
 
     const sendLink = (phoneNumber: string, error: boolean) => {
@@ -104,34 +104,38 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 
     return (
         <Wrapper>
-            <LoginBackground/>
+            <LoginBackground />
             <LoginWrapper>
                 <Header>Nuta-mobiili</Header>
                 <Message active={message !== ''} error={error}>
                     <ErrorMessageIcon visible={error}>&#9888;</ErrorMessageIcon>
                     <MessageText>{message}</MessageText>
                 </Message>
-                <LoginForm onSubmit={sendLink} disabled={props.loggingIn}/>
+                <LoginForm onSubmit={sendLink} disabled={props.loggingIn} />
             </LoginWrapper>
         </Wrapper>
     )
 }
 
-const mapStateToProps = (state:AppState) => ({
-        authError: state.auth.error, 
-        loggingIn: state.auth.loggingIn, 
-        loggedIn: state.auth.loggedIn
-    });
+const mapStateToProps = (state: AppState) => ({
+    authError: state.auth.error,
+    loggingIn: state.auth.loggingIn,
+    loggedIn: state.auth.loggedIn
+});
 
 const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
     return {
         auth: (challenge: string, id: string) => {
-            dispatch({type: authTypes.AUTH_ATTEMPT, 
-                      payload: {challenge, id}});
+            dispatch({
+                type: authTypes.AUTH_ATTEMPT,
+                payload: { challenge, id }
+            });
         },
         linkRequest: (phoneNumber: string) => {
-            dispatch({type: authTypes.AUTH_LINK_REQUEST, 
-                      payload: {phoneNumber}});
+            dispatch({
+                type: authTypes.AUTH_LINK_REQUEST,
+                payload: { phoneNumber }
+            });
         }
     }
 }
