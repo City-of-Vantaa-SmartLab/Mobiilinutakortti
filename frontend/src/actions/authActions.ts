@@ -1,10 +1,9 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
 import { post, get } from '../apis';
-import { authTypes, AuthAttempt, LinkRequest, AuthSuccess } from '../types/authTypes';
+import { authTypes, AuthAttempt, LinkRequest } from '../types/authTypes';
 import { userTypes, getUser } from '../types/userTypes';
 
-import { push } from 'connected-react-router';
-
+// import { push } from 'connected-react-router';
 
 
 export function* rootSaga() {

@@ -27,7 +27,7 @@ const App: React.FC<AppProps> = (props) => {
     if(props.loggedIn) {
       props.getUser(props.token)
     }
-  }, [props.loggedIn])
+  }, [props.loggedIn, props.token])
 
   return (
     <Wrapper>

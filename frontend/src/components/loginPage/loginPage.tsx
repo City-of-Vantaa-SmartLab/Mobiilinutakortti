@@ -33,14 +33,15 @@ const Header = styled.h1`
 
 const Message = styled.div<{active: boolean, error: boolean}>` 
     display: ${(props) => props.active ? "flex" : "None"};
+    align-items: center;
     flex-direction: row;
-    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
     width: 100%;
     border-bottom: 2px solid ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
     padding: 0;
     margin-bottom: 1.5rem;
     box-sizing: border-box;
-    align-items: center;
+    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
+    
 
 `;
 
@@ -86,7 +87,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
         if (props.loggedIn) {
             props.history.push('/')
         }
-    }, [props.loggedIn])
+    }, [props.loggedIn, props.history])
 
 
     const sendLink = (phoneNumber: string, error: boolean) => {
