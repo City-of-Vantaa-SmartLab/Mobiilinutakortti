@@ -1,24 +1,59 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
 import ProtectedRoute  from './ProtectedRoute';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+
+import { userTypes, userActions } from '../types/userTypes';
+import { AppState } from '../reducers';
 
 const Wrapper = styled.section`
   height: 100%;
 `;
 
+interface AppProps {
+  getUser: (token: string) => void,
+  loggedIn: boolean,
+  token: string
+}
 
-const App: React.FC = () => {
+
+const App: React.FC<AppProps> = (props) => {
+
+  useEffect(() => {
+    if(props.loggedIn) {
+      props.getUser(props.token)
+    }
+  }, [props.loggedIn])
+
   return (
     <Wrapper>
       <Switch>
         <Route path='/login' component={LoginPage}/>
-        <Route exact path='/' component={QRPage}/>
+        <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage}/>
       </Switch>
     </Wrapper>
   );
 }
 
-export default App;
+const mapStateToProps = (state: AppState) => ({
+  loggedIn: state.auth.loggedIn,
+  token: state.auth.token
+});
+
+
+
+const mapDispatchToProps = (dispatch: Dispatch<userActions>) => {
+  return {
+    getUser: (token: string) => {
+        dispatch({type: userTypes.GET_USER, 
+                  payload: token})
+    }
+  }
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

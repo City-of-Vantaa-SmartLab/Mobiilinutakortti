@@ -23,8 +23,11 @@ const Header = styled.h1`
     color: rgb(249, 229, 30);
     text-transform: uppercase;
     text-align: center;
-    font-size: 2.4rem;
-    font-weight: bold;
+    font-size: 11vw;
+    font-weight: 700;
+    @media(min-width: 600px) {
+        font-size: 3.4rem;
+    }
 `;
 
 
@@ -55,7 +58,8 @@ interface LoginProps extends RouteComponentProps {
     auth: (challenge: string, id: string) => void,
     linkRequest: (phone: string) => void,
     authError: boolean,
-    loggingIn: boolean
+    loggingIn: boolean,
+    loggedIn: boolean
 }
 
 const LoginPage: React.FC<LoginProps> = (props) => {  
@@ -77,6 +81,13 @@ const LoginPage: React.FC<LoginProps> = (props) => {
             setMessage('Authentication failed, use the form below to request a new link');
         }
     }, [props.authError, error])
+
+    useEffect(() => {
+        if (props.loggedIn) {
+            props.history.push('/')
+        }
+    }, [props.loggedIn])
+
 
     const sendLink = (phoneNumber: string, error: boolean) => {
         if (error) {
@@ -107,7 +118,8 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 
 const mapStateToProps = (state:AppState) => ({
         authError: state.auth.error, 
-        loggingIn: state.auth.loggingIn 
+        loggingIn: state.auth.loggingIn, 
+        loggedIn: state.auth.loggedIn
     });
 
 const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {

@@ -7,21 +7,23 @@ import { rootSaga } from '../actions/authActions';
 
 export const history = createBrowserHistory()
 
-const userToken:string | null = localStorage.getItem('token') ? localStorage.getItem('token') : ''
-const isLogged:boolean = (userToken === null);
+const token:string | null = localStorage.getItem('token')
+const isLogged:boolean = (token !== null);
 
 const persistedState = {
     auth: {
         loggedIn: isLogged,
-        token: userToken,
+        token: token ? token : '',
     }
 }
 
 export function configureStore(): Store<AppState> {
 
+
     const sagaMiddleware = createSagaMiddleware();
     const store = createStore(
         rootReducer(history), 
+        persistedState,
         compose(
             applyMiddleware(
                 routerMiddleware(history),

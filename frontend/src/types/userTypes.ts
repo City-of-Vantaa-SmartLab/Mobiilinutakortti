@@ -1,4 +1,5 @@
 export enum userTypes {
+    GET_USER = "GET_USER",
     GET_SELF_SUCCESS = "GET_SELF_SUCCESS",
     GET_SELF_FAIL = "GET_SELF_FAIL"
 }
@@ -18,4 +19,9 @@ export interface getSelfFail {
     payload: string,
 }
 
-export type userActions = getSelfSuccess | getSelfFail;
+export interface getUser {
+    type: userTypes.GET_USER,
+    payload: string,
+}
+
+export type userActions = getSelfSuccess | getSelfFail | getUser;

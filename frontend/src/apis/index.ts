@@ -3,6 +3,7 @@ const baseURL = process.env.REACT_APP_ENDPOINT;
 
 
 export const get = async (uri: string, token: string):Promise<any> => {
+    console.log(token);
     const url:string = `${baseURL}${uri}`;
     const init:RequestInit = {
         method: 'GET',
@@ -12,6 +13,7 @@ export const get = async (uri: string, token: string):Promise<any> => {
             'Authorization': `Bearer ${token}`
         }
     };
+    console.log(init);
     const response = await fetch(url, init);
     if (response.status === 200 || response.status === 201) {
         return response.json();
