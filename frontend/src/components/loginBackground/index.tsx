@@ -31,8 +31,8 @@ position: absolute;
 const LoginBackground: React.FC = () => {
     return (
         <BG>
-            <Triangle1/>
-            <Triangle2/>      
+            <Triangle1 />
+            <Triangle2 />
         </BG>
     )
 }

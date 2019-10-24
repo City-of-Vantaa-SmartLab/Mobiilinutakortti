@@ -4,8 +4,9 @@ export enum authTypes {
     AUTH_ATTEMPT = "AUTH_ATTEMPT",
     AUTH_SUCCESS = "AUTH_SUCCESS",
     AUTH_FAIL = "AUTH_FAIL",
-    LINK_REQUEST = "LINK_REQUEST"
+    AUTH_LINK_REQUEST = "AUTH_LINK_REQUEST"
 }
+
 
 //action interfaces
 
@@ -26,7 +27,7 @@ export interface AuthFail {
 
 
 export interface LinkRequest {
-    type: authTypes.LINK_REQUEST,
+    type: authTypes.AUTH_LINK_REQUEST,
     payload: { phoneNumber: string },
 }
 
@@ -38,6 +39,6 @@ export type authActions = AuthAttempt | AuthSuccess | AuthFail | LinkRequest;
 export interface authState {
     loggingIn: boolean,
     loggedIn: boolean,
-    token: string | null,
+    token: string,
     error: boolean
 }
