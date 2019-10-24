@@ -1,4 +1,4 @@
-import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param } from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param, Delete } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -78,4 +78,17 @@ export class JuniorController {
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
+
+    /**
+     * Deletes the junior account associated to the id provided.
+     * @param id - the id of the junior to delete
+     */
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Delete(':id')
+    async deleteJunior(@Param('id') id: string) {
+        await this.juniorService.deleteJunior(id);
+    }
+
 }

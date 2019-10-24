@@ -22,6 +22,12 @@ describe('JuniorController (e2e)', () => {
     const testJuniorRegister = {
         phoneNumber: '04122345671',
         firstName: 'Testy jr the second', lastName: 'e2e2',
+        postCode: '02130',
+        parentsName: 'Auth Senior',
+        parentsPhoneNumber: '0411234567',
+        gender: 'M',
+        age: 10,
+        homeYouthClub: 'Tikkurila',
     } as RegisterJuniorDto;
 
     const testAdminLogin = {
@@ -67,6 +73,12 @@ describe('JuniorController (e2e)', () => {
             const testData = {
                 phoneNumber: '04112345677',
                 firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
+                postCode: '02130',
+                parentsName: 'Auth Senior',
+                parentsPhoneNumber: '0411234567',
+                gender: 'M',
+                age: 10,
+                homeYouthClub: 'Tikkurila',
             } as RegisterJuniorDto;
             return request(app.getHttpServer())
                 .post('/junior/register')
@@ -241,5 +253,37 @@ describe('JuniorController (e2e)', () => {
                 .send(testData)
                 .expect(201);
         });
+    });
+
+    describe('/junior/delete', () => {
+        let juniorToDelete;
+        beforeAll(async () => {
+            const response = await request(app.getHttpServer())
+                .get('/junior/list')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Accept', 'application/json');
+            juniorToDelete = response.body[0].id;
+        }),
+            it('Should return a 200 user when carried out by an Admin', async () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/${juniorToDelete}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .expect(200);
+            }),
+            it('Should reject the request for non-admins', () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/${juniorToDelete}`)
+                    .set('Authorization', `Bearer ${juniorToken}`)
+                    .set('Accept', 'application/json')
+                    .expect(403);
+            }),
+            it('Should reject the reqest if the ID is invalid', () => {
+                return request(app.getHttpServer())
+                    .delete(`/junior/183461394613`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .set('Accept', 'application/json')
+                    .expect(400);
+            });
     });
 });

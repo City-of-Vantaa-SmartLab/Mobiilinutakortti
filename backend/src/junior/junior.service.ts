@@ -60,6 +60,10 @@ export class JuniorService {
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
+        const errors = await validate(junior);
+        if (errors.length > 0) {
+            throw new BadRequestException(errors);
+        }
         await this.createJunior(junior);
         // return `${registrationData.phoneNumber} ${content.Created} (PIN:${pin})`;
         return await this.setChallenge(junior.phoneNumber);
@@ -99,6 +103,16 @@ export class JuniorService {
         }
         await this.juniorRepo.save(user);
         return `${details.phoneNumber} ${content.Updated}`;
+    }
+
+    /**
+     * This method deletes the provided junior.
+     * @param id the id of the user to delete.
+     */
+    async deleteJunior(id: string) {
+        const junior = await this.getJunior(id);
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        this.juniorRepo.remove(junior);
     }
 
     // Modified to return challenge, this will be improved upon SMS intergration.
