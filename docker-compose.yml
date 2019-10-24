@@ -4,7 +4,7 @@ services:
     build: ./backend
     command: npm run start:dev
     volumes:
-      - ./backend:/backend
+      - ./backend/src:/backend/src
       - /backend/node_modules
     depends_on:
       - db
@@ -25,7 +25,8 @@ services:
   admin-frontend:
     build: ./admin-frontend
     volumes:
-      - ./admin-frontend:/admin-frontend
+      - ./admin-frontend/src:/admin-frontend/src
+      - ./admin-frontend/public:/admin-frontend/public
       - /admin-frontend/node_modules
     command: npm run start
     ports:

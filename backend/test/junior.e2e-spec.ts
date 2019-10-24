@@ -5,7 +5,7 @@ import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
-import { JuniorUserViewModel } from '../src/junior/vm/junior.vm';
+import { JuniorUserViewModel } from '../src/junior/vm';
 
 describe('JuniorController (e2e)', () => {
     let app;

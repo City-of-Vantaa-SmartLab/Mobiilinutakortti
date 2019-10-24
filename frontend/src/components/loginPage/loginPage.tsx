@@ -23,21 +23,25 @@ const Header = styled.h1`
     color: rgb(249, 229, 30);
     text-transform: uppercase;
     text-align: center;
-    font-size: 2.4rem;
-    font-weight: bold;
+    font-size: 11vw;
+    font-weight: 700;
+    @media(min-width: 600px) {
+        font-size: 3.4rem;
+    }
 `;
 
 
 const Message = styled.div<{ active: boolean, error: boolean }>` 
     display: ${(props) => props.active ? "flex" : "None"};
+    align-items: center;
     flex-direction: row;
-    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
     width: 100%;
     border-bottom: 2px solid ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
     padding: 0;
     margin-bottom: 1.5rem;
     box-sizing: border-box;
-    align-items: center;
+    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
+    
 
 `;
 
@@ -55,7 +59,8 @@ interface LoginProps extends RouteComponentProps {
     auth: (challenge: string, id: string) => void,
     linkRequest: (phone: string) => void,
     authError: boolean,
-    loggingIn: boolean
+    loggingIn: boolean,
+    loggedIn: boolean
 }
 
 const LoginPage: React.FC<LoginProps> = (props) => {
@@ -64,19 +69,26 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 
     useEffect(() => {
         const query = new URLSearchParams(props.location.search);
-        const challenge = query.get('challenge')
-        const id = query.get('id')
+        const challenge = query.get('challenge');
+        const id = query.get('id');
         if (challenge && id) {
             props.auth(challenge, id);
         }
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (props.authError && !error) {
             setError(true);
             setMessage('Authentication failed, use the form below to request a new link');
         }
-    }, [props.authError, error])
+    }, [props.authError, error]);
+
+    useEffect(() => {
+        if (props.loggedIn) {
+            props.history.push('/')
+        }
+    }, [props.loggedIn, props.history]);
+
 
     const sendLink = (phoneNumber: string, error: boolean) => {
         if (error) {
@@ -107,7 +119,8 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 
 const mapStateToProps = (state: AppState) => ({
     authError: state.auth.error,
-    loggingIn: state.auth.loggingIn
+    loggingIn: state.auth.loggingIn,
+    loggedIn: state.auth.loggedIn
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
@@ -120,7 +133,7 @@ const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
         },
         linkRequest: (phoneNumber: string) => {
             dispatch({
-                type: authTypes.LINK_REQUEST,
+                type: authTypes.AUTH_LINK_REQUEST,
                 payload: { phoneNumber }
             });
         }

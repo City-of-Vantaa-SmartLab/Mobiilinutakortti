@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
-import { JuniorUserViewModel } from './vm/junior.vm';
+import { JuniorUserViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
@@ -57,6 +57,10 @@ export class JuniorService {
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
+        const errors = await validate(junior);
+        if (errors.length > 0) {
+            throw new BadRequestException(errors);
+        }
         await this.createJunior(junior);
         const challenge = await this.setChallenge(junior.phoneNumber);
         const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);

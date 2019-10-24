@@ -12,7 +12,8 @@ import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
-import { JWTToken } from '../authentication/jwt.model';
+import { JWTToken } from 'src/authentication/jwt.model';
+import { Message, Check } from '../common/vm';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
@@ -41,10 +42,10 @@ export class AdminController {
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
-  async createTest(@Body() userData: RegisterAdminDto): Promise<string> {
+  async createTest(@Body() userData: RegisterAdminDto): Promise<Message> {
     // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
     // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
-    return await this.adminService.registerAdmin(userData);
+    return new Message(await this.adminService.registerAdmin(userData));
   }
 
   /**
@@ -67,9 +68,9 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
-  async autoLogin(): Promise<boolean> {
+  async autoLogin(): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
-    return true;
+    return new Check(true);
   }
 
   /**
@@ -94,8 +95,8 @@ export class AdminController {
   @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
-  async create(@Body() userData: RegisterAdminDto): Promise<string> {
-    return await this.adminService.registerAdmin(userData);
+  async create(@Body() userData: RegisterAdminDto): Promise<Message> {
+    return new Message(await this.adminService.registerAdmin(userData));
   }
 
   /**
@@ -109,8 +110,8 @@ export class AdminController {
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('edit')
-  async edit(@Body() userData: EditAdminDto): Promise<string> {
-    return await this.adminService.editAdmin(userData);
+  async edit(@Body() userData: EditAdminDto): Promise<Message> {
+    return new Message(await this.adminService.editAdmin(userData));
   }
 
   /**
