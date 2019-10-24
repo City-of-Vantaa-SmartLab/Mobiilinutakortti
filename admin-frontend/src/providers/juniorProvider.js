@@ -81,7 +81,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new Error(parseErrorMessages(response.statusText));
+                        throw new Error(parseErrorMessages(response.message));
                     }
                     return {data: response};
                 });
