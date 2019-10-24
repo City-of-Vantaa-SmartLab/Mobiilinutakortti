@@ -10,6 +10,8 @@ import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
 import { Junior } from './junior.decorator';
+import { Message, Check } from '../common/vm';
+import { Challenge } from './entities';
 
 @Controller('junior')
 export class JuniorController {
@@ -23,7 +25,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('register')
-    async registerJunior(@Body() userData: RegisterJuniorDto) {
+    async registerJunior(@Body() userData: RegisterJuniorDto): Promise<Challenge> {
         return await this.juniorService.registerJunior(userData);
     }
 
@@ -37,9 +39,9 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
     @Get('login')
-    async autoLogin(): Promise<boolean> {
+    async autoLogin(): Promise<Check> {
         // This is a simple route the frontend can hit to verify a valid JWT.
-        return true;
+        return new Check(true);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -50,7 +52,7 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('reset')
-    async resetLogin(@Body() userData: ResetJuniorDto) {
+    async resetLogin(@Body() userData: ResetJuniorDto): Promise<Challenge> {
         return await this.juniorService.resetLogin(userData.phoneNumber);
     }
 
@@ -59,8 +61,8 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
-    async edit(@Body() userData: EditJuniorDto): Promise<string> {
-        return await this.juniorService.editJunior(userData);
+    async edit(@Body() userData: EditJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.editJunior(userData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
