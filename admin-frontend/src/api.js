@@ -5,7 +5,7 @@ export default {
     create: `${base}/junior/register`,
     edit: `${base}/junior/edit`,
     list: `${base}/junior/list`,
-    get: `${base}/junior/`
+    base: `${base}/junior/`
   },
   auth: {
     login: `${base}/admin/login`
