@@ -14,3 +14,11 @@ export const jsonDataToNumber: ValueTransformer = {
     to: (str: string | number) => typeof str === 'string' ? +str : str,
     from: (num: number) => num,
 };
+
+/**
+ * A transformer to be used on databases so that all numbers are stored in an international format.
+ */
+export const makePhoneNumberInternational: ValueTransformer = {
+    to: (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str,
+    from: (str: string) => str,
+};

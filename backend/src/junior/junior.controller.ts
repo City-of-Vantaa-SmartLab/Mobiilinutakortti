@@ -1,4 +1,7 @@
-import { Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors, Get, Param, Delete } from '@nestjs/common';
+import {
+    Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors,
+    Get, Param, BadRequestException, Delete,
+} from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,6 +15,10 @@ import { JWTToken } from '../authentication/jwt.model';
 import { Junior } from './junior.decorator';
 import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';
+// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
+// The same note is made for the earlier imported BadRequestException
+import { ConfigHelper } from '../configHandler';
+import * as content from '../content.json';
 
 @Controller('junior')
 export class JuniorController {
@@ -25,15 +32,15 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('register')
-    async registerJunior(@Body() userData: RegisterJuniorDto): Promise<Challenge> {
-        return await this.juniorService.registerJunior(userData);
+    async registerJunior(@Body() userData: RegisterJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.registerJunior(userData));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
     @Get('getSelf')
     async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
-        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.id));
+        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.userId));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -52,8 +59,8 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('reset')
-    async resetLogin(@Body() userData: ResetJuniorDto): Promise<Challenge> {
-        return await this.juniorService.resetLogin(userData.phoneNumber);
+    async resetLogin(@Body() userData: ResetJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.resetLogin(userData.phoneNumber));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -82,6 +89,18 @@ export class JuniorController {
     }
 
     /**
+     * This is non prod route, only to be used in development.
+     * @param phoneNumber phoneNumber to check.
+     */
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @Get('getChallenge/:phoneNumber')
+    async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
+        // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
+        // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
+        return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
+    }
+
+    /**
      * Deletes the junior account associated to the id provided.
      * @param id - the id of the junior to delete
      */
@@ -91,6 +110,6 @@ export class JuniorController {
     @Delete(':id')
     async deleteJunior(@Param('id') id: string) {
         await this.juniorService.deleteJunior(id);
-    }
 
+    }
 }

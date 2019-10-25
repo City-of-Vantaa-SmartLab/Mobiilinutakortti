@@ -1,5 +1,8 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors, Get, Param, Delete } from '@nestjs/common';
-import { RegisterAdminDto, LoginAdminDto, EditAdminDto, GetAdminDto } from './dto';
+import {
+  Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors,
+  Get, Param, BadRequestException, Delete,
+} from '@nestjs/common';
+import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
 import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -11,6 +14,10 @@ import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
 import { JWTToken } from 'src/authentication/jwt.model';
 import { Message, Check } from '../common/vm';
+// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
+// The same note is made for the earlier imported BadRequestException
+import { ConfigHelper } from '../configHandler';
+import * as content from '../content.json';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -27,7 +34,7 @@ export class AdminController {
   ) { }
 
   /**
-   * TODO: This is a test route and should be removed before going live.
+   * This is a test route.
    *
    * This is currently used to inject a new super user.
    * @param userData - RegisterAdminDto
@@ -36,6 +43,8 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
   async createTest(@Body() userData: RegisterAdminDto): Promise<Message> {
+    // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
+    // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
     return new Message(await this.adminService.registerAdmin(userData));
   }
 
@@ -48,7 +57,7 @@ export class AdminController {
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
   async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
-    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
+    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
   }
 
   /**

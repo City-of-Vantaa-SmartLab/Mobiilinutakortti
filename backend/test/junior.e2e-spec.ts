@@ -55,11 +55,14 @@ describe('JuniorController (e2e)', () => {
         token = (await request(app.getHttpServer())
             .post('/admin/login')
             .send(testAdminLogin)).body.access_token;
-        const challenge = (await request(app.getHttpServer())
+        await request(app.getHttpServer())
             .post('/junior/register')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
-            .send(testJuniorRegister)).body;
+            .send(testJuniorRegister);
+        const challenge = (await request(app.getHttpServer())
+            .get(`/junior/getChallenge/${testJuniorRegister.phoneNumber}`)
+            .set('Accept', 'application/json')).body;
         testJuniorLogin = { id: challenge.id, challenge: challenge.challenge };
     });
 
@@ -69,16 +72,12 @@ describe('JuniorController (e2e)', () => {
     });
 
     describe('/junior/register', () => {
-        it('returns a hash (temporary) if a new user is created', async () => {
+        it('returns a 201 if a new user is created', async () => {
             const testData = {
                 phoneNumber: '04112345677',
                 firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
-                postCode: '02130',
-                parentsName: 'Auth Senior',
-                parentsPhoneNumber: '0411234567',
-                gender: 'M',
-                age: 10,
-                homeYouthClub: 'Tikkurila',
+                age: 12, homeYouthClub: 'TestTown', postCode: '09814', parentsName: testJuniorRegister.parentsName,
+                parentsPhoneNumber: testJuniorRegister.parentsPhoneNumber, gender: 'f',
             } as RegisterJuniorDto;
             return request(app.getHttpServer())
                 .post('/junior/register')
