@@ -57,7 +57,7 @@ export class AdminController {
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
   async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
-    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.id));
+    return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
   }
 
   /**

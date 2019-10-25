@@ -34,7 +34,7 @@ export class JuniorService {
     }
 
     async createJunior(details: Junior) {
-        await this.juniorRepo.save(details);
+        return await this.juniorRepo.save(details);
     }
 
     async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
@@ -62,8 +62,9 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         await this.createJunior(junior);
+        const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
         const challenge = await this.setChallenge(junior.phoneNumber);
-        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
         if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         return `${registrationData.phoneNumber} ${content.Created}`;
     }

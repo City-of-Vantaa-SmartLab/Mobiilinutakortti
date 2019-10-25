@@ -30,29 +30,25 @@ export class SmsService {
     }
 
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        try {
-            // tslint:disable-next-line: no-console
-            console.log(`Sending SMS to ${messageRequest.to[0]}`);
-            await this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
-                response => {
-                    if (response.data.accepted[0].to === messageRequest.to[0].slice(1)) {
-                        // tslint:disable-next-line: no-console
-                        console.log(`SMS send to ${messageRequest.to[0]}`);
-                        return true;
-                    } else {
-                        // tslint:disable-next-line: no-console
-                        console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
-                        return false;
-                    }
-                }).catch(error => {
+        // tslint:disable-next-line: no-console
+        console.log(`Sending SMS to ${messageRequest.to[0]}`);
+        return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
+            response => {
+                if (response.data.accepted[0].to === messageRequest.to[0]) {
                     // tslint:disable-next-line: no-console
-                    console.log(error.response);
-                });
-        } catch (e) {
-            // tslint:disable-next-line: no-console
-            console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${e.message}`);
-            return false;
-        }
+                    console.log(`SMS send to ${messageRequest.to[0]}`);
+                    return true;
+                } else {
+                    // tslint:disable-next-line: no-console
+                    console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
+                    return false;
+                }
+            }).catch(error => {
+                // tslint:disable-next-line: no-console
+                console.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
+                return false;
+            });
+
     }
 
     private getOneTimeLink(challenge: Challenge): string {

@@ -40,7 +40,7 @@ export class JuniorController {
     @AllowedRoles(Roles.JUNIOR)
     @Get('getSelf')
     async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
-        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.id));
+        return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.userId));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
