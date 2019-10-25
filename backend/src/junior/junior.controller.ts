@@ -109,7 +109,7 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @Delete(':id')
     async deleteJunior(@Param('id') id: string) {
-        await this.juniorService.deleteJunior(id);
+        return new Message(await this.juniorService.deleteJunior(id));
 
     }
 }
