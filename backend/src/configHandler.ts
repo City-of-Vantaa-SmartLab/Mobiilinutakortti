@@ -2,7 +2,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export class ConfigHelper {
 
-    private static isLive() {
+    static isLive() {
         return process.env.NODE_ENV === 'production';
     }
 
@@ -21,5 +21,9 @@ export class ConfigHelper {
             entities: ['dist/**/*.entity{.ts,.js}'],
             synchronize: true,
         };
+    }
+
+    static getFrontendPort(): string {
+        return process.env.FRONTEND || 'http://localhost:3001';
     }
 }

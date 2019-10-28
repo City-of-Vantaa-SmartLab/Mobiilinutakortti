@@ -5,8 +5,12 @@
   "DataNotChanged": "Tietoja ei muutettu.",
   "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
   "FailedLogin": "Kirjautuminen epäonnistui.",
+  "NonProdFeature": "This feature is not available in production.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
+  "Reset": "reset link sent.",
   "ValueIsNotPhoneNumber": "Annettu arvo ei ole puhelinnumero. Saatu arvo: $value.",
   "Updated": "Päivitetty.",
-  "UserNotFound": "Käyttäjää ei löydy."
+  "UserNotFound": "Käyttäjää ei löydy.",
+  "MessengerServiceNotAvailable": "The messaging service is currently unavailable, please try again later.",
+  "SMSSender": "Vantaan nuorisopalvelut"
 }

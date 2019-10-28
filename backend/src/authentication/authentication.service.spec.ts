@@ -13,11 +13,12 @@ import { getTestDB } from '../../test/testdb';
 import { AdminModule } from '../admin/admin.module';
 import { AppModule } from '../app.module';
 import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException, HttpModule } from '@nestjs/common';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
 import { Challenge, Junior } from '../junior/entities';
+import { SmsModule } from '../sms/sms.module';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
@@ -49,7 +50,7 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, JwtModule.register({
+      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
         secret: jwt.secret,
         signOptions: { expiresIn: jwt.expiry },
       })],
@@ -73,7 +74,8 @@ describe('AuthenticationService', () => {
     juniorService = module.get<JuniorService>(JuniorService);
 
     await adminService.registerAdmin(testRegisterAdmin);
-    const juniorChallenge = await juniorService.registerJunior(testRegisterJunior);
+    await juniorService.registerJunior(testRegisterJunior);
+    const juniorChallenge = await juniorService.getChallengeByPhoneNumber(testRegisterJunior.phoneNumber);
     testLoginJunior = { id: juniorChallenge.id, challenge: juniorChallenge.challenge };
   });
 

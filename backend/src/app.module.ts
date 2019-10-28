@@ -13,6 +13,7 @@ import { GuardsModule } from './roles/roles.module';
 import { Admin } from './admin/admin.entity';
 import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ClubModule } from './club/club.module';
     AuthenticationModule,
     GuardsModule,
     ClubModule,
+    SmsModule,
   ],
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController],
