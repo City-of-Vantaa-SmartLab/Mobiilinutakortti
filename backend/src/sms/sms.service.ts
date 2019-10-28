@@ -56,6 +56,7 @@ export class SmsService {
     }
 
     private getMessage(recipientName: string, systemName: string, link: string) {
-        return `Hei ${recipientName}! Sinulle on luotu oma ${systemName}-tili. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}.`;
+        return `Hei ${recipientName}! Sinulle on luotu oma ${systemName}-tili.
+         Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}`;
     }
 }
