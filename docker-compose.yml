@@ -4,7 +4,7 @@ services:
     build: ./backend
     command: npm run start:dev
     volumes:
-      - ./backend/src:/backend/src
+      - ./backend:/backend
       - /backend/node_modules
     depends_on:
       - db
