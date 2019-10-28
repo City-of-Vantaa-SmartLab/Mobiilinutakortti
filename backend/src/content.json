@@ -12,5 +12,6 @@
   "Updated": "Päivitetty.",
   "UserNotFound": "Käyttäjää ei löydy.",
   "MessengerServiceNotAvailable": "The messaging service is currently unavailable, please try again later.",
-  "SMSSender": "Vantaan nuorisopalvelut"
+  "SMSSender": "Vantaan nuorisopalvelut",
+  "Deleted": "user deleted."
 }

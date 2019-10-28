@@ -113,6 +113,7 @@ export class JuniorService {
         const junior = await this.getJunior(id);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         this.juniorRepo.remove(junior);
+        return `${id} ${content.Deleted}`;
     }
 
     // Modified to return challenge, this will be improved upon SMS intergration.

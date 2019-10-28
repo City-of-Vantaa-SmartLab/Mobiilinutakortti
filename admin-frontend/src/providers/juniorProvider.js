@@ -1,5 +1,5 @@
 import api from '../api';
-import { GET_LIST, CREATE, UPDATE, GET_ONE } from 'react-admin';
+import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE } from 'react-admin';
 import { parseErrorMessages } from '../utils';
 
 export const juniorProvider = (type, params, httpClient) => {
@@ -74,7 +74,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 });
         }
         case GET_ONE: {
-            url = api.junior.get + params.id;
+            url = api.junior.base + params.id;
             options = {
                 method: 'GET'
             };
@@ -84,6 +84,19 @@ export const juniorProvider = (type, params, httpClient) => {
                         throw new Error(parseErrorMessages(response.message));
                     }
                     return {data: response};
+                });
+        }
+        case DELETE: {
+            url = api.junior.base + params.id;
+            options = {
+                method: 'DELETE'
+            };
+            return httpClient(url, options)
+                .then(response => {
+                    if (response.statusCode < 200 || response.statusCode >= 300) {
+                        throw new Error(parseErrorMessages(response.message));
+                    }
+                    return {data: {id: params.id}}
                 });
         }
         default:
