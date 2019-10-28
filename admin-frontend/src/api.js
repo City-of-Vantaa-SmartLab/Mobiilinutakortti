@@ -1,13 +1,13 @@
-const base = process.env.REACT_APP_ENDPOINT
+const appUrl = process.env.REACT_APP_ENDPOINT
 
 export default {
   junior: {
-    create: `${base}/junior/register`,
-    edit: `${base}/junior/edit`,
-    list: `${base}/junior/list`,
-    get: `${base}/junior/`
+    create: `${appUrl}/junior/register`,
+    edit: `${appUrl}/junior/edit`,
+    list: `${appUrl}/junior/list`,
+    base: `${appUrl}/junior/`
   },
   auth: {
-    login: `${base}/admin/login`
+    login: `${appUrl}/admin/login`
   }
 }
