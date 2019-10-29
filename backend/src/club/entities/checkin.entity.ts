@@ -1,17 +1,20 @@
-import { Entity, PrimaryColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Club } from './club.entity';
-import { Junior } from 'src/junior/entities';
+import { Junior } from '../../junior/entities';
+import { timeStampToDateTime } from '../../common/transformers';
 
 @Entity()
 export class CheckIn {
 
-    @PrimaryColumn()
-    dayTimeStamp: string;
+    @PrimaryGeneratedColumn()
+    id: string;
 
-    @PrimaryColumn()
+    @Column({ transformer: timeStampToDateTime })
+    timestamp: string;
+
+    @ManyToOne(type => Club)
     club: Club;
 
-    @ManyToMany(type => Junior, junior => junior.id)
-    @JoinTable()
-    juniors: Junior[];
+    @ManyToOne(type => Junior, junior => junior.checkIns)
+    junior: Junior;
 }

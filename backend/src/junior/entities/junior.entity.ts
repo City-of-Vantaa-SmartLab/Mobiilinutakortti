@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { IsPhoneNumber, Length, IsPositive, IsMobilePhone } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { IsPhoneNumber, Length, IsPositive } from 'class-validator';
 import { jsonDataToNumber, makePhoneNumberInternational } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 
@@ -39,6 +39,6 @@ export class Junior {
     @Column()
     homeYouthClub: string;
 
-    @ManyToMany(type => CheckIn, checkIn => checkIn.dayTimeStamp)
+    @OneToMany(type => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
 }

@@ -12,7 +12,7 @@ import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
 import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
-import { JWTToken } from 'src/authentication/jwt.model';
+import { JWTToken } from '../authentication/jwt.model';
 import { Message, Check } from '../common/vm';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException

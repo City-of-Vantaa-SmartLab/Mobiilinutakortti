@@ -22,3 +22,8 @@ export const makePhoneNumberInternational: ValueTransformer = {
     to: (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str,
     from: (str: string) => str,
 };
+
+export const timeStampToDateTime: ValueTransformer = {
+    to: (date: Date | string) => typeof date === 'string' ? date : (+date).toString(),
+    from: (timestamp: string) => new Date(+timestamp),
+};
