@@ -6,7 +6,6 @@ import { Junior } from '../junior/entities';
 import { ClubViewModel } from './vm';
 import * as content from '../content.json';
 import { CheckInDto } from './dto';
-import { ConfigHelper } from '../configHandler';
 
 @Injectable()
 export class ClubService {

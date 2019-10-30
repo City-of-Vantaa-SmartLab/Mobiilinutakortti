@@ -4,12 +4,12 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
+import { RegisterJuniorDto, LoginJuniorDto, } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
 import { ClubViewModel } from '../src/club/vm';
-import { CheckInDto } from 'src/club/dto';
-import { Check } from 'src/common/vm';
-import { CheckIn } from 'src/club/entities';
+import { CheckInDto } from '../src/club/dto';
+import { Check } from '../src/common/vm';
+import { CheckIn } from '../src/club/entities';
 
 describe('JuniorController (e2e)', () => {
     let app;
