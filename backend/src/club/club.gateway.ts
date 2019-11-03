@@ -8,7 +8,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { RolesGuard } from '../roles/roles.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
-import * as gatewayEvents from './gateway-events.json';;
+import * as gatewayEvents from './gateway-events.json';
 import { WsJwtGuard } from '../authentication/ws.jwt.guard';
 
 @WebSocketGateway({ transports: ['polling'], origins: '*:*' })
