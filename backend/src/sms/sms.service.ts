@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, HttpService } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, HttpService, Logger } from '@nestjs/common';
 import { Recipient, TeliaMessageRequest } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
@@ -7,6 +7,8 @@ import { ConfigHelper } from '../configHandler';
 
 @Injectable()
 export class SmsService {
+
+    private readonly logger = new Logger('SMS Service');
 
     constructor(
         private readonly httpService: HttpService) { }
@@ -30,22 +32,18 @@ export class SmsService {
     }
 
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        // tslint:disable-next-line: no-console
-        console.log(`Sending SMS to ${messageRequest.to[0]}`);
+        this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
             response => {
                 if (response.data.accepted[0].to === messageRequest.to[0]) {
-                    // tslint:disable-next-line: no-console
-                    console.log(`SMS send to ${messageRequest.to[0]}`);
+                    this.logger.log(`SMS send to ${messageRequest.to[0]}`);
                     return true;
                 } else {
-                    // tslint:disable-next-line: no-console
-                    console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
+                    this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
                     return false;
                 }
             }).catch(error => {
-                // tslint:disable-next-line: no-console
-                console.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
+                this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
                 return false;
             });
 

@@ -30,6 +30,10 @@ export class ClubService {
         } catch (e) { }
     }
 
+    async getClubById(clubId: string): Promise<Club> {
+        return await this.clubRepo.findOne(clubId);
+    }
+
     async getClubs(): Promise<ClubViewModel[]> {
         return (await this.clubRepo.find()).map(club => new ClubViewModel(club));
     }
@@ -43,7 +47,7 @@ export class ClubService {
     async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
         const junior = await this.juniorRepo.findOne(checkInData.juniorId);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        const club = await this.clubRepo.findOne(checkInData.clubId);
+        const club = await this.getClubById(checkInData.clubId);
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         const checkIn = { junior, club, timestamp: (+this.getEESTDate()).toString() } as CheckIn;
         await this.checkInRepo.save(checkIn);

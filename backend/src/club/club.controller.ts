@@ -8,12 +8,16 @@ import { ClubViewModel } from './vm';
 import { CheckInDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
+import { ClubGateway } from './club.gateway';
+import { Socket } from 'socket.io';
+import * as gatewayEvents from './gateway-events.json';
 
 @Controller('club')
 export class ClubController {
 
     constructor(
         private readonly clubService: ClubService,
+        private readonly clubGateway: ClubGateway,
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -37,6 +41,13 @@ export class ClubController {
     @AllowedRoles(Roles.ADMIN)
     @Post('check-in')
     async checkInJunior(@Body() userData: CheckInDto): Promise<Check> {
-        return new Check((await this.clubService.checkInJunior(userData)));
+        const check = new Check((await this.clubService.checkInJunior(userData)));
+        if (check.result) {
+            const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
+            if (socket) {
+                socket.emit(gatewayEvents.checkIn, (await this.clubService.getClubById(userData.clubId)).name);
+            }
+        }
+        return check;
     }
 }
