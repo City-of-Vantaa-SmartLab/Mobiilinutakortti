@@ -1,7 +1,6 @@
-import { Entity, PrimaryColumn, ManyToOne, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 import { Club } from './club.entity';
 import { Junior } from '../../junior/entities';
-import { timeStampToDateTime } from '../../common/transformers';
 
 @Entity()
 export class CheckIn {
@@ -9,7 +8,7 @@ export class CheckIn {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({ transformer: timeStampToDateTime })
+    @CreateDateColumn()
     timestamp: string;
 
     @ManyToOne(type => Club)

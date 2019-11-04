@@ -39,6 +39,6 @@ export class Junior {
     @Column()
     homeYouthClub: string;
 
-    @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE' })
+    @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     checkIns: CheckIn[];
 }
