@@ -45,20 +45,11 @@ export class ClubService {
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         const club = await this.clubRepo.findOne(checkInData.clubId);
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        const checkIn = { junior, club, timestamp: (+this.getEESTDate()).toString() } as CheckIn;
+        const checkIn = { junior, club } as CheckIn;
         await this.checkInRepo.save(checkIn);
         if (!junior.checkIns) { junior.checkIns = []; }
         junior.checkIns.push(checkIn);
         await this.juniorRepo.save(junior);
         return true;
-    }
-
-    private getEESTDate(): Date {
-        const serverTime = new Date();
-        const offSet = ((serverTime.getTimezoneOffset()) * 60 * 1000) + 1000 * 60 * 60 * 2;
-        const timeStamp = serverTime.getTime() + offSet;
-        const finnishDate = new Date();
-        finnishDate.setTime(timeStamp);
-        return finnishDate;
     }
 }
