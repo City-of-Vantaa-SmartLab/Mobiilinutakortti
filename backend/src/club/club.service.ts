@@ -49,9 +49,6 @@ export class ClubService {
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         const checkIn = { junior, club } as CheckIn;
         await this.checkInRepo.save(checkIn);
-        if (!junior.checkIns) { junior.checkIns = []; }
-        junior.checkIns.push(checkIn);
-        await this.juniorRepo.save(junior);
         return true;
     }
 }
