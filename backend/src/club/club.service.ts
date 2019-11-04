@@ -43,7 +43,7 @@ export class ClubService {
     async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
         const [junior, club] = await Promise.all([
             this.juniorRepo.findOne(checkInData.juniorId),
-            this.clubRepo.findOne(checkInData.clubId)
+            this.clubRepo.findOne(checkInData.clubId),
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
