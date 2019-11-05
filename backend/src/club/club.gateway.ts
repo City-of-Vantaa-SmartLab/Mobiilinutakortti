@@ -11,7 +11,7 @@ import { Roles } from '../roles/roles.enum';
 import * as gatewayEvents from './gateway-events.json';
 import { WsJwtGuard } from '../authentication/ws.jwt.guard';
 
-@WebSocketGateway({ transports: ['polling'], origins: '*:*' })
+@WebSocketGateway({ origins: '*:*' })
 export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private readonly logger = new Logger('Club Gateway');
@@ -29,7 +29,7 @@ export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @UseGuards(WsJwtGuard, RolesGuard)
   @AllowedRoles(Roles.JUNIOR)
   @SubscribeMessage(gatewayEvents.checkIn)
-  handleEventt(
+  checkInEvent(
     @ConnectedSocket() client: Socket,
   ): WsResponse<unknown> {
     const id = client.handshake.query.token;
