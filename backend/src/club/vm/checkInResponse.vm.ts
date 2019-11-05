@@ -1,11 +1,10 @@
-import * as content from '../../content.json';
 
 export class CheckInResponseViewModel {
     success: boolean;
-    message: string;
+    response: string = '';
 
-    constructor(success: boolean, clubName?: string) {
+    constructor(success: boolean, response?: string) {
         this.success = success;
-        success ? this.message = `${content.CheckInSuccess} ${clubName}!` : this.message = content.NoNewCheckins;
+        if (response) { this.response = response; }
     }
 }

@@ -10,6 +10,7 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import * as gatewayEvents from './gateway-events.json';
 import { WsJwtGuard } from '../authentication/ws.jwt.guard';
+import { CheckInResponseViewModel } from './vm';
 
 @WebSocketGateway({ origins: '*:*' })
 export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -34,6 +35,7 @@ export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): WsResponse<unknown> {
     const id = client.handshake.query.token;
     this.connectedJuniors[id] = client;
-    return { event: gatewayEvents.checkIn, data: 'Connected' };
+    const response = new CheckInResponseViewModel(true);
+    return { event: gatewayEvents.checkIn, data: response };
   }
 }

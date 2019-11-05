@@ -4,13 +4,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
-import { ClubViewModel } from './vm';
+import { ClubViewModel, CheckInResponseViewModel } from './vm';
 import { CheckInDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
 import { ClubGateway } from './club.gateway';
 import { Socket } from 'socket.io';
 import * as gatewayEvents from './gateway-events.json';
+import * as content from '../content.json';
 
 @Controller('club')
 export class ClubController {
@@ -42,11 +43,10 @@ export class ClubController {
     @Post('check-in')
     async checkInJunior(@Body() userData: CheckInDto): Promise<Check> {
         const check = new Check((await this.clubService.checkInJunior(userData)));
-        if (check.result) {
-            const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
-            if (socket) {
-                socket.emit(gatewayEvents.checkIn, (await this.clubService.getClubById(userData.clubId)).name);
-            }
+        const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
+        if (socket) {
+            const response = check.result ? (await this.clubService.getClubById(userData.clubId)).name : content.CheckInFailed;
+            socket.emit(gatewayEvents.checkIn, new CheckInResponseViewModel(check.result, response));
         }
         return check;
     }
