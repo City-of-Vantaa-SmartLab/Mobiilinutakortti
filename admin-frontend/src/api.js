@@ -9,5 +9,10 @@ export default {
   },
   auth: {
     login: `${appUrl}/admin/login`
-  }
+  },
+  youthClub: {
+    list: `${appUrl}/club/list`,
+    checkIn: `${appUrl}/club/check-in`
+  },
+
 }
