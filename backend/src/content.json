@@ -4,6 +4,7 @@
   "Created": "luotu.",
   "ClubNotFound": "The club provided could not be found.",
   "CheckInSuccess": "Tervetuloa",
+  "CheckInFailed": "Unable to check-in, please try again.",
   "DataNotChanged": "Tietoja ei muutettu.",
   "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
   "FailedLogin": "Kirjautuminen epäonnistui.",

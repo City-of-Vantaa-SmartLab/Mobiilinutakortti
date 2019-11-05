@@ -1,10 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Roles } from './roles.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Repository } from 'typeorm';
 import { Admin } from '../admin/admin.entity';
+import { Roles } from './roles.enum';
+
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(
@@ -12,18 +13,18 @@ export class RolesGuard implements CanActivate {
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Admin)
-        private readonly adminRepo: Repository<Admin>) { }
+        private readonly adminRepo: Repository<Admin>,
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const roles = this.reflector.get<Roles[]>('roles', context.getHandler());
-        if (!roles) {
-            return true;
-        }
-        const request = context.switchToHttp().getRequest().user;
-        const id = request.userId;
-        const userRoles = await this.getUserRoles(id);
-        const hasRole = () => userRoles.some((role) => roles.includes(role));
-        return id && hasRole();
+        if (!roles) { return true; }
+        const userId: string = context.switchToHttp().getRequest().user ? context.switchToHttp().getRequest().user.userId
+            : context.switchToWs().getClient().handshake.query.token;
+        if (!userId) { return false; }
+        const userRoles = await this.getUserRoles(userId);
+        const hasRoles = () => userRoles.some((role) => roles.includes(role));
+        return hasRoles();
     }
 
     private async getUserRoles(id: string): Promise<Roles[]> {

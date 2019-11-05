@@ -11,4 +11,4 @@ import { Admin } from '../admin/admin.entity';
     providers: [RolesGuard],
     exports: [RolesGuard],
 })
-export class GuardsModule { }
+export class RolesModule { }
