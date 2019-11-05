@@ -30,6 +30,10 @@ export class ClubService {
         } catch (e) { }
     }
 
+    async getClubById(clubId: string): Promise<Club> {
+        return await this.clubRepo.findOne(clubId);
+    }
+
     async getClubs(): Promise<ClubViewModel[]> {
         return (await this.clubRepo.find()).map(club => new ClubViewModel(club));
     }
