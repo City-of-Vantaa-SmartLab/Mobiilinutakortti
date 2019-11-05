@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { IsPhoneNumber, Length, IsPositive } from 'class-validator';
-import { jsonDataToNumber, makePhoneNumberInternational } from '../../common/transformers';
+import { IsPhoneNumber, Length } from 'class-validator';
+import { makePhoneNumberInternational } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 
 @Entity()
@@ -32,9 +32,8 @@ export class Junior {
     @Length(1, 1)
     gender: string;
 
-    @Column({ transformer: jsonDataToNumber })
-    @IsPositive()
-    age: number;
+    @Column({ default: '1230768000000', nullable: true })
+    birthdayTimestamp: string;
 
     @Column()
     homeYouthClub: string;

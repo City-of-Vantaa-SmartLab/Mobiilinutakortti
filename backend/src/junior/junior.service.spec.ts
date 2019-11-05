@@ -27,7 +27,7 @@ describe('JuniorService', () => {
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     gender: 'M',
-    age: 10,
+    birthdayTimestamp: '1230768000000',
     homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;

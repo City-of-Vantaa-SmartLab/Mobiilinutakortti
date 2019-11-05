@@ -26,7 +26,7 @@ describe('JuniorController (e2e)', () => {
         parentsName: 'Auth Senior',
         parentsPhoneNumber: '0411234567',
         gender: 'M',
-        age: 10,
+        birthdayTimestamp: '1230768000000',
         homeYouthClub: 'Tikkurila',
     } as RegisterJuniorDto;
 
@@ -76,7 +76,7 @@ describe('JuniorController (e2e)', () => {
             const testData = {
                 phoneNumber: '04112345677',
                 firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
-                age: 12, homeYouthClub: 'TestTown', postCode: '09814', parentsName: testJuniorRegister.parentsName,
+                birthdayTimestamp: '1230768000000', homeYouthClub: 'TestTown', postCode: '09814', parentsName: testJuniorRegister.parentsName,
                 parentsPhoneNumber: testJuniorRegister.parentsPhoneNumber, gender: 'f',
             } as RegisterJuniorDto;
             return request(app.getHttpServer())

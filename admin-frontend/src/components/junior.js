@@ -1,22 +1,23 @@
 import React from 'react';
-import { 
+import {
     List,
     Datagrid,
     TextField,
     SelectField,
-    NumberField,
+    DateField,
     FunctionField,
     Create,
     SimpleForm,
     TextInput,
     SelectInput,
-    NumberInput,
+    DateInput,
     required,
-    number,
     choices,
     EditButton,
     Edit,
- } from 'react-admin';
+
+} from 'react-admin';
+import { ageValidator } from '../utils'
 
 const genderChoices = [
     { id: 'm', name: 'Mies' },
@@ -33,7 +34,7 @@ export const JuniorList = (props) => (
         <Datagrid>
             <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
             <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
-            <NumberField label="Ikä" source="age" />
+            <DateField label="Syntymäaika" source="birthdayTimestamp" />
             <TextField label="Puhelinnumero" source="phoneNumber" />
             <TextField label="Postinumero" source="postCode" />
             <TextField label="Kotinuorisotalo" source="homeYouthClub" />
@@ -46,15 +47,15 @@ export const JuniorList = (props) => (
 export const JuniorCreate = (props) => (
     <Create title="Rekisteröi nuori" {...props}>
         <SimpleForm redirect="list">
-            <TextInput label="Etunimi" source="firstName" validate={ required() }/>
-            <TextInput label="Sukunimi" source="lastName" validate={ required() }/>
-            <SelectInput label="Sukupuoli" source="gender" choices={ genderChoices } validate={ [required(), choices(['m', 'f', 'o'])] } />
-            <NumberInput label="Ikä" source="age" validate={ [required(), number()] }/>
-            <TextInput label="Puhelinnumero" source="phoneNumber" validate={ required() }/>
-            <TextInput label="Postinumero" source="postCode" validate={ required() }/>
-            <TextInput label="Kotinuorisotalo" source="homeYouthClub" validate={ required() }/>
-            <TextInput label="Huoltajan nimi" source="parentsName" validate={ required() }/>
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={ required() }/>
+            <TextInput label="Etunimi" source="firstName" validate={required()} />
+            <TextInput label="Sukunimi" source="lastName" validate={required()} />
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o'])]} />
+            <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
+            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
+            <TextInput label="Postinumero" source="postCode" validate={required()} />
+            <TextInput label="Kotinuorisotalo" source="homeYouthClub" validate={required()} />
+            <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
         </SimpleForm>
     </Create>
 );
@@ -64,7 +65,7 @@ export const JuniorEdit = (props) => (
             <TextInput label="Etunimi" source="firstName" />
             <TextInput label="Sukunimi" source="lastName" />
             <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
-            <NumberInput label="Ikä" source="age" />
+            <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
             <TextInput label="Puhelinnumero" source="phoneNumber" />
             <TextInput label="Postinumero" source="postCode" />
             <TextInput label="Kotinuorisotalo" source="homeYouthClub" />

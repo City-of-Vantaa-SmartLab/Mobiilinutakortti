@@ -28,7 +28,7 @@ export class RegisterJuniorDto {
     readonly gender: string;
 
     @IsNotEmpty()
-    readonly age: number;
+    readonly birthdayTimestamp: string;
 
     @IsNotEmpty()
     readonly homeYouthClub: string;

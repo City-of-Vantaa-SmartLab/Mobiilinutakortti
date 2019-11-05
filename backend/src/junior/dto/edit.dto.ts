@@ -23,7 +23,7 @@ export class EditJuniorDto {
     @Length(1, 1)
     gender: string;
 
-    age: number;
+    birthdayTimestamp: string;
 
     homeYouthClub: string;
 }

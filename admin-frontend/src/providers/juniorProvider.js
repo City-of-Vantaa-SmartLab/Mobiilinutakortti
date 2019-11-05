@@ -1,6 +1,6 @@
 import api from '../api';
 import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE } from 'react-admin';
-import { parseErrorMessages } from '../utils';
+import { parseErrorMessages, timestampToDate } from '../utils';
 
 export const juniorProvider = (type, params, httpClient) => {
     let url;
@@ -16,6 +16,9 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new Error(parseErrorMessages(response.message));
                     }
+                    response.forEach(e => {
+                        e.birthdayTimestamp = timestampToDate(e.birthdayTimestamp);
+                    });
                     return { data: response, total: response.length };
                 });
         }
@@ -25,7 +28,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                age: params.data.age,
+                birthdayTimestamp: new Date(params.data.birthdayTimestamp).getTime(),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
@@ -42,7 +45,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new Error(parseErrorMessages(response.message));
                     }
-                    return {data: {id: ''}} //React-admin expects this format from from CREATE. Hacky and ugly, but works.
+                    return { data: { id: '' } } //React-admin expects this format from from CREATE. Hacky and ugly, but works.
                 });
         }
         case UPDATE: {
@@ -52,12 +55,13 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                age: params.data.age,
+                birthdayTimestamp: new Date(params.data.birthdayTimestamp).getTime(),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber
             };
+            console.log(params.data.birthdayTimestamp);
             const jsonData = JSON.stringify(data);
             url = api.junior.edit;
             options = {
@@ -83,7 +87,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new Error(parseErrorMessages(response.message));
                     }
-                    return {data: response};
+                    return { data: response };
                 });
         }
         case DELETE: {
@@ -96,7 +100,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new Error(parseErrorMessages(response.message));
                     }
-                    return {data: {id: params.id}}
+                    return { data: { id: params.id } }
                 });
         }
         default:

@@ -55,7 +55,7 @@ export class JuniorService {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
             phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
-            gender: registrationData.gender, age: registrationData.age, homeYouthClub: registrationData.homeYouthClub,
+            gender: registrationData.gender, birthdayTimestamp: registrationData.birthdayTimestamp, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
         const errors = await validate(junior);
         if (errors.length > 0) {
@@ -91,7 +91,7 @@ export class JuniorService {
         user.phoneNumber = details.phoneNumber;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
-        user.age = details.age;
+        user.birthdayTimestamp = details.birthdayTimestamp;
         user.parentsName = details.parentsName;
         user.parentsPhoneNumber = details.parentsPhoneNumber;
         user.postCode = details.postCode;
