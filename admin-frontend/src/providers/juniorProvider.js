@@ -1,5 +1,5 @@
 import api from '../api';
-import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE } from 'react-admin';
+import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE, HttpError } from 'react-admin';
 import { parseErrorMessages } from '../utils';
 
 export const juniorProvider = (type, params, httpClient) => {
@@ -14,7 +14,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data: response, total: response.length };
                 });
@@ -40,7 +40,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return {data: {id: ''}} //React-admin expects this format from from CREATE. Hacky and ugly, but works.
                 });
@@ -68,7 +68,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data } //React-admin expects this format from from UPDATE. Hacky and ugly, but works.
                 });
@@ -81,7 +81,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return {data: response};
                 });
@@ -94,7 +94,7 @@ export const juniorProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return {data: {id: params.id}}
                 });

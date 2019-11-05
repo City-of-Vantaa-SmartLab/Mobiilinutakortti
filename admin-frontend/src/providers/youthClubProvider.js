@@ -1,5 +1,5 @@
 import api from '../api';
-import { GET_LIST } from 'react-admin';
+import { GET_LIST, HttpError } from 'react-admin';
 import { parseErrorMessages } from '../utils';
 
 export const youthClubProvider = (type, params, httpClient) => {
@@ -14,7 +14,7 @@ export const youthClubProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw {message: parseErrorMessages(response.message), status: response.statusCode};
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data: response, total: response.length };
                 });
