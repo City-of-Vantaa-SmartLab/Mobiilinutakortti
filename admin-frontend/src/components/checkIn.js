@@ -50,6 +50,7 @@ const CheckInView = (props) => {
   return (
     <Container>
       <QrReader
+        delay={5000}
         onScan={handleScan}
         onError={handleError}
         style={ {width: 640, height: 640} }
