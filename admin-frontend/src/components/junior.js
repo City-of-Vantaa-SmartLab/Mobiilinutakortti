@@ -15,20 +15,15 @@ import {
     number,
     choices,
     EditButton,
-    Edit,
-    GET_LIST
+    Edit
  } from 'react-admin';
-
- import { dataProvider } from '../providers/dataProvider';
+ import  { getYouthClubs } from '../utils';
 
 const genderChoices = [
     { id: 'm', name: 'Mies' },
     { id: 'f', name: 'Nainen' },
     { id: 'o', name: 'Muu' }
 ];
-
-const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub').then((res) => res.data)
-    .then((res) => res.map((youthClub) => ({id: youthClub.name, name: youthClub.name}))) // TODO: Eventually it will be wise to change the ID to the actual ID. This will require backend changes.
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
@@ -73,7 +68,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={ required() }/>
             </SimpleForm>
         </Create>
-);
+    );
 
 }
 export const JuniorEdit = (props) => {
@@ -95,7 +90,7 @@ export const JuniorEdit = (props) => {
                 <NumberInput label="Ikä" source="age" />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={ required() }/>
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
                 <TextInput label="Huoltajan nimi" source="parentsName" />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
             </SimpleForm>
