@@ -146,8 +146,8 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Delete(':id')
-  async deleteAdmin(@Param('id') id: string) {
-    await this.adminService.deleteAdmin(id);
+  async deleteAdmin(@Param('id') id: string): Promise<Message> {
+    return new Message(await this.adminService.deleteAdmin(id));
   }
 
 }
