@@ -53,11 +53,11 @@ export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
-            setYouthClubs(youthClubs);
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
         };
         addYouthClubsToState();
-    }, [youthClubs]);
+    }, []);
 
     return (
         <Create title="Rekisteröi nuori" {...props}>
@@ -80,11 +80,11 @@ export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
-            setYouthClubs(youthClubs);
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
         };
         addYouthClubsToState();
-    }, [youthClubs]);
+    }, []);
 
     return (
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
