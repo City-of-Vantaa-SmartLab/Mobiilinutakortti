@@ -50,7 +50,7 @@ export const JuniorCreate = (props) => (
             <TextInput label="Etunimi" source="firstName" validate={required()} />
             <TextInput label="Sukunimi" source="lastName" validate={required()} />
             <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o'])]} />
-            <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
+            <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator()]} />
             <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
             <TextInput label="Postinumero" source="postCode" validate={required()} />
             <TextInput label="Kotinuorisotalo" source="homeYouthClub" validate={required()} />
