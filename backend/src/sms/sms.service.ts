@@ -16,7 +16,7 @@ export class SmsService {
         const settings = SMSConfig.getTeliaConfig();
         if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink);
+        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -55,8 +55,8 @@ export class SmsService {
         return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(recipientName: string, systemName: string, link: string) {
+    private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
         return `Hei ${recipientName}! Sinulle on luotu oma ${systemName}-tili.
-         Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}`;
+         Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
     }
 }
