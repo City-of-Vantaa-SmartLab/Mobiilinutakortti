@@ -1,6 +1,7 @@
 FROM node:10
 ENV TZ=Europe/Helsinki
-RUN ln -sndatef /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN rm -f /etc/localtime
+RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 WORKDIR /backend
 COPY package*.json ./
 RUN npm install
