@@ -19,12 +19,21 @@ export const authProvider = (type, params) => {
             })
             .then(({ access_token }) => {
                 localStorage.setItem('token', access_token);
-            });
+            })
+            .then(() => defaultHttpClient(api.youthWorker.self, {method: 'GET'}))
+            .then((response) => {
+                if (response.isSuperUser) {
+                    localStorage.setItem('role', 'SUPERADMIN');
+                } else {
+                    localStorage.setItem('role', 'ADMIN');
+                }
+            })
     }
     if (type === AUTH_ERROR) {
         const status = params.status;
         if (status === 401 || status === 403) {
             localStorage.removeItem('token');
+            localStorage.removeItem('role');
             return Promise.reject();
         }
         return Promise.resolve()
@@ -34,10 +43,11 @@ export const authProvider = (type, params) => {
     }
     if (type === AUTH_LOGOUT) {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         return Promise.resolve()
     }
     if (type === AUTH_GET_PERMISSIONS) {
-        const role = 'SUPERADMIN' //TODO: Change to proper implementation once backend work is done.
+        const role = localStorage.getItem('role')
         return role ? Promise.resolve(role) : Promise.reject();
     }
     return Promise.resolve();
