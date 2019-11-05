@@ -9,5 +9,5 @@ export const parseErrorMessages = (messageList) => {
   }
 }
 
-export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub').then((res) => res.data)
-    .then((res) => res.map((youthClub) => ({id: youthClub.name, name: youthClub.name}))) // TODO: Eventually it will be wise to change the ID to the actual ID. This will require backend changes.
+export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
+  .then((res) => res.data.map((youthClub) => ({id: youthClub.name, name: youthClub.name}))) // TODO: Eventually it will be wise to change the ID to the actual ID. This will require backend changes.)
