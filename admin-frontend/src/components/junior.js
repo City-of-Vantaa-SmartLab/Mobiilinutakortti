@@ -14,21 +14,16 @@ import {
     required,
     choices,
     EditButton,
-    Edit,
-    GET_LIST
+    Edit
 } from 'react-admin';
-import { ageValidator, getYouthClubs } from '../utils'
+import { getYouthClubs, ageValidator } from '../utils'
 
-import { dataProvider } from '../providers/dataProvider';
 
 const genderChoices = [
     { id: 'm', name: 'Mies' },
     { id: 'f', name: 'Nainen' },
     { id: 'o', name: 'Muu' }
 ];
-
-const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub').then((res) => res.data)
-    .then((res) => res.map((youthClub) => ({ id: youthClub.name, name: youthClub.name }))) // TODO: Eventually it will be wise to change the ID to the actual ID. This will require backend changes.
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
@@ -39,7 +34,7 @@ export const JuniorList = (props) => (
         <Datagrid>
             <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
             <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
-            <DateField label="Syntymäaika" source="birthdayTimestamp" />
+            <DateField label="Syntymäaika" source="birthday" />
             <TextField label="Puhelinnumero" source="phoneNumber" />
             <TextField label="Postinumero" source="postCode" />
             <TextField label="Kotinuorisotalo" source="homeYouthClub" />
@@ -66,7 +61,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o'])]} />
-                <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
+                <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
@@ -93,7 +88,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Etunimi" source="firstName" />
                 <TextInput label="Sukunimi" source="lastName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
-                <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
+                <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />

@@ -9,7 +9,7 @@ export class JuniorUserViewModel {
     parentsName: string;
     parentsPhoneNumber: string;
     gender: string;
-    birthdayTimestamp: string;
+    birthday: string;
     homeYouthClub: string;
 
     constructor(entity: Junior) {
@@ -22,6 +22,6 @@ export class JuniorUserViewModel {
         this.parentsPhoneNumber = entity.parentsPhoneNumber;
         this.gender = entity.gender;
         this.homeYouthClub = entity.homeYouthClub;
-        this.birthdayTimestamp = entity.birthdayTimestamp;
+        this.birthday = entity.birthday;
     }
 }

@@ -16,9 +16,6 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    response.forEach(e => {
-                        e.birthdayTimestamp = timestampToDate(e.birthdayTimestamp);
-                    });
                     return { data: response, total: response.length };
                 });
         }
@@ -28,7 +25,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                birthdayTimestamp: new Date(params.data.birthdayTimestamp).getTime(),
+                birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
@@ -55,13 +52,12 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                birthdayTimestamp: new Date(params.data.birthdayTimestamp).getTime(),
+                birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber
             };
-            console.log(params.data.birthdayTimestamp);
             const jsonData = JSON.stringify(data);
             url = api.junior.edit;
             options = {

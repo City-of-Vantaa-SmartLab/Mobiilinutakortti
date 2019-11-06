@@ -11,6 +11,7 @@
   "NonProdFeature": "This feature is not available in production.",
   "NoCheckins": "No checkins are available for that time.",
   "NoNewCheckins": "No new check-ins found.",
+  "NotADate": "Invalid date provided.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
   "Reset": "reset link sent.",
   "ValueIsNotPhoneNumber": "Annettu arvo ei ole puhelinnumero. Saatu arvo: $value.",
