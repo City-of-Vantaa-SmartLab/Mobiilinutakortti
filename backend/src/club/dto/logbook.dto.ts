@@ -1,4 +1,5 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsDateString } from 'class-validator';
+import * as content from '../../content.json';
 
 export class LogBookDto {
 
@@ -6,5 +7,6 @@ export class LogBookDto {
     clubId: string;
 
     @IsNotEmpty()
-    dateTimeStamp: string;
+    @IsDateString({ message: content.NotADate })
+    date: string;
 }

@@ -45,12 +45,12 @@ export class ClubService {
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
-    async getCheckinsForClubForDate(clubId: string, timestamp: string): Promise<CheckIn[]> {
-        const startOfDay = new Date(new Date(+timestamp).setHours(0, 0, 0, 0));
-        const endOfDay = new Date(new Date(+timestamp).setHours(23, 59, 59, 59));
+    async getCheckinsForClubForDate(clubId: string, dateTime: string): Promise<CheckIn[]> {
+        const startOfDay = new Date(dateTime).setHours(0, 0, 0, 0);
+        const endOfDay = new Date(dateTime).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(clubId))
-            .filter(checkIns => new Date(checkIns.timestamp) <= endOfDay && new Date(checkIns.timestamp) >= startOfDay);
-        if (clubCheckIns.length < 0) { throw new BadRequestException(content.NoCheckins); }
+            .filter(checkIn => this.isBetween(new Date(checkIn.timestamp).getTime(), startOfDay, endOfDay));
+        if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
         return clubCheckIns;
     }
 
@@ -67,7 +67,7 @@ export class ClubService {
     }
 
     async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {
-        const checkIns = await this.getCheckinsForClubForDate(logbookDetails.clubId, logbookDetails.dateTimeStamp);
+        const checkIns = await this.getCheckinsForClubForDate(logbookDetails.clubId, logbookDetails.date);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
@@ -76,7 +76,7 @@ export class ClubService {
         });
         const [genders, ages] = [
             this.getGendersForLogBook(uniqueJuniors.map(j => j.gender)),
-            this.getAgesForLogBook(uniqueJuniors.map(j => j.birthdayTimestamp))];
+            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday)))];
         return new LogBookViewModel(checkIns[0].club.name, genders, ages);
     }
 
@@ -88,9 +88,9 @@ export class ClubService {
         return genders;
     }
 
-    private getAgesForLogBook(allJuniorAges: string[]): Map<string, number> {
+    private getAgesForLogBook(allJuniorAges: Date[]): Map<string, number> {
         const ages = new Map();
-        const allJuniorAgesAsNumbers = allJuniorAges.map(age => this.getAgeFromFromTimestamp(age));
+        const allJuniorAgesAsNumbers = allJuniorAges.map(age => this.getAgeFromDate(age));
         ageRanges.ranges.forEach(range => {
             const [min, max] = range.split('-');
             const total = allJuniorAgesAsNumbers.filter(a => a >= +min && a <= +max).length;
@@ -99,8 +99,12 @@ export class ClubService {
         return ages;
     }
 
-    private getAgeFromFromTimestamp(timestamp: string): number {
-        const ageDateTime = new Date(Date.now() - new Date(+timestamp).getTime());
-        return Math.abs(ageDateTime.getFullYear() - 1970);
+    private getAgeFromDate(birthday: Date): number {
+        const ageDateTime = new Date(Date.now() - birthday.setHours(0, 0, 0, 0));
+        return Math.abs(ageDateTime.getUTCFullYear() - 1970);
+    }
+
+    private isBetween(value: number, min: number, max: number): boolean {
+        return value <= max && value >= min;
     }
 }
