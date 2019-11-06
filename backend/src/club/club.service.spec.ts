@@ -17,7 +17,7 @@ describe('ClubService', () => {
   let service: ClubService;
   let connection: Connection;
   let juniorService: JuniorService;
-  let testJuniors: Junior[] = [];
+  const testJuniors: Junior[] = [];
   let testClub: Club;
 
   beforeAll(async () => {
