@@ -17,7 +17,7 @@ import {
     Edit,
     GET_LIST
 } from 'react-admin';
-import { ageValidator } from '../utils'
+import { ageValidator, getYouthClubs } from '../utils'
 
 import { dataProvider } from '../providers/dataProvider';
 
@@ -54,11 +54,11 @@ export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
-            setYouthClubs(youthClubs);
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
         };
         addYouthClubsToState();
-    }, [youthClubs]);
+    }, []);
 
     return (
         <Create title="Rekisteröi nuori" {...props}>
@@ -81,11 +81,11 @@ export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
-            setYouthClubs(youthClubs);
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
         };
         addYouthClubsToState();
-    }, [youthClubs]);
+    }, []);
 
     return (
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
@@ -96,7 +96,7 @@ export const JuniorEdit = (props) => {
                 <DateInput label="Syntymäaika" source="birthdayTimestamp" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
                 <TextInput label="Huoltajan nimi" source="parentsName" />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
             </SimpleForm>
