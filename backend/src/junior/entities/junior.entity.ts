@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { IsPhoneNumber, Length } from 'class-validator';
 import { makePhoneNumberInternational } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
+import { ConfigHelper } from '../../configHandler';
 
 @Entity()
 export class Junior {
@@ -32,8 +33,9 @@ export class Junior {
     @Length(1, 1)
     gender: string;
 
-    @Column({ default: '1230768000000', nullable: true })
-    birthdayTimestamp: string;
+    // Additional check introduced to allow the SQLite testDB to run
+    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    birthday: string;
 
     @Column()
     homeYouthClub: string;
