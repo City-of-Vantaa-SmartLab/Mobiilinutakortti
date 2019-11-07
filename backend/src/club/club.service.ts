@@ -93,7 +93,7 @@ export class ClubService {
         const allJuniorAgesAsNumbers = allJuniorAges.map(age => this.getAgeFromDate(age));
         ageRanges.ranges.forEach(range => {
             const [min, max] = range.split('-');
-            const total = allJuniorAgesAsNumbers.filter(a => a >= +min && a <= +max).length;
+            const total = allJuniorAgesAsNumbers.filter(a => this.isBetween(a, +min, +max)).length;
             ages.set(range, total);
         });
         return ages;
