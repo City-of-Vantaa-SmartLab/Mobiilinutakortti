@@ -21,6 +21,10 @@ const VerticalCardPadding = styled.div`
     padding-top: 40px;
 `;
 
+const StyledDialogTitle = styled(DialogTitle)`
+    padding-left: 0px !important;
+`;
+
 const LogBookTextFieldContainer = styled.div`
     width: 100%;
     display: flex;
@@ -125,11 +129,11 @@ let LogBookView = (props) => {
                 <LogBookCard>
                     <LogBookCardHeader title={clubName} subheader={props.selectedDate} />
                     <LogBookCardContent>
-                        <DialogTitle>Sukupuoli</DialogTitle>
+                        <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
                         <LogBookTextFieldContainer>
                             {genders}
                         </LogBookTextFieldContainer>
-                        <DialogTitle>Ikä</DialogTitle>
+                        <StyledDialogTitle>Ikä</StyledDialogTitle>
                         <LogBookTextFieldContainer>
                             {ages}
                         </LogBookTextFieldContainer>
