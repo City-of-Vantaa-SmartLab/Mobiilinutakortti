@@ -8,7 +8,7 @@ import { Connection } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
-import { Admin } from '../admin/admin.entity';
+import { Admin } from '../admin/entities';
 import { ConflictException, HttpModule } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';

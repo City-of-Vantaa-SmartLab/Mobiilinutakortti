@@ -1,4 +1,4 @@
-import { Admin } from '../admin.entity';
+import { Admin } from '../entities';
 
 /**
  * The model returned to the frontend for Admins.

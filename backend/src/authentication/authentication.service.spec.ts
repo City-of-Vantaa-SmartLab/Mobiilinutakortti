@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from '../admin/admin.service';
 import { Connection } from 'typeorm';
-import { Admin } from '../admin/admin.entity';
+import { Admin } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
