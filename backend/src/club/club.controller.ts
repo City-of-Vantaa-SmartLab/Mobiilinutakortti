@@ -54,7 +54,7 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
-    @Get('logbook')
+    @Post('logbook')
     async getLogBookData(@Body() logBookData: LogBookDto): Promise<LogBookViewModel> {
         return await this.clubService.generateLogBook(logBookData);
     }

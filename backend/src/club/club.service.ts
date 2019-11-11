@@ -49,7 +49,7 @@ export class ClubService {
         const startOfDay = new Date(dateTime).setHours(0, 0, 0, 0);
         const endOfDay = new Date(dateTime).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(clubId))
-            .filter(checkIn => this.isBetween(new Date(checkIn.timestamp).getTime(), startOfDay, endOfDay));
+            .filter(checkIn => (this.isBetween(new Date(checkIn.timestamp).getTime(), startOfDay, endOfDay)) && checkIn.junior);
         if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
         return clubCheckIns;
     }

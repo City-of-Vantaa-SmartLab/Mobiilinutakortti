@@ -16,14 +16,7 @@ import {
     EditButton,
     Edit
 } from 'react-admin';
-import { getYouthClubs, ageValidator } from '../utils'
-
-
-const genderChoices = [
-    { id: 'm', name: 'Mies' },
-    { id: 'f', name: 'Nainen' },
-    { id: 'o', name: 'Muu' }
-];
+import { getYouthClubs, ageValidator, genderChoices } from '../utils'
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>

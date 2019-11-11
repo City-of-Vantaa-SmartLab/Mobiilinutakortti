@@ -1,6 +1,12 @@
 import { GET_LIST } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 
+export const genderChoices = [
+  { id: 'm', name: 'Mies' },
+  { id: 'f', name: 'Nainen' },
+  { id: 'o', name: 'Muu' }
+];
+
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {
     return messageList.map(errorObj => Object.values(errorObj.constraints)[0]).join('\n')
