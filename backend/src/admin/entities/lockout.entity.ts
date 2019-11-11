@@ -21,6 +21,6 @@ export class Lockout {
 
 function getDefaultDate() {
     const currentTime = new Date();
-    currentTime.setMinutes(currentTime.getMinutes() + 3);
+    currentTime.setHours(currentTime.getHours() + 3);
     return ConfigHelper.isTest() ? currentTime.getTime() : currentTime;
 }

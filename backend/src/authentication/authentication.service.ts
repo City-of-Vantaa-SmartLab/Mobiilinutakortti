@@ -23,8 +23,8 @@ export class AuthenticationService {
         const lockedOut = await this.adminService.isLockedOut(user.id);
         if (lockedOut) {
             const timeRemaining = new Date(new Date().getTime() - new Date((await this.adminService.getLockoutRecord(user.id)).expiry).getTime());
-            const hoursRemaining = timeRemaining.getHours();
-            const minutesRemaining = timeRemaining.getMinutes();
+            const hoursRemaining = 23 - timeRemaining.getUTCHours();
+            const minutesRemaining = 60 - timeRemaining.getUTCMinutes();
             throw new ForbiddenException(`${content.LockedOut} Try again in ${hoursRemaining} hours ${minutesRemaining} minutes.`);
         }
         return await this.validateAdmin({
