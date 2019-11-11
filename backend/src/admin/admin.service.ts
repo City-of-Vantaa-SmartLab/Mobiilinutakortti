@@ -5,7 +5,7 @@ import { Admin, Lockout } from './entities';
 import * as content from '../content.json';
 import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
-import { saltRounds } from '../authentication/authentication.consts';
+import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
 import { AdminUserViewModel } from './vm/admin.vm';
 
 /**
@@ -59,7 +59,14 @@ export class AdminService {
      * @param admin - the id of the admin.
      */
     async getLockoutRecord(adminId: string): Promise<Lockout> {
-        return await this.lockoutRepo.findOne(adminId);
+        const admin = await this.getAdmin(adminId);
+        if (!admin) { throw new BadRequestException(content.UserNotFound); }
+        return await this.lockoutRepo.findOne({ where: { admin }, relations: ['admin'] });
+    }
+
+    async deleteLockoutRecord(adminId: string) {
+        const lockoutRecord = await this.getLockoutRecord(adminId);
+        if (lockoutRecord) { await this.lockoutRepo.remove(lockoutRecord); }
     }
 
     /**
@@ -114,23 +121,21 @@ export class AdminService {
         const lockoutRecord = await this.getLockoutRecord(adminId);
         if (!lockoutRecord) { return false; }
         const expired = await this.checkLockoutExpired(lockoutRecord);
-        if (expired) { return true; }
-        return lockoutRecord.attempts >= 5;
+        if (expired) { return false; }
+        return lockoutRecord.attempts >= maximumAttempts;
     }
 
     async addFailedAttempt(adminId: string) {
         let lockoutRecord = await this.getLockoutRecord(adminId);
         if (!lockoutRecord) {
-            const currentTime = new Date();
-            currentTime.setHours(currentTime.getHours() + 3);
-            lockoutRecord = { id: await this.getAdmin(adminId), attempts: 0, expiry: currentTime.toString() } as Lockout;
+            lockoutRecord = { admin: await this.getAdmin(adminId), attempts: 0 } as Lockout;
         }
         lockoutRecord.attempts++;
-        this.lockoutRepo.save(lockoutRecord);
+        await this.lockoutRepo.save(lockoutRecord);
     }
 
     private async checkLockoutExpired(lockout: Lockout): Promise<boolean> {
-        const expired = new Date(lockout.expiry).getTime() > new Date().getTime();
+        const expired = new Date(lockout.expiry).getTime() < new Date().getTime();
         if (!expired) { return false; }
         await this.lockoutRepo.remove(lockout);
         return true;

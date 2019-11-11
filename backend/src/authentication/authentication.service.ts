@@ -27,7 +27,7 @@ export class AuthenticationService {
             const minutesRemaining = timeRemaining.getMinutes();
             throw new ForbiddenException(`${content.LockedOut} Try again in ${hoursRemaining} hours ${minutesRemaining} minutes.`);
         }
-        return await this.validateUser({
+        return await this.validateAdmin({
             provided: loginData.password, expected: user.password,
         }, user.id);
     }
@@ -38,14 +38,13 @@ export class AuthenticationService {
         return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
     }
 
-    // This function is being kept as it might be useful when parents are added.
-    private async validateUser(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+    private async validateAdmin(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.provided, attempt.expected);
-
         if (!passwordMatch) {
-            this.adminService.addFailedAttempt(userId);
+            await this.adminService.addFailedAttempt(userId);
             throw new UnauthorizedException(content.FailedLogin);
         }
+        await this.adminService.deleteLockoutRecord(userId);
         return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 
