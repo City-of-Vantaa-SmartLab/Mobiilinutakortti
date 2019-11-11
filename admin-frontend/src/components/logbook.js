@@ -56,6 +56,7 @@ let LogBookView = (props) => {
     const [clubName, setClubName] = useState('');
     const [ages, setAges] = useState([]);
     const [genders, setGenders] = useState([]);
+    const [searchDate, setSearchDate] = useState('');
 
     const getGenderTitles = (keyValueArray) => {
         keyValueArray.map(pair => pair.key = genderChoices.find(g => g.id === pair.key).name);
@@ -66,6 +67,7 @@ let LogBookView = (props) => {
         setClubName('');
         setAges([]);
         setGenders([]);
+        setSearchDate('');
     }
 
     const mapKeyValueToUI = (keyValueArray) => {
@@ -106,6 +108,7 @@ let LogBookView = (props) => {
                         const { showNotification } = props;
                         showNotification(response.message, "warning");
                     } else {
+                        setSearchDate(date.toLocaleDateString());
                         setClubName(response.clubName);
                         setGenders(mapKeyValueToUI(getGenderTitles(response.genders)));
                         setAges(mapKeyValueToUI(response.ages));
@@ -127,7 +130,7 @@ let LogBookView = (props) => {
 
             {clubName !== '' &&
                 <LogBookCard>
-                    <LogBookCardHeader title={clubName} subheader={props.selectedDate} />
+                    <LogBookCardHeader title={clubName} subheader={searchDate} />
                     <LogBookCardContent>
                         <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
                         <LogBookTextFieldContainer>
