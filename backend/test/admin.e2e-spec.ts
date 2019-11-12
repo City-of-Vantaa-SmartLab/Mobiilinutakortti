@@ -131,7 +131,7 @@ describe('AdminController (e2e)', () => {
                     .post('/admin/login')
                     .send(testData)
                     .expect(400);
-            })
+            });
     });
 
     describe('/admin/login (Get)', () => {
