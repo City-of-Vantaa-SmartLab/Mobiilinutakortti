@@ -24,8 +24,10 @@ font-size: 0.9rem;
 `;
 
 const Button = styled.button`
+font-family: 'GT-Walsheim';
 background: rgb(249, 229, 30);
 border-radius: 0.3rem;
+border: none;
 padding: 1rem;
 margin: 0.5rem 0;
 font-size: 0.9rem;

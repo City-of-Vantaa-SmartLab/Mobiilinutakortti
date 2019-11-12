@@ -42,7 +42,8 @@ code {
   height: 100%;
   width: 100%;
   overflow: scroll;
-  background-color: rgb(60, 143, 222);
+  background-color: #3c8fde;
+  position: relative;
 
 }
 
