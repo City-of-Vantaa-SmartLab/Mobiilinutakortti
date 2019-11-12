@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [TypeOrmModule.forFeature([Junior, Club, CheckIn, Admin]),
   JwtModule.register({
     secret: jwt.secret,
-    signOptions: { expiresIn: jwt.expiry },
+    signOptions: { expiresIn: jwt.adminExpiry },
   })],
   providers: [ClubService, ClubGateway],
   controllers: [ClubController],
