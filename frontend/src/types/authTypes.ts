@@ -4,7 +4,8 @@ export enum authTypes {
     AUTH_ATTEMPT = "AUTH_ATTEMPT",
     AUTH_SUCCESS = "AUTH_SUCCESS",
     AUTH_FAIL = "AUTH_FAIL",
-    AUTH_LINK_REQUEST = "AUTH_LINK_REQUEST"
+    AUTH_LINK_REQUEST = "AUTH_LINK_REQUEST",
+    LOGOUT = "LOGOUT"
 }
 
 
@@ -31,8 +32,12 @@ export interface LinkRequest {
     payload: { phoneNumber: string },
 }
 
+export interface Logout {
+    type: authTypes.LOGOUT,
+}
 
-export type authActions = AuthAttempt | AuthSuccess | AuthFail | LinkRequest;
+
+export type authActions = AuthAttempt | AuthSuccess | AuthFail | LinkRequest | Logout;
 
 //reducer interfaces
 

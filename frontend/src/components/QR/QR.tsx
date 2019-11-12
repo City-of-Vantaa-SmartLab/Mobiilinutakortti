@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
-import Measure from 'react-measure';
+import Measure from 'react-measure'
 
 
-const QRContainer = styled.section<{ active: boolean }>`
+const QRContainer=styled.section<{active: boolean}>`
     width: 100%;
-    background: rgb(249, 229, 30);
+    background: #f9e51e;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     border-radius: 0.5rem;
     position: relative;
@@ -35,7 +35,7 @@ const QRContainer = styled.section<{ active: boolean }>`
 
 interface QRProps {
     id: string,
-}
+} 
 
 const QR: React.FC<QRProps> = (props) => {
     const [size, setSize] = useState(0);
@@ -45,17 +45,17 @@ const QR: React.FC<QRProps> = (props) => {
             bounds
             onResize={contentRect => {
                 if (contentRect.bounds) {
-                    setSize(contentRect.bounds.width - contentRect.bounds.width * 0.16)
+                    setSize(contentRect.bounds.width-contentRect.bounds.width*0.16)
+                    }
                 }
             }
-            }
-        >
+            >
             {({ measureRef }) => (
                 <QRContainer ref={measureRef} active={props.id !== ''}>
-                    <QRCode value={props.id} includeMargin={true} size={size} />
+                    <QRCode value={props.id} includeMargin={true} size={size}/>
                 </QRContainer>
             )}
-        </Measure>
+        </Measure>   
     );
 }
 
