@@ -61,6 +61,18 @@ export class AdminController {
   }
 
   /**
+   * This method will re-issue a JWT token, refreshing its expiry
+   * @param adminData - the user data from the request
+   */
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('refresh')
+  async refreshJWT(@Admin() adminData: any): Promise<JWTToken> {
+    return this.authenticationService.signAdminToken(adminData.userId);
+  }
+
+  /**
    * A simple route that allows the frontend to tell whether the current token is valid, and belongs to an Admin/Super Admin
    *
    * @returns - true if successful, false otherwise.

@@ -46,7 +46,10 @@ export class AuthenticationService {
             throw new UnauthorizedException(content.FailedLogin);
         }
         await this.adminService.deleteLockoutRecord(userId);
-        return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: jwt.adminExpiry }) } as JWTToken;
+        return this.signAdminToken(userId);
     }
 
+    signAdminToken(adminId: string): JWTToken {
+        return { access_token: this.jwtService.sign({ sub: adminId }, { expiresIn: jwt.adminExpiry }) } as JWTToken;
+    }
 }

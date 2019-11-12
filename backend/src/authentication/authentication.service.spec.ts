@@ -125,6 +125,7 @@ describe('AuthenticationService', () => {
         const id = (await adminService.getAdminByEmail(loginTestAdmin.email)).id;
         try {
           await service.loginAdmin({ email: newTestAdmin.email, password: 'DogZ' });
+          // tslint:disable-next-line: no-empty
         } catch (e) { }
         const failedAttemptExists = (await adminService.getLockoutRecord(id));
         await service.loginAdmin(loginTestAdmin);
