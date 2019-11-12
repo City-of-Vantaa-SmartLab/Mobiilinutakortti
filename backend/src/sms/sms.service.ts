@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, HttpService } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, HttpService, Logger } from '@nestjs/common';
 import { Recipient, TeliaMessageRequest } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
@@ -8,6 +8,8 @@ import { ConfigHelper } from '../configHandler';
 @Injectable()
 export class SmsService {
 
+    private readonly logger = new Logger('SMS Service');
+
     constructor(
         private readonly httpService: HttpService) { }
 
@@ -16,7 +18,7 @@ export class SmsService {
         const settings = SMSConfig.getTeliaConfig();
         if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink);
+        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -30,22 +32,18 @@ export class SmsService {
     }
 
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        // tslint:disable-next-line: no-console
-        console.log(`Sending SMS to ${messageRequest.to[0]}`);
+        this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
             response => {
                 if (response.data.accepted[0].to === messageRequest.to[0]) {
-                    // tslint:disable-next-line: no-console
-                    console.log(`SMS send to ${messageRequest.to[0]}`);
+                    this.logger.log(`SMS send to ${messageRequest.to[0]}`);
                     return true;
                 } else {
-                    // tslint:disable-next-line: no-console
-                    console.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
+                    this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
                     return false;
                 }
             }).catch(error => {
-                // tslint:disable-next-line: no-console
-                console.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
+                this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
                 return false;
             });
 
@@ -55,8 +53,8 @@ export class SmsService {
         return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(recipientName: string, systemName: string, link: string) {
+    private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
         return `Hei ${recipientName}! Sinulle on luotu oma ${systemName}-tili.
-         Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}`;
+         Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
     }
 }

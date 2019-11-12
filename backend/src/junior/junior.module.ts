@@ -6,7 +6,6 @@ import { JuniorController } from './junior.controller';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { Admin } from '../admin/admin.entity';
 import { SmsModule } from '../sms/sms.module';
-import { SmsService } from '../sms/sms.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Junior, Admin, Challenge]),

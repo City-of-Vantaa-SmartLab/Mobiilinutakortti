@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     List,
     Datagrid,
@@ -15,8 +15,9 @@ import {
     number,
     choices,
     EditButton,
-    Edit,
+    Edit
  } from 'react-admin';
+ import  { getYouthClubs } from '../utils';
 
 const genderChoices = [
     { id: 'm', name: 'Mies' },
@@ -43,33 +44,56 @@ export const JuniorList = (props) => (
         </Datagrid>
     </List>
 );
-export const JuniorCreate = (props) => (
-    <Create title="Rekisteröi nuori" {...props}>
-        <SimpleForm redirect="list">
-            <TextInput label="Etunimi" source="firstName" validate={ required() }/>
-            <TextInput label="Sukunimi" source="lastName" validate={ required() }/>
-            <SelectInput label="Sukupuoli" source="gender" choices={ genderChoices } validate={ [required(), choices(['m', 'f', 'o'])] } />
-            <NumberInput label="Ikä" source="age" validate={ [required(), number()] }/>
-            <TextInput label="Puhelinnumero" source="phoneNumber" validate={ required() }/>
-            <TextInput label="Postinumero" source="postCode" validate={ required() }/>
-            <TextInput label="Kotinuorisotalo" source="homeYouthClub" validate={ required() }/>
-            <TextInput label="Huoltajan nimi" source="parentsName" validate={ required() }/>
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={ required() }/>
-        </SimpleForm>
-    </Create>
-);
-export const JuniorEdit = (props) => (
-    <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
-        <SimpleForm>
-            <TextInput label="Etunimi" source="firstName" />
-            <TextInput label="Sukunimi" source="lastName" />
-            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
-            <NumberInput label="Ikä" source="age" />
-            <TextInput label="Puhelinnumero" source="phoneNumber" />
-            <TextInput label="Postinumero" source="postCode" />
-            <TextInput label="Kotinuorisotalo" source="homeYouthClub" />
-            <TextInput label="Huoltajan nimi" source="parentsName" />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
-        </SimpleForm>
-    </Edit>
-);
+export const JuniorCreate = (props) => {
+    const [youthClubs, setYouthClubs] = useState([]);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
+        };
+        addYouthClubsToState();
+    }, []);
+
+    return (
+        <Create title="Rekisteröi nuori" {...props}>
+            <SimpleForm redirect="list">
+                <TextInput label="Etunimi" source="firstName" validate={ required() }/>
+                <TextInput label="Sukunimi" source="lastName" validate={ required() }/>
+                <SelectInput label="Sukupuoli" source="gender" choices={ genderChoices } validate={ [required(), choices(['m', 'f', 'o'])] } />
+                <NumberInput label="Ikä" source="age" validate={ [required(), number()] }/>
+                <TextInput label="Puhelinnumero" source="phoneNumber" validate={ required() }/>
+                <TextInput label="Postinumero" source="postCode" validate={ required() }/>
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={ required() }/>
+                <TextInput label="Huoltajan nimi" source="parentsName" validate={ required() }/>
+                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={ required() }/>
+            </SimpleForm>
+        </Create>
+    );
+
+}
+export const JuniorEdit = (props) => {
+    const [youthClubs, setYouthClubs] = useState([]);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
+        };
+        addYouthClubsToState();
+    }, []);
+
+    return (
+        <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
+            <SimpleForm>
+                <TextInput label="Etunimi" source="firstName" />
+                <TextInput label="Sukunimi" source="lastName" />
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
+                <NumberInput label="Ikä" source="age" />
+                <TextInput label="Puhelinnumero" source="phoneNumber" />
+                <TextInput label="Postinumero" source="postCode" />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+                <TextInput label="Huoltajan nimi" source="parentsName" />
+                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+            </SimpleForm>
+        </Edit>
+    );
+}

@@ -9,9 +9,10 @@ import { ConfigHelper } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
-import { GuardsModule } from './roles/roles.module';
+import { RolesModule } from './roles/roles.module';
 import { Admin } from './admin/admin.entity';
 import { Junior } from './junior/entities';
+import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
 
 @Module({
@@ -21,7 +22,8 @@ import { SmsModule } from './sms/sms.module';
     AdminModule,
     JuniorModule,
     AuthenticationModule,
-    GuardsModule,
+    RolesModule,
+    ClubModule,
     SmsModule,
   ],
   providers: [AppService],

@@ -63,6 +63,7 @@ export class AdminService {
         const admin = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
             email: registrationData.email, password: hashedPassword, isSuperUser: registrationData.isSuperUser,
+            mainYouthClub: registrationData.mainYouthClub,
         } as Admin;
         await this.createAdmin(admin);
         return `${registrationData.email} ${content.Created}`;
@@ -83,6 +84,7 @@ export class AdminService {
         user.firstName = details.firstName;
         user.lastName = details.lastName;
         user.isSuperUser = details.isSuperUser;
+        user.mainYouthClub = details.mainYouthClub;
         await this.adminRepo.save(user);
         return `${details.email} ${content.Updated}`;
     }
@@ -95,5 +97,6 @@ export class AdminService {
         const admin = await this.getAdmin(id);
         if (!admin) { throw new BadRequestException(content.UserNotFound); }
         this.adminRepo.remove(admin);
+        return `${id} ${content.Deleted}`;
     }
 }

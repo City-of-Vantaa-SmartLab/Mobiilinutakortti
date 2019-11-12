@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsPhoneNumber, Length, IsPositive, IsMobilePhone } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { IsPhoneNumber, Length, IsPositive } from 'class-validator';
 import { jsonDataToNumber, makePhoneNumberInternational } from '../../common/transformers';
+import { CheckIn } from '../../club/entities';
 
 @Entity()
 export class Junior {
@@ -37,4 +38,7 @@ export class Junior {
 
     @Column()
     homeYouthClub: string;
+
+    @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    checkIns: CheckIn[];
 }
