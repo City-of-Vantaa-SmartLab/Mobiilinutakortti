@@ -3,7 +3,7 @@ import { post, get } from '../apis';
 import { authTypes, AuthAttempt, LinkRequest } from '../types/authTypes';
 import { userTypes, getUser } from '../types/userTypes';
 
-// import { push } from 'connected-react-router';
+import { push } from 'connected-react-router';
 
 
 export function* rootSaga() {
@@ -23,7 +23,9 @@ function* getUserInfo(action: getUser) {
         const response = yield call(get, '/junior/getSelf', action.payload);
         yield put({ type: userTypes.GET_SELF_SUCCESS, payload: response });
     } catch (error) {
-        // yield put({ type: userTypes.GET_SELF_FAIL });
+        localStorage.removeItem('token');
+        yield put({ type: authTypes.LOGOUT });
+        yield put(push('/login'));
     }
 }
 
