@@ -5,3 +5,15 @@ export const validatePhone = (number: string) => {
     }
     return false;
 }
+
+export const isIos = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    console.log(userAgent);
+    return /iphone|ipad|ipod/.test( userAgent );
+  }
+
+export const isInStandaloneMode = () => {
+    let nav:any = window.navigator;
+    return ('standalone' in nav && nav.standalone);
+}
+  
