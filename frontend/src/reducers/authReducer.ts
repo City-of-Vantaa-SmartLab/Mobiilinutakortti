@@ -18,6 +18,8 @@ export default (state = initialState, action: authActions): authState => {
             return { ...state, loggingIn: false, error: true };
         case authTypes.AUTH_LINK_REQUEST:
             return { ...state, error: false };
+        case authTypes.LOGOUT:
+            return { ...state, loggedIn: false, error: false}
         default:
             return state;
     }

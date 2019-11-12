@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 const Header = styled.section`
     text-align: center;
     width: 100%;
-    color: rgb(249, 229, 30);
+    color: #f9e51e;
     margin-top: 2.5rem;
     height: 100%;
     & > p {

@@ -13,7 +13,7 @@ border-radius: 2rem;
 const Triangle2 = styled.div`
  position: absolute;
  top: -6rem;
- background: #004099;
+ background: #0042a5;
  width: 100%;
  height: 100%;
  transform: skew(0, -15deg);
@@ -22,7 +22,7 @@ const Triangle2 = styled.div`
 
 const Triangle1 = styled.div`
 position: absolute;
- background: #40cfff;
+ background: #84ccf8;
  top: -4.5rem;
  width: 100%;
  height: 100%;
