@@ -13,7 +13,7 @@ export class Lockout {
     attempts: number;
 
     @Column({
-        type: 'timestamptz',
+        type: ConfigHelper.isTest() ? 'text' : 'timestamptz',
         default: getDefaultDate(),
     })
     expiry: string;

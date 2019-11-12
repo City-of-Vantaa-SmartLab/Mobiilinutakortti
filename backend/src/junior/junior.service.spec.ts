@@ -20,7 +20,7 @@ describe('JuniorService', () => {
   let connection: Connection;
 
   const testRegisterYouth = {
-    phoneNumber: '04122345618',
+    phoneNumber: '04122345000',
     firstName: 'Auth jr',
     lastName: 'Senior',
     postCode: '02130',
@@ -67,14 +67,16 @@ describe('JuniorService', () => {
   });
 
   describe('Register Youth', () => {
-    it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
+    beforeAll(async () => {
       await service.registerJunior(testRegisterYouth);
-      const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
-      testLoginYouth = {
-        id: challenge.id, challenge: challenge.challenge,
-      };
-      expect(testLoginYouth.challenge).toBeDefined();
     }),
+      it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
+        const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
+        testLoginYouth = {
+          id: challenge.id, challenge: challenge.challenge,
+        };
+        expect(testLoginYouth.challenge).toBeDefined();
+      }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
         expect(response.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber.toLowerCase()) &&
