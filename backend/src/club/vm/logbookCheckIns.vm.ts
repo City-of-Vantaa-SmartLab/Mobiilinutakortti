@@ -7,13 +7,14 @@ export class LogBookCheckInsViewModel {
     constructor(checkIns: CheckIn[]) {
         this.juniors = checkIns.map(checkIn => {
             const dateTime = new Date(checkIn.timestamp);
-            console.log(dateTime.toLocaleTimeString());
+            let hours = dateTime.getHours().toString();
             let minutes = dateTime.getMinutes().toString();
+            if (hours.length < 2) { hours = `0${hours}`; }
             if (minutes.length < 2) { minutes = `0${minutes}`; }
             return {
                 name: `${checkIn.junior.firstName} ${checkIn.junior.lastName}`,
                 id: checkIn.junior.id,
-                time: `${dateTime.getHours().toString()}:${minutes}`,
+                time: `${hours}:${minutes}`,
             } as JuniorInformation;
         });
     }
