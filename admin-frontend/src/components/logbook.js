@@ -44,7 +44,7 @@ const LogBookCardContent = styled(CardContent)`
 `;
 
 const LogBookCardContentSelect = styled(LogBookCardContent)`
-    display: felx;
+    display: flex;
     justify-content: center;
 `;
 
