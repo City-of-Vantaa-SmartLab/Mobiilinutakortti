@@ -1,6 +1,12 @@
 import { GET_LIST } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 
+export const genderChoices = [
+  { id: 'm', name: 'Mies' },
+  { id: 'f', name: 'Nainen' },
+  { id: 'o', name: 'Muu' }
+];
+
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {
     return messageList.map(errorObj => Object.values(errorObj.constraints)[0]).join('\n')
@@ -8,8 +14,6 @@ export const parseErrorMessages = (messageList) => {
     return messageList;
   }
 }
-
-export const timestampToDate = (timestamp) => new Date(+timestamp);
 
 export const ageValidator = (value, allValues) => {
   const valueAsTimestamp = Date.parse(value.toString());

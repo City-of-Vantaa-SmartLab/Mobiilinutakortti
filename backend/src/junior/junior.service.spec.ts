@@ -27,7 +27,7 @@ describe('JuniorService', () => {
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     gender: 'M',
-    birthday: new Date().toISOString(),
+    birthday: new Date('05-05-2005').toISOString(),
     homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
@@ -110,7 +110,7 @@ describe('JuniorService', () => {
       it(' should change values if valid data is provided', async () => {
         const dto = {
           ...juniorToEdit,
-          phoneNumber: '04122345610',
+          phoneNumber: '04122345600',
         } as EditJuniorDto;
         await service.editJunior(dto);
         const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);
