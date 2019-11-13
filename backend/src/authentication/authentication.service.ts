@@ -23,9 +23,9 @@ export class AuthenticationService {
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         const lockedOut = await this.adminService.isLockedOut(user.id);
         if (lockedOut) {
-            const timeRemaining = new Date(new Date().getTime() - new Date((await this.adminService.getLockoutRecord(user.id)).expiry).getTime());
-            const hoursRemaining = 23 - timeRemaining.getUTCHours();
-            const minutesRemaining = 60 - timeRemaining.getUTCMinutes();
+            const timeRemaining = new Date((new Date((await this.adminService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
+            const hoursRemaining = timeRemaining.getUTCHours();
+            const minutesRemaining = timeRemaining.getUTCMinutes();
             throw new ForbiddenException(`${content.LockedOut} Try again in ${hoursRemaining} hours ${minutesRemaining} minutes.`);
         }
         return await this.validateAdmin({

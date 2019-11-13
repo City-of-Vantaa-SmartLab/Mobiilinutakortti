@@ -13,7 +13,7 @@ export class Lockout {
     attempts: number;
 
     @Column({
-        type: ConfigHelper.isTest() ? 'text' : 'timestamptz',
+        type: ConfigHelper.isTest() ? 'text' : 'timestamp with time zone',
         default: getDefaultDate(),
     })
     expiry: string;
@@ -21,6 +21,6 @@ export class Lockout {
 
 function getDefaultDate() {
     const currentTime = new Date();
-    currentTime.setHours(currentTime.getHours() + 3);
+    currentTime.setHours(currentTime.getHours() + 3, currentTime.getMinutes());
     return ConfigHelper.isTest() ? currentTime.getTime() : currentTime;
 }

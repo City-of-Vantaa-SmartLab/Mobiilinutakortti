@@ -7,6 +7,7 @@ import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
 import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
 import { AdminUserViewModel } from './vm/admin.vm';
+import { ConfigHelper } from '../configHandler';
 
 /**
  * A service designed to deal with Admin actions.
@@ -135,7 +136,7 @@ export class AdminService {
     }
 
     private async checkLockoutExpired(lockout: Lockout): Promise<boolean> {
-        const expired = new Date(lockout.expiry).getTime() < new Date().getTime();
+        const expired = new Date(lockout.expiry) < new Date();
         if (!expired) { return false; }
         await this.lockoutRepo.remove(lockout);
         return true;
