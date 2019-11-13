@@ -56,7 +56,9 @@ export class ClubController {
     @AllowedRoles(Roles.ADMIN)
     @Post('check-ins')
     async getYouthClubCheckIns(@Body() logBookData: LogBookDto): Promise<LogBookCheckInsViewModel> {
-        return new LogBookCheckInsViewModel(await this.clubService.getCheckinsForClubForDate(logBookData));
+        return new LogBookCheckInsViewModel(
+            (await this.clubService.getClubById(logBookData.clubId)).name,
+            await this.clubService.getCheckinsForClubForDate(logBookData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
