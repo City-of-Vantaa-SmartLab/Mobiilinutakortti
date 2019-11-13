@@ -1,6 +1,6 @@
 import api from '../api';
 import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE, HttpError } from 'react-admin';
-import { parseErrorMessages, timestampToDate } from '../utils';
+import { parseErrorMessages } from '../utils';
 
 export const juniorProvider = (type, params, httpClient) => {
     let url;

@@ -12,7 +12,8 @@ export default {
   },
   youthClub: {
     list: `${appUrl}/club/list`,
-    checkIn: `${appUrl}/club/check-in`
+    checkIn: `${appUrl}/club/check-in`,
+    logBook: `${appUrl}/club/logbook`
   },
   youthWorker: {
     create: `${appUrl}/admin/register`,
