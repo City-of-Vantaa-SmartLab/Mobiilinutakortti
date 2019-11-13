@@ -20,7 +20,7 @@ export const authProvider = (type, params) => {
             .then(({ access_token }) => {
                 localStorage.setItem('token', access_token);
             })
-            .then(() => defaultHttpClient(api.youthWorker.self, {method: 'GET'}))
+            .then(() => defaultHttpClient(api.youthWorker.self, { method: 'GET' }))
             .then((response) => {
                 if (response.isSuperUser) {
                     localStorage.setItem('role', 'SUPERADMIN');
