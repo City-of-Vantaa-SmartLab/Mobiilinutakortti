@@ -1,12 +1,13 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Admin } from './admin.entity';
+import { Admin, Lockout } from './entities';
 import * as content from '../content.json';
 import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash } from 'bcrypt';
-import { saltRounds } from '../authentication/authentication.consts';
+import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
 import { AdminUserViewModel } from './vm/admin.vm';
+import { ConfigHelper } from '../configHandler';
 
 /**
  * A service designed to deal with Admin actions.
@@ -20,6 +21,8 @@ export class AdminService {
     constructor(
         @InjectRepository(Admin)
         private readonly adminRepo: Repository<Admin>,
+        @InjectRepository(Lockout)
+        private readonly lockoutRepo: Repository<Lockout>,
     ) { }
 
     /**
@@ -50,6 +53,21 @@ export class AdminService {
      */
     async createAdmin(details: Admin) {
         await this.adminRepo.save(details);
+    }
+
+    /**
+     * Returns the lockout record of the admin.
+     * @param admin - the id of the admin.
+     */
+    async getLockoutRecord(adminId: string): Promise<Lockout> {
+        const admin = await this.getAdmin(adminId);
+        if (!admin) { throw new BadRequestException(content.UserNotFound); }
+        return await this.lockoutRepo.findOne({ where: { admin }, relations: ['admin'] });
+    }
+
+    async deleteLockoutRecord(adminId: string) {
+        const lockoutRecord = await this.getLockoutRecord(adminId);
+        if (lockoutRecord) { await this.lockoutRepo.remove(lockoutRecord); }
     }
 
     /**
@@ -98,5 +116,29 @@ export class AdminService {
         if (!admin) { throw new BadRequestException(content.UserNotFound); }
         this.adminRepo.remove(admin);
         return `${id} ${content.Deleted}`;
+    }
+
+    async isLockedOut(adminId: string): Promise<boolean> {
+        const lockoutRecord = await this.getLockoutRecord(adminId);
+        if (!lockoutRecord) { return false; }
+        const expired = await this.checkLockoutExpired(lockoutRecord);
+        if (expired) { return false; }
+        return lockoutRecord.attempts >= maximumAttempts;
+    }
+
+    async addFailedAttempt(adminId: string) {
+        let lockoutRecord = await this.getLockoutRecord(adminId);
+        if (!lockoutRecord) {
+            lockoutRecord = { admin: await this.getAdmin(adminId), attempts: 0 } as Lockout;
+        }
+        lockoutRecord.attempts++;
+        await this.lockoutRepo.save(lockoutRecord);
+    }
+
+    private async checkLockoutExpired(lockout: Lockout): Promise<boolean> {
+        const expired = new Date(lockout.expiry) < new Date();
+        if (!expired) { return false; }
+        await this.lockoutRepo.remove(lockout);
+        return true;
     }
 }

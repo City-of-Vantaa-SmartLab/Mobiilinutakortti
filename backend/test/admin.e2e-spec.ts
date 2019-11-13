@@ -5,6 +5,7 @@ import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { AdminUserViewModel } from '../src/admin/vm/admin.vm';
+import { maximumAttempts } from '../src/authentication/authentication.consts';
 
 describe('AdminController (e2e)', () => {
     let app;
@@ -131,6 +132,28 @@ describe('AdminController (e2e)', () => {
                     .post('/admin/login')
                     .send(testData)
                     .expect(400);
+            }),
+            it('Should lockout a user if they make 5 incorrect attempts', async () => {
+                const lockoutRegister = {
+                    email: 'LockoutTest@test.com', password: 'Password',
+                    firstName: 'Testy', lastName: 'McTestFace', isSuperUser: false,
+                } as RegisterAdminDto;
+                const lockoutLogin = { email: lockoutRegister.email, password: lockoutRegister.password } as LoginAdminDto;
+                const lockoutLoginWrong = { email: lockoutRegister.email, password: '12345' };
+                await request(app.getHttpServer())
+                    .post('/admin/register')
+                    .set('Authorization', `Bearer ${superToken}`)
+                    .set('Accept', 'application/json')
+                    .send(lockoutRegister);
+                for (let i = 0; i < maximumAttempts; i++) {
+                    await request(app.getHttpServer())
+                        .post('/admin/login')
+                        .send(lockoutLoginWrong);
+                }
+                return request(app.getHttpServer())
+                    .post('/admin/login')
+                    .send(lockoutLogin)
+                    .expect(403);
             });
     });
 
