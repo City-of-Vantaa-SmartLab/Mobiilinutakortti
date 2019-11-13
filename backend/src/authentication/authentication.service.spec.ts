@@ -42,7 +42,7 @@ describe('AuthenticationService', () => {
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     gender: 'M',
-    age: 10,
+    birthday: new Date().toISOString(),
     homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginJunior: LoginJuniorDto;

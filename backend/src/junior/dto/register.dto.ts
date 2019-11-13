@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
+import { IsNotEmpty, IsPhoneNumber, Length, IsDateString } from 'class-validator';
 import * as content from '../../content.json';
 
 export class RegisterJuniorDto {
@@ -28,7 +28,8 @@ export class RegisterJuniorDto {
     readonly gender: string;
 
     @IsNotEmpty()
-    readonly age: number;
+    @IsDateString({ message: content.NotADate })
+    readonly birthday: string;
 
     @IsNotEmpty()
     readonly homeYouthClub: string;

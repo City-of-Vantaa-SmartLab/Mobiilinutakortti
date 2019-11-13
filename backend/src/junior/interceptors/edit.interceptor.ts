@@ -25,7 +25,7 @@ export class JuniorEditInterceptor implements NestInterceptor {
         body.parentsName ? dataChanged = dataChanged || body.parentsName !== userToEdit.parentsName : body.parentsName = userToEdit.parentsName;
         body.parentsPhoneNumber ? dataChanged = dataChanged || body.parentsPhoneNumber !== userToEdit.parentsPhoneNumber
             : body.parentsPhoneNumber = userToEdit.parentsPhoneNumber;
-        body.age ? dataChanged = dataChanged || body.age !== userToEdit.age : body.age = userToEdit.age;
+        body.birthday ? dataChanged = dataChanged || body.birthday !== userToEdit.birthday : body.birthday = userToEdit.birthday;
         body.homeYouthClub ? dataChanged = dataChanged || body.homeYouthClub !== userToEdit.homeYouthClub
             : body.homeYouthClub = userToEdit.homeYouthClub;
         body.gender ? dataChanged = dataChanged || body.gender !== userToEdit.gender : body.gender = userToEdit.gender;
