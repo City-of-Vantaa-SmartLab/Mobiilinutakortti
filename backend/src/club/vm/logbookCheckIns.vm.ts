@@ -1,10 +1,11 @@
 import { CheckIn } from '../entities';
 
 export class LogBookCheckInsViewModel {
-
+    clubName: string;
     juniors: JuniorInformation[];
 
-    constructor(checkIns: CheckIn[]) {
+    constructor(clubName: string, checkIns: CheckIn[]) {
+        this.clubName = clubName;
         this.juniors = checkIns.map(checkIn => {
             const dateTime = new Date(checkIn.timestamp);
             let hours = dateTime.getHours().toString();
