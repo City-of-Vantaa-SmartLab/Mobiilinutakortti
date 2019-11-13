@@ -16,26 +16,24 @@ const messages = {
 
 const i18nProvider = locale => messages[locale];
 
+const sessionCheck = async () => {
+    const url = api.youthWorker.self;
+    const options = {
+        method: 'GET'
+    };
+    await httpClient(url, options, false)
+        .then(response => {
+            if (response.statusCode < 200 || response.statusCode >= 300) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('role');
+                location.reload();
+            }
+        });
+}
+
 const App = () => {
 
-    window.onpopstate = async () => {
-        const url = api.youthWorker.refresh;
-        const options = {
-            method: 'GET'
-        };
-        await httpClient(url, options)
-            .then(response => {
-                if (response.statusCode < 200 || response.statusCode >= 300) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('role');
-                    return Promise.resolve();
-                }
-                return response;
-            })
-            .then(({ access_token }) => {
-                localStorage.setItem('token', access_token);
-            });
-    };
+    setInterval(sessionCheck, 180000);
 
     return (<Admin locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
         {permissions => [
