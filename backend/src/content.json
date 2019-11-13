@@ -13,6 +13,7 @@
   "NoNewCheckins": "No new check-ins found.",
   "NotADate": "Invalid date provided.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
+  "LockedOut": "Too many incorrect attempts.",
   "Reset": "reset link sent.",
   "ValueIsNotPhoneNumber": "Annettu arvo ei ole puhelinnumero. Saatu arvo: $value.",
   "Updated": "Päivitetty.",

@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { AdminService } from '../admin/admin.service';
@@ -20,7 +20,14 @@ export class AuthenticationService {
     async loginAdmin(loginData: LoginAdminDto): Promise<JWTToken> {
         const user = await this.adminService.getAdminByEmail(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        return await this.validateUser({
+        const lockedOut = await this.adminService.isLockedOut(user.id);
+        if (lockedOut) {
+            const timeRemaining = new Date((new Date((await this.adminService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
+            const hoursRemaining = timeRemaining.getUTCHours();
+            const minutesRemaining = timeRemaining.getUTCMinutes();
+            throw new ForbiddenException(`${content.LockedOut} Try again in ${hoursRemaining} hours ${minutesRemaining} minutes.`);
+        }
+        return await this.validateAdmin({
             provided: loginData.password, expected: user.password,
         }, user.id);
     }
@@ -31,11 +38,13 @@ export class AuthenticationService {
         return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
     }
 
-    // This function is being kept as it might be useful when parents are added.
-    async validateUser(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+    private async validateAdmin(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.provided, attempt.expected);
-
-        if (!passwordMatch) { throw new UnauthorizedException(content.FailedLogin); }
+        if (!passwordMatch) {
+            await this.adminService.addFailedAttempt(userId);
+            throw new UnauthorizedException(content.FailedLogin);
+        }
+        await this.adminService.deleteLockoutRecord(userId);
         return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
     }
 

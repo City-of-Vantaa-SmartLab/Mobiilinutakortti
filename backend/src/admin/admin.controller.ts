@@ -68,9 +68,9 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
-  async autoLogin(): Promise<Check> {
+  async autoLogin(@Admin() adminData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
-    return new Check(true);
+    return new Check(!(await this.adminService.isLockedOut(adminData.userId)));
   }
 
   /**
