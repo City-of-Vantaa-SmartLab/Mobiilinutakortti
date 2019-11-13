@@ -2,55 +2,22 @@ import React, { useState } from 'react';
 import { showNotification, DateInput } from 'react-admin';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
-import { Card, Button, CardContent, CardHeader, TextField, DialogTitle } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import {
+    Container,
+    LogBookCard,
+    LogBookCardHeader,
+    LogBookCardContent,
+    LogBookTextField,
+    LogBookTextFieldContainer,
+    LogBookCardContentSelect,
+    VerticalCardPadding,
+    StyledDialogTitle
+} from './styledComponents/logbook';
 import httpClient from '../httpClient';
 import api from '../api';
-import styled from 'styled-components';
 import { genderChoices } from '../utils';
 
-const Container = styled.div`
-    height: 100%;
-    width: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-`;
-
-const VerticalCardPadding = styled.div`
-    padding-top: 40px;
-`;
-
-const StyledDialogTitle = styled(DialogTitle)`
-    padding-left: 0px !important;
-`;
-
-const LogBookTextFieldContainer = styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-`;
-
-const LogBookCard = styled(Card)`
-    width: 800px;
-`;
-
-const LogBookCardHeader = styled(CardHeader)`
-    text-align: center;
-`;
-
-const LogBookCardContent = styled(CardContent)`
-    margin: 0px 30px;
-`;
-
-const LogBookCardContentSelect = styled(LogBookCardContent)`
-    display: flex;
-    justify-content: center;
-`;
-
-const LogBookTextField = styled(TextField)`
-    width:100px;
-`;
 
 let LogBookView = (props) => {
     const [clubName, setClubName] = useState('');
