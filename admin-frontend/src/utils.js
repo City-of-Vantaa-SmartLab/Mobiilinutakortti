@@ -9,8 +9,6 @@ export const parseErrorMessages = (messageList) => {
   }
 }
 
-export const timestampToDate = (timestamp) => new Date(+timestamp);
-
 export const ageValidator = (value, allValues) => {
   const valueAsTimestamp = Date.parse(value.toString());
 

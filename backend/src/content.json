@@ -9,6 +9,7 @@
   "DataIncorrect": "Annetut tiedot ovat virheelliset tai ne puuttuvat.",
   "FailedLogin": "Kirjautuminen epäonnistui.",
   "NonProdFeature": "This feature is not available in production.",
+  "NoCheckins": "No checkins are available for that time.",
   "NoNewCheckins": "No new check-ins found.",
   "NotADate": "Invalid date provided.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
