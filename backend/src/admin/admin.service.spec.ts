@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from './admin.service';
 import { Connection } from 'typeorm';
-import { Admin } from './admin.entity';
+import { Admin, Lockout } from './entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
@@ -42,7 +42,10 @@ describe('AdminService', () => {
       providers: [AdminService, AuthenticationService, {
         provide: getRepositoryToken(Admin),
         useFactory: repositoryMockFactory,
-      }, JwtStrategy],
+      }, {
+          provide: getRepositoryToken(Lockout),
+          useFactory: repositoryMockFactory,
+        }, JwtStrategy],
     }).overrideProvider(Connection)
       .useValue(connection)
       .compile();

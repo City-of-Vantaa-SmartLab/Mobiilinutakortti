@@ -1,7 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, BadRequestException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Admin } from './../admin.entity';
+import { Admin } from '../entities';
 import { Repository } from 'typeorm';
 import { EditAdminDto } from '../dto';
 import * as content from '../../content.json';

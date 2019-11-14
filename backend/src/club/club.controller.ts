@@ -4,8 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
-import { ClubViewModel, CheckInResponseViewModel } from './vm';
-import { CheckInDto } from './dto';
+import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel } from './vm';
+import { CheckInDto, LogBookDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
 import { ClubGateway } from './club.gateway';
@@ -49,5 +49,13 @@ export class ClubController {
             socket.emit(gatewayEvents.checkIn, new CheckInResponseViewModel(check.result, response));
         }
         return check;
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Post('logbook')
+    async getLogBookData(@Body() logBookData: LogBookDto): Promise<LogBookViewModel> {
+        return await this.clubService.generateLogBook(logBookData);
     }
 }

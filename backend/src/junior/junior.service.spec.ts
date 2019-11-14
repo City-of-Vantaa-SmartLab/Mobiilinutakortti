@@ -8,7 +8,7 @@ import { Connection } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AdminModule } from '../admin/admin.module';
-import { Admin } from '../admin/admin.entity';
+import { Admin } from '../admin/entities';
 import { ConflictException, HttpModule } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';
@@ -20,14 +20,14 @@ describe('JuniorService', () => {
   let connection: Connection;
 
   const testRegisterYouth = {
-    phoneNumber: '04122345618',
+    phoneNumber: '04122345000',
     firstName: 'Auth jr',
     lastName: 'Senior',
     postCode: '02130',
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     gender: 'M',
-    age: 10,
+    birthday: new Date('05-05-2005').toISOString(),
     homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
@@ -67,14 +67,16 @@ describe('JuniorService', () => {
   });
 
   describe('Register Youth', () => {
-    it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
+    beforeAll(async () => {
       await service.registerJunior(testRegisterYouth);
-      const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
-      testLoginYouth = {
-        id: challenge.id, challenge: challenge.challenge,
-      };
-      expect(testLoginYouth.challenge).toBeDefined();
     }),
+      it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
+        const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
+        testLoginYouth = {
+          id: challenge.id, challenge: challenge.challenge,
+        };
+        expect(testLoginYouth.challenge).toBeDefined();
+      }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
         expect(response.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber.toLowerCase()) &&
@@ -108,7 +110,7 @@ describe('JuniorService', () => {
       it(' should change values if valid data is provided', async () => {
         const dto = {
           ...juniorToEdit,
-          phoneNumber: '04122345610',
+          phoneNumber: '04122345600',
         } as EditJuniorDto;
         await service.editJunior(dto);
         const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);

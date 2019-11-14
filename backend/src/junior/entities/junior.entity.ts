@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { IsPhoneNumber, Length, IsPositive } from 'class-validator';
-import { jsonDataToNumber, makePhoneNumberInternational } from '../../common/transformers';
+import { IsPhoneNumber, Length } from 'class-validator';
+import { makePhoneNumberInternational, lowercase } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
+import { ConfigHelper } from '../../configHandler';
 
 @Entity()
 export class Junior {
@@ -28,13 +29,13 @@ export class Junior {
     @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
 
-    @Column()
+    @Column({ transformer: lowercase })
     @Length(1, 1)
     gender: string;
 
-    @Column({ transformer: jsonDataToNumber })
-    @IsPositive()
-    age: number;
+    // Additional check introduced to allow the SQLite testDB to run
+    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    birthday: string;
 
     @Column()
     homeYouthClub: string;

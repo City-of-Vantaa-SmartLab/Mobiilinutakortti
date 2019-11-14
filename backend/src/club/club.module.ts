@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Club, CheckIn } from './entities';
 import { ClubController } from './club.controller';
-import { Admin } from '../admin/admin.entity';
+import { Admin } from '../admin/entities';
 import { ClubGateway } from './club.gateway';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';

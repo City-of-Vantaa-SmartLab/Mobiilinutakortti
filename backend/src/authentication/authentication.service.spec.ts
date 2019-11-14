@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from '../admin/admin.service';
 import { Connection } from 'typeorm';
-import { Admin } from '../admin/admin.entity';
+import { Admin, Lockout } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
@@ -42,7 +42,7 @@ describe('AuthenticationService', () => {
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     gender: 'M',
-    age: 10,
+    birthday: new Date().toISOString(),
     homeYouthClub: 'Tikkurila',
   } as RegisterJuniorDto;
   let testLoginJunior: LoginJuniorDto;
@@ -63,6 +63,10 @@ describe('AuthenticationService', () => {
         },
         {
           provide: getRepositoryToken(Challenge),
+          useFactory: repositoryMockFactory,
+        },
+        {
+          provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
         }, JwtStrategy],
     }).overrideProvider(Connection)
@@ -111,6 +115,44 @@ describe('AuthenticationService', () => {
         } catch (e) {
           expect(e.response === error.getResponse());
         }
+      }),
+      it('An incorrect login should create a lockout entry; however, loging in succesfully should clear it.', async () => {
+        const newTestAdmin = {
+          email: 'Authentication2@service.test', firstName: 'Forgets',
+          lastName: 'Alot', password: 'Password', isSuperUser: false,
+        } as RegisterAdminDto;
+        const loginTestAdmin = { email: newTestAdmin.email, password: newTestAdmin.password } as LoginAdminDto;
+        await adminService.registerAdmin(newTestAdmin);
+        const id = (await adminService.getAdminByEmail(loginTestAdmin.email)).id;
+        try {
+          await service.loginAdmin({ email: newTestAdmin.email, password: 'DogZ' });
+        } catch (e) { }
+        const failedAttemptExists = (await adminService.getLockoutRecord(id));
+        await service.loginAdmin(loginTestAdmin);
+        const failedAttemptExists2 = (await adminService.getLockoutRecord(id));
+        expect(failedAttemptExists && !failedAttemptExists2).toBeTruthy();
+      }),
+      it('Should lock an account after 5 attempts', async () => {
+        const newTestAdmin = {
+          email: 'Authentication3@service.test', firstName: 'Forgets',
+          lastName: 'Alot', password: 'Password', isSuperUser: false,
+        } as RegisterAdminDto;
+        const loginTestAdmin = { email: newTestAdmin.email, password: newTestAdmin.password } as LoginAdminDto;
+        await adminService.registerAdmin(newTestAdmin);
+        const id = (await adminService.getAdminByEmail(loginTestAdmin.email)).id;
+        let attemptsMatch = true;
+        let lockedOut = false;
+        for (let i = 1; i < 6; i++) {
+          try {
+            await service.loginAdmin({ email: newTestAdmin.email, password: 'Safe' });
+          } catch (e) { attemptsMatch = attemptsMatch && ((await adminService.getLockoutRecord(id)).attempts === i); }
+        }
+        try {
+          await service.loginAdmin(loginTestAdmin);
+        } catch (e) {
+          lockedOut = true;
+        }
+        expect((await adminService.isLockedOut(id)) && attemptsMatch && lockedOut);
       });
   });
 

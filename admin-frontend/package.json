@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.6.0",
     "ra-language-finnish": "^2.9.3",
     "react": "^16.10.1",
     "react-admin": "^2.9.6",

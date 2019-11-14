@@ -25,7 +25,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                age: params.data.age,
+                birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
@@ -42,7 +42,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: {id: ''}} //React-admin expects this format from from CREATE. Hacky and ugly, but works.
+                    return { data: { id: '' } } //React-admin expects this format from from CREATE. Hacky and ugly, but works.
                 });
         }
         case UPDATE: {
@@ -52,7 +52,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 gender: params.data.gender,
-                age: params.data.age,
+                birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
@@ -83,7 +83,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: response};
+                    return { data: response };
                 });
         }
         case DELETE: {
@@ -96,7 +96,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: {id: params.id}}
+                    return { data: { id: params.id } }
                 });
         }
         default:

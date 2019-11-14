@@ -6,6 +6,10 @@ export class ConfigHelper {
         return process.env.NODE_ENV === 'production';
     }
 
+    static isTest() {
+        return process.env.NODE_ENV === 'test';
+    }
+
     static getJWTSecret(): string {
         return process.env.JWT || 'Remember to make me more secure before prod!';
     }
