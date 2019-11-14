@@ -6,10 +6,6 @@ import Title from '../Title/Title';
 import QR from '../QR/QR';
 import { subscribeToCheckIn } from '../../apis'
 
-import openSocket from 'socket.io-client';
-
-const baseURL = process.env.REACT_APP_ENDPOINT;
-
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
