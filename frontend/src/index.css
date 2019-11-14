@@ -60,3 +60,16 @@ code {
     box-shadow: 12px 24px 100px rgba(0, 0, 0, 0.5);
   }
 }
+
+/* fontello */
+@font-face {
+  font-family: 'fontello';
+  src: url('./assets/fontello.eot?14546286');
+  src: url('./assets/fontello.eot?14546286#iefix') format('embedded-opentype'),
+       url('./assets/fontello.woff2?14546286') format('woff2'),
+       url('./assets/fontello.woff?14546286') format('woff'),
+       url('./assets/fontello.ttf?14546286') format('truetype'),
+       url('./assets/fontello.svg?14546286#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}

@@ -32,13 +32,38 @@ const QRContainer=styled.section<{active: boolean}>`
     }
 `;
 
+const SuccessIcon = styled.div<{size: number}>`
+    top: 8%;
+    left:  8%;
+    bottom: 8%;
+    right: 8%;
+    background: white;
+    position: absolute;
+    border-radius: 0.3rem;
+    &:before {
+        content: '\f06d';
+        font-family: 'fontello';
+        display: block;
+        padding: ${(props) => `${props.size*0.1}px`};
+        font-size: ${(props) => `calc(${props.size}px - ${props.size*0.2}px)`};
+        color: #4a7829;
+    }
+`;
 
 interface QRProps {
     id: string,
+    checkedIn: boolean
 } 
 
 const QR: React.FC<QRProps> = (props) => {
     const [size, setSize] = useState(0);
+    let content:any;
+
+    if (!props.checkedIn) {
+        content = <QRCode value={props.id} includeMargin={true} size={size}/>
+    } else {
+        content = <SuccessIcon size={size}/>
+    }
 
     return (
         <Measure
@@ -52,7 +77,7 @@ const QR: React.FC<QRProps> = (props) => {
             >
             {({ measureRef }) => (
                 <QRContainer ref={measureRef} active={props.id !== ''}>
-                    <QRCode value={props.id} includeMargin={true} size={size}/>
+                    {content}
                 </QRContainer>
             )}
         </Measure>   

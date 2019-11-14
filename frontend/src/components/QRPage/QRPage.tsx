@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { AppState } from '../../reducers';
 import Title from '../Title/Title';
 import QR from '../QR/QR';
-
+import { subscribeToCheckIn } from '../../apis'
 
 const Wrapper = styled.div`
     display: flex;
@@ -39,14 +39,25 @@ interface QRPageProps {
 }
 
 const QRPage: React.FC<QRPageProps> = (props) => {
+    const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState("Näytä QR-koodi lukulaitteelle saapuessasi nuorisotalolle");
+
+    useEffect(() => {
+        subscribeToCheckIn((err:any, response:any) => {
+            if (response.response !== '' && response.success) {
+                setSuccess(true)
+                setMessage(`Tervetuloa ${response.response}an`);
+            }
+        });    
+    }, []);
 
     return (
         <Wrapper>
             <Header>
-                <Title title='Kirjaudu Nutalle' subtitle={props.name} />
+                <Title title='Kirjaudu nutalle' subtitle={props.name} />
             </Header>
-            <QR id={props.id} />
-            <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotalolle</Footer>
+            <QR id={props.id} checkedIn={success}/>
+            <Footer>{message}</Footer>
         </Wrapper>
     );
 }

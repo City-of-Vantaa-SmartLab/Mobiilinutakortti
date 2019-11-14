@@ -46,9 +46,14 @@ const Message = styled.div<{ active: boolean, error: boolean }>`
 `;
 
 const ErrorMessageIcon = styled.div<{ visible: boolean }>`
-    font-size: 2rem;
+    font-size: 1.4rem;
     padding-right: 0.5rem;
     display: ${(props) => props.visible ? "block" : "None"};
+    &:before {
+        content: '\f07d';
+        font-family: 'fontello';
+        display: block;
+    }
 `;
 
 const MessageText = styled.p`
@@ -108,7 +113,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
             <LoginWrapper>
                 <Header>Nuta-mobiili</Header>
                 <Message active={message !== ''} error={error}>
-                    <ErrorMessageIcon visible={error}>&#9888;</ErrorMessageIcon>
+                    <ErrorMessageIcon visible={error}></ErrorMessageIcon>
                     <MessageText>{message}</MessageText>
                 </Message>
                 <LoginForm onSubmit={sendLink} disabled={props.loggingIn} />
