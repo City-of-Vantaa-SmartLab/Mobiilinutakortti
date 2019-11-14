@@ -38,7 +38,9 @@ const App: React.FC<AppProps> = (props) => {
 
 //check if ios and open in a browser
   useEffect(() => {
+   
     if (isIos() && !isInStandaloneMode()) {
+      console.log('really?');
       setShowA2hs(true);
     }
   }, []);

@@ -8,7 +8,6 @@ export const validatePhone = (number: string) => {
 
 export const isIos = () => {
     const userAgent = window.navigator.userAgent.toLowerCase();
-    console.log(userAgent);
     return /iphone|ipad|ipod/.test( userAgent );
   }
 

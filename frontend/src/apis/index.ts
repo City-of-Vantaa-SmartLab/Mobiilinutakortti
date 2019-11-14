@@ -1,11 +1,9 @@
 import openSocket from 'socket.io-client';
 const baseURL = process.env.REACT_APP_ENDPOINT;
 
-export async function subscribeToCheckIn() {
+export async function subscribeToCheckIn(set:any) {
     const socket = openSocket(`${baseURL}?token=${localStorage.getItem('token')}`);
-    await socket.on('check-in', (response: any) => {
-        console.log(response);
-    });
+    await socket.on('check-in', (response: any) => set(null, response));
     socket.emit("check-in", "");
 }
 

@@ -22,7 +22,7 @@ const Popup = styled.div`
     position: relative;
     width: 100%;
     text-align: center;
-    background: rgba(255,255,255,0.5);
+    background: #d9d9d6;
     border-radius: 0.3rem;
     box-sizing: border-box;
     &:before {
@@ -31,9 +31,10 @@ const Popup = styled.div`
         top: 100%;
         left: calc(50% - 1rem);
         width: 0;
-        border-top: 1rem solid rgba(255,255,255,0.5);
+        border-top: 1rem solid #d9d9d6;
         border-left: 1rem solid transparent;
         border-right: 1rem solid transparent;
+        
     }
     & > p {
         padding: 0 0 0 1rem;
@@ -61,7 +62,7 @@ const A2hs: React.FC<A2hsProps> = (props) => {
     return (
         <Wrapper visible={props.isVisible}>
             <Popup>
-            <p>Click <i></i> and find 'Add to Homescreen' to install the app</p>
+            <p>Klikkaa <i></i>-kuvaketta ja valitse ”Lisää Koti-valikkoon” lisätäksesi sovelluksen</p>
             <Close onClick={props.close}>&times;</Close>
             </Popup>
         </Wrapper>
