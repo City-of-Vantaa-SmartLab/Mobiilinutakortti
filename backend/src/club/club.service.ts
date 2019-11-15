@@ -45,10 +45,10 @@ export class ClubService {
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
-    async getCheckinsForClubForDate(clubId: string, dateTime: string): Promise<CheckIn[]> {
-        const startOfDay = new Date(dateTime).setHours(0, 0, 0, 0);
-        const endOfDay = new Date(dateTime).setHours(23, 59, 59, 59);
-        const clubCheckIns = (await this.getCheckinsForClub(clubId))
+    async getCheckinsForClubForDate(logbookDetails: LogBookDto): Promise<CheckIn[]> {
+        const startOfDay = new Date(logbookDetails.date).setHours(0, 0, 0, 0);
+        const endOfDay = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
+        const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
             .filter(checkIn => (this.isBetween(new Date(checkIn.timestamp).getTime(), startOfDay, endOfDay)) && checkIn.junior);
         if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
         return clubCheckIns;
@@ -67,7 +67,7 @@ export class ClubService {
     }
 
     async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {
-        const checkIns = await this.getCheckinsForClubForDate(logbookDetails.clubId, logbookDetails.date);
+        const checkIns = await this.getCheckinsForClubForDate(logbookDetails);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
