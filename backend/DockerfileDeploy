@@ -1,9 +1,0 @@
-FROM node:10
-ENV TZ=Europe/Helsinki
-RUN rm -f /etc/localtime
-RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
-WORKDIR /backend
-COPY . .
-RUN npm install
-EXPOSE 3000
-CMD ["npm", "run", "start:prod"]

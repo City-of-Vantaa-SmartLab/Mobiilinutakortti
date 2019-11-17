@@ -1,9 +1,10 @@
+import { token } from './utils';
 
 export default (url, options = {}) => {
   options.headers = new Headers({ 'Content-Type': 'application/json' });
-  const token = localStorage.getItem('token');
-  if (token) {
-    options.headers.set('Authorization', `Bearer ${token}`);
+  const authToken = localStorage.getItem(token);
+  if (authToken) {
+    options.headers.set('Authorization', `Bearer ${authToken}`);
   }
   return fetch(url, options)
     .then(res => res.json())

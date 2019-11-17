@@ -13,7 +13,7 @@ import { Socket } from 'socket.io';
 import * as gatewayEvents from './gateway-events.json';
 import * as content from '../content.json';
 
-@Controller('club')
+@Controller(`${content.Routes.api}/club`)
 export class ClubController {
 
     constructor(
