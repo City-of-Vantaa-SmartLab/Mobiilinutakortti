@@ -7,6 +7,7 @@ import * as content from '../content.json';
 import { LoginJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
 import { JWTToken } from './jwt.model';
+import { jwt } from './authentication.consts';
 
 @Injectable()
 export class AuthenticationService {
@@ -35,7 +36,7 @@ export class AuthenticationService {
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
         const challengeResponse = await this.juniorService.attemptChallenge(loginData.id, loginData.challenge);
         if (!challengeResponse) { throw new UnauthorizedException(content.FailedLogin); }
-        return { access_token: this.jwtService.sign({ sub: challengeResponse }) } as JWTToken;
+        return this.signToken(challengeResponse);
     }
 
     private async validateAdmin(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
@@ -45,7 +46,12 @@ export class AuthenticationService {
             throw new UnauthorizedException(content.FailedLogin);
         }
         await this.adminService.deleteLockoutRecord(userId);
-        return { access_token: this.jwtService.sign({ sub: userId }) } as JWTToken;
+        return this.signToken(userId, true);
+    }
+
+    signToken(userId: string, isAdmin = false): JWTToken {
+        const expiry = isAdmin ? jwt.adminExpiry : jwt.juniorExpiry;
+        return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: expiry }) };
     }
 
 }
