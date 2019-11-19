@@ -21,6 +21,7 @@ export default {
     edit: `${appUrl}/admin/edit`,
     list: `${appUrl}/admin/list`,
     self: `${appUrl}/admin/getSelf`,
+    refresh: `${appUrl}/admin/refresh`,
     base: `${appUrl}/admin/`
   }
 }

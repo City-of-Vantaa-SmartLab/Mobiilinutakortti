@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import QrReader from 'react-qr-reader'
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
-import httpClient from '../httpClient';
+import { httpClient, httpClientWithResponse } from '../httpClients';
 import api from '../api';
+import { authProvider } from '../providers';
+import { token } from '../utils';
+import { AUTH_LOGOUT } from 'react-admin';
 
 const Container = styled.div`
   height: 100%;
@@ -19,6 +22,27 @@ const Container = styled.div`
 
 const CheckInView = (props) => {
 
+  useEffect(() => {
+    let refresh = setInterval(async () => {
+      await httpClient(api.youthWorker.refresh, { method: 'GET' }).then(async (response) => {
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          clearInterval(refresh);
+          await authProvider(AUTH_LOGOUT, {});
+          window.location.reload();
+        }
+        return response;
+      })
+        .then(({ access_token }) => {
+          localStorage.setItem(token, access_token);
+        })
+    }, 1 * 60000);
+
+    return () => {
+      clearInterval(refresh);
+      refresh = null;
+    }
+  }, []);
+
   const handleScan = async (qrData) => {
     if (qrData) {
       const url = api.youthClub.checkIn;
@@ -27,10 +51,10 @@ const CheckInView = (props) => {
         juniorId: qrData
       });
       const options = {
-          method: 'POST',
-          body
+        method: 'POST',
+        body
       };
-      await httpClient(url, options)
+      await httpClientWithResponse(url, options)
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -53,7 +77,7 @@ const CheckInView = (props) => {
         delay={5000}
         onScan={handleScan}
         onError={handleError}
-        style={ {width: 640, height: 640} }
+        style={{ width: 640, height: 640 }}
       />
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
