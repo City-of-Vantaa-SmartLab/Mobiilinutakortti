@@ -13,6 +13,8 @@ export class EditJuniorDto {
 
     lastName: string;
 
+    nickName: string;
+
     postCode: string;
 
     parentsName: string;
