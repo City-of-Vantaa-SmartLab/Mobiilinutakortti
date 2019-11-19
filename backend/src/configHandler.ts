@@ -2,6 +2,10 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export class ConfigHelper {
 
+    static getDefaultDate() {
+        return Date.now();
+    }
+
     static isLive() {
         return process.env.NODE_ENV === 'production';
     }
