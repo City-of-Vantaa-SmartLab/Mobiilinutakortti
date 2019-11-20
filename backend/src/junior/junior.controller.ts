@@ -1,6 +1,6 @@
 import {
     Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors,
-    Get, Param, BadRequestException, Delete,
+    Get, Param, BadRequestException, Delete, Query, Res,
 } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
@@ -19,6 +19,7 @@ import { Challenge } from './entities';
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
+import { ListControlDto } from '../common/dto';
 
 @Controller(`${content.Routes.api}/junior`)
 export class JuniorController {
@@ -76,7 +77,9 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
-    async getAllJuniors(): Promise<JuniorUserViewModel[]> {
+    async getAllJuniors(@Query('controls') query): Promise<JuniorUserViewModel[]> {
+        const controls = JSON.parse(query) as ListControlDto;
+        // TODO keep working from here!
         return await this.juniorService.listAllJuniors();
     }
 

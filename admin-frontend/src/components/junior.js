@@ -14,7 +14,8 @@ import {
     required,
     choices,
     EditButton,
-    Edit
+    Edit,
+    Filter
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices } from '../utils'
 
@@ -22,21 +23,40 @@ const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
-export const JuniorList = (props) => (
-    <List title="Nuoret" {...props}>
-        <Datagrid>
-            <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
-            <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
-            <DateField label="Syntymäaika" source="birthday" />
-            <TextField label="Puhelinnumero" source="phoneNumber" />
-            <TextField label="Postinumero" source="postCode" />
-            <TextField label="Kotinuorisotalo" source="homeYouthClub" />
-            <TextField label="Huoltajan nimi" source="parentsName" />
-            <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
+export const JuniorList = (props) => {
+
+    const [youthClubs, setYouthClubs] = useState([]);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
+        };
+        addYouthClubsToState();
+    }, []);
+
+    const JuniorFilter = (props) => (
+        <Filter {...props}>
+            <TextInput label="Nimi" source="name" />
+            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+        </Filter>
+    );
+
+    return (
+        <List title="Nuoret" filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
+            <Datagrid>
+                <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+                <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
+                <DateField label="Syntymäaika" source="birthday" />
+                <TextField label="Puhelinnumero" source="phoneNumber" />
+                <TextField label="Postinumero" source="postCode" />
+                <TextField label="Kotinuorisotalo" source="homeYouthClub" />
+                <TextField label="Huoltajan nimi" source="parentsName" />
+                <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <EditButton />
+            </Datagrid>
+        </List>
+    )
+};
 
 export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
@@ -84,7 +104,7 @@ export const JuniorEdit = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choicses={youthClubs} />
                 <TextInput label="Huoltajan nimi" source="parentsName" />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
             </SimpleForm>

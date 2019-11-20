@@ -8,9 +8,29 @@ export const juniorProvider = (type, params, httpClient) => {
     switch (type) {
         case GET_LIST: {
             url = api.junior.list;
-            options = {
-                method: 'GET'
+
+            const controls = {
+                filters: {
+                    name: params.filter.name,
+                    homeYouthClub: params.filter.homeYouthClub
+                },
+                pagination: {
+                    page: params.pagination.page,
+                    perPage: params.pagination.perPage
+                },
+                sort: {
+                    field: params.sort.field,
+                    order: params.sort.order
+                }
+
             };
+
+            options = {
+                method: 'GET',
+            };
+
+            url += `?controls=${encodeURIComponent(JSON.stringify(controls))}`
+            console.log(options);
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {

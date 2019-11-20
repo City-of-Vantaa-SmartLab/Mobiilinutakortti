@@ -19,7 +19,7 @@ const OpenLogBookCheckInsButton = (props) => (
 )
 
 export const YouthClubList = (props) => (
-  <List title="Nuorisotalot" {...props}>
+  <List title="Nuorisotalot" bulkActionButtons={false} exporter={false} {...props}>
     <Datagrid>
       <TextField label="Nimi" source="name" />
       <TextField label="Postinumero" source="postCode" />
