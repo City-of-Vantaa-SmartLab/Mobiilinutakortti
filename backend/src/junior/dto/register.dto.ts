@@ -13,6 +13,8 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly lastName: string;
 
+    readonly nickName: string;
+
     @IsNotEmpty()
     readonly postCode: string;
 
