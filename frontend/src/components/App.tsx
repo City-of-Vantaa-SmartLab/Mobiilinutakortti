@@ -8,9 +8,8 @@ import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
 import A2hs from './A2hs';
 import ProtectedRoute from './ProtectedRoute';
-
-
 import { userTypes, userActions } from '../types/userTypes';
+import { authTypes, authActions } from '../types/authTypes';
 import { AppState } from '../reducers';
 
 import { isIos, isInStandaloneMode } from '../utils';
@@ -22,6 +21,7 @@ const Wrapper = styled.section`
 
 interface AppProps {
   getUser: (token: string) => void,
+  authWithCache: () => void,
   loggedIn: boolean,
   token: string
 }
@@ -29,16 +29,21 @@ interface AppProps {
 const App: React.FC<AppProps> = (props) => {
   const [showA2hs, setShowA2hs] = useState(false);
 
-
   useEffect(() => {
     if (props.loggedIn) {
       props.getUser(props.token)
     }
   }, [props.loggedIn, props.token]);
 
-//check if ios and open in a browser
+//if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
   useEffect(() => {
-   
+    if (!props.loggedIn) {
+      props.authWithCache()
+    }
+  }, []);
+
+//check if ios and open in a browser
+  useEffect(() => { 
     if (isIos() && !isInStandaloneMode()) {
       setShowA2hs(true);
     }
@@ -66,14 +71,19 @@ const mapStateToProps = (state: AppState) => ({
 
 
 
-const mapDispatchToProps = (dispatch: Dispatch<userActions>) => {
+const mapDispatchToProps = (dispatch: Dispatch<userActions|authActions>) => {
   return {
     getUser: (token: string) => {
       dispatch({
         type: userTypes.GET_USER,
         payload: token
       })
-    }
+    },
+    authWithCache: () => {
+      dispatch({
+        type: authTypes.AUTH_WITH_CACHE
+      })
+    },
   }
 };
 

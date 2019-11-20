@@ -40,3 +40,10 @@ export const post = async (uri: string, params?: object): Promise<any> => {
     } else throw new Error(response.statusText);
 
 };
+
+export const getCachedToken = async (): Promise<any> => {
+    const response = await fetch('/token');
+    if (response.status === 200 || response.status === 201) {
+        return response.json();
+    } else throw new Error(response.statusText);
+  }

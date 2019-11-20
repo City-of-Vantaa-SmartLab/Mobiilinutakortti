@@ -62,7 +62,8 @@ const MessageText = styled.p`
 
 interface LoginProps extends RouteComponentProps {
     auth: (challenge: string, id: string) => void,
-    linkRequest: (phone: string) => void,
+    authLinkRequest: (phone: string) => void,
+
     authError: boolean,
     loggingIn: boolean,
     loggedIn: boolean
@@ -73,6 +74,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     const [error, setError] = useState(false);
 
     useEffect(() => {
+        //authenticate with login link
         const query = new URLSearchParams(props.location.search);
         const challenge = query.get('challenge');
         const id = query.get('id');
@@ -101,7 +103,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
             setMessage('Invalid input, please try again');
         } else {
             setError(false);
-            props.linkRequest(phoneNumber);
+            props.authLinkRequest(phoneNumber);
             setMessage('');
         }
         props.history.push('/login');
@@ -136,7 +138,7 @@ const mapDispatchToProps = (dispatch: Dispatch<authActions>) => {
                 payload: { challenge, id }
             });
         },
-        linkRequest: (phoneNumber: string) => {
+        authLinkRequest: (phoneNumber: string) => {
             dispatch({
                 type: authTypes.AUTH_LINK_REQUEST,
                 payload: { phoneNumber }

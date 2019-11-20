@@ -7,8 +7,9 @@ import { rootSaga } from '../actions/authActions';
 
 export const history = createBrowserHistory();
 
-const token: string | null = localStorage.getItem('token');
+const token: string | null  = localStorage.getItem('token');
 const isLogged: boolean = (token !== null);
+
 
 const persistedState = {
     auth: {

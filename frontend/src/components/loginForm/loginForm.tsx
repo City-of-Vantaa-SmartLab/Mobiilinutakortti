@@ -4,41 +4,39 @@ import { validatePhone } from '../../utils';
 
 
 const Form = styled.form`
-display: flex;
-flex-direction: column;
-z-index: 10;
-
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
 `;
 
 const Input = styled.input`
-outline: none;
-box-shadow: none;
-border-width: 0
-border-radius: 0.3rem;
-padding: 1rem;
-margin: 1rem 0 0.5rem 0;
-font-size: 0.9rem;
-&:focus {
-    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
-}
+    outline: none;
+    box-shadow: none;
+    border-width: 0
+    border-radius: 0.3rem;
+    padding: 1rem;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 0.9rem;
+    &:focus {
+        box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+    }
 `;
 
 const Button = styled.button`
-font-family: 'GT-Walsheim';
-background: rgb(249, 229, 30);
-border-radius: 0.3rem;
-border: none;
-padding: 1rem;
-margin: 0.5rem 0;
-font-size: 0.9rem;
-&:focus {
-    outline: None;
-}
-
+    font-family: 'GT-Walsheim';
+    background: rgb(249, 229, 30);
+    border-radius: 0.3rem;
+    border: none;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    &:focus {
+        outline: None;
+    }
 `;
 
 const FormHeader = styled.label`
-color: white;
+    color: white;
 `;
 
 interface LoginForm {
@@ -65,7 +63,7 @@ const LoginForm: React.FC<LoginForm> = (props) => {
             e.preventDefault();
             if (phone) handleSubmit()
         }}>
-            <FormHeader>Enter your number</FormHeader>
+            <FormHeader>Puhelinnumerosi</FormHeader>
             <Input
                 onChange={e => {
                     setPhone(e.target.value)

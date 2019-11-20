@@ -1,4 +1,14 @@
 
+
+export const saveTokenToStorage = (token: string) => {
+    localStorage.setItem('token', token);
+}
+
+export const cacheToken = (token: string) => {
+    fetch('/token', { method: "POST", body: JSON.stringify({ token: token })});
+}
+
+
 export const validatePhone = (number: string) => {
     if (number.match(/(^(\+358|0)\d{9})/)) {
         return true;
