@@ -10,7 +10,6 @@ import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
-import { TotalViewModel } from '../common/vm/total.vm';
 
 @Injectable()
 export class JuniorService {
@@ -36,7 +35,7 @@ export class JuniorService {
 
     private applySort(sortOptions: SortDto) {
         const order = {};
-        if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; };
+        if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; }
         return order;
     }
 
