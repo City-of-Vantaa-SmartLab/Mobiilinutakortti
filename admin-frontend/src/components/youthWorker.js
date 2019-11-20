@@ -17,7 +17,7 @@ import {
 import { getYouthClubs } from '../utils';
 
 export const YouthWorkerList = (props) => (
-  <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} {...props}>
+  <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
     <Datagrid>
       <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
       <TextField label="Sähköposti" source="email" />
