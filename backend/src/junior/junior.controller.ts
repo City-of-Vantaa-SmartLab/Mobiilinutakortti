@@ -13,7 +13,7 @@ import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
 import { Junior } from './junior.decorator';
-import { Message, Check } from '../common/vm';
+import { Message, Check, TotalViewModel } from '../common/vm';
 import { Challenge } from './entities';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException
@@ -76,11 +76,17 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
+    @Get('total')
+    async getTotalJuniors(): Promise<TotalViewModel> {
+        return new TotalViewModel(await this.juniorService.getTotalJuniors());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Get('list')
     async getAllJuniors(@Query('controls') query): Promise<JuniorUserViewModel[]> {
-        const controls = JSON.parse(query) as ListControlDto;
-        // TODO keep working from here!
-        console.log(controls);
+        const controls = query ? JSON.parse(query) as ListControlDto : undefined;
         return await this.juniorService.listAllJuniors(controls);
     }
 

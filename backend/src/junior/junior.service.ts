@@ -10,6 +10,7 @@ import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
+import { TotalViewModel } from '../common/vm/total.vm';
 
 @Injectable()
 export class JuniorService {
@@ -23,16 +24,14 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorUserViewModel[]> {
-        let order = {};
-        let where = [] || {};
+        const query = { order: {}, where: {}, skip: 0, take: 0 };
         if (controls) {
-            order = controls.sort ? this.applySort(controls.sort) : {};
-            where = controls.filters ? this.applyWhereYouthClub(controls.filters) : {};
+            query.order = controls.sort ? this.applySort(controls.sort) : {};
+            query.where = controls.filters ? this.applyWhereYouthClub(controls.filters) : {};
+            query.take = controls.pagination ? controls.pagination.perPage : 0;
+            query.skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
-        console.log(where);
-        return (await this.juniorRepo.find({
-            where, order,
-        })).map(e => new JuniorUserViewModel(e));
+        return (await this.juniorRepo.find(query)).map(e => new JuniorUserViewModel(e));
     }
 
     private applySort(sortOptions: SortDto) {
@@ -64,6 +63,10 @@ export class JuniorService {
             where.push(query);
         }
         return where;
+    }
+
+    async getTotalJuniors(): Promise<number> {
+        return await this.juniorRepo.count();
     }
 
     async getJunior(id: string): Promise<Junior> {

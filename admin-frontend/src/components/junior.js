@@ -85,6 +85,7 @@ export const JuniorCreate = (props) => {
     );
 
 }
+
 export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
@@ -105,7 +106,7 @@ export const JuniorEdit = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choicses={youthClubs} />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
                 <TextInput label="Huoltajan nimi" source="parentsName" />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
             </SimpleForm>

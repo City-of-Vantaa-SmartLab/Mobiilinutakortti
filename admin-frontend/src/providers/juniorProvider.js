@@ -30,13 +30,19 @@ export const juniorProvider = (type, params, httpClient) => {
             };
 
             url += `?controls=${encodeURIComponent(JSON.stringify(controls))}`
-            console.log(options);
+
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return { data: response, total: response.length };
+                    return httpClient(api.junior.total, { method: 'GET' })
+                        .then(countResponse => {
+                            if (countResponse.statusCode < 200 || countResponse.statusCode >= 300) {
+                                throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                            }
+                            return { data: response, total: countResponse.total };
+                        });
                 });
         }
         case CREATE: {
