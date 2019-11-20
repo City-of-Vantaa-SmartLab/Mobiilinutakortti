@@ -2,64 +2,56 @@ import React, { useState } from 'react';
 import { showNotification, DateInput } from 'react-admin';
 import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
-import { Button } from '@material-ui/core';
+import {
+    Button, Table, TableHead,
+    TableRow, TableCell, TableBody,
+    Link
+} from '@material-ui/core';
 import {
     Container,
     LogBookCard,
     LogBookCardHeader,
     LogBookCardContent,
-    LogBookTextField,
-    LogBookTextFieldContainer,
     LogBookCardContentSelect,
     VerticalCardPadding,
-    StyledDialogTitle
 } from './styledComponents/logbook';
 import httpClient from '../httpClient';
 import api from '../api';
-import { genderChoices } from '../utils';
 
-
-let LogBookView = (props) => {
+let LogBookListView = (props) => {
     const [clubName, setClubName] = useState('');
-    const [ages, setAges] = useState([]);
-    const [genders, setGenders] = useState([]);
+    const [table, setTable] = useState([]);
     const [searchDate, setSearchDate] = useState('');
-
-    const getGenderTitles = (keyValueArray) => {
-        keyValueArray.map(pair => pair.key = genderChoices.find(g => g.id === pair.key).name);
-        return keyValueArray;
-    }
 
     const resetState = () => {
         setClubName('');
-        setAges([]);
-        setGenders([]);
         setSearchDate('');
+        setTable([]);
     }
 
-    const mapKeyValueToUI = (keyValueArray) => {
+    const mapJuniorsToUI = (juniorArray) => {
         const UI = [];
-        keyValueArray.forEach(pair => {
+        let key = 0;
+        juniorArray.forEach(junior => {
             UI.push(
-                <LogBookTextField
-                    key={pair.key}
-                    label={pair.key}
-                    defaultValue={pair.value}
-                    margin="normal"
-                    variant="filled"
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                />
-            );
+                <TableRow key={key}>
+                    <TableCell>
+                        <Link href={`#/junior/${junior.id}`} color="inherit">
+                            {junior.name}
+                        </Link>
+                    </TableCell>
+                    <TableCell>{junior.time}</TableCell>
+                </TableRow >
+            )
+            key++;
         });
         return UI;
     }
 
-    const getLogBookEntry = async () => {
+    const getCheckIns = async () => {
         const date = new Date(props.selectedDate);
         if (!isNaN(date.getTime())) {
-            const url = api.youthClub.logBook;
+            const url = api.youthClub.checkIns;
             const body = JSON.stringify({
                 clubId: props.match.params.youthClubId,
                 date: date
@@ -77,8 +69,7 @@ let LogBookView = (props) => {
                     } else {
                         setSearchDate(date.toLocaleDateString());
                         setClubName(response.clubName);
-                        setGenders(mapKeyValueToUI(getGenderTitles(response.genders)));
-                        setAges(mapKeyValueToUI(response.ages));
+                        setTable(mapJuniorsToUI(response.juniors))
                     }
                 });
         }
@@ -90,7 +81,7 @@ let LogBookView = (props) => {
                 <LogBookCardHeader title="Valitse Päivämäärä" />
                 <LogBookCardContentSelect>
                     <DateInput label="Päivämäärä" source="queryDate" />
-                    <Button onClick={getLogBookEntry} >Hae</Button>
+                    <Button onClick={getCheckIns} >Hae</Button>
                 </LogBookCardContentSelect>
             </LogBookCard>
             <VerticalCardPadding />
@@ -99,14 +90,17 @@ let LogBookView = (props) => {
                 <LogBookCard>
                     <LogBookCardHeader title={clubName} subheader={searchDate} />
                     <LogBookCardContent>
-                        <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
-                        <LogBookTextFieldContainer>
-                            {genders}
-                        </LogBookTextFieldContainer>
-                        <StyledDialogTitle>Ikä</StyledDialogTitle>
-                        <LogBookTextFieldContainer>
-                            {ages}
-                        </LogBookTextFieldContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Nimi</TableCell>
+                                    <TableCell>Aika</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {table}
+                            </TableBody>
+                        </Table>
                     </LogBookCardContent>
                 </LogBookCard>
             }
@@ -114,14 +108,14 @@ let LogBookView = (props) => {
     )
 }
 
-LogBookView = reduxForm({
-    form: 'logBookView'
-})(LogBookView);
+LogBookListView = reduxForm({
+    form: 'logBookListView'
+})(LogBookListView);
 
-const selector = formValueSelector('logBookView');
-LogBookView = connect(state => {
+const selector = formValueSelector('logBookListView');
+LogBookListView = connect(state => {
     const date = selector(state, 'queryDate')
     return { selectedDate: date };
-}, { showNotification })(LogBookView);
+}, { showNotification })(LogBookListView);
 
-export default LogBookView;
+export default LogBookListView;

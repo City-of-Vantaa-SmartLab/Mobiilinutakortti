@@ -14,6 +14,10 @@ const OpenLogBookButton = (props) => (
   <Button variant="contained" href={`#/logbook/${props.record.id}`} >Logbook</Button>
 )
 
+const OpenLogBookCheckInsButton = (props) => (
+  <Button variant="contained" href={`#/checkIns/${props.record.id}`} >Check-ins</Button>
+)
+
 export const YouthClubList = (props) => (
   <List title="Nuorisotalot" {...props}>
     <Datagrid>
@@ -21,6 +25,7 @@ export const YouthClubList = (props) => (
       <TextField label="Postinumero" source="postCode" />
       <OpenCheckInButton />
       <OpenLogBookButton />
+      <OpenLogBookCheckInsButton />
     </Datagrid>
   </List>
 );
