@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
@@ -9,6 +9,7 @@ import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
+import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 
 @Injectable()
 export class JuniorService {
@@ -21,8 +22,48 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(): Promise<JuniorUserViewModel[]> {
-        return (await this.juniorRepo.find()).map(e => new JuniorUserViewModel(e));
+    async listAllJuniors(controls?: ListControlDto): Promise<JuniorUserViewModel[]> {
+        let order = {};
+        let where = [] || {};
+        if (controls) {
+            order = controls.sort ? this.applySort(controls.sort) : {};
+            where = controls.filters ? this.applyWhereYouthClub(controls.filters) : {};
+        }
+        console.log(where);
+        return (await this.juniorRepo.find({
+            where, order,
+        })).map(e => new JuniorUserViewModel(e));
+    }
+
+    private applySort(sortOptions: SortDto) {
+        const order = {};
+        if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; };
+        return order;
+    }
+
+    private applyWhereYouthClub(filterOptions: FilterDto) {
+        const homeYouthClub = 'homeYouthClub';
+        const names = ['firstName', 'lastName'];
+        const where = [];
+        if (filterOptions.name && filterOptions.homeYouthClub) {
+            names.forEach(name => {
+                const query = {};
+                query[name] = Like(`%${filterOptions.name}%`);
+                query[homeYouthClub] = filterOptions.homeYouthClub;
+                where.push(query);
+            });
+        } else if (filterOptions.name) {
+            names.forEach(name => {
+                const query = {};
+                query[name] = Like(`%${filterOptions.name}%`);
+                where.push(query);
+            });
+        } else if (filterOptions.homeYouthClub) {
+            const query = {};
+            query[homeYouthClub] = filterOptions.homeYouthClub;
+            where.push(query);
+        }
+        return where;
     }
 
     async getJunior(id: string): Promise<Junior> {

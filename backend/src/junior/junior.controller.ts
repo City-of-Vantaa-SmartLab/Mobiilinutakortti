@@ -80,7 +80,8 @@ export class JuniorController {
     async getAllJuniors(@Query('controls') query): Promise<JuniorUserViewModel[]> {
         const controls = JSON.parse(query) as ListControlDto;
         // TODO keep working from here!
-        return await this.juniorService.listAllJuniors();
+        console.log(controls);
+        return await this.juniorService.listAllJuniors(controls);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
