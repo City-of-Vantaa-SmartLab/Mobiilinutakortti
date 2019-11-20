@@ -45,6 +45,7 @@ export class ClubController {
         const check = new Check((await this.clubService.checkInJunior(userData)));
         const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
         if (socket) {
+            console.log('has socket');
             const response = check.result ? (await this.clubService.getClubById(userData.clubId)).name : content.CheckInFailed;
             socket.emit(gatewayEvents.checkIn, new CheckInResponseViewModel(check.result, response));
         }
