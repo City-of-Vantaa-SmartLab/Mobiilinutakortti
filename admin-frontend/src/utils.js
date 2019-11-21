@@ -7,6 +7,8 @@ export const genderChoices = [
   { id: 'o', name: 'Muu' }
 ];
 
+export const token = 'admin-token';
+
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {
     return messageList.map(errorObj => Object.values(errorObj.constraints)[0]).join('\n')

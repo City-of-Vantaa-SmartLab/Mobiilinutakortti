@@ -1,11 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { AppService } from './app.service';
+import { join } from 'path';
+import * as content from './content.json';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get()
+  @Get(`/${content.Routes.api}`)
   getStatus(): string {
     return this.appService.getStatus();
   }

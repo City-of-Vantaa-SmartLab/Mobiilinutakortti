@@ -50,19 +50,19 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/admin/registerTemp')
+            .post('/api/admin/registerTemp')
             .send(testAdminRegister);
         token = (await request(app.getHttpServer())
-            .post('/admin/login')
+            .post('/api/admin/login')
             .send(testAdminLogin)).body.access_token;
         const a = await request(app.getHttpServer())
-            .post('/junior/register')
+            .post('/api/junior/register')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
             .send(testJuniorRegister);
 
         const challenge = (await request(app.getHttpServer())
-            .get(`/junior/getChallenge/${testJuniorRegister.phoneNumber}`)
+            .get(`/api/junior/getChallenge/${testJuniorRegister.phoneNumber}`)
             .set('Accept', 'application/json')).body;
         testJuniorLogin = { id: challenge.id, challenge: challenge.challenge };
     });
@@ -81,7 +81,7 @@ describe('JuniorController (e2e)', () => {
                 parentsPhoneNumber: testJuniorRegister.parentsPhoneNumber, gender: 'f',
             } as RegisterJuniorDto;
             return request(app.getHttpServer())
-                .post('/junior/register')
+                .post('/api/junior/register')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(testData)
@@ -89,7 +89,7 @@ describe('JuniorController (e2e)', () => {
         }),
             it('returns a Conflict if the user already exists', async () => {
                 return request(app.getHttpServer())
-                    .post('/junior/register')
+                    .post('/api/junior/register')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testJuniorRegister)
@@ -98,7 +98,7 @@ describe('JuniorController (e2e)', () => {
             it('returns an Bad Request if invalid data is entered', async () => {
                 const testData = { firstName: 'Bob', lastName: 'Bobby' };
                 return request(app.getHttpServer())
-                    .post('/junior/register')
+                    .post('/api/junior/register')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -106,7 +106,7 @@ describe('JuniorController (e2e)', () => {
             }),
             it('returns an Unauthorized if no JWT token is provided', async () => {
                 return request(app.getHttpServer())
-                    .post('/junior/register')
+                    .post('/api/junior/register')
                     .send(testJuniorRegister)
                     .expect(401);
             });
@@ -115,28 +115,28 @@ describe('JuniorController (e2e)', () => {
     describe('/junior/login POST', () => {
         it('returns a JWT token on a succesful login', async () => {
             juniorToken = (await request(app.getHttpServer())
-                .post('/junior/login')
+                .post('/api/junior/login')
                 .send(testJuniorLogin)).body.access_token;
             expect(juniorToken);
         }),
             it('returns an unauthorized if the id does not exist', async () => {
                 const testData = { id: '1', challenge: testJuniorLogin.challenge } as LoginJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/login')
+                    .post('/api/junior/login')
                     .send(testData)
                     .expect(401);
             }),
             it('returns exception if an invalid challenge is provided', async () => {
                 const testData = { id: testJuniorLogin.id, challenge: '12345' } as LoginJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/login')
+                    .post('/api/junior/login')
                     .send(testData)
                     .expect(401);
             }),
             it('returns a Bad Request if invalid data is entered', async () => {
                 const testData = { phoneNumber: testJuniorLogin.id };
                 return request(app.getHttpServer())
-                    .post('/junior/login')
+                    .post('/api/junior/login')
                     .send(testData)
                     .expect(400);
             });
@@ -145,14 +145,14 @@ describe('JuniorController (e2e)', () => {
     describe('/junior/login GET', () => {
         it('return a 200 if a valid junior Token is provided', async () => {
             return request(app.getHttpServer())
-                .get('/junior/login')
+                .get('/api/junior/login')
                 .set('Authorization', `Bearer ${juniorToken}`)
                 .set('Accept', 'application/json')
                 .expect(200);
         }),
             it('returns an error in the case of an invalid token is provided', async () => {
                 return request(app.getHttpServer())
-                    .get('/junior/login')
+                    .get('/api/junior/login')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(403);
@@ -162,7 +162,7 @@ describe('JuniorController (e2e)', () => {
     describe('/junior/list', () => {
         it('Should return a list containing details of all juniors', async () => {
             const response = await request(app.getHttpServer())
-                .get('/junior/list')
+                .get('/api/junior/list')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
             juniorList = response.body as JuniorUserViewModel[];
@@ -170,7 +170,7 @@ describe('JuniorController (e2e)', () => {
         }),
             it('Should reject non-super users', async () => {
                 return request(app.getHttpServer())
-                    .get('/admin/list')
+                    .get('/api/admin/list')
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .expect(403);
@@ -181,7 +181,7 @@ describe('JuniorController (e2e)', () => {
         it('Should return a 201 when completed with valid data', async () => {
             const testData = { id: juniorList[0].id, firstName: 'John' } as EditJuniorDto;
             return request(app.getHttpServer())
-                .post('/junior/edit')
+                .post('/api/junior/edit')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(testData)
@@ -190,7 +190,7 @@ describe('JuniorController (e2e)', () => {
             it('Should reject non-super users', async () => {
                 const testData = { id: juniorList[0].id, phoneNumber: '04122345671' } as EditJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/edit')
+                    .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -199,7 +199,7 @@ describe('JuniorController (e2e)', () => {
             it('Should throw an error if invalid data is provided.', async () => {
                 const testData = { id: juniorList[0].id, phoneNumber: 'notAPhoneNumber' } as EditJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/edit')
+                    .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -208,7 +208,7 @@ describe('JuniorController (e2e)', () => {
             it('Should throw an error if the user does not exist', async () => {
                 const testData = { id: '014833', phoneNumber: '04112345671' } as EditJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/edit')
+                    .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -220,13 +220,13 @@ describe('JuniorController (e2e)', () => {
                     firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
                 } as RegisterJuniorDto;
                 await request(app.getHttpServer())
-                    .post('/junior/register')
+                    .post('/api/junior/register')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(temp);
                 const testData = { id: juniorList[0].id, phoneNumber: juniorList[1].phoneNumber } as EditJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/edit')
+                    .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -235,7 +235,7 @@ describe('JuniorController (e2e)', () => {
             it('Should throw an error if no data is changed.', async () => {
                 const testData = { id: juniorList[0].id } as EditJuniorDto;
                 return request(app.getHttpServer())
-                    .post('/junior/edit')
+                    .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
@@ -247,7 +247,7 @@ describe('JuniorController (e2e)', () => {
         it('Should return a 200 when completed with a new challenge', async () => {
             const testData = { phoneNumber: testJuniorRegister.phoneNumber } as ResetJuniorDto;
             return request(app.getHttpServer())
-                .post('/junior/reset')
+                .post('/api/junior/reset')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(testData)
@@ -259,28 +259,28 @@ describe('JuniorController (e2e)', () => {
         let juniorToDelete;
         beforeAll(async () => {
             const response = await request(app.getHttpServer())
-                .get('/junior/list')
+                .get('/api/junior/list')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
             juniorToDelete = response.body[0].id;
         }),
             it('Should return a 200 user when carried out by an Admin', async () => {
                 return request(app.getHttpServer())
-                    .delete(`/junior/${juniorToDelete}`)
+                    .delete(`/api/junior/${juniorToDelete}`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(200);
             }),
             it('Should reject the request for non-admins', () => {
                 return request(app.getHttpServer())
-                    .delete(`/junior/${juniorToDelete}`)
+                    .delete(`/api/junior/${juniorToDelete}`)
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .expect(403);
             }),
             it('Should reject the reqest if the ID is invalid', () => {
                 return request(app.getHttpServer())
-                    .delete(`/junior/183461394613`)
+                    .delete(`/api/junior/183461394613`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(400);

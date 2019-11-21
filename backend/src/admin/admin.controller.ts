@@ -26,7 +26,7 @@ import * as content from '../content.json';
  * - successful POSTS return a 201.
  * - all errors return a status code and message relevant to the issue.
  */
-@Controller('admin')
+@Controller(`${content.Routes.api}/admin`)
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,

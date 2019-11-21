@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -36,9 +36,9 @@ const App: React.FC<AppProps> = (props) => {
     }
   }, [props.loggedIn, props.token]);
 
-//check if ios and open in a browser
+  //check if ios and open in a browser
   useEffect(() => {
-   
+
     if (isIos() && !isInStandaloneMode()) {
       setShowA2hs(true);
     }
@@ -54,7 +54,7 @@ const App: React.FC<AppProps> = (props) => {
         <Route path='/login' component={LoginPage} />
         <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
       </Switch>
-      <A2hs isVisible={showA2hs} close={onClose}/>
+      <A2hs isVisible={showA2hs} close={onClose} />
     </Wrapper>
   );
 }

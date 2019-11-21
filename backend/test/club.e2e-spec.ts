@@ -55,29 +55,29 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/admin/registerTemp')
+            .post('/api/admin/registerTemp')
             .send(testAdminRegister);
         token = (await request(app.getHttpServer())
-            .post('/admin/login')
+            .post('/api/admin/login')
             .send(testAdminLogin)).body.access_token;
         await request(app.getHttpServer())
-            .post('/junior/register')
+            .post('/api/junior/register')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
             .send(testJuniorRegister);
         const challenge = (await request(app.getHttpServer())
-            .get(`/junior/getChallenge/${testJuniorRegister.phoneNumber}`)
+            .get(`/api/junior/getChallenge/${testJuniorRegister.phoneNumber}`)
             .set('Accept', 'application/json')).body;
         testJuniorLogin = { id: challenge.id, challenge: challenge.challenge };
         juniorList = (await request(app.getHttpServer())
-            .get('/junior/list')
+            .get('/api/junior/list')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')).body as JuniorUserViewModel[];
         juniorToken = (await request(app.getHttpServer())
-            .post('/junior/login')
+            .post('/api/junior/login')
             .send(testJuniorLogin)).body.access_token;
         clubList = (await request(app.getHttpServer())
-            .get('/club/list')
+            .get('/api/club/list')
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'application/json')
         ).body;
@@ -92,7 +92,7 @@ describe('JuniorController (e2e)', () => {
         it('Should return a list containing details of all clubs', async () => {
             const exampleClub = clubList[0];
             const response = await request(app.getHttpServer())
-                .get('/club/list')
+                .get('/api/club/list')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
             const returnedList = response.body as ClubViewModel[];
@@ -100,7 +100,7 @@ describe('JuniorController (e2e)', () => {
         }),
             it('Should reject non admins', async () => {
                 return request(app.getHttpServer())
-                    .get('/club/list')
+                    .get('/api/club/list')
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .expect(403);
@@ -111,7 +111,7 @@ describe('JuniorController (e2e)', () => {
         it('should return a 201 and true if the check-in is successful', async () => {
             const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
             const response = (await request(app.getHttpServer())
-                .post('/club/check-in')
+                .post('/api/club/check-in')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(exampleCheckIn));
@@ -121,7 +121,7 @@ describe('JuniorController (e2e)', () => {
             it('should reject non-admins', async () => {
                 const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
                 const response = (await request(app.getHttpServer())
-                    .post('/club/check-in')
+                    .post('/api/club/check-in')
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
@@ -130,7 +130,7 @@ describe('JuniorController (e2e)', () => {
             it('should throw a Bad Request if the junior does not exists', async () => {
                 const exampleCheckIn = { clubId: clubList[0].id, juniorId: '99999999' } as CheckInDto;
                 const response = (await request(app.getHttpServer())
-                    .post('/club/check-in')
+                    .post('/api/club/check-in')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
@@ -139,7 +139,7 @@ describe('JuniorController (e2e)', () => {
             it('should return a Bad Request if the club does not exist', async () => {
                 const exampleCheckIn = { clubId: '999999', juniorId: juniorList[0].id } as CheckInDto;
                 const response = (await request(app.getHttpServer())
-                    .post('/club/check-in')
+                    .post('/api/club/check-in')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
@@ -151,14 +151,14 @@ describe('JuniorController (e2e)', () => {
         beforeAll(async () => {
             const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
             await request(app.getHttpServer())
-                .post('/club/check-in')
+                .post('/api/club/check-in')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(exampleCheckIn);
         }),
             it('Should return all check-ins for the provided club', async () => {
                 const response = (await request(app.getHttpServer())
-                    .get(`/club/check-in/${clubList[0].id}`)
+                    .get(`/api/club/check-in/${clubList[0].id}`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json'));
                 const checkIns = response.body as CheckIn[];
@@ -166,14 +166,14 @@ describe('JuniorController (e2e)', () => {
             }),
             it('Should reject the user if they are not an admin.', async () => {
                 await request(app.getHttpServer())
-                    .get(`/club/check-in/${clubList[0].id}`)
+                    .get(`/api/club/check-in/${clubList[0].id}`)
                     .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .expect(403);
             }),
             it('Should return a bad request if an invalid club is provided', async () => {
                 await request(app.getHttpServer())
-                    .get(`/club/check-in/99999999`)
+                    .get(`/api/club/check-in/99999999`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(400);

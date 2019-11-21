@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
@@ -14,6 +14,7 @@ import { Admin } from './admin/entities';
 import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
+import { RoutersMiddleware } from './middleware/routers.middleware';
 
 @Module({
   imports: [
@@ -29,6 +30,10 @@ import { SmsModule } from './sms/sms.module';
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RoutersMiddleware).forRoutes('/**');
+  }
+
   constructor(private readonly connection: Connection) { }
 }
