@@ -7,7 +7,7 @@ export class LogBookCheckInsViewModel {
     constructor(clubName: string, checkIns: CheckIn[]) {
         this.clubName = clubName;
         this.juniors = checkIns.map(checkIn => {
-            const dateTime = new Date(checkIn.timestamp);
+            const dateTime = new Date(checkIn.checkInTime);
             let hours = dateTime.getHours().toString();
             let minutes = dateTime.getMinutes().toString();
             if (hours.length < 2) { hours = `0${hours}`; }

@@ -13,7 +13,7 @@ export class CheckIn {
         type: ConfigHelper.isTest() ? 'text' : 'timestamp with time zone',
         default: getDefaultDate(),
     })
-    timestamp: string;
+    checkInTime: string;
 
     @ManyToOne(type => Club)
     club: Club;

@@ -16,7 +16,6 @@ const Container = styled.div`
   flex-direction: column;
 `
 
-
 const CheckInView = (props) => {
 
   const handleScan = async (qrData) => {
@@ -27,8 +26,8 @@ const CheckInView = (props) => {
         juniorId: qrData
       });
       const options = {
-          method: 'POST',
-          body
+        method: 'POST',
+        body
       };
       await httpClient(url, options)
         .then(response => {
@@ -53,7 +52,7 @@ const CheckInView = (props) => {
         delay={5000}
         onScan={handleScan}
         onError={handleError}
-        style={ {width: 640, height: 640} }
+        style={{ width: 640, height: 640 }}
       />
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
