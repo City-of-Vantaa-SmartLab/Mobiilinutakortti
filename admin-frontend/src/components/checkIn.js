@@ -53,7 +53,7 @@ const CheckInView = (props) => {
         delay={10000}
         onScan={handleScan}
         onError={handleError}
-        style={{ width: 640, height: 640 }}
+        style={{ width: 600, height: 600 }}
       />
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
