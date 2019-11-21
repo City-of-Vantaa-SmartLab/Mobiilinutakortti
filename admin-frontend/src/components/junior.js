@@ -15,11 +15,12 @@ import {
     choices,
     EditButton,
     Edit,
+    Filter,
     showNotification
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices } from '../utils'
 import Button from '@material-ui/core/Button';
-import httpClient from '../httpClient';
+import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
 const JuniorEditTitle = ({ record }) => (
@@ -29,6 +30,15 @@ const JuniorEditTitle = ({ record }) => (
 export const JuniorList = connect(null, { showNotification })(props => {
 
     const { showNotification } = props;
+
+    const [youthClubs, setYouthClubs] = useState([]);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const parsedYouthClubs = await getYouthClubs();
+            setYouthClubs(parsedYouthClubs);
+        };
+        addYouthClubsToState();
+    }, []);
 
     const ResendSMSButton = (data) => (
         <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Resend SMS</Button>
@@ -43,7 +53,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
             method: 'POST',
             body
         };
-        await httpClient(url, options)
+        await httpClientWithResponse(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
                     showNotification(response.message, "warning");
@@ -53,8 +63,16 @@ export const JuniorList = connect(null, { showNotification })(props => {
             });
     }
 
+
+    const JuniorFilter = (props) => (
+        <Filter {...props}>
+            <TextInput label="Nimi" source="name" />
+            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+        </Filter>
+    );
+
     return (
-        <List title="Nuoret" {...props}>
+        <List title="Nuoret" filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />

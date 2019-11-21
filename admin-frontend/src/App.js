@@ -10,7 +10,6 @@ import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
-import { token } from './utils';
 
 const messages = {
     'fi': finnishMessages,

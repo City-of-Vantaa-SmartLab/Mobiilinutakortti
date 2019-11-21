@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { TextField, Button, Toolbar } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import httpClient from '../httpClient';
+import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
 let ChangePasswordView = (props) => {
@@ -22,7 +22,7 @@ let ChangePasswordView = (props) => {
                 method: 'POST',
                 body
             };
-            await httpClient(url, options)
+            await httpClientWithResponse(url, options)
                 .then(response => {
                     const { showNotification } = props;
                     if (response.statusCode < 200 || response.statusCode >= 300) {

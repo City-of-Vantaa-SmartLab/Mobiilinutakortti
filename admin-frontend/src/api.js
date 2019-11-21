@@ -5,6 +5,7 @@ export default {
     create: `${appUrl}/junior/register`,
     edit: `${appUrl}/junior/edit`,
     list: `${appUrl}/junior/list`,
+    total: `${appUrl}/junior/total`,
     reset: `${appUrl}/junior/reset`,
     base: `${appUrl}/junior/`
   },

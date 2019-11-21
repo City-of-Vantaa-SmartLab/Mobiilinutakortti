@@ -17,7 +17,7 @@ import {
 import { getYouthClubs } from '../utils';
 
 export const YouthWorkerList = (props) => (
-  <List title="Nuorisotyöntekijät" {...props}>
+  <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
     <Datagrid>
       <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
       <TextField label="Sähköposti" source="email" />
@@ -66,7 +66,6 @@ export const YouthWorkerEdit = (props) => {
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
       <SimpleForm redirect="list">
         <TextInput label="Sähköposti" source="email" type="email" />
-        {/* <TextInput label="Salasana" source="password" type="password" /> */}
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
         <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />

@@ -76,7 +76,8 @@ export class ClubService {
         });
         const [genders, ages] = [
             this.getGendersForLogBook(uniqueJuniors.map(j => j.gender)),
-            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday)))];
+            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday))),
+        ];
         return new LogBookViewModel(checkIns[0].club.name, genders, ages);
     }
 
