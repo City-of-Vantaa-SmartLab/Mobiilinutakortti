@@ -12,7 +12,6 @@ import { JuniorModule } from '../junior/junior.module';
     PassportModule,
   JwtModule.register({
     secret: jwt.secret,
-    signOptions: { expiresIn: jwt.expiry },
   })],
   providers: [AuthenticationService, JwtStrategy],
   exports: [AuthenticationService],
