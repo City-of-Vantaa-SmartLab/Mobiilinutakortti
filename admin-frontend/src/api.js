@@ -22,6 +22,7 @@ export default {
     edit: `${appUrl}/admin/edit`,
     list: `${appUrl}/admin/list`,
     self: `${appUrl}/admin/getSelf`,
+    password: `${appUrl}/admin/changePassword`,
     base: `${appUrl}/admin/`
   }
 }

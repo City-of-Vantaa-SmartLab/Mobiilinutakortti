@@ -27,8 +27,8 @@ const CheckInView = (props) => {
         juniorId: qrData
       });
       const options = {
-          method: 'POST',
-          body
+        method: 'POST',
+        body
       };
       await httpClient(url, options)
         .then(response => {
@@ -36,7 +36,7 @@ const CheckInView = (props) => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
             showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
-            showNotification('Kirjautuminen onnistui!')
+            showNotification('Sisäänkirjautuminen onnistunut!')
           }
         });
     }
@@ -50,10 +50,10 @@ const CheckInView = (props) => {
   return (
     <Container>
       <QrReader
-        delay={5000}
+        delay={10000}
         onScan={handleScan}
         onError={handleError}
-        style={ {width: 640, height: 640} }
+        style={{ width: 640, height: 640 }}
       />
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
