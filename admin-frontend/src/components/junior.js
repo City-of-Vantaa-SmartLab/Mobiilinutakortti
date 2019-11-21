@@ -40,6 +40,13 @@ export const JuniorList = connect(null, { showNotification })(props => {
         addYouthClubsToState();
     }, []);
 
+    const JuniorFilter = (props) => (
+        <Filter {...props}>
+            <TextInput label="Nimi" source="name" />
+            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+        </Filter>
+    );
+
     const ResendSMSButton = (data) => (
         <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Resend SMS</Button>
     )
@@ -62,14 +69,6 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 }
             });
     }
-
-
-    const JuniorFilter = (props) => (
-        <Filter {...props}>
-            <TextInput label="Nimi" source="name" />
-            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
-        </Filter>
-    );
 
     return (
         <List title="Nuoret" filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>

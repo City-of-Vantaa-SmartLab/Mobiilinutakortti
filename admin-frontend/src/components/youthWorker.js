@@ -71,6 +71,6 @@ export const YouthWorkerEdit = (props) => {
         <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
-    </Edit>
+    </Edit >
   );
 };

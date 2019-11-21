@@ -36,6 +36,7 @@ export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const id = client.handshake.query.token;
     this.connectedJuniors[id] = client;
     const response = new CheckInResponseViewModel(true);
+    console.log(this.connectedJuniors);
     return { event: gatewayEvents.checkIn, data: response };
   }
 }
