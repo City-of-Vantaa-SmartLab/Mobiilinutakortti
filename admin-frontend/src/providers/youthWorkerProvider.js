@@ -14,19 +14,19 @@ export const youthWorkerProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                      throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data: response, total: response.length };
                 });
         }
         case CREATE: {
             const data = JSON.stringify({
-              email: params.data.email,
-              password: params.data.password,
-              firstName: params.data.firstName,
-              lastName: params.data.lastName,
-              isSuperUser: params.data.isSuperUser,
-              mainYouthClub: params.data.mainYouthClub,
+                email: params.data.email,
+                password: params.data.password,
+                firstName: params.data.firstName,
+                lastName: params.data.lastName,
+                isSuperUser: params.data.isSuperUser,
+                mainYouthClub: params.data.mainYouthClub,
             });
             url = api.youthWorker.create;
             options = {
@@ -37,20 +37,20 @@ export const youthWorkerProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                      throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: {id: ''}} //React-admin expects this format from from CREATE. Hacky and ugly, but works.
+                    return { data: { id: '' } } //React-admin expects this format from from CREATE. Hacky and ugly, but works.
                 });
         }
         case UPDATE: {
             const data = {
-              id: params.data.id,
-              email: params.data.email,
-              password: params.data.password,
-              firstName: params.data.firstName,
-              lastName: params.data.lastName,
-              isSuperUser: params.data.isSuperUser,
-              mainYouthClub: params.data.mainYouthClub
+                id: params.data.id,
+                email: params.data.email,
+                //   password: params.data.password,
+                firstName: params.data.firstName,
+                lastName: params.data.lastName,
+                isSuperUser: params.data.isSuperUser,
+                mainYouthClub: params.data.mainYouthClub
             };
             const jsonData = JSON.stringify(data);
             url = api.youthWorker.edit;
@@ -62,7 +62,7 @@ export const youthWorkerProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                      throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data } //React-admin expects this format from from UPDATE. Hacky and ugly, but works.
                 });
@@ -75,9 +75,9 @@ export const youthWorkerProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                      throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: response};
+                    return { data: response };
                 });
         }
         case DELETE: {
@@ -88,9 +88,9 @@ export const youthWorkerProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                      throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return {data: {id: params.id}}
+                    return { data: { id: params.id } }
                 });
         }
         default:
