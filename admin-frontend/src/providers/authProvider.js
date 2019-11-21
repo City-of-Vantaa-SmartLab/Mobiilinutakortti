@@ -1,5 +1,5 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
-import defaultHttpClient from '../httpClient';
+import { httpClient } from '../httpClients';
 import api from '../api';
 import { token } from '../utils';
 
@@ -11,7 +11,7 @@ export const authProvider = (type, params) => {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
         };
-        return defaultHttpClient(url, options)
+        return httpClient(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
                     throw new Error(response.message);
@@ -21,7 +21,7 @@ export const authProvider = (type, params) => {
             .then(({ access_token }) => {
                 localStorage.setItem(token, access_token);
             })
-            .then(() => defaultHttpClient(api.youthWorker.self, { method: 'GET' }))
+            .then(() => httpClient(api.youthWorker.self, { method: 'GET' }))
             .then((response) => {
                 if (response.isSuperUser) {
                     localStorage.setItem('role', 'SUPERADMIN');

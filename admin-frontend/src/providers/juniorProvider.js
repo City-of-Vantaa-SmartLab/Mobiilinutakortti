@@ -8,15 +8,41 @@ export const juniorProvider = (type, params, httpClient) => {
     switch (type) {
         case GET_LIST: {
             url = api.junior.list;
-            options = {
-                method: 'GET'
+
+            const controls = {
+                filters: {
+                    name: params.filter.name,
+                    homeYouthClub: params.filter.homeYouthClub
+                },
+                pagination: {
+                    page: params.pagination.page,
+                    perPage: params.pagination.perPage
+                },
+                sort: {
+                    field: params.sort.field,
+                    order: params.sort.order
+                }
+
             };
+
+            options = {
+                method: 'GET',
+            };
+
+            url += `?controls=${encodeURIComponent(JSON.stringify(controls))}`
+
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return { data: response, total: response.length };
+                    return httpClient(api.junior.total, { method: 'GET' })
+                        .then(countResponse => {
+                            if (countResponse.statusCode < 200 || countResponse.statusCode >= 300) {
+                                throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                            }
+                            return { data: response, total: countResponse.total };
+                        });
                 });
         }
         case CREATE: {
@@ -24,6 +50,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 phoneNumber: params.data.phoneNumber,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
+                nickName: params.data.nickName,
                 gender: params.data.gender,
                 birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,
@@ -51,6 +78,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 phoneNumber: params.data.phoneNumber,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
+                nickName: params.data.nickName,
                 gender: params.data.gender,
                 birthday: new Date(params.data.birthday),
                 homeYouthClub: params.data.homeYouthClub,

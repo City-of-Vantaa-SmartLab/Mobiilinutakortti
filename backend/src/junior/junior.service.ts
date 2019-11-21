@@ -1,6 +1,6 @@
 import { Injectable, ConflictException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
@@ -9,6 +9,7 @@ import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
+import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 
 @Injectable()
 export class JuniorService {
@@ -21,8 +22,50 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(): Promise<JuniorUserViewModel[]> {
-        return (await this.juniorRepo.find()).map(e => new JuniorUserViewModel(e));
+    async listAllJuniors(controls?: ListControlDto): Promise<JuniorUserViewModel[]> {
+        const query = { order: {}, where: {}, skip: 0, take: 0 };
+        if (controls) {
+            query.order = controls.sort ? this.applySort(controls.sort) : {};
+            query.where = controls.filters ? this.applyWhereYouthClub(controls.filters) : {};
+            query.take = controls.pagination ? controls.pagination.perPage : 0;
+            query.skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
+        }
+        return (await this.juniorRepo.find(query)).map(e => new JuniorUserViewModel(e));
+    }
+
+    private applySort(sortOptions: SortDto) {
+        const order = {};
+        if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; }
+        return order;
+    }
+
+    private applyWhereYouthClub(filterOptions: FilterDto) {
+        const homeYouthClub = 'homeYouthClub';
+        const names = ['firstName', 'lastName', 'nickName'];
+        const where = [];
+        if (filterOptions.name && filterOptions.homeYouthClub) {
+            names.forEach(name => {
+                const query = {};
+                query[name] = Like(`%${filterOptions.name}%`);
+                query[homeYouthClub] = filterOptions.homeYouthClub;
+                where.push(query);
+            });
+        } else if (filterOptions.name) {
+            names.forEach(name => {
+                const query = {};
+                query[name] = Like(`%${filterOptions.name}%`);
+                where.push(query);
+            });
+        } else if (filterOptions.homeYouthClub) {
+            const query = {};
+            query[homeYouthClub] = filterOptions.homeYouthClub;
+            where.push(query);
+        }
+        return where;
+    }
+
+    async getTotalJuniors(): Promise<number> {
+        return await this.juniorRepo.count();
     }
 
     async getJunior(id: string): Promise<Junior> {
@@ -57,6 +100,7 @@ export class JuniorService {
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
+        if (registrationData.nickName) { junior.nickName = registrationData.nickName; }
         const errors = await validate(junior);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
@@ -71,13 +115,13 @@ export class JuniorService {
 
     async resetLogin(phoneNumber: string): Promise<string> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
-        if (!user) { throw new ConflictException(content.UserNotFound); }
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
         const activeChallenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challenge = await this.setChallenge(phoneNumber);
         const junior = await this.juniorRepo.findOne({ phoneNumber });
-        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
-        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        // const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        // if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         return `${phoneNumber} ${content.Reset}`;
     }
 
@@ -97,6 +141,7 @@ export class JuniorService {
         user.postCode = details.postCode;
         user.homeYouthClub = details.homeYouthClub;
         user.gender = details.gender;
+        user.nickName = details.nickName;
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);

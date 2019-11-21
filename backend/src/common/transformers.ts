@@ -1,4 +1,5 @@
 import { ValueTransformer } from 'typeorm';
+import { sanitisePhoneNumber } from '../junior/junior.utility';
 
 export const lowercase: ValueTransformer = {
     to: (str: string) => str.toLocaleLowerCase(),
@@ -15,10 +16,18 @@ export const jsonDataToNumber: ValueTransformer = {
     from: (num: number) => num,
 };
 
+export const trimString: ValueTransformer = {
+    to: (str: string) => typeof str === 'string' ? str.trim() : str,
+    from: (str: string) => str,
+};
+
 /**
  * A transformer to be used on databases so that all numbers are stored in an international format.
  */
 export const makePhoneNumberInternational: ValueTransformer = {
-    to: (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str,
+    to: (str: string) => {
+        const sanitisedPhoneNumber = sanitisePhoneNumber(str);
+        return sanitisedPhoneNumber.charAt(0) === '0' ? sanitisedPhoneNumber.replace('0', '358') : sanitisedPhoneNumber;
+    },
     from: (str: string) => str,
 };

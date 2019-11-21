@@ -49,7 +49,7 @@ export class ClubService {
         const startOfDay = new Date(logbookDetails.date).setHours(0, 0, 0, 0);
         const endOfDay = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
-            .filter(checkIn => (this.isBetween(new Date(checkIn.timestamp).getTime(), startOfDay, endOfDay)) && checkIn.junior);
+            .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfDay, endOfDay)) && checkIn.junior);
         if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
         return clubCheckIns;
     }
@@ -61,7 +61,7 @@ export class ClubService {
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        const checkIn = { junior, club } as CheckIn;
+        const checkIn = { junior, club, checkInTime: new Date().toLocaleString() } as CheckIn;
         await this.checkInRepo.save(checkIn);
         return true;
     }
@@ -76,7 +76,8 @@ export class ClubService {
         });
         const [genders, ages] = [
             this.getGendersForLogBook(uniqueJuniors.map(j => j.gender)),
-            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday)))];
+            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday))),
+        ];
         return new LogBookViewModel(checkIns[0].club.name, genders, ages);
     }
 

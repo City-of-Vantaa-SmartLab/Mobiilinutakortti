@@ -1,6 +1,6 @@
 import {
     Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors,
-    Get, Param, BadRequestException, Delete,
+    Get, Param, BadRequestException, Delete, Query, Res,
 } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
@@ -13,12 +13,13 @@ import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
 import { Junior } from './junior.decorator';
-import { Message, Check } from '../common/vm';
+import { Message, Check, TotalViewModel } from '../common/vm';
 import { Challenge } from './entities';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
+import { ListControlDto } from '../common/dto';
 
 @Controller(`${content.Routes.api}/junior`)
 export class JuniorController {
@@ -75,9 +76,18 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
+    @Get('total')
+    async getTotalJuniors(): Promise<TotalViewModel> {
+        return new TotalViewModel(await this.juniorService.getTotalJuniors());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Get('list')
-    async getAllJuniors(): Promise<JuniorUserViewModel[]> {
-        return await this.juniorService.listAllJuniors();
+    async getAllJuniors(@Query('controls') query): Promise<JuniorUserViewModel[]> {
+        const controls = query ? JSON.parse(query) as ListControlDto : undefined;
+        return await this.juniorService.listAllJuniors(controls);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
