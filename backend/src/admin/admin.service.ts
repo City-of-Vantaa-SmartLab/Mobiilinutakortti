@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 import { Admin, Lockout } from './entities';
 import * as content from '../content.json';
 import { EditAdminDto, RegisterAdminDto } from './dto';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
 import { AdminUserViewModel } from './vm/admin.vm';
-import { ConfigHelper } from '../configHandler';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 /**
  * A service designed to deal with Admin actions.
@@ -85,6 +85,17 @@ export class AdminService {
         } as Admin;
         await this.createAdmin(admin);
         return `${registrationData.email} ${content.Created}`;
+    }
+
+    async changePassword(adminId: string, changePasswordDto: ChangePasswordDto): Promise<string> {
+        const user = await this.adminRepo.findOne(adminId);
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
+        const passwordsMatch = await compare(changePasswordDto.oldPassword, user.password);
+        if (!passwordsMatch) { throw new BadRequestException(content.IncorrectPassword); }
+        const newPassword = await hash(changePasswordDto.newPassword, saltRounds);
+        user.password = newPassword;
+        await this.adminRepo.save(user);
+        return content.PasswordUpdated;
     }
 
     /**

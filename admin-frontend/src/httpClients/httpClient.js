@@ -1,6 +1,6 @@
-import { token } from './utils';
+import { token } from '../utils';
 
-export default (url, options = {}) => {
+export const httpClient = (url, options = {}) => {
   options.headers = new Headers({ 'Content-Type': 'application/json' });
   const authToken = localStorage.getItem(token);
   if (authToken) {
