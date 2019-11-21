@@ -18,6 +18,7 @@ import { Message, Check } from '../common/vm';
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
+import { ChangePasswordDto } from './dto/changePassword.dto';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -120,6 +121,14 @@ export class AdminController {
   @Post('edit')
   async edit(@Body() userData: EditAdminDto): Promise<Message> {
     return new Message(await this.adminService.editAdmin(userData));
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.SUPERUSER)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('changePassword')
+  async changePassword(@Admin() adminData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
+    return new Message(await this.adminService.changePassword(adminData.userId, userDate));
   }
 
   /**

@@ -19,7 +19,6 @@ const Container = styled.div`
   flex-direction: column;
 `
 
-
 const CheckInView = (props) => {
 
   useEffect(() => {
