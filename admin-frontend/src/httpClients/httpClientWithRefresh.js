@@ -1,4 +1,4 @@
-import { httpClient } from './httpClient';
+import { httpClient } from './';
 import api from '../api';
 import { token } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
