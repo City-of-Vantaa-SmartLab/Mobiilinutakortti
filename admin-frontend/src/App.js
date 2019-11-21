@@ -10,6 +10,7 @@ import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
+import CustomLayout from './customLayout';
 
 const messages = {
     'fi': finnishMessages,
@@ -40,7 +41,7 @@ const App = () => {
     }, []);
 
     return (
-        <Admin locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
+        <Admin appLayout={CustomLayout} locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
             {permissions => [
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />
