@@ -70,14 +70,6 @@ export const JuniorList = connect(null, { showNotification })(props => {
             });
     }
 
-
-    const JuniorFilter = (props) => (
-        <Filter {...props}>
-            <TextInput label="Nimi" source="name" />
-            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
-        </Filter>
-    );
-
     return (
         <List title="Nuoret" filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
