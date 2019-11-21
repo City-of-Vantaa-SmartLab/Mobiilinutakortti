@@ -6,6 +6,6 @@ export class JuniorQRViewModel {
 
     constructor(junior: Junior) {
         this.id = junior.id;
-        this.name = `${junior.firstName} ${junior.lastName}`;
+        this.name = `${junior.firstName} '${junior.nickName}' ${junior.lastName}`;
     }
 }

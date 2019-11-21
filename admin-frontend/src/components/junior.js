@@ -6,7 +6,6 @@ import {
     TextField,
     SelectField,
     DateField,
-    FunctionField,
     Create,
     SimpleForm,
     TextInput,
@@ -57,7 +56,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
     return (
         <List title="Nuoret" {...props}>
             <Datagrid>
-                <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+                <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
                 <DateField label="Syntymäaika" source="birthday" />
                 <TextField label="Puhelinnumero" source="phoneNumber" />
@@ -87,6 +86,7 @@ export const JuniorCreate = (props) => {
             <SimpleForm redirect="list">
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
+                <TextInput label="Nimimerkki" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o'])]} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
@@ -115,6 +115,7 @@ export const JuniorEdit = (props) => {
             <SimpleForm>
                 <TextInput label="Etunimi" source="firstName" />
                 <TextInput label="Sukunimi" source="lastName" />
+                <TextInput label="Nimimerkki" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
                 <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />

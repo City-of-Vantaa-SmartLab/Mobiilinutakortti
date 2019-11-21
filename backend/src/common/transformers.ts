@@ -16,6 +16,11 @@ export const jsonDataToNumber: ValueTransformer = {
     from: (num: number) => num,
 };
 
+export const trimString: ValueTransformer = {
+    to: (str: string) => str.trim(),
+    from: (str: string) => str,
+}
+
 /**
  * A transformer to be used on databases so that all numbers are stored in an international format.
  */

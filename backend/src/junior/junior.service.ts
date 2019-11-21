@@ -57,6 +57,7 @@ export class JuniorService {
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub,
         } as Junior;
+        if (registrationData.nickName) { junior.nickName = registrationData.nickName; }
         const errors = await validate(junior);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
@@ -97,6 +98,7 @@ export class JuniorService {
         user.postCode = details.postCode;
         user.homeYouthClub = details.homeYouthClub;
         user.gender = details.gender;
+        user.nickName = details.nickName;
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
