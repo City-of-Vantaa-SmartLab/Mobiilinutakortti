@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -35,15 +35,15 @@ const App: React.FC<AppProps> = (props) => {
     }
   }, [props.loggedIn, props.token]);
 
-//if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
+  //if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
   useEffect(() => {
     if (!props.loggedIn) {
       props.authWithCache()
     }
   }, []);
 
-//check if ios and open in a browser
-  useEffect(() => { 
+  //check if ios and open in a browser
+  useEffect(() => {
     if (isIos() && !isInStandaloneMode()) {
       setShowA2hs(true);
     }
@@ -59,7 +59,7 @@ const App: React.FC<AppProps> = (props) => {
         <Route path='/login' component={LoginPage} />
         <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
       </Switch>
-      <A2hs isVisible={showA2hs} close={onClose}/>
+      <A2hs isVisible={showA2hs} close={onClose} />
     </Wrapper>
   );
 }
@@ -71,7 +71,7 @@ const mapStateToProps = (state: AppState) => ({
 
 
 
-const mapDispatchToProps = (dispatch: Dispatch<userActions|authActions>) => {
+const mapDispatchToProps = (dispatch: Dispatch<userActions | authActions>) => {
   return {
     getUser: (token: string) => {
       dispatch({

@@ -21,5 +21,9 @@
   "MessengerServiceNotAvailable": "The messaging service is currently unavailable, please try again later.",
   "SMSSender": "VantaaNuta",
   "SMSSignature": "Vantaan nuorisopalvelut",
-  "Deleted": "user deleted."
+  "Deleted": "user deleted.",
+  "Routes": {
+    "api": "api",
+    "admin": "nuorisotyontekijat"
+  }
 }

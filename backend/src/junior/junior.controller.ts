@@ -20,7 +20,7 @@ import { Challenge } from './entities';
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 
-@Controller('junior')
+@Controller(`${content.Routes.api}/junior`)
 export class JuniorController {
 
     constructor(

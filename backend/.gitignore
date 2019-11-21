@@ -3,6 +3,9 @@
 /node_modules
 /documentation
 
+/public
+/public-admin
+
 # Logs
 logs
 *.log
