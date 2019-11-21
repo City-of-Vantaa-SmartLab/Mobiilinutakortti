@@ -61,6 +61,14 @@ export class AdminController {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
   }
 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Get('refresh')
+  async refreshJWT(@Admin() adminData: any): Promise<JWTToken> {
+    return this.authenticationService.signToken(adminData.userId, true);
+  }
+
   /**
    * A simple route that allows the frontend to tell whether the current token is valid, and belongs to an Admin/Super Admin
    *

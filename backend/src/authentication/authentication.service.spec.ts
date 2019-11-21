@@ -52,7 +52,6 @@ describe('AuthenticationService', () => {
     module = await Test.createTestingModule({
       imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
         secret: jwt.secret,
-        signOptions: { expiresIn: jwt.expiry },
       })],
       providers: [AdminService, AuthenticationService, JuniorService, {
         provide: getRepositoryToken(Admin),

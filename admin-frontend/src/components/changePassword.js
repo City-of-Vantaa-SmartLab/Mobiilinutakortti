@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { TextField, Button, Toolbar } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import httpClient from '../httpClient';
+import httpClient from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 
 let ChangePasswordView = (props) => {

@@ -14,7 +14,7 @@ import {
     VerticalCardPadding,
     StyledDialogTitle
 } from './styledComponents/logbook';
-import httpClient from '../httpClient';
+import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 import { genderChoices } from '../utils';
 
@@ -69,7 +69,7 @@ let LogBookView = (props) => {
                 body
             };
             resetState();
-            await httpClient(url, options)
+            await httpClientWithResponse(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         const { showNotification } = props;
