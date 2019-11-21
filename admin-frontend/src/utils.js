@@ -21,13 +21,13 @@ export const ageValidator = (value, allValues) => {
   const valueAsTimestamp = Date.parse(value.toString());
 
   if (isNaN(valueAsTimestamp)) {
-    return 'Invalid date entered.';
+    return 'Väärä päivämäärä.';
   }
 
   const current = new Date().getTime();
 
   if (current < valueAsTimestamp) {
-    return 'Junior cannot be born in the future.';
+    return 'Juniori ei voi syntyä tulevaisuudessa.';
   }
   return undefined;
 }
