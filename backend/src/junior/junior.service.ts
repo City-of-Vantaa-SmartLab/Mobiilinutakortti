@@ -72,13 +72,13 @@ export class JuniorService {
 
     async resetLogin(phoneNumber: string): Promise<string> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
-        if (!user) { throw new ConflictException(content.UserNotFound); }
+        if (!user) { throw new BadRequestException(content.UserNotFound); }
         const activeChallenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challenge = await this.setChallenge(phoneNumber);
         const junior = await this.juniorRepo.findOne({ phoneNumber });
-        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
-        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        // const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        // if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         return `${phoneNumber} ${content.Reset}`;
     }
 

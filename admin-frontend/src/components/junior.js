@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
     List,
     Datagrid,
@@ -13,29 +14,62 @@ import {
     required,
     choices,
     EditButton,
-    Edit
+    Edit,
+    showNotification
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices } from '../utils'
+import Button from '@material-ui/core/Button';
+import httpClient from '../httpClient';
+import api from '../api';
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
-export const JuniorList = (props) => (
-    <List title="Nuoret" {...props}>
-        <Datagrid>
-            <TextField label="Nimi" source="displayName" />
-            <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
-            <DateField label="Syntymäaika" source="birthday" />
-            <TextField label="Puhelinnumero" source="phoneNumber" />
-            <TextField label="Postinumero" source="postCode" />
-            <TextField label="Kotinuorisotalo" source="homeYouthClub" />
-            <TextField label="Huoltajan nimi" source="parentsName" />
-            <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
+export const JuniorList = connect(null, { showNotification })(props => {
+
+    const { showNotification } = props;
+
+    const ResendSMSButton = (data) => (
+        <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Resend SMS</Button>
+    )
+
+    const resendSMS = async (phoneNumber) => {
+        const url = api.junior.reset;
+        const body = JSON.stringify({
+            phoneNumber
+        });
+        const options = {
+            method: 'POST',
+            body
+        };
+        await httpClient(url, options)
+            .then(response => {
+                if (response.statusCode < 200 || response.statusCode >= 300) {
+                    showNotification(response.message, "warning");
+                } else {
+                    showNotification(response.message);
+                }
+            });
+    }
+
+    return (
+        <List title="Nuoret" {...props}>
+            <Datagrid>
+                <TextField label="Nimi" source="displayName" />
+                <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
+                <DateField label="Syntymäaika" source="birthday" />
+                <TextField label="Puhelinnumero" source="phoneNumber" />
+                <TextField label="Postinumero" source="postCode" />
+                <TextField label="Kotinuorisotalo" source="homeYouthClub" />
+                <TextField label="Huoltajan nimi" source="parentsName" />
+                <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <ResendSMSButton />
+                <EditButton />
+            </Datagrid>
+        </List>
+    )
+});
 
 export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
@@ -65,6 +99,7 @@ export const JuniorCreate = (props) => {
     );
 
 }
+
 export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
@@ -91,4 +126,4 @@ export const JuniorEdit = (props) => {
             </SimpleForm>
         </Edit>
     );
-}
+};

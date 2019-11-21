@@ -5,6 +5,7 @@ export default {
     create: `${appUrl}/junior/register`,
     edit: `${appUrl}/junior/edit`,
     list: `${appUrl}/junior/list`,
+    reset: `${appUrl}/junior/reset`,
     base: `${appUrl}/junior/`
   },
   auth: {
@@ -21,6 +22,8 @@ export default {
     edit: `${appUrl}/admin/edit`,
     list: `${appUrl}/admin/list`,
     self: `${appUrl}/admin/getSelf`,
+    refresh: `${appUrl}/admin/refresh`,
+    password: `${appUrl}/admin/changePassword`,
     base: `${appUrl}/admin/`
   }
 }
