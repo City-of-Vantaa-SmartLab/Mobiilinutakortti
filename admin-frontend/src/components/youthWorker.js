@@ -66,15 +66,10 @@ export const YouthWorkerEdit = (props) => {
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
       <SimpleForm redirect="list">
         <TextInput label="Sähköposti" source="email" type="email" />
-<<<<<<< HEAD
-      <TextInput label="Salasana" source="password" type="password" />
-=======
-        {/* <TextInput label="Salasana" source="password" type="password" /> */}
->>>>>>> master
-      <TextInput label="Etunimi" source="firstName" />
-      <TextInput label="Sukunimi" source="lastName" />
-      <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />
-      <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
+        <TextInput label="Etunimi" source="firstName" />
+        <TextInput label="Sukunimi" source="lastName" />
+        <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />
+        <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
     </Edit >
   );
