@@ -48,7 +48,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
     );
 
     const ResendSMSButton = (data) => (
-        <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Resend SMS</Button>
+        <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä tekstiviesti uudestaan</Button>
     )
 
     const resendSMS = async (phoneNumber) => {

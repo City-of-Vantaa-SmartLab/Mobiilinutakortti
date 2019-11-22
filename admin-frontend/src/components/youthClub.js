@@ -15,7 +15,7 @@ const OpenLogBookButton = (props) => (
 )
 
 const OpenLogBookCheckInsButton = (props) => (
-  <Button variant="contained" href={`#/checkIns/${props.record.id}`} >Check-ins</Button>
+  <Button variant="contained" href={`#/checkIns/${props.record.id}`} >Kirjautumiset</Button>
 )
 
 export const YouthClubList = (props) => (
