@@ -120,8 +120,8 @@ export class JuniorService {
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challenge = await this.setChallenge(phoneNumber);
         const junior = await this.juniorRepo.findOne({ phoneNumber });
-        // const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
-        // if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         return `${phoneNumber} ${content.Reset}`;
     }
 
