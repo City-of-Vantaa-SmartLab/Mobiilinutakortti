@@ -1,4 +1,5 @@
 import { CheckIn } from '../entities';
+import { formatName } from '../../junior/junior.helper';
 
 export class LogBookCheckInsViewModel {
     clubName: string;
@@ -13,7 +14,7 @@ export class LogBookCheckInsViewModel {
             if (hours.length < 2) { hours = `0${hours}`; }
             if (minutes.length < 2) { minutes = `0${minutes}`; }
             return {
-                name: `${checkIn.junior.firstName} '${checkIn.junior.nickName}' ${checkIn.junior.lastName}`,
+                name: formatName(checkIn.junior.firstName, checkIn.junior.lastName, checkIn.junior.nickName),
                 id: checkIn.junior.id,
                 time: `${hours}:${minutes}`,
             } as JuniorInformation;
