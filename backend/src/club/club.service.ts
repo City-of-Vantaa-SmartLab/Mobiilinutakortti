@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CheckIn, Club } from './entities';
 import { Repository } from 'typeorm';
@@ -7,9 +7,12 @@ import { ClubViewModel, LogBookViewModel } from './vm';
 import * as content from '../content.json';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
+import * as clubs from './youthClubs.json';
 
 @Injectable()
 export class ClubService {
+
+    private readonly logger = new Logger('Club Service');
 
     constructor(
         @InjectRepository(Junior)
@@ -21,14 +24,23 @@ export class ClubService {
     ) {
         // This if statement allows tests to run correctly.
         try {
-            this.clubRepo.count().then(total => {
-                if (total < 1) {
-                    const testClub = { name: 'Hakunilan Nuorisotila', postCode: '12345' } as Club;
-                    this.clubRepo.save(testClub);
-                }
-            });
-            // tslint:disable-next-line: no-empty
-        } catch (e) { }
+            this.setInitialClubs().then(() =>
+                this.logger.log('Synched youth clubs with list'),
+            );
+        } catch (e) {
+            this.logger.log('Youth clubs synching');
+        }
+    }
+
+    async setInitialClubs() {
+        const clubsInSystem = await this.clubRepo.find();
+        const missingClubs = [];
+        clubs.youthClubs.forEach(neededClub => {
+            if (clubsInSystem.findIndex(c => c.name === neededClub) < 0) {
+                missingClubs.push({ name: neededClub } as Club);
+            }
+        });
+        await this.clubRepo.save(missingClubs);
     }
 
     async getClubById(clubId: string): Promise<Club> {
