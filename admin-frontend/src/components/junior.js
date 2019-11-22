@@ -16,7 +16,8 @@ import {
     EditButton,
     Edit,
     Filter,
-    showNotification
+    showNotification,
+    Pagination
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices } from '../utils'
 import Button from '@material-ui/core/Button';
@@ -28,6 +29,8 @@ const JuniorEditTitle = ({ record }) => (
 );
 
 export const JuniorList = connect(null, { showNotification })(props => {
+
+    const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
 
     const { showNotification } = props;
 
@@ -71,7 +74,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
     }
 
     return (
-        <List title="Nuoret" filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
+        <List title="Nuoret" pagination={<CustomPagination />} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />

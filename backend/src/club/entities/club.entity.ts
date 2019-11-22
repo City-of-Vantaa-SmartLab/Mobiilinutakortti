@@ -8,6 +8,6 @@ export class Club {
     @Column({ unique: true })
     name: string;
 
-    @Column()
+    @Column({ nullable: true })
     postCode: string;
 }
