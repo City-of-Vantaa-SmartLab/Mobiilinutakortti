@@ -11,9 +11,14 @@ let ChangePasswordView = (props) => {
 
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const dataProvided = () => (oldPassword && newPassword && confirmPassword);
+    const passwordsMatch = () => (newPassword === confirmPassword);
+    const buttonDisabled = () => !(dataProvided() && passwordsMatch());
 
     const changePassword = async () => {
-        if (oldPassword !== '' && newPassword !== '') {
+        if (!buttonDisabled()) {
             const url = api.youthWorker.password;
             const body = JSON.stringify({
                 oldPassword, newPassword
@@ -41,7 +46,8 @@ let ChangePasswordView = (props) => {
                     color="primary"
                     size="large"
                     startIcon={<SaveIcon />}
-                    onClick={changePassword}>
+                    onClick={changePassword}
+                    disabled={buttonDisabled()}>
                     Tallenna
                 </Button>
             </Toolbar>
@@ -52,6 +58,7 @@ let ChangePasswordView = (props) => {
         <SimpleForm toolbar={<CustomToolbar />} >
             <TextField value={oldPassword} label="Vanha Salasana" type="password" onChange={(e) => setOldPassword(e.target.value)} required />
             <TextField value={newPassword} label="Uusi Salasana" type="password" onChange={(e) => setNewPassword(e.target.value)} required />
+            <TextField value={confirmPassword} label="Vahvista uusi salasana" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required />
         </SimpleForm>
     );
 };
