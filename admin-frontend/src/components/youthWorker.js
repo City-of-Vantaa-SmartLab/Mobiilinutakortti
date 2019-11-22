@@ -60,6 +60,22 @@ export const YouthWorkerEdit = (props) => {
       setYouthClubs(parsedYouthClubs);
     };
     addYouthClubsToState();
+
+    const targetNode = document;
+    const config = { attributes: true, childList: false, subtree: true };
+
+    const checkTitles = () => {
+      const title = document.getElementById('alert-dialog-title');
+      if (title) {
+        title.getElementsByTagName("h2")[0].innerHTML = 'Poista nuorisotyöntekijä';
+      }
+    };
+    const observer = new MutationObserver(checkTitles);
+    observer.observe(targetNode, config);
+
+    return () => {
+      observer.disconnect();
+    }
   }, []);
 
   return (
