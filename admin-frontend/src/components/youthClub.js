@@ -22,7 +22,7 @@ export const YouthClubList = (props) => (
   <List title="Nuorisotalot" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
     <Datagrid>
       <TextField label="Nimi" source="name" />
-      <TextField label="Postinumero" source="postCode" />
+      {/* <TextField label="Postinumero" source="postCode" /> */}
       <OpenCheckInButton />
       <OpenLogBookButton />
       <OpenLogBookCheckInsButton />
