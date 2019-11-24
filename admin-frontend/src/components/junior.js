@@ -122,12 +122,29 @@ export const JuniorCreate = (props) => {
 
 export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
+
     useEffect(() => {
         const addYouthClubsToState = async () => {
             const parsedYouthClubs = await getYouthClubs();
             setYouthClubs(parsedYouthClubs);
         };
         addYouthClubsToState();
+
+        const targetNode = document;
+        const config = { attributes: true, childList: false, subtree: true };
+
+        const checkTitles = () => {
+            const title = document.getElementById('alert-dialog-title');
+            if (title) {
+                title.getElementsByTagName("h2")[0].innerHTML = 'Poista Junior';
+            }
+        };
+        const observer = new MutationObserver(checkTitles);
+        observer.observe(targetNode, config);
+
+        return () => {
+            observer.disconnect();
+        }
     }, []);
 
     return (
