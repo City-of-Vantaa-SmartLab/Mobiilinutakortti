@@ -86,7 +86,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     useEffect(() => {
         if (props.authError && !error) {
             setError(true);
-            setMessage('Authentication failed, use the form below to request a new link');
+            setMessage('Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin');
         }
     }, [props.authError, error]);
 
@@ -100,7 +100,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     const sendLink = (phoneNumber: string, error: boolean) => {
         if (error) {
             setError(true);
-            setMessage('Invalid input, please try again');
+            setMessage('Tarkista, että antamasi puhelinnumero on oikein');
         } else {
             setError(false);
             props.authLinkRequest(phoneNumber);
@@ -113,7 +113,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
         <Wrapper>
             <LoginBackground />
             <LoginWrapper>
-                <Header>Nuta-mobiili</Header>
+                <Header>Nutakortti</Header>
                 <Message active={message !== ''} error={error}>
                     <ErrorMessageIcon visible={error}></ErrorMessageIcon>
                     <MessageText>{message}</MessageText>

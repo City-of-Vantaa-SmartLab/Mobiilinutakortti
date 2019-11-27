@@ -25,6 +25,7 @@ const Popup = styled.div`
     background: #d9d9d6;
     border-radius: 0.3rem;
     box-sizing: border-box;
+    z-index: 100;
     &:before {
         content: "";
         position: absolute;
