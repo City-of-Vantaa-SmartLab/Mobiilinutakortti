@@ -35,6 +35,7 @@ export class JuniorService {
 
     private applySort(sortOptions: SortDto) {
         const order = {};
+        if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
         if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; }
         return order;
     }
