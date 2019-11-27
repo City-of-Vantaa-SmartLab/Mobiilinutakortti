@@ -30,7 +30,13 @@ export class JuniorService {
             query.take = controls.pagination ? controls.pagination.perPage : 0;
             query.skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
-        return (await this.juniorRepo.find(query)).map(e => new JuniorUserViewModel(e));
+        const unSearchedResponse = (await this.juniorRepo.find(query)).map(e => new JuniorUserViewModel(e));
+        if (controls.filters.name) {
+            return unSearchedResponse.filter(junior => junior.firstName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1 ||
+                junior.nickName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1 ||
+                junior.lastName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1);
+        }
+        return unSearchedResponse;
     }
 
     private applySort(sortOptions: SortDto) {
@@ -42,22 +48,8 @@ export class JuniorService {
 
     private applyWhereYouthClub(filterOptions: FilterDto) {
         const homeYouthClub = 'homeYouthClub';
-        const names = ['firstName', 'lastName', 'nickName'];
         const where = [];
-        if (filterOptions.name && filterOptions.homeYouthClub) {
-            names.forEach(name => {
-                const query = {};
-                query[name] = Like(`%${filterOptions.name}%`);
-                query[homeYouthClub] = filterOptions.homeYouthClub;
-                where.push(query);
-            });
-        } else if (filterOptions.name) {
-            names.forEach(name => {
-                const query = {};
-                query[name] = Like(`%${filterOptions.name}%`);
-                where.push(query);
-            });
-        } else if (filterOptions.homeYouthClub) {
+        if (filterOptions.homeYouthClub) {
             const query = {};
             query[homeYouthClub] = filterOptions.homeYouthClub;
             where.push(query);
