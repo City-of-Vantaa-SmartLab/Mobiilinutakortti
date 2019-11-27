@@ -44,9 +44,9 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerTemp')
   async createTest(@Body() userData: RegisterAdminDto): Promise<Message> {
-    // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
-    // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
-    return new Message(await this.adminService.registerAdmin(userData));
+    if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); } else {
+      return new Message(await this.adminService.registerAdmin(userData));
+    }
   }
 
   /**
