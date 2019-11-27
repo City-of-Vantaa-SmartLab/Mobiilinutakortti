@@ -15,7 +15,7 @@
   "NoNewCheckins": "Ei kirjautumisia.",
   "NotADate": "Väärä päivämäärä.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
-  "LockedOut": "Tili on lukittu. Liian monta väärää yritystä.",
+  "LockedOut": "Liian monta väärää yritystä.",
   "Reset": "Palautuslinkki lähetetty.",
   "ValueIsNotPhoneNumber": "Annettu arvo ei ole puhelinnumero. Saatu arvo: $value.",
   "Updated": "Päivitetty.",

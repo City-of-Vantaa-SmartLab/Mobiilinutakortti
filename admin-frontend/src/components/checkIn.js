@@ -70,13 +70,14 @@ const CheckInView = (props) => {
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   }
 
+
   return (
     <Container>
       <QrReader
         delay={10000}
         onScan={handleScan}
         onError={handleError}
-        style={{ width: 600, height: 600 }}
+        style={{ width: 600, height: 600, transform: `scaleX(-1)` }}
       />
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
