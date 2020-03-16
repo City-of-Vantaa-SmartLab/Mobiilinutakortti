@@ -1,7 +1,9 @@
 Vantaa UTA
 
 Backend runs in port 3000
+
 Mobile-frontend runs in port 3001
+
 Admin-frontend runs in port 5000
 ## Installation
 
