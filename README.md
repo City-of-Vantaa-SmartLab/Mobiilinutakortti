@@ -9,16 +9,12 @@ Clone repository
 From the repository, use the package manager NPM to install dependencies.
 ```bash
 npm install
-npm start
 ```
-
-## Running the application
 To start the backend, database, mobile-front and admin-front,
 run following command in root directory where docker-compose.yml is located
 ```bash
 docker-compose up
-```
-
+``` 
 ## Creating a super-user to gain access to admin-frontend
 Using Postman/Insomnia/any alternative:
 
