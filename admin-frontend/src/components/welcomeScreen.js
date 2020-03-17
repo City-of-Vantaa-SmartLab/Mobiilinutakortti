@@ -10,29 +10,37 @@ const createBox = keyframes`
   }
 `;
 
+const blink = keyframes`
+  50% {
+    box-shadow: 0 0 0 99999px rgba(0, 0, 0, .8);
+  }
+`;
 
 const WelcomeWrapper = styled.div`
-  animation: ${createBox} 0.15s linear;
+  animation: ${createBox} 0.2s linear, ${blink} 1.2s linear infinite;
   width: 30em;
   height: 30em;
   display: flex;
   margin: 4em 0em 4em;
   border: 4px solid #6bc24a;
   border-radius: 4px;
-  align-items: center;
   justify-content: center;
+  flex-direction: column;
  h2 {
-   width: 100%;
    font-size: 3em;
    text-align: center;
+   display: inline-block;
+ }
+ span{
+   font-size: 2em;
+   text-align: center;
+   display: inline-block;
  }
 `;
 const WelcomeScreen = (props) =>
-    <WelcomeWrapper open={props.open}>
-        {console.log(props.open)}
-        <div className={"inner-container"}>
-            <h2> Kirjautuminen onnistui </h2>
-        </div>
+    <WelcomeWrapper>
+            <span>Kirjautuminen onnistui </span>
+            <h2>Tervetuloa</h2>
     </WelcomeWrapper>;
 
 export default WelcomeScreen;

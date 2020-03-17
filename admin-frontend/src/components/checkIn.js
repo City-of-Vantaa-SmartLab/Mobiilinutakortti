@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import QrReader from 'react-qr-reader'
 import ding from '../audio/ding.mp3'
 import WelcomeScreen from "./welcomeScreen";
+import LoadingMessage from "./loadingMessage";
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -24,6 +25,7 @@ let audio = new Audio(ding)
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showWelcomeNotification, setShowWelcomeNotification] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let refresh = setInterval(async () => {
@@ -47,16 +49,19 @@ const CheckInView = (props) => {
   }, []);
 
   const handleCheckInSuccess = () => {
-    console.log("check in success handler fires")
-    setShowQRCode(false);
-    setShowWelcomeNotification(true);
+    setLoading(false);
     audio.play();
+    setShowWelcomeNotification(true);
+    setTimeout(() => {
+      setShowWelcomeNotification(false);
+      setShowQRCode(true);
+    }, 3500);
   };
 
   const handleScan = async (qrData) => {
-    console.log("QR DATA: ", qrData);
     if (qrData) {
       setShowQRCode(false);
+      setLoading(true);
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
         clubId: props.match.params.youthClubId,
@@ -83,7 +88,6 @@ const CheckInView = (props) => {
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
-
   return (
     <Container>
       {showQRCode && (
@@ -96,6 +100,9 @@ const CheckInView = (props) => {
       )}
       {showWelcomeNotification && (
           <WelcomeScreen />
+      )}
+      {loading && (
+          <LoadingMessage message={'Odota hetki'}/>
       )}
       <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
