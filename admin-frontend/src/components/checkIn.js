@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import QrReader from 'react-qr-reader'
+import { withRouter } from "react-router";
+import QrReader from 'react-qr-reader';
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -9,6 +10,8 @@ import api from '../api';
 import { authProvider } from '../providers';
 import { token } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
+import { Prompt } from "react-router-dom";
+import { isSubstring } from '../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -17,9 +20,15 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-`
+`;
 
 const CheckInView = (props) => {
+
+  props.history.listen((location, action) => {
+    if (location && action && notRedirectingBack(location)) {
+      logout()
+    }
+  });
 
   useEffect(() => {
     let refresh = setInterval(async () => {
@@ -41,6 +50,11 @@ const CheckInView = (props) => {
       refresh = null;
     }
   }, []);
+
+  const logout= async() => {
+    await authProvider(AUTH_LOGOUT, {});
+    window.location.reload();
+  };
 
   const handleScan = async (qrData) => {
     if (qrData) {
@@ -68,22 +82,27 @@ const CheckInView = (props) => {
   const handleError = () => {
     const { showNotification } = props;
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
-  }
+  };
 
+  const notRedirectingBack = (location) => !isSubstring(location.pathname, "checkIn");
 
   return (
     <Container>
+      <Prompt
+          when={true}
+          message={`Näkymästä poistuminen vaatii uudelleenkirjautumisen. Oletko varma että haluat jatkaa?`}
+      />
       <QrReader
         delay={10000}
         onScan={handleScan}
         onError={handleError}
         style={{ width: 600, height: 600, transform: `scaleX(-1)` }}
       />
-      <Button variant="contained" href="#youthclub" >Takaisin</Button>
+      <Button variant="contained" href="#youthclub">Takaisin</Button>
     </Container>
   )
-}
+};
 
 export default connect(null, {
   showNotification
-})(CheckInView);
+})(withRouter(CheckInView));

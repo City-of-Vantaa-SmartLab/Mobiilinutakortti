@@ -35,3 +35,4 @@ export const ageValidator = (value, allValues) => {
 export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
   .then((res) => res.data.map((youthClub) => ({ id: youthClub.name, name: youthClub.name }))) // TODO: Eventually it will be wise to change the ID to the actual ID. This will require backend changes.)
 
+export const isSubstring = (mainString, subString) => mainString.indexOf(subString) !== -1;
