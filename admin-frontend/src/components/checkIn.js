@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from "react-router";
-import QrReader from 'react-qr-reader';
+import QrReader from 'react-qr-reader'
+import ding from '../audio/ding.mp3'
+import WelcomeScreen from "./welcomeScreen";
+import LoadingMessage from "./loadingMessage";
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -22,7 +25,12 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+let audio = new Audio(ding);
+
 const CheckInView = (props) => {
+  const [showQRCode, setShowQRCode] = useState(true);
+  const [showWelcomeNotification, setShowWelcomeNotification] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   props.history.listen((location, action) => {
     if (location && action && notRedirectingBack(location)) {
@@ -53,11 +61,23 @@ const CheckInView = (props) => {
 
   const logout= async() => {
     await authProvider(AUTH_LOGOUT, {});
-    window.location.reload();
+    window.location.reload()
+  };
+
+  const handleCheckInSuccess = () => {
+    setLoading(false);
+    audio.play();
+    setShowWelcomeNotification(true);
+    setTimeout(() => {
+      setShowWelcomeNotification(false);
+      setShowQRCode(true);
+    }, 3500);
   };
 
   const handleScan = async (qrData) => {
     if (qrData) {
+      setShowQRCode(false);
+      setLoading(true);
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
         clubId: props.match.params.youthClubId,
@@ -73,7 +93,7 @@ const CheckInView = (props) => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
             showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
-            showNotification('Sisäänkirjautuminen onnistunut!')
+            handleCheckInSuccess();
           }
         });
     }
@@ -92,13 +112,21 @@ const CheckInView = (props) => {
           when={true}
           message={`Näkymästä poistuminen vaatii uudelleenkirjautumisen. Oletko varma että haluat jatkaa?`}
       />
-      <QrReader
-        delay={10000}
-        onScan={handleScan}
-        onError={handleError}
-        style={{ width: 600, height: 600, transform: `scaleX(-1)` }}
-      />
-      <Button variant="contained" href="#youthclub">Takaisin</Button>
+      {showQRCode && (
+          <QrReader
+              delay={10000}
+              onScan={handleScan}
+              onError={handleError}
+              style={{ width: 600, height: 600, transform: `scaleX(-1)` }}
+          />
+      )}
+      {showWelcomeNotification && (
+          <WelcomeScreen />
+      )}
+      {loading && (
+          <LoadingMessage message={'Odota hetki'}/>
+      )}
+      <Button variant="contained" href="#youthclub" >Takaisin</Button>
     </Container>
   )
 };
