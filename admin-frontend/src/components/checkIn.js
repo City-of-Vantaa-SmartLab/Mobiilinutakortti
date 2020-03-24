@@ -25,7 +25,7 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-let audio = new Audio(ding);
+const audio = new Audio(ding);
 
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
@@ -33,7 +33,7 @@ const CheckInView = (props) => {
   const [loading, setLoading] = useState(false);
 
   props.history.listen((location, action) => {
-    if (location && action && notRedirectingBack(location)) {
+    if (location && action && !navigatingToCheckIn(location)) {
       logout()
     }
   });
@@ -104,7 +104,7 @@ const CheckInView = (props) => {
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
-  const notRedirectingBack = (location) => !isSubstring(location.pathname, "checkIn");
+  const navigatingToCheckIn = (location) => isSubstring(location.pathname, "checkIn");
 
   return (
     <Container>
