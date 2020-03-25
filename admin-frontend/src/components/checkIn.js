@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from "react-router";
 import QrReader from 'react-qr-reader'
 import ding from '../audio/ding.mp3'
 import WelcomeScreen from "./welcomeScreen";
@@ -12,6 +13,8 @@ import api from '../api';
 import { authProvider } from '../providers';
 import { token } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
+import { Prompt } from "react-router-dom";
+import { isSubstring } from '../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -21,11 +24,19 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
 `;
-let audio = new Audio(ding)
+
+const audio = new Audio(ding);
+
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showWelcomeNotification, setShowWelcomeNotification] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  props.history.listen((location, action) => {
+    if (location && action && !navigatingToCheckIn(location)) {
+      logout()
+    }
+  });
 
   useEffect(() => {
     let refresh = setInterval(async () => {
@@ -47,6 +58,11 @@ const CheckInView = (props) => {
       refresh = null;
     }
   }, []);
+
+  const logout= async() => {
+    await authProvider(AUTH_LOGOUT, {});
+    window.location.reload()
+  };
 
   const handleCheckInSuccess = () => {
     setLoading(false);
@@ -88,8 +104,14 @@ const CheckInView = (props) => {
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
+  const navigatingToCheckIn = (location) => isSubstring(location.pathname, "checkIn");
+
   return (
     <Container>
+      <Prompt
+          when={true}
+          message={`Näkymästä poistuminen vaatii uudelleenkirjautumisen. Oletko varma että haluat jatkaa?`}
+      />
       {showQRCode && (
           <QrReader
               delay={10000}
@@ -111,4 +133,4 @@ const CheckInView = (props) => {
 
 export default connect(null, {
   showNotification
-})(CheckInView);
+})(withRouter(CheckInView));
