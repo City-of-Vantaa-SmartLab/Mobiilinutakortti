@@ -91,9 +91,15 @@ const CheckInView = (props) => {
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
-            showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+              showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
-            handleCheckInSuccess();
+            if (response.success === false) {
+              showNotification('Jokin meni pieleen. Yrititkö kirjautua samalla QR-koodilla useamman kerran?', 'warning')
+              setLoading(false);
+              setShowQRCode(true);
+            } else {
+              handleCheckInSuccess();
+            }
           }
         });
     }

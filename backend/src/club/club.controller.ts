@@ -1,4 +1,13 @@
-import { Controller, UsePipes, ValidationPipe, UseGuards, Get, Param, Post, Body } from '@nestjs/common';
+import {
+    Controller,
+    UsePipes,
+    ValidationPipe,
+    UseGuards,
+    Get,
+    Param,
+    Post,
+    Body,
+} from '@nestjs/common';
 import { ClubService } from './club.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
@@ -41,14 +50,21 @@ export class ClubController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('check-in')
-    async checkInJunior(@Body() userData: CheckInDto): Promise<Check> {
-        const check = new Check((await this.clubService.checkInJunior(userData)));
+    async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
+        const alreadyCheckedIn = await this.clubService.checkIfAlreadyCheckedIn(userData.juniorId, userData.clubId);
+        let check = null;
+        if (alreadyCheckedIn) {
+            check = new Check(false);
+            return new CheckInResponseViewModel(check.result, 'Duplicate check-in');
+        } else {
+            check = new Check((await this.clubService.checkInJunior(userData)));
+        }
         const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
         if (socket) {
             const response = check.result ? (await this.clubService.getClubById(userData.clubId)).name : content.CheckInFailed;
             socket.emit(gatewayEvents.checkIn, new CheckInResponseViewModel(check.result, response));
         }
-        return check;
+        return new CheckInResponseViewModel(check.result);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

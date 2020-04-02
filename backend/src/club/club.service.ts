@@ -8,6 +8,7 @@ import * as content from '../content.json';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
 import * as clubs from './youthClubs.json';
+import { datesDifferLessThan } from '../utils/helpers';
 
 @Injectable()
 export class ClubService {
@@ -49,6 +50,17 @@ export class ClubService {
 
     async getClubs(): Promise<ClubViewModel[]> {
         return (await this.clubRepo.find()).map(club => new ClubViewModel(club));
+    }
+
+    async checkIfAlreadyCheckedIn(juniorId: string, clubId: string): Promise<boolean> {
+        const checkIns = await this.getCheckinsForClub(clubId);
+        let duplicateCheckIn = false;
+        await checkIns.forEach((checkIn) => {
+            if (checkIn.junior.id === juniorId && datesDifferLessThan(new Date(), new Date(checkIn.checkInTime), 2)) {
+                duplicateCheckIn = true;
+            }
+        });
+        return duplicateCheckIn;
     }
 
     async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
