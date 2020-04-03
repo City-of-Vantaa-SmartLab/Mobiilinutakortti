@@ -34,6 +34,10 @@ To make sure everything is working, navigate to:
 
 If you see the webpage for frontend and admin-frontend, and "API is running" message for backend, you're good.
 
+NOTE:
+* If you have PostgreSQL running locally, it is probably using port 5432 and will conflict with the Docker setup. Bring the local instance down or reconfigure it to solve the issue.
+* Docker might not start all the services if you encounter some problems somewhere. In this case, just try composing up again.
+
 ## Creating an admin user
 
 The application needs at least one admin user to work properly. The backend must be running when executing this step.
