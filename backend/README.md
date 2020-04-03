@@ -8,7 +8,7 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 
 - Docker
 - Node JS - v10
-- PostgreSQL - v11 (probably works with v10 and v12 also)
+- PostgreSQL - v11 (seems to work with v10 also; some problems with v12)
 
 ## Running with Docker
 
