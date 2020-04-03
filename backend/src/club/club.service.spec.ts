@@ -97,10 +97,25 @@ describe('ClubService', () => {
     });
   });
 
+  // If you change junior used in this test, do same to test below, they are chained
   describe('CheckInJunior', () => {
     it('Should return true when successful', async () => {
       const result = await service.checkInJunior({ juniorId: testJuniors[0].id, clubId: testClub.id });
       expect(result).toBeTruthy();
+    });
+  });
+
+  describe('CheckInJuniorDuplicate', () => {
+    it('Should return true when trying to check same junior again', async () => {
+      const result = await service.checkIfAlreadyCheckedIn(testJuniors[0].id, testClub.id);
+      expect(result).toBeTruthy();
+    });
+  });
+
+  describe('CheckInJuniorDuplicate', () => {
+    it('Should return false when trying to check new junior', async () => {
+      const result = await service.checkIfAlreadyCheckedIn(testJuniors[1].id, testClub.id);
+      expect(result).toBeFalsy();
     });
   });
 

@@ -1,79 +1,59 @@
-To generate documenation used `npm run compodoc:build` to serve documentation use `npm run compodoc`
+The backend directory includes the server side code for running Mobiilinutakortti app.
 
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+Server side is built using NestJS *(running on port 3000) and* PostgreSQL as database *(running on port 5432)*
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## System Requirements:
+- Docker
+- Node JS - v10
+- PostgreSQL - v11
 
-## Description
+## Running Backend - With Docker
+1. Provided docker is running locally on your machine, run `./build_docker_backend.sh`
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+    *NOTE: make the file executable by running `chmod +x build_docker_backend.sh`*
+2. Once the backend and database containers are up and running, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*
 
-## Installation
+    ### Access NestJS/PostgreSQL Docker Container
+    ---
+    1. `docker ps` : lists docker containers running
 
-```bash
-$ npm install
-```
+    2. `docker exec -it backend_app_1 sh` : gain access to NestJS docker container
 
-## Running the app
+    3.  `docker exec -it backend_db_1 sh` : gain access to PostgreSQL docker container
 
-```bash
-# development
-$ npm run start
+        3.1. `psql -U postgres` : login with `postgres` user using the `psql` interactive terminal
 
-# watch mode
-$ npm run start:dev
+        3.2. `\l` : lists all available database in the container *(where you'll find `nuta` database for Mobiilinutakortti app)*
 
-# production mode
-$ npm run start:prod
-```
+        3.3. `\c nuta` : connects to `nuta` database
 
-## Test
+        3.4. `\dt` : lists all the tables in the database
 
-Tests should be ran outside of the Docker container.
-When testing a sqlite database will be spawned and deleted if all tests are passed. Otherwise this database can be investigated. To re-test the database will need to be deleted from test/testdb.sql
+        3.5. `\d club` : list schema of `club` table
 
-As we have decided that controllers should only contain routes, e2e tests should suffice for controller tests during this project.
+        3.6. `table club;` / `select * from club;` : lists all values within `club` table
 
-```bash
-# unit tests
-$ npm run test
+        3.7.  `\q` : exit PostgreSQL
 
-# e2e tests
-$ npm run test:e2e
-```
+## Running Backend - Locally
+1. **PostgreSQL**
 
-## Support
+    Once PostgreSQL is running locally
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    1.1. Run `psql` to get access to the interactive PostgreSQL terminal
 
-## Stay in touch
+    1.2. Create a new `nuta` database in PostgreSQL using `create database nuta;`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+    1.3. `\l` : lists all available PostgreSQL database in local machine *(where you'll find `nuta` database for Mobiilinutakortti app)*
 
-## License
+2. **Backend**
 
-  Nest is [MIT licensed](LICENSE).
+    2.1. Run `npm install` to get all backend packages needed
+
+    2.2. Before running the backend, update the "host" in [configHandler.ts](https://github.com/City-of-Vantaa-SmartLab/Mobiilinutakortti/blob/master/backend/src/configHandler.ts) to `localhost` & update the "username", "password" according to username and password set for PostgreSQL your local machine.
+
+      *NOTE: If you're not sure of the "username", check the username via `psql` by running `\du`. By default, the "password" will be `password`.*
+
+    2.3. Run the backend locally via `npm run start:dev`
+
+    Once the backend and database are up and running locally, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*

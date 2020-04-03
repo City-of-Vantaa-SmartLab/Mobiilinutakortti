@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from "react-router";
 import QrReader from 'react-qr-reader'
 import ding from '../../audio/ding.mp3'
 import WelcomeScreen from "./welcomeScreen";
@@ -6,13 +7,14 @@ import LoadingMessage from "../loadingMessage";
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import Button from '@material-ui/core/Button';
 import { httpClient, httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
 import { authProvider } from '../../providers';
 import { token } from '../../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import CheckinBackground from './checkInBackground.js';
+import { Prompt } from "react-router-dom";
+import { isSubstring } from '../../utils.js';
 
 const Container = styled.div`
   height: 100%;
@@ -32,11 +34,18 @@ const QrReaderContainer = styled.div`
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
 
-let audio = new Audio(ding)
+const audio = new Audio(ding);
+
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showWelcomeNotification, setShowWelcomeNotification] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  props.history.listen((location, action) => {
+    if (location && action && !navigatingToCheckIn(location)) {
+      logout()
+    }
+  });
 
   useEffect(() => {
     let refresh = setInterval(async () => {
@@ -58,6 +67,11 @@ const CheckInView = (props) => {
       refresh = null;
     }
   }, []);
+
+  const logout= async() => {
+    await authProvider(AUTH_LOGOUT, {});
+    window.location.reload()
+  };
 
   const handleCheckInSuccess = () => {
     setLoading(false);
@@ -87,9 +101,15 @@ const CheckInView = (props) => {
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
-            showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+              showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
-            handleCheckInSuccess();
+            if (response.success === false) {
+              showNotification('Jokin meni pieleen. Yrititkö kirjautua samalla QR-koodilla useamman kerran?', 'warning')
+              setLoading(false);
+              setShowQRCode(true);
+            } else {
+              handleCheckInSuccess();
+            }
           }
         });
     }
@@ -100,9 +120,15 @@ const CheckInView = (props) => {
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
+  const navigatingToCheckIn = (location) => isSubstring(location.pathname, "checkIn");
+
   return (
     <Container>
       <CheckinBackground />
+      <Prompt
+          when={true}
+          message={`Näkymästä poistuminen vaatii uudelleenkirjautumisen. Oletko varma että haluat jatkaa?`}
+      />
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
@@ -125,4 +151,4 @@ const CheckInView = (props) => {
 
 export default connect(null, {
   showNotification
-})(CheckInView);
+})(withRouter(CheckInView));
