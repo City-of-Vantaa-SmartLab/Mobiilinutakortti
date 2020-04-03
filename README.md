@@ -36,7 +36,14 @@ If you see the webpage for frontend and admin-frontend, and "API is running" mes
 
 NOTE:
 * If you have PostgreSQL running locally, it is probably using port 5432 and will conflict with the Docker setup. Bring the local instance down or reconfigure it to solve the issue.
-* Docker might not start all the services if you encounter some problems somewhere. In this case, just try composing up again.
+* Docker might not start all the services especially if you encounter some problems somewhere at any point. In this case, just **try to compose up again**.
+* At some point during npm install you might get a weird error like this:
+
+    npm ERR! code EAI_AGAIN
+    npm ERR! errno EAI_AGAIN
+    npm ERR! request to https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org registry.npmjs.org:443
+
+    This is because Docker has some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
 
 ## Creating an admin user
 
