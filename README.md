@@ -86,6 +86,8 @@ Now you can login to admin-frontend with given credentials.
 
 ## Troubleshooting
 
+### Login not working
+
 Docker volumes sometimes get messed up and database won't work, often indicated by login not working. This might be indicated by error message such as:
 
 `Failed Password Authentication for user 'postgres'`
@@ -93,3 +95,21 @@ Docker volumes sometimes get messed up and database won't work, often indicated 
 Bring down the Docker containers with: `docker-compose down`
 
 To nuke the database, remove Docker volume from the PostgreSQL container, and bring the application up again.
+
+### admin-frontend (or some other) build errors out
+
+When running "docker-compose up" you might get an error like this:
+
+    admin-frontend_1  | events.js:174
+    admin-frontend_1  |       throw er; // Unhandled 'error' event
+    admin-frontend_1  |       ^
+    admin-frontend_1  |
+    admin-frontend_1  | Error: ENOSPC: System limit for number of file watchers reached, watch '/admin-frontend/public'
+
+or your build may error randomly.
+
+There's a lot of files under node_modules and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On a Ubuntu Linux the limit can be increased for example like this:
+
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
