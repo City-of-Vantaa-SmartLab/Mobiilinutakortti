@@ -42,9 +42,23 @@
     {
       "environment": [
         {
-          "name": "TELIA_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_PASSWORD-jYkICu"
+          "name": "RDS_PORT",
+          "value": "5432"
         },
+        {
+          "name": "RDS_DB_NAME",
+          "value": "nuta"
+        },
+        {
+          "name": "RDS_USERNAME",
+          "value": "postgres"
+        },
+        {
+          "name": "TELIA_USER",
+          "value": "Vantaa"
+        }
+      ],
+      "secrets": [
         {
           "name": "RDS_HOSTNAME",
           "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_HOSTNAME-Qi2D9a"
@@ -58,24 +72,12 @@
           "value": "https://ws.mkv.telia.fi/restsms/lekabrest/send"
         },
         {
-          "name": "RDS_PORT",
-          "value": "5432"
-        },
-        {
-          "name": "RDS_DB_NAME",
-          "value": "nuta"
-        },
-        {
           "name": "TELIA_USERNAME",
           "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_USERNAME-ht4qwL"
         },
         {
-          "name": "RDS_USERNAME",
-          "value": "postgres"
-        },
-        {
-          "name": "TELIA_USER",
-          "value": "Vantaa"
+          "name": "TELIA_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_PASSWORD-jYkICu"
         }
       ],
       "name": "youth-club-server",
