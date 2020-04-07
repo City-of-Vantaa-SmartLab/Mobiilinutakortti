@@ -50,6 +50,10 @@
           "value": "nuta"
         },
         {
+          "name": "TELIA_ENDPOINT",
+          "value": "https://ws.mkv.telia.fi/restsms/lekabrest/send"
+        },
+        {
           "name": "RDS_USERNAME",
           "value": "postgres"
         },
@@ -66,10 +70,6 @@
         {
           "name": "RDS_PASSWORD",
           "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_PASSWORD-mVdIxe"
-        },
-        {
-          "name": "TELIA_ENDPOINT",
-          "value": "https://ws.mkv.telia.fi/restsms/lekabrest/send"
         },
         {
           "name": "TELIA_USERNAME",
