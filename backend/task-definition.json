@@ -65,19 +65,19 @@
       "secrets": [
         {
           "name": "RDS_HOSTNAME",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_HOSTNAME-Qi2D9a"
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_HOSTNAME-Qi2D9a/RDS_HOSTNAME"
         },
         {
           "name": "RDS_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_PASSWORD-mVdIxe"
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_PASSWORD-mVdIxe/RDS_PASSWORD"
         },
         {
           "name": "TELIA_USERNAME",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_USERNAME-ht4qwL"
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_USERNAME-ht4qwL/TELIA_USERNAME"
         },
         {
           "name": "TELIA_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_PASSWORD-jYkICu"
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_PASSWORD-jYkICu/TELIA_PASSWORD"
         }
       ],
       "name": "youth-club-server",
