@@ -36,10 +36,10 @@ on:
 name: Deploy to Amazon ECS
 
 jobs:
-  deploy-admin-frontend:
-    name: Deploy
+  authorize-to-aws:
+    name: Authorize
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -54,7 +54,12 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+     
+  deploy-admin-frontend:
+    name: Deploy admin-frontend
+    runs-on: ubuntu-latest
 
+    steps:
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -82,5 +87,40 @@ jobs:
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: youth-club-admin-front-2
+        cluster: youth-club
+        wait-for-service-stability: true
+  
+  deploy-backend:
+    name: Deploy backend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: youth-club-server
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./backend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: backend/task-definition.json
+        container-name: youth-club-server
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: youth-club-server-service
         cluster: youth-club
         wait-for-service-stability: true
