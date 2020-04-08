@@ -151,4 +151,4 @@ const CheckInView = (props) => {
 
 export default connect(null, {
   showNotification
-})(withRouter(CheckInView));
+})(CheckInView);
