@@ -60,24 +60,16 @@
         {
           "name": "TELIA_USER",
           "value": "Vantaa"
+        },
+        {
+          "name": "RDS_HOSTNAME",
+          "value":"vantaa-nuta-2020-2.cekah5govxhb.eu-west-1.rds.amazonaws.com"
         }
       ],
       "secrets": [
         {
-          "name": "NUTA_RDS_HOSTNAME",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_HOSTNAME-Qi2D9a"
-        },
-        {
-          "name": "NUTA_RDS_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:NUTA_RDS_PASSWORD-mVdIxe"
-        },
-        {
-          "name": "TELIA_USERNAME",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_USERNAME-ht4qwL"
-        },
-        {
-          "name": "TELIA_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:TELIA_PASSWORD-jYkICu"
+          "name": "RDS_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:nuta-rds-password-g45tON"
         }
       ],
       "name": "youth-club-server",
