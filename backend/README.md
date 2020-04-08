@@ -56,3 +56,8 @@ Once the backend and database are up and running locally, to make sure the every
 ## Creating an admin user
 
 The application needs at least one admin user to work properly. See the generic README.md at the root of the repository (../README.md) on instructions how to create one.
+
+
+## Testing SMS functionality
+
+To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*

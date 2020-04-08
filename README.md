@@ -84,6 +84,10 @@ POST to [http://localhost:3000/api/admin/registerTemp](http://localhost:3000/ap
 
 Now you can login to admin-frontend with given credentials.
 
+## Testing SMS functionality
+
+To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
+
 ## Troubleshooting
 
 ### Login not working
