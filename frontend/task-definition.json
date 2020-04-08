@@ -1,11 +1,11 @@
 {
   "networkMode": "awsvpc",
-  "family": "youth-club-admin-front-2",
+  "family": "youth-club-mobile",
   "placementConstraints": [],
   "cpu": "512",
   "executionRoleArn": "arn:aws:iam::876630367030:role/ecsTaskExecutionRole",
   "volumes": [],
-  "memory": "2048",
+  "memory": "1024",
   "requiresCompatibilities": [
     "FARGATE"
   ],
@@ -15,11 +15,15 @@
         {
           "name": "REACT_APP_ENDPOINT",
           "value": "https://api.mobiilinuta-admin-test.com/api"
+        },
+        {
+          "name": "REACT_APP_WEBSOCKET",
+          "value": "https://api.mobiilinuta-admin-test.com/"
         }
       ],
-      "name": "youth-club-admin-front",
+      "name": "youth-club-mobile-front",
       "mountPoints": [],
-      "image": "876630367030.dkr.ecr.eu-west-1.amazonaws.com/youth-club-admin-front:latest",
+      "image": "876630367030.dkr.ecr.eu-west-1.amazonaws.com/youth-club-mobile-front:latest",
       "cpu": 0,
       "portMappings": [
         {
@@ -33,7 +37,7 @@
         "options": {
           "awslogs-region": "eu-west-1",
           "awslogs-stream-prefix": "ecs",
-          "awslogs-group": "/ecs/youth-club-admin-front"
+          "awslogs-group": "/ecs/youth-club-mobile"
         }
       },
       "essential": true,

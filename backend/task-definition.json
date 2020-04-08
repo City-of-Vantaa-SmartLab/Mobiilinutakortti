@@ -1,43 +1,14 @@
 {
-  "status": "ACTIVE",
   "networkMode": "awsvpc",
   "family": "youth-club-server",
   "placementConstraints": [],
-  "requiresAttributes": [
-    {
-      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-    },
-    {
-      "name": "ecs.capability.execution-role-awslogs"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.ecr-auth"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
-    },
-    {
-      "name": "ecs.capability.execution-role-ecr-pull"
-    },
-    {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
-      "name": "ecs.capability.task-eni"
-    }
-  ],
   "cpu": "512",
   "executionRoleArn": "arn:aws:iam::876630367030:role/ecsTaskExecutionRole",
-  "compatibilities": [
-    "EC2",
-    "FARGATE"
-  ],
   "volumes": [],
   "memory": "1024",
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:eu-west-1:876630367030:task-definition/youth-club-server:2",
   "containerDefinitions": [
     {
       "environment": [
@@ -94,6 +65,5 @@
       "essential": true,
       "volumesFrom": []
     }
-  ],
-  "revision": 2
+  ]
 }
