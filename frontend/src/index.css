@@ -42,23 +42,22 @@ code {
   height: 100%;
   width: 100%;
   overflow: scroll;
-  background-color: #3c8fde;
   position: relative;
 
 }
 
 @media only screen and (min-width: 600px) {
-  body {
+  /* body {
     max-height: 812px;
     max-width: 480px;
     margin: auto;
-  }
+  } */
   html {
     display: flex;
   }
-  #root {
+  /* #root {
     box-shadow: 12px 24px 100px rgba(0, 0, 0, 0.5);
-  }
+  } */
 }
 
 /* fontello */
