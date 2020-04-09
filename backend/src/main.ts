@@ -9,6 +9,6 @@ async function bootstrap() {
   app.enableCors();
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
-  await app.listen(3000);
+  await app.listen(process.env.APPLICATION_PORT || 3000);
 }
 bootstrap();

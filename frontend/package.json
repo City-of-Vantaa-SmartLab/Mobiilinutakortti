@@ -32,7 +32,9 @@
     "socket.io-client": "^2.3.0",
     "styled-components": "^4.4.0",
     "typescript": "3.6.3",
-    "yup": "^0.28.3"
+    "yup": "^0.28.3",
+    "tslint": "^6.1.0",
+    "tslint-react": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
