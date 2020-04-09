@@ -5,6 +5,7 @@ import { AppState } from '../../reducers';
 import Title from '../Title/Title';
 import QR from '../QR/QR';
 import { subscribeToCheckIn } from '../../apis'
+import { Container } from '../Container';
 
 const Wrapper = styled.div`
     display: flex;
@@ -52,13 +53,15 @@ const QRPage: React.FC<QRPageProps> = (props) => {
     }, []);
 
     return (
-        <Wrapper>
-            <Header>
-                <Title title='Kirjaudu nutalle' subtitle={props.name} />
-            </Header>
-            <QR id={props.id} checkedIn={success}/>
-            <Footer>{message}</Footer>
-        </Wrapper>
+        <Container>
+            <Wrapper>
+                <Header>
+                    <Title title='Kirjaudu nutalle' subtitle={props.name} />
+                </Header>
+                <QR id={props.id} checkedIn={success}/>
+                <Footer>{message}</Footer>
+            </Wrapper>
+        </Container>
     );
 }
 

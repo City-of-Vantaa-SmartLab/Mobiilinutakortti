@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
 import A2hs from './A2hs';
+import ParentRedirectView from './ParentRedirectView';
+import RegistrationView from './RegistrationView';
 import ProtectedRoute from './ProtectedRoute';
 import { userTypes, userActions } from '../types/userTypes';
 import { authTypes, authActions } from '../types/authTypes';
@@ -16,6 +18,7 @@ import { isIos, isInStandaloneMode } from '../utils';
 
 const Wrapper = styled.section`
   height: 100%;
+  display: flex;
 `;
 
 
@@ -58,6 +61,8 @@ const App: React.FC<AppProps> = (props) => {
       <Switch>
         <Route path='/login' component={LoginPage} />
         <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
+        <Route path='/hae' component={ParentRedirectView} />
+        <Route path='/hakemus' component={RegistrationView} />
       </Switch>
       <A2hs isVisible={showA2hs} close={onClose} />
     </Wrapper>
