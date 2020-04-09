@@ -107,8 +107,7 @@ export interface FormValues {
 
 
 const InnerForm = (props: FormikProps<FormValues>) => {  
-    const { handleSubmit, handleReset, values, touched, errors } = props;
-    console.log(values);
+    const { handleSubmit, handleReset, touched, errors } = props;
     return (           
             <Form onReset={handleReset} onSubmit={handleSubmit}>  
 
@@ -213,7 +212,6 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 youthClub: string().required("Valitse kotinuorisotila valikosta")
             }),
     handleSubmit: (values, formikBag) => {
-        console.log(values);
         formikBag.props.onSubmit();
         
     },

@@ -126,7 +126,7 @@ const Description = styled.div`
 const RadioField: React.FC<InputProps & FieldProps> = ({
     field,
     title,
-    form: {},
+    form,
     ...props
   }) => {
     return (
