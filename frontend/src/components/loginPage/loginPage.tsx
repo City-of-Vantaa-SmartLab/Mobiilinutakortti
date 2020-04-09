@@ -8,6 +8,7 @@ import { authTypes, authActions } from '../../types/authTypes';
 import { AppState } from '../../reducers';
 import LoginBackground from '../loginBackground';
 import LoginForm from '../loginForm/loginForm';
+import { Container } from '../Container';
 
 const Wrapper = styled.div`
     height: 100%;
@@ -110,6 +111,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     }
 
     return (
+        <Container>
         <Wrapper>
             <LoginBackground />
             <LoginWrapper>
@@ -121,6 +123,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
                 <LoginForm onSubmit={sendLink} disabled={props.loggingIn} />
             </LoginWrapper>
         </Wrapper>
+        </Container>
     )
 }
 
