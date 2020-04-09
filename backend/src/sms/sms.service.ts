@@ -14,7 +14,6 @@ export class SmsService {
         private readonly httpService: HttpService) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
-        if (!ConfigHelper.isLive()) { return true; }
         const settings = SMSConfig.getTeliaConfig();
         if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         const oneTimeLink = this.getOneTimeLink(challenge);
