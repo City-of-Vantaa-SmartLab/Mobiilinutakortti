@@ -33,8 +33,8 @@ The CSR was created using this data:
     Country Name (2 letter code) [AU]:FI
     State or Province Name (full name) [Some-State]:Uusimaa
     Locality Name (eg, city) []:Vantaa
-    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Gofore Oyj
-    Organizational Unit Name (eg, section) []:
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:Vantaan kaupunki
+    Organizational Unit Name (eg, section) []:Vantaan Nuorisopalvelut
     Common Name (e.g. server FQDN or YOUR name) []:nutakortti-test.vantaa.fi
     Email Address []:
     A challenge password []:
