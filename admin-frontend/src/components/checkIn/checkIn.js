@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withRouter } from "react-router";
+import { Notification } from 'react-admin';
 import QrReader from 'react-qr-reader'
 import ding from '../../audio/ding.mp3'
 import WelcomeScreen from "./welcomeScreen";
@@ -124,6 +124,7 @@ const CheckInView = (props) => {
 
   return (
     <Container>
+      <Notification />
       <CheckinBackground />
       <Prompt
           when={true}
