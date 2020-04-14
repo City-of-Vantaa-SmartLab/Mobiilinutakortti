@@ -73,10 +73,14 @@ const CheckInView = (props) => {
     window.location.reload()
   };
 
+  const tryToPlayAudio = () => {
+    return audio.play();
+  };
+
   const handleCheckInSuccess = () => {
     setLoading(false);
     setShowQRCode(false)
-    audio.play();
+    tryToPlayAudio().catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
     setShowWelcomeNotification(true);
     setTimeout(() => {
       setShowWelcomeNotification(false);
