@@ -105,6 +105,7 @@ const CheckInView = (props) => {
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
+              setLoading(false);
               showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
             if (response.success === false) {
