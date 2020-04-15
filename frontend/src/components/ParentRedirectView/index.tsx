@@ -21,6 +21,7 @@ const Wrapper = styled.div`
 const Logo = styled.div`
     color: white;
     height: calc(100px + 8vw);
+    min-height: calc(100px + 8vw);
     width: 100%;
     background: linear-gradient(5deg, transparent, transparent 40%, #3c8fde calc(40% + 1px), #3c8fde);
     position: relative;
@@ -107,9 +108,9 @@ const ParentRedirectView: React.FC = (props) => {
                 <p>Nutakortti on mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan</p>
             </Header>
             <Description>
-                <p>Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan kaupungin Nuorisopalveluiden jäsenkorttia. Kirjaudu sisään pankkitunnuksilla, mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot. <br/><br/> Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle tekstiviesillä henkilökohtaisen kirjautumislinkin palveluun.</p>
+                <p>Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan kaupungin Nuorisopalveluiden jäsenkorttia. Kirjaudu sisään pankkitunnuksilla, mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot. <br/><br/> Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
                 <Button>Täytä hakemus</Button>
-                <a href="#">Lue tarkemmin, kuinka käsitelemme tietojasi.</a>
+                <a href="#">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </Description>
         </Content>
     </Wrapper>

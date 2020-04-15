@@ -156,14 +156,14 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             component={DropdownField} 
                             title='Kotinuorisotila' 
                             options={['club1', 'club2', 'club3']}
-                            defaultChoice='Kannu'
+                            defaultChoice='Valitse nuorisotila'
                             description="Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy."
                         />      
                 </Fieldset>
             </Column>
             <FormFooter>
                 <Button type="submit">Lähetä hakemus</Button>
-                <a href="#">Lue tarkemmin, kuinka käsitelemme tietojasi.</a>
+                <a href="#">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </FormFooter>
         </Form>
     )
@@ -199,7 +199,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 juniorFirstName: string().required("Täytä tiedot"),
                 juniorLastName: string().required("Täytä tiedot"),
                 juniorNickName: string(),
-                juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp/kk/vvvv').required('Anna syntymäaika muodossa pp/kk/vvvv'), 
+                juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp.kk.vvvv').required('Anna syntymäaika muodossa pp.kk.vvvv'), 
                 juniorPhoneNumber: string().matches(/(^(\+358|0|358)\d{9})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
                 postalCode: string().length(5, 'Tarkista, että antamasi postinumero on oikein').matches(/^[0-9]*$/, 'Tarkista, että antamasi postinumero on oikein').required("Täytä tiedot"),
                 school: string().required("Täytä tiedot"),

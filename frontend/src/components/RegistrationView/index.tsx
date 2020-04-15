@@ -66,7 +66,7 @@ const RegistrationView: React.FC = (props) => {
             <Confirmation>
                 <div>
                 <h2>Kiitos hakemuksestasi!</h2>
-                <p>Soitamme sinulle, kun olemme käsitelleet hakimuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
+                <p>Soitamme sinulle, kun olemme käsittelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
                 <SuccessIcon/>
                 </div>
             </Confirmation>
