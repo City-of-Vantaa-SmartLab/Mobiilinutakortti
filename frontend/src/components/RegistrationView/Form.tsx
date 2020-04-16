@@ -1,9 +1,9 @@
 import React from 'react';
-import { Field, FormikProps, withFormik } from 'formik';
+import { Field, FormikProps, withFormik, FieldProps } from 'formik';
 import styled from 'styled-components';
-import { string, object } from 'yup';
+import { string, object, boolean } from 'yup';
 
-import { InputField, DropdownField, SelectGroup } from './FormFields';
+import { InputField, DropdownField, SelectGroup, Checkbox } from './FormFields';
 
 
 const Form = styled.form`
@@ -41,7 +41,7 @@ const Button = styled.button`
     border: none;
     color: #fff;
     padding: 1em;
-    margin-bottom: 1.5em;
+    margin: 1.5em 0;
     font-size: 1em;
     font-weight: 600;
     &:focus {
@@ -49,6 +49,9 @@ const Button = styled.button`
     }
     &:active {
         background: #0042a5;
+    }
+    &:disabled {
+        opacity: 0.8;
     }
 `;
 
@@ -69,6 +72,7 @@ const FormFooter = styled.div`
     align-items: center;
     & > a {
         display: block;
+        font-size: 0.8em;
     }
 `;
 
@@ -101,8 +105,8 @@ export interface FormValues {
     parentFirstName: string,
     parentLastName: string,
     parentPhoneNumber: string,
-
-    youthClub: string
+    youthClub: string,
+    termsOfUse: boolean
 }
 
 
@@ -117,7 +121,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field name='juniorFirstName' component={InputField} title='Etunimi'/>
                         <Field name='juniorLastName' component={InputField} title='Sukunimi'/>
                         <Field name='juniorNickName' component={InputField} title='Kutsumanimi'/>
-                        <Field name='juniorBirthday' component={InputField} title='Syntymäaika' placeholder='pp/kk/vvvv'/>
+                        <Field name='juniorBirthday' component={InputField} title='Syntymäaika' placeholder='pp.kk.vvvv'/>
                         <Field name='juniorPhoneNumber' component={InputField} title='Puhelinnumero'/>
                         <Field name='postalCode' component={InputField} title='Postinumero'/>
                         <Field name='school' component={InputField} title='Koulun nimi'/>
@@ -158,12 +162,20 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             options={['club1', 'club2', 'club3']}
                             defaultChoice='Valitse nuorisotila'
                             description="Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy."
-                        />      
+                        />        
                 </Fieldset>
             </Column>
             <FormFooter>
-                <Button type="submit">Lähetä hakemus</Button>
-                <a href="#">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
+                <Field name='termsOfUse'>  
+                    {({ field } : FieldProps) => (
+                        <div>
+                            <Checkbox type='checkbox' id={field.name} {...field} />
+                            <label htmlFor={field.name}>Hyväksyn&#160;<a target='_blank' href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a></label>
+                        </div>
+                    )}
+                </Field> 
+                <Button type="submit" disabled={!props.values.termsOfUse}>Lähetä hakemus</Button>
+                <a target='_blank' href="https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/148977_Henkilotietojen_kasittely_nuorisopalveluissa.pdf">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </FormFooter>
         </Form>
     )
@@ -192,7 +204,8 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
             parentFirstName: '',
             parentLastName: '',
             parentPhoneNumber: '',
-            youthClub: ''
+            youthClub: '',
+            termsOfUse: false
         }
     },
     validationSchema: object().shape({
@@ -209,7 +222,8 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 parentFirstName: string().required("Täytä tiedot"),
                 parentLastName: string().required("Täytä tiedot"),
                 parentPhoneNumber: string().matches(/(^(\+358|0|358)\d{9})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
-                youthClub: string().required("Valitse kotinuorisotila valikosta")
+                youthClub: string().required("Valitse kotinuorisotila valikosta"),
+                termsOfUse: boolean().required()
             }),
     handleSubmit: (values, formikBag) => {
         formikBag.props.onSubmit();

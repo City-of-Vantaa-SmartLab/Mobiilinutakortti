@@ -257,5 +257,55 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     )
 }
 
+export const Checkbox = styled.input.attrs({type: 'checkbox'})`
+
+&:checked, &:not(:checked) {
+    position: absolute;
+    visibility: hidden;
+}
+& + label{
+    font-size: 0.8em;
+}
+
+&:checked + label, &:not(:checked) + label {
+    position: relative;
+    padding-left: 26px;
+    cursor: pointer;
+    color: #000;
+    line-height: 1.5em;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    // justify-content: center;
+}
+
+& + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    // border: 1px solid #000;
+    background: #fff;
+}
+&:checked + label:before {
+    background: #3c8fde;
+}
+&:checked + label:after, &:not(:checked) + label:after {
+    content: '';
+    left: 6px;
+    top: calc(50% - 7px);
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 1px 1px 0;
+    transform: rotate(45deg);
+    position: absolute;
+}
+&:not(:checked) + label:after {
+    opacity: 0;
+}
+`;
+
 
 
