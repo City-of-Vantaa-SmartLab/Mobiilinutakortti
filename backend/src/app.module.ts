@@ -15,6 +15,7 @@ import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RoutersMiddleware } from './middleware/routers.middleware';
     RolesModule,
     ClubModule,
     SmsModule,
+    ConfigModule.forRoot(),
   ],
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController],

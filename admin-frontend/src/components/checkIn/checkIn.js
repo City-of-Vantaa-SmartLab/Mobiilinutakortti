@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { withRouter } from "react-router";
+import { Notification } from 'react-admin';
 import QrReader from 'react-qr-reader'
 import ding from '../../audio/ding.mp3'
 import WelcomeScreen from "./welcomeScreen";
@@ -73,10 +73,14 @@ const CheckInView = (props) => {
     window.location.reload()
   };
 
+  const tryToPlayAudio = () => {
+    return audio.play();
+  };
+
   const handleCheckInSuccess = () => {
     setLoading(false);
     setShowQRCode(false)
-    audio.play();
+    tryToPlayAudio().catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
     setShowWelcomeNotification(true);
     setTimeout(() => {
       setShowWelcomeNotification(false);
@@ -101,6 +105,7 @@ const CheckInView = (props) => {
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
+              setLoading(false);
               showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
           } else {
             if (response.success === false) {
@@ -124,6 +129,7 @@ const CheckInView = (props) => {
 
   return (
     <Container>
+      <Notification />
       <CheckinBackground />
       <Prompt
           when={true}
