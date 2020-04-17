@@ -4,11 +4,19 @@ import {
   Datagrid,
   TextField,
 } from 'react-admin';
+import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
-const OpenCheckInButton = (props) => (
-  <Button variant="contained" href={`#/checkIn/${props.record.id}`} >Kirjautuminen</Button>
-)
+const OpenCheckInButton = (props) => {
+  console.log(props.record)
+  return (
+    <Link to={{
+      pathname: `/checkIn/${props.record.id}`,
+      state: {record: props.record}
+    }}>
+      <Button variant="contained" >Kirjautuminen</Button>
+    </Link>
+)}
 
 const OpenLogBookButton = (props) => (
   <Button variant="contained" href={`#/logbook/${props.record.id}`} >Logbook</Button>

@@ -32,13 +32,15 @@ const CheckMarkContainer = styled.div`
 
 const CheckMark = () =>  (
     <CheckMarkContainer>
-        <svg width={800} height={800} viewBox="0 0 800 800">
-            <circle cx="400" cy="350" r="300" fill="#f9e51e" />
-            <circle id="circle" cx="400" cy="350" r="245" fill="#6bc24a" />
-            <g>
-                <path id="check" d="M280,320 l30,50 l80,-55" />
+      <svg width={550} height={550} viewBox="0 0 500 500" >
+        <g transform="translate(250, 250)">
+            <circle cx="0" cy="0"  r="230" fill="#f9e51e" />
+            <circle id="circle" cx="0" cy="0" r="186" fill="#6bc24a" />
+          <g transform="translate(-120, -10) scale(0.9)">
+                <path id="check" d="M0,0 l30,50 l80,-55" />
             </g>
-        </svg>
+        </g>
+      </svg>
     </CheckMarkContainer>
 );
 
