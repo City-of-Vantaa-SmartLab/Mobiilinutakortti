@@ -47,6 +47,17 @@ const CheckInView = (props) => {
     }
   });
 
+  window.onbeforeunload = () => {
+    localStorage.removeItem("admin-token")
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin-token');
+    if(token === undefined || token === null) {
+      logout()
+    }
+  },[])
+
   useEffect(() => {
     let refresh = setInterval(async () => {
       await httpClient(api.youthWorker.refresh, { method: 'GET' }).then(async (response) => {
