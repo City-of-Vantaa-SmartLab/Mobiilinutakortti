@@ -67,23 +67,24 @@ export class AuthenticationService {
 
     generateSecurityContext(@Body() acsData: AcsDto): SecurityContextDto {
         const { sessionIndex, nameId, firstName, lastName, zipCode } = acsData;
-        const signed =  sign(`${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
         const expiryTime = ((new Date().getTime() / 1000) + 3600).toString();
+        // TODO/FIXME: if multiple first names, this will fail?
+        const signed = sign(`${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
         return {
             sessionIndex,
             nameId,
             firstName,
             lastName,
             zipCode,
-            signedString: signed,
             expiryTime,
+            signedString: signed
         } as SecurityContextDto;
     }
 
     validateSecurityContext(@Body() securityContext: SecurityContextDto): boolean {
-        const { sessionIndex, nameId, firstName, lastName, zipCode, expiryTime, signedString }  = securityContext;
+        const { sessionIndex, nameId, firstName, lastName, zipCode, expiryTime, signedString } = securityContext;
         const timestampValid = Number(expiryTime) > new Date().getTime() / 1000;
-        const signatureValid = unsign(signedString, secretString) === `${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
+        const signatureValid = unsign(signedString, secretString) === `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
         return timestampValid && signatureValid;
     }
 }
