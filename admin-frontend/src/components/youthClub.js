@@ -5,9 +5,16 @@ import {
   TextField,
 } from 'react-admin';
 import Button from '@material-ui/core/Button';
+import audio from "../audio/audio.js"
+
+const prepareAudio = () => {
+  audio.play()
+  audio.pause()
+  audio.currentTime = 0
+}
 
 const OpenCheckInButton = (props) => (
-  <Button variant="contained" href={`#/checkIn/${props.record.id}`} >Kirjautuminen</Button>
+  <Button variant="contained" onClick={prepareAudio} href={`#/checkIn/${props.record.id}`} >Kirjautuminen</Button>
 )
 
 const OpenLogBookButton = (props) => (
