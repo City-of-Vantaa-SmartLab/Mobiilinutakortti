@@ -49,6 +49,17 @@ const CheckInView = (props) => {
     }
   });
 
+  window.onbeforeunload = () => {
+    localStorage.removeItem("admin-token")
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin-token');
+    if(token === undefined || token === null) {
+      logout()
+    }
+  },[])
+
   useEffect(() => {
     if(props.location.state !== undefined) {
       localStorage.setItem('youthClubName', JSON.stringify(props.location.state.record.name));
