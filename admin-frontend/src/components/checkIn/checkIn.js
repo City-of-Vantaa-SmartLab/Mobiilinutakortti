@@ -35,6 +35,8 @@ const QrReaderContainer = styled.div`
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
 
+let youthClubName = "";
+
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
