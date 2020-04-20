@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
 import QrReader from 'react-qr-reader'
 import ding from '../../audio/ding.mp3'
-import WelcomeScreen from "./welcomeScreen";
+import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
@@ -27,7 +27,7 @@ const Container = styled.div`
 `;
 
 const QrReaderContainer = styled.div`
-  margin-top: 5.2em;
+  margin-top: 7.4em;
   width: 32em;
   border: 55px solid #f9e51e;
   -webkit-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
@@ -37,14 +37,25 @@ const QrReaderContainer = styled.div`
 
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
-  const [showWelcomeNotification, setShowWelcomeNotification] = useState(false);
+  const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checkInSuccess, setCheckInSuccess] = useState(null);
 
   props.history.listen((location, action) => {
     if (location && action && !navigatingToCheckIn(location)) {
       logout()
     }
   });
+
+  useEffect(() => {
+    if(props.location.state !== undefined) {
+      localStorage.setItem('youthClubName', JSON.stringify(props.location.state.record.name));
+      youthClubName = props.location.state.record.name;
+    }
+    if(props.location.state === undefined) {
+      youthClubName = JSON.parse(localStorage.getItem("youthClubName"));
+    }
+  }, [])
 
   useEffect(() => {
     let refresh = setInterval(async () => {
@@ -76,15 +87,19 @@ const CheckInView = (props) => {
     return audio.play();
   };
 
-  const handleCheckInSuccess = () => {
+  const handleCheckInReturn = (success) => {
     setLoading(false);
     setShowQRCode(false)
-    tryToPlayAudio().catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
-    setShowWelcomeNotification(true);
+    setCheckInSuccess(success)
+    setShowQrCheckNotification(true);
+    if(success) {
+      tryToPlayAudio().catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
+    }
     setTimeout(() => {
-      setShowWelcomeNotification(false);
+      setShowQrCheckNotification(false);
+      setCheckInSuccess(null);
       setShowQRCode(true);
-    }, 2500);
+    }, success ? 2500 : 2000);
   };
 
   const handleScan = async (qrData) => {
@@ -106,14 +121,9 @@ const CheckInView = (props) => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);
               showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+            setShowQRCode(true)
           } else {
-            if (response.success === false) {
-              showNotification('Jokin meni pieleen. Yrititkö kirjautua samalla QR-koodilla useamman kerran?', 'warning')
-              setLoading(false);
-              setShowQRCode(true);
-            } else {
-              handleCheckInSuccess();
-            }
+            handleCheckInReturn(response.success);
           }
         });
     }
@@ -145,9 +155,8 @@ const CheckInView = (props) => {
             />
           </QrReaderContainer>
       )}
-      {showWelcomeNotification && (
-          <WelcomeScreen />
-      )}
+      {}
+      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} youthClubName={youthClubName} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>
       )}
