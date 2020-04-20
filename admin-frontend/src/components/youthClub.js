@@ -6,6 +6,13 @@ import {
 } from 'react-admin';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import audio from "../audio/audio.js"
+
+const prepareAudio = () => {
+  audio.play()
+  audio.pause()
+  audio.currentTime = 0
+}
 
 const OpenCheckInButton = (props) => {
   console.log(props.record)
@@ -14,7 +21,7 @@ const OpenCheckInButton = (props) => {
       pathname: `/checkIn/${props.record.id}`,
       state: {record: props.record}
     }}>
-      <Button variant="contained" >Kirjautuminen</Button>
+      <Button onClick={prepareAudio} variant="contained" >Kirjautuminen</Button>
     </Link>
 )}
 

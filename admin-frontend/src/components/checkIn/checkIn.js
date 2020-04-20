@@ -15,6 +15,7 @@ import { AUTH_LOGOUT } from 'react-admin';
 import CheckinBackground from './checkInBackground.js';
 import { Prompt } from "react-router-dom";
 import { isSubstring } from '../../utils.js';
+import audio from "../../audio/audio.js"
 
 const Container = styled.div`
   height: 100%;
@@ -33,9 +34,6 @@ const QrReaderContainer = styled.div`
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
-
-const audio = new Audio(ding);
-let youthClubName = "";
 
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
