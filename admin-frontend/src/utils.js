@@ -4,7 +4,13 @@ import { dataProvider } from './providers/dataProvider';
 export const genderChoices = [
   { id: 'm', name: 'Mies' },
   { id: 'f', name: 'Nainen' },
-  { id: 'o', name: 'Muu' }
+  { id: 'o', name: 'Muu' },
+  { id: '-', name: 'Ei halua määritellä'}
+];
+
+export const statusChoices = [
+  { id: 'a', name: 'Accepted' },
+  { id: 'p', name: 'Pending' }
 ];
 
 export const token = 'admin-token';

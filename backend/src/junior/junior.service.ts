@@ -91,7 +91,9 @@ export class JuniorService {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
             phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
-            gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub,
+            school: registrationData.school, class: registrationData.class,
+            gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub, status: registrationData.status, 
+            photoPermission: registrationData.photoPermission,
         } as Junior;
         if (registrationData.nickName) { junior.nickName = registrationData.nickName; }
         const errors = await validate(junior);
@@ -99,10 +101,12 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         await this.createJunior(junior);
-        const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
-        const challenge = await this.setChallenge(junior.phoneNumber);
-        const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
-        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        if (junior.status === 'a') {
+            const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
+            const challenge = await this.setChallenge(junior.phoneNumber);
+            const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
+            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        }
         return `${registrationData.phoneNumber} ${content.Created}`;
     }
 
@@ -120,6 +124,7 @@ export class JuniorService {
 
     async editJunior(details: EditJuniorDto): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
+        const prevStatus = user.status;
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.phoneNumber !== details.phoneNumber) {
             const phoneNumberInUse = await this.getJuniorByPhoneNumber(details.phoneNumber);
@@ -131,15 +136,24 @@ export class JuniorService {
         user.birthday = details.birthday;
         user.parentsName = details.parentsName;
         user.parentsPhoneNumber = details.parentsPhoneNumber;
+        user.school = details.school;
+        user.class = details.class;
         user.postCode = details.postCode;
         user.homeYouthClub = details.homeYouthClub;
         user.gender = details.gender;
         user.nickName = details.nickName;
+        user.status = details.status;
+        user.photoPermission = details.photoPermission;
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
         }
         await this.juniorRepo.save(user);
+        if (prevStatus === 'p' && details.status === 'a') {
+            const challenge = await this.setChallenge(user.phoneNumber);
+            const messageSent = await this.smsService.sendVerificationSMS({ name: user.firstName, phoneNumber: user.phoneNumber }, challenge);
+            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+        }
         return `${details.phoneNumber} ${content.Updated}`;
     }
 

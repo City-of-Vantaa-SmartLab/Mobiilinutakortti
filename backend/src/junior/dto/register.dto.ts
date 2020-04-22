@@ -19,6 +19,12 @@ export class RegisterJuniorDto {
     readonly postCode: string;
 
     @IsNotEmpty()
+    readonly school: string;
+
+    @IsNotEmpty()
+    readonly class: string;
+
+    @IsNotEmpty()
     readonly parentsName: string;
 
     @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
@@ -35,4 +41,10 @@ export class RegisterJuniorDto {
 
     @IsNotEmpty()
     readonly homeYouthClub: string;
+
+    @IsNotEmpty()
+    readonly status: string;
+    
+    @IsNotEmpty()
+    readonly photoPermission: boolean;
 }

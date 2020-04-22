@@ -1,75 +1,43 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
-
-const Wrapper = styled.div`
-    background: linear-gradient(-10deg, transparent, transparent 55%, #0042a5 calc(55% + 1px), #0042a5); 
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    overflow: scroll;
-    @media (max-width: 450px) {
-        font-size: 14px;
-    }
-    @media (min-height: 1150px) {
-        font-size: 19px;
-    }
-`;
-
-const Header = styled.h1`
-    text-align: center;
-    color: rgb(249, 229, 30);
-    font-size: 3em;
-    margin: 0.5em 0.5em 0;
-`;
-
-
-const Confirmation = styled.div`
-    margin: auto;
-    max-width: 800px;
-    
-    padding: 2em;
-    & > div {
-        background: #fff;
-        box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
-        padding: 2em;
-        & > h2 {
-            margin-top: 0;
-            color: #0042a5;
-        }
-    }
-`;
-
-
-const SuccessIcon = styled.div`
-    margin: 2em 0;
-    &:before {
-        content: '\f06d';
-        font-family: 'fontello';
-        display: block;
-        color: #4a7829;
-        font-size: 10em;
-        text-align: center;
-    }
-`;
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button } from './StyledComponents';
+import { get } from '../../apis';
 
 const RegistrationView: React.FC = (props) => {  
     const  [submitted, setSubmitted] = useState(false);
+    const [clubs, setClubs] = useState([]);
+    const [error, setError] = useState(false);
 
+//fetch club list
+    useEffect(() => {
+        get('/club/list')
+            .then(response => setClubs(response))
+            .catch((e) => { console.log(e);
+                setError(true)})
+    }, []);
+    
     return (
         <Wrapper>
             <Header>Nutakortti-hakemus</Header>
-            {!submitted &&
-                <RegistrationForm onSubmit={()=>setSubmitted(true)}/>
+            {!submitted && !error && 
+                <RegistrationForm onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
-            {submitted &&
+            {submitted && !error &&
             <Confirmation>
                 <div>
-                <h2>Kiitos hakemuksestasi!</h2>
-                <p>Soitamme sinulle, kun olemme käsittelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
-                <SuccessIcon/>
+                    <h2>Kiitos hakemuksestasi!</h2>
+                    <p>Soitamme sinulle, kun olemme käsittelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
+                    <SuccessIcon/>
                 </div>
             </Confirmation>
+            }
+             {error &&
+             <Error>
+                 <div>
+                 <p>Something went wrong. Please, try again!</p>
+                    <Button onClick={() => setError(false)}>Go back</Button>
+                 </div>
+            </Error>
             }
         </Wrapper>
     )

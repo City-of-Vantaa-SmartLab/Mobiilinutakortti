@@ -53,10 +53,14 @@ export const juniorProvider = (type, params, httpClient) => {
                 nickName: params.data.nickName,
                 gender: params.data.gender,
                 birthday: new Date(params.data.birthday),
+                school: params.data.school,
+                class: params.data.class,
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
-                parentsPhoneNumber: params.data.parentsPhoneNumber
+                parentsPhoneNumber: params.data.parentsPhoneNumber,
+                status: params.data.status,
+                photoPermission: params.data.photoPermission
             });
             url = api.junior.create;
             options = {
@@ -81,10 +85,14 @@ export const juniorProvider = (type, params, httpClient) => {
                 nickName: params.data.nickName,
                 gender: params.data.gender,
                 birthday: new Date(params.data.birthday),
+                school: params.data.school,
+                class: params.data.class,
                 homeYouthClub: params.data.homeYouthClub,
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
-                parentsPhoneNumber: params.data.parentsPhoneNumber
+                parentsPhoneNumber: params.data.parentsPhoneNumber,
+                status: params.data.status,
+                photoPermission: params.data.photoPermission
             };
             const jsonData = JSON.stringify(data);
             url = api.junior.edit;

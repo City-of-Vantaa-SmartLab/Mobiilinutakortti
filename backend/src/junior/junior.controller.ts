@@ -30,8 +30,8 @@ export class JuniorController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.ADMIN)
+    // @UseGuards(AuthGuard('jwt'), RolesGuard)
+    // @AllowedRoles(Roles.ADMIN)
     @Post('register')
     async registerJunior(@Body() userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));

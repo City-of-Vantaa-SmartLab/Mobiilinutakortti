@@ -11,6 +11,7 @@ import {
     TextInput,
     SelectInput,
     DateInput,
+    BooleanInput,
     required,
     choices,
     EditButton,
@@ -19,7 +20,7 @@ import {
     showNotification,
     Pagination
 } from 'react-admin';
-import { getYouthClubs, ageValidator, genderChoices } from '../utils'
+import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
 import Button from '@material-ui/core/Button';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
@@ -84,6 +85,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 <TextField label="Kotinuorisotalo" source="homeYouthClub" />
                 <TextField label="Huoltajan nimi" source="parentsName" />
                 <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <SelectField label="Status" source="status" choices={statusChoices} />
                 <ResendSMSButton />
                 <EditButton />
             </Datagrid>
@@ -111,9 +113,14 @@ export const JuniorCreate = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <TextInput label="Koulu" source="school" validate={required()} />
+                <TextInput label="Luokka" source="class" validate={required()} />
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <BooleanInput label="Kuvauslupa" source="photoPermission" validate={required()} />
+                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['a', 'p'])]} />
+                
             </SimpleForm>
         </Create>
     );
@@ -157,9 +164,14 @@ export const JuniorEdit = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" />
                 <TextInput label="Postinumero" source="postCode" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+                <TextInput label="Koulu" source="school" />
+                <TextInput label="Luokka" source="class" />
                 <TextInput label="Huoltajan nimi" source="parentsName" />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+                <BooleanInput label="Kuvauslupa" source="photoPermission"/>
+                <SelectInput label="Status" source="status" choices={statusChoices} />
+                
             </SimpleForm>
         </Edit>
     );

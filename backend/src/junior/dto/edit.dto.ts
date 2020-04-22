@@ -17,6 +17,10 @@ export class EditJuniorDto {
 
     postCode: string;
 
+    school: string;
+
+    class: string;
+
     parentsName: string;
 
     @IsPhoneNumber('FI', { message: content.ValueIsNotPhoneNumber })
@@ -29,4 +33,8 @@ export class EditJuniorDto {
     birthday: string;
 
     homeYouthClub: string;
+
+    status: string;
+
+    photoPermission: boolean;
 }
