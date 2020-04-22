@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Admin, Resource } from 'react-admin';
+import './App.css';
+import { Admin, Resource, Login } from 'react-admin';
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
@@ -11,6 +12,8 @@ import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
+
+const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
 const messages = {
     'fi': finnishMessages,
@@ -41,7 +44,7 @@ const App = () => {
     }, []);
 
     return (
-        <Admin appLayout={CustomLayout} locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
+        <Admin appLayout={CustomLayout} loginPage={CustomLoginPage} locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
             {permissions => [
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />
