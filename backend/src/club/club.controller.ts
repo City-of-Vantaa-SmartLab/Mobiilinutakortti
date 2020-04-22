@@ -47,7 +47,6 @@ export class ClubController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('check-in')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {

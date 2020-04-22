@@ -15,7 +15,6 @@ const prepareAudio = () => {
 }
 
 const OpenCheckInButton = (props) => {
-  console.log(props.record)
   return (
     <Link to={{
       pathname: `/checkIn/${props.record.id}`,
