@@ -38,7 +38,7 @@
         },
         {
           "name": "FRONTEND",
-          "value":"http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com/"
+          "value":"http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com"
         }
       ],
       "secrets": [
