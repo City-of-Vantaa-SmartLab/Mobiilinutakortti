@@ -20,6 +20,8 @@ import { Challenge } from './entities';
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 import { ListControlDto } from '../common/dto';
+import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
+import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';
 
 @Controller(`${content.Routes.api}/junior`)
 export class JuniorController {
@@ -33,7 +35,7 @@ export class JuniorController {
     // @UseGuards(AuthGuard('jwt'), RolesGuard)
     // @AllowedRoles(Roles.ADMIN)
     @Post('register')
-    async registerJunior(@Body() userData: RegisterJuniorDto): Promise<Message> {
+    async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));
     }
 
@@ -60,7 +62,7 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('reset')
-    async resetLogin(@Body() userData: ResetJuniorDto): Promise<Message> {
+    async resetLogin(@Body(ResetPhoneNumberValidationPipe) userData: ResetJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.resetLogin(userData.phoneNumber));
     }
 
@@ -69,7 +71,7 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
-    async edit(@Body() userData: EditJuniorDto): Promise<Message> {
+    async edit(@Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.editJunior(userData));
     }
 
