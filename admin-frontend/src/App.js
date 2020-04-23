@@ -37,7 +37,7 @@ const App = () => {
                     }
                 })
             }
-        }, 1 * 60000);
+        }, 60000);
 
         return () => {
             clearInterval(validCheck);
