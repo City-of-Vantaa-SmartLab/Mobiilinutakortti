@@ -26,9 +26,13 @@ describe('JuniorService', () => {
     postCode: '02130',
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
+    school: 'random school',
+    class: '5A',
     gender: 'M',
     birthday: new Date('05-05-2005').toISOString(),
     homeYouthClub: 'Tikkurila',
+    status: 'a',
+    photoPermission: true
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
   let juniorToEdit: EditJuniorDto;

@@ -8,7 +8,7 @@ export async function subscribeToCheckIn(set: any) {
     socket.emit("check-in", "");
 }
 
-export const get = async (uri: string, token: string): Promise<any> => {
+export const get = async (uri: string, token?: string): Promise<any> => {
     const url: string = `${baseURL}${uri}`;
     const init: RequestInit = {
         method: 'GET',

@@ -31,8 +31,8 @@ export class ClubController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.ADMIN)
+    // @UseGuards(AuthGuard('jwt'), RolesGuard)
+    // @AllowedRoles(Roles.ADMIN)
     @Get('list')
     async getAllClubs(): Promise<ClubViewModel[]> {
         return await this.clubService.getClubs();

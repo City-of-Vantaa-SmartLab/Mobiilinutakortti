@@ -16,6 +16,10 @@ export class EditJuniorDto {
 
     postCode: string;
 
+    school: string;
+
+    class: string;
+
     parentsName: string;
 
     parentsPhoneNumber: string;
@@ -27,4 +31,8 @@ export class EditJuniorDto {
     birthday: string;
 
     homeYouthClub: string;
+
+    status: string;
+
+    photoPermission: boolean;
 }

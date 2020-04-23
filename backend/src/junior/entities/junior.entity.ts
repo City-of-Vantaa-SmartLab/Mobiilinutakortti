@@ -25,6 +25,12 @@ export class Junior {
     postCode: string;
 
     @Column()
+    school: string;
+
+    @Column()
+    class: string;
+
+    @Column()
     parentsName: string;
 
     @Column({ transformer: makePhoneNumberInternational })
@@ -40,6 +46,12 @@ export class Junior {
 
     @Column()
     homeYouthClub: string;
+
+    @Column()
+    status: string;
+
+    @Column()
+    photoPermission: boolean; 
 
     @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     checkIns: CheckIn[];
