@@ -118,7 +118,7 @@ const submitForm = async (values: FormValues) => {
         postCode: values.postCode,
         parentsName: `${values.parentFirstName} ${values.parentLastName}`,
         parentsPhoneNumber: values.parentPhoneNumber,
-        status: 'p',
+        status: 'pending',
         photoPermission: values.photoPermission === 'y'
     };
         const response = await post('/junior/register', data);
