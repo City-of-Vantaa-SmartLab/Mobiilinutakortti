@@ -101,7 +101,7 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         await this.createJunior(junior);
-        if (junior.status === 'a') {
+        if (junior.status === 'accepted') {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
@@ -149,7 +149,7 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         await this.juniorRepo.save(user);
-        if (prevStatus === 'p' && details.status === 'a') {
+        if (prevStatus === 'pending' && details.status === 'accepted') {
             const challenge = await this.setChallenge(user.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({ name: user.firstName, phoneNumber: user.phoneNumber }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }

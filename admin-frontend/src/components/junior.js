@@ -119,7 +119,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" validate={required()} />
-                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['a', 'p'])]} />
+                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]} />
                 
             </SimpleForm>
         </Create>

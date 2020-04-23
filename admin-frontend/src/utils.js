@@ -9,8 +9,8 @@ export const genderChoices = [
 ];
 
 export const statusChoices = [
-  { id: 'a', name: 'Accepted' },
-  { id: 'p', name: 'Pending' }
+  { id: 'accepted', name: 'Accepted' },
+  { id: 'pending', name: 'Pending' }
 ];
 
 export const token = 'admin-token';
