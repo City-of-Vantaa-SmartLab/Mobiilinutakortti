@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { IsPhoneNumber, Length } from 'class-validator';
+import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 import { ConfigHelper } from '../../configHandler';
@@ -18,7 +18,6 @@ export class Junior {
     @Column({ default: '', transformer: trimString })
     nickName: string;
 
-    @IsPhoneNumber('FI')
     @Column({ unique: true, transformer: makePhoneNumberInternational })
     phoneNumber: string;
 
@@ -28,7 +27,6 @@ export class Junior {
     @Column()
     parentsName: string;
 
-    @IsPhoneNumber('FI')
     @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
 
