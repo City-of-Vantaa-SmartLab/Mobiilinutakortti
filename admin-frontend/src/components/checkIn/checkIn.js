@@ -160,7 +160,7 @@ const CheckInView = (props) => {
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
-                delay={10000}
+                delay={300}
                 onScan={handleScan}
                 onError={handleError}
                 facingMode="user"
