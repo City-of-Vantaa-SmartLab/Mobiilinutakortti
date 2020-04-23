@@ -35,6 +35,10 @@
         {
           "name": "RDS_HOSTNAME",
           "value":"vantaa-nuta-2020-2.cekah5govxhb.eu-west-1.rds.amazonaws.com"
+        },
+        {
+          "name": "FRONTEND",
+          "value":"http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com/"
         }
       ],
       "secrets": [
