@@ -37,14 +37,14 @@ const QrCheckResultScreen = (props) => (
           <div className={"mark-container"}>
               <Header>Tervetuloa!</Header>
               <CheckMark />
-              <StyledText>{`Kirjautuminen nuorisotilaan ${props.youthClubName} onnistui`}</StyledText>
+              <StyledText>{`Kirjautuminen nuorisotilaan onnistui!`}</StyledText>
           </div>
             )}
         {!props.successful && (
           <div className={"mark-container"}>
               <Header>Jokin meni pieleen!</Header>
               <ErrorMark />
-              <StyledText>Yrititkö kirjautua samalla tunnuksella uudelleen sisään</StyledText>
+              <StyledText>Yrititkö kirjautua samalla tunnuksella uudelleen sisään?</StyledText>
           </div>
             )}
     </Wrapper>
