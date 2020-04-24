@@ -29,13 +29,15 @@ const App = () => {
             const body = {
                 method: 'GET'
             };
-            await httpClient(url, body).then(async (response) => {
-                if (response.statusCode < 200 || response.statusCode >= 300 || response.result === false) {
-                    await authProvider(AUTH_LOGOUT, {});
-                    window.location.reload();
-                }
-            })
-        }, 1 * 60000);
+            if(!window.location.href.includes("checkIn")){
+                await httpClient(url, body).then(async (response) => {
+                    if (response.statusCode < 200 || response.statusCode >= 300 || response.result === false) {
+                        await authProvider(AUTH_LOGOUT, {});
+                        window.location.reload();
+                    }
+                })
+            }
+        }, 60000);
 
         return () => {
             clearInterval(validCheck);
