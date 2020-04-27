@@ -9,9 +9,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { httpClient, httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
-import { authProvider } from '../../providers';
-import { token } from '../../utils';
-import { AUTH_LOGOUT } from 'react-admin';
 import CheckinBackground from './checkInBackground.js';
 import { Prompt } from "react-router-dom";
 import { isSubstring } from '../../utils.js';
@@ -43,21 +40,9 @@ const CheckInView = (props) => {
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
 
-  props.history.listen((location, action) => {
-    if (location && action && !navigatingToCheckIn(location)) {
-      logout()
-    }
-  });
-
-  window.onbeforeunload = () => {
-    localStorage.removeItem("admin-token")
-  };
 
   useEffect(() => {
-    const token = localStorage.getItem('admin-token');
-    if(token === undefined || token === null) {
-      logout()
-    }
+    localStorage.removeItem("admin-token")
   },[])
 
   useEffect(() => {
@@ -69,32 +54,6 @@ const CheckInView = (props) => {
       youthClubName = JSON.parse(localStorage.getItem("youthClubName"));
     }
   }, [])
-
-  useEffect(() => {
-    let refresh = setInterval(async () => {
-      await httpClient(api.youthWorker.refresh, { method: 'GET' }).then(async (response) => {
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-          clearInterval(refresh);
-          await authProvider(AUTH_LOGOUT, {});
-          window.location.reload();
-        }
-        return response;
-      })
-        .then(({ access_token }) => {
-          localStorage.setItem(token, access_token);
-        })
-    }, 1 * 60000);
-
-    return () => {
-      clearInterval(refresh);
-      refresh = null;
-    }
-  }, []);
-
-  const logout= async() => {
-    await authProvider(AUTH_LOGOUT, {});
-    window.location.reload()
-  };
 
   const tryToPlayAudio = () => {
     return audio.play();
@@ -160,7 +119,7 @@ const CheckInView = (props) => {
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
-                delay={10000}
+                delay={300}
                 onScan={handleScan}
                 onError={handleError}
                 facingMode="user"

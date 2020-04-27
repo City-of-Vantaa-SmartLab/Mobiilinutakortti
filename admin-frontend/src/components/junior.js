@@ -52,7 +52,9 @@ export const JuniorList = connect(null, { showNotification })(props => {
     );
 
     const ResendSMSButton = (data) => (
-        <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä tekstiviesti uudestaan</Button>
+        data.record.status === "accepted"
+            ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä tekstiviesti uudestaan</Button>
+            : <Button disabled>Lähetä tekstiviesti uudestaan</Button>
     )
 
     const resendSMS = async (phoneNumber) => {
@@ -120,7 +122,6 @@ export const JuniorCreate = (props) => {
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
                 <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]} />
-                
             </SimpleForm>
         </Create>
     );
