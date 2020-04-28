@@ -105,7 +105,7 @@ const ParentRedirectView: React.FC = (props) => {
         <Content>
             <Header>
                 <h1>Nutakortin hakeminen</h1>
-                <p>Nutakortti on mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan</p>
+                <p>Nutakortti on mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan.</p>
             </Header>
             <Description>
                 <p>Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan kaupungin Nuorisopalveluiden jäsenkorttia. Kirjaudu sisään pankkitunnuksilla, mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot. <br/><br/> Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
