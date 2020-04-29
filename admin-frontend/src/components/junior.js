@@ -111,7 +111,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
                 <TextInput label="Kutsumanimi" source="nickName" />
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o'])]} />
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o', '-'])]} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
@@ -120,7 +120,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
-                <BooleanInput label="Kuvauslupa" source="photoPermission" />
+                <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
                 <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]} />
             </SimpleForm>
         </Create>
@@ -158,20 +158,21 @@ export const JuniorEdit = (props) => {
     return (
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
             <SimpleForm>
-                <TextInput label="Etunimi" source="firstName" />
-                <TextInput label="Sukunimi" source="lastName" />
+                <TextInput label="Etunimi" source="firstName" validate={required()}/>
+                <TextInput label="Sukunimi" source="lastName" validate={required()}/>
                 <TextInput label="Kutsumanimi" source="nickName" />
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} />
-                <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} />
-                <TextInput label="Puhelinnumero" source="phoneNumber" />
-                <TextInput label="Postinumero" source="postCode" />
-                <TextInput label="Koulu" source="school" />
-                <TextInput label="Luokka" source="class" />
-                <TextInput label="Huoltajan nimi" source="parentsName" />
-                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
-                <BooleanInput label="Kuvauslupa" source="photoPermission"/>
-                <SelectInput label="Status" source="status" choices={statusChoices} />
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o', '-'])]}/>
+                <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} validate={required()}/>
+                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <TextInput label="Postinumero" source="postCode" validate={required()}/>
+                <TextInput label="Koulu" source="school" validate={required()}/>
+                <TextInput label="Luokka" source="class" validate={required()}/>
+                <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
+                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
+                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()}/>
+                <BooleanInput label="Kuvauslupa" source="photoPermission" />
+                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]}/>
+                
             </SimpleForm>
         </Edit>
     );
