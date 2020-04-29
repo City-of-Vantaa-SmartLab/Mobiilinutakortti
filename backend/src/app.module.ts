@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { AuthenticationController } from './authentication/authentication.controller';
 import { ConfigHelper } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
@@ -30,7 +31,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot(),
   ],
   providers: [AppService],
-  controllers: [AppController, AdminController, JuniorController],
+  controllers: [AppController, AdminController, JuniorController, AuthenticationController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

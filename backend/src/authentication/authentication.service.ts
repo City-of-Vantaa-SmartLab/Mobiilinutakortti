@@ -1,13 +1,24 @@
-import { Injectable, Inject, forwardRef, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt';
-import { AdminService } from '../admin/admin.service';
-import { LoginAdminDto } from '../admin/dto';
+import {
+    BadRequestException,
+    Body,
+    ForbiddenException,
+    forwardRef,
+    Inject,
+    Injectable,
+    UnauthorizedException
+} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
+import {compare} from 'bcrypt';
+import {AdminService} from '../admin/admin.service';
+import {LoginAdminDto} from '../admin/dto';
 import * as content from '../content.json';
-import { LoginJuniorDto } from '../junior/dto';
-import { JuniorService } from '../junior/junior.service';
-import { JWTToken } from './jwt.model';
-import { jwt } from './authentication.consts';
+import {LoginJuniorDto} from '../junior/dto';
+import {JuniorService} from '../junior/junior.service';
+import {JWTToken} from './jwt.model';
+import {jwt} from './authentication.consts';
+import {AcsDto} from './dto';
+import {sign} from 'cookie-signature';
+import {secretString} from './secret';
 
 @Injectable()
 export class AuthenticationService {
@@ -53,4 +64,8 @@ export class AuthenticationService {
         return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: expiry }) };
     }
 
+    generateSignature(@Body() acsData: AcsDto): string {
+        const { firstName, lastName, zipCode } = acsData;
+        return  sign(`${firstName} ${lastName} ${zipCode}`, secretString);
+    }
 }
