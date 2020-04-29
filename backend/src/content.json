@@ -20,6 +20,7 @@
   "Updated": "Päivitetty.",
   "UserNotFound": "Käyttäjää ei löydy.",
   "MessengerServiceNotAvailable": "Tekstiviestipalvelu on tilapäisesti pois käytöstä.",
+  "SMSNotAvailableButUserCreated": "SMS palvelu ei ole väliaikaisesti saatavilla, mutta käyttäjä on luotu.",
   "SMSSender": "VantaaNuta",
   "SMSSignature": "Vantaan nuorisopalvelut",
   "Deleted": "Käyttäjä poistettu.",

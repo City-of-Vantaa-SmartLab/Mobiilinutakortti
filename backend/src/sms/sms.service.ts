@@ -15,7 +15,18 @@ export class SmsService {
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
         const settings = SMSConfig.getTeliaConfig();
-        if (!settings) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+
+        // check if any error is thrown while obtaining SMS settings during junior registration (to disply different error message)
+        const smsSettingsError = new Error().stack.split("at ")[2].includes("registerJunior");
+
+        if(!settings && smsSettingsError) {
+            throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
+        }
+
+        else if (!settings) {
+            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+        }
+
         const oneTimeLink = this.getOneTimeLink(challenge);
         const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
         const messageRequest = {
@@ -25,7 +36,10 @@ export class SmsService {
         const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
         if (attemptMessage) {
             return true;
-        } else {
+        } else if(smsSettingsError){
+            throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
+        }
+        else {
             throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
         }
     }
