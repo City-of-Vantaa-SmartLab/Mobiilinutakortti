@@ -111,10 +111,6 @@ export class JuniorService {
     }
 
     async resetLogin(phoneNumber: string): Promise<string> {
-        const user = await this.getJuniorByPhoneNumber(phoneNumber);
-        if (!user) { throw new BadRequestException(content.UserNotFound); }
-        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
-        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challenge = await this.setChallenge(phoneNumber);
         const junior = await this.juniorRepo.findOne({ phoneNumber });
         const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
@@ -170,8 +166,10 @@ export class JuniorService {
 
     // Modified to return challenge, this will be improved upon SMS intergration.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
-        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
+        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString(); 
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
+        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: ['junior'] });
+        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }    
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
         return await this.challengeRepo.findOne({ junior });

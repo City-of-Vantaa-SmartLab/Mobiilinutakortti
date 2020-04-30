@@ -18,7 +18,8 @@ import {
     Edit,
     Filter,
     showNotification,
-    Pagination
+    Pagination,
+    FormDataConsumer
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
 import Button from '@material-ui/core/Button';
@@ -27,6 +28,10 @@ import api from '../api';
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
+);
+
+const SMSwarning = () => (
+    <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
 );
 
 export const JuniorList = connect(null, { showNotification })(props => {
@@ -122,6 +127,11 @@ export const JuniorCreate = (props) => {
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
                 <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]} />
+                <FormDataConsumer>
+                 {({ formData }) => formData.status === 'accepted' &&
+                    <SMSwarning/>
+                 }
+             </FormDataConsumer>
             </SimpleForm>
         </Create>
     );
@@ -154,8 +164,8 @@ export const JuniorEdit = (props) => {
             observer.disconnect();
         }
     }, []);
-
     return (
+
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
             <SimpleForm>
                 <TextInput label="Etunimi" source="firstName" validate={required()}/>
@@ -172,7 +182,11 @@ export const JuniorEdit = (props) => {
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()}/>
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
                 <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]}/>
-                
+                <FormDataConsumer>
+                 {({ formData, record }) => (formData.status === 'accepted' && record.status==='pending') && 
+                    <SMSwarning/>
+                 }
+             </FormDataConsumer>
             </SimpleForm>
         </Edit>
     );
