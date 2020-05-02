@@ -1,8 +1,11 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class SessionDataDto {
+export class SecurityContextDto {
   @IsNotEmpty()
   readonly sessionIndex: string;
+
+  @IsNotEmpty()
+  readonly nameId: string;
 
   @IsNotEmpty()
   readonly signedString: string;
@@ -17,5 +20,5 @@ export class SessionDataDto {
   readonly zipCode: string;
 
   @IsNotEmpty()
-  readonly expireTime: string;
+  readonly expiryTime: string;
 }

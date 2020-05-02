@@ -3,21 +3,20 @@ import {
   Controller,
   Post,
 } from '@nestjs/common';
-import { SessionDataDto, AcsDto } from './dto';
-import { SessionValidationResponseViewModel } from './vm';
+import { AuthenticationService } from './authentication.service';
+import { SecurityContextDto } from './dto';
+import { ContextValidViewModel } from './vm';
 import * as content from '../content.json';
-import { unsign } from 'cookie-signature';
-import * as moment from 'moment';
-import { secretString } from './secret';
 
 @Controller(`${content.Routes.api}/auth`)
 export class AuthenticationController {
 
+  constructor(
+    private readonly authenticationService: AuthenticationService,
+  ) { }
+
   @Post('validate-signature')
-  validateSignature(@Body() sessionData: SessionDataDto): SessionValidationResponseViewModel {
-    const { firstName, lastName, zipCode } = sessionData;
-    const timestampValid = moment(sessionData.expireTime).isAfter(moment(Date.now()));
-    const signatureValid = unsign(sessionData.signedString, secretString) === `${firstName} ${lastName} ${zipCode}`;
-    return new SessionValidationResponseViewModel(signatureValid && timestampValid);
+  validateSignature(@Body() securityContext: SecurityContextDto): ContextValidViewModel {
+    return new ContextValidViewModel(this.authenticationService.validateSecurityContext(securityContext));
   }
 }

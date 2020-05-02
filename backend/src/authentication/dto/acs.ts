@@ -5,6 +5,9 @@ export class AcsDto {
   readonly sessionIndex: string;
 
   @IsNotEmpty()
+  readonly nameId: string;
+
+  @IsNotEmpty()
   readonly firstName: string;
 
   @IsNotEmpty()

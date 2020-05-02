@@ -1,2 +1,2 @@
-export { SessionDataDto } from './sessionData';
+export { SecurityContextDto } from './securityContext';
 export { AcsDto } from './acs';

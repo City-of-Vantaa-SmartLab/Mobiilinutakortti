@@ -16,9 +16,10 @@ import {LoginJuniorDto} from '../junior/dto';
 import {JuniorService} from '../junior/junior.service';
 import {JWTToken} from './jwt.model';
 import {jwt} from './authentication.consts';
-import {AcsDto} from './dto';
-import {sign} from 'cookie-signature';
+import { AcsDto, SecurityContextDto } from './dto';
+import {sign, unsign} from 'cookie-signature';
 import {secretString} from './secret';
+import * as moment from 'moment';
 
 @Injectable()
 export class AuthenticationService {
@@ -64,8 +65,25 @@ export class AuthenticationService {
         return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: expiry }) };
     }
 
-    generateSignature(@Body() acsData: AcsDto): string {
-        const { firstName, lastName, zipCode } = acsData;
-        return  sign(`${firstName} ${lastName} ${zipCode}`, secretString);
+    generateSecurityContext(@Body() acsData: AcsDto): SecurityContextDto {
+        const { sessionIndex, nameId, firstName, lastName, zipCode } = acsData;
+        const signed =  sign(`${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
+        const expiryTime = ((new Date().getTime() / 1000) + 3600).toString();
+        return {
+            sessionIndex,
+            nameId,
+            firstName,
+            lastName,
+            zipCode,
+            signedString: signed,
+            expiryTime,
+        } as SecurityContextDto;
+    }
+
+    validateSecurityContext(@Body() securityContext: SecurityContextDto): boolean {
+        const { sessionIndex, nameId, firstName, lastName, zipCode, expiryTime, signedString }  = securityContext;
+        const timestampValid = Number(expiryTime) > new Date().getTime() / 1000;
+        const signatureValid = unsign(signedString, secretString) === `${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
+        return timestampValid && signatureValid;
     }
 }

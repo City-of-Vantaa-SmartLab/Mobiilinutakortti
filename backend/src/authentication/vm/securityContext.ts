@@ -1,4 +1,4 @@
-export class SessionValidationResponseViewModel {
+export class ContextValidViewModel {
   valid: boolean;
 
   constructor(valid: boolean) {

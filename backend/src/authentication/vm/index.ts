@@ -1,1 +1,1 @@
-export { SessionValidationResponseViewModel } from './sessionValidationResponse.vm';
+export { ContextValidViewModel } from './securityContext';
