@@ -17,6 +17,7 @@ import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
 import { ConfigModule } from '@nestjs/config';
+import { SsoModule } from './sso/sso.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
     RolesModule,
     ClubModule,
     SmsModule,
+    SsoModule,
     ConfigModule.forRoot(),
   ],
   providers: [AppService],
