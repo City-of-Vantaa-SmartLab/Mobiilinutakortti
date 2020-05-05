@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   // This is for local development only.
   // In test and production environments the HTTPS is provided by a separate AWS load balancer.
-  let httpsOptions = {};
+  let httpsOptions = null;
   if (fs.existsSync('./certs/nutakortti-test_private_key.pem')) {
     httpsOptions = {
       key: fs.readFileSync('./certs/nutakortti-test_private_key.pem'),
@@ -17,7 +17,9 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = httpsOptions ?
+    await NestFactory.create(AppModule, { httpsOptions }) :
+    await NestFactory.create(AppModule);
   app.enableCors();
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
