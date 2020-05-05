@@ -5,10 +5,7 @@ import * as xmlbuilder from 'xmlbuilder';
 import * as XML from 'pixl-xml';
 import { assignIn } from 'lodash';
 
-export class SAMLHandler {
-  temp_name_id: string;
-  temp_session_index: string;
-
+export class SAMLHelper {
   private_key: string;
   sso_logout_url: string;
 
@@ -83,5 +80,17 @@ export class SAMLHandler {
       'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
     samlQueryString.Signature = sign.sign(this.private_key, 'base64');
     return samlQueryString;
+  }
+
+  getLogoutResponseBody(request_body: string): string {
+    // TODO return a response as defined in https://palveluhallinta.suomi.fi/fi/tuki/artikkelit/591ac75b14bbb10001966f9d
+    return '';
+  }
+
+  checkLogoutResponse(req_url: string): boolean {
+    const query = url.parse(req_url, true).query;
+    // TODO check status from response
+    console.log(query);
+    return true;
   }
 }

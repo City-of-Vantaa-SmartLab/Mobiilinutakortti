@@ -20,8 +20,8 @@ export class SsoController {
 
   // This is called when coming back from Suomi.fi identification.
   @Post('acs')
-  getLoginResponse(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.handleLoginRequest(req, res);
+  loginResponse(@Req() req: Request, @Res() res: Response) {
+    this.ssoService.handleLoginResponse(req, res);
   }
 
   // Call this to initiate logout process.
@@ -30,20 +30,17 @@ export class SsoController {
     this.ssoService.getLogoutRequestUrl(req, res);
   }
 
-  // SSO logout, redirect binding. Suomi.fi will redirect the user here after logout.
+  // SSO logout, redirect binding. Suomi.fi will redirect the user here after SP-initiated logout.
   @Get('slo')
-  logoutRedirect(): string {
-    // TODO: check status from query string samlresponse, it might have failed
-    // TODO redirect to page that says logged out.
-    return "LOGOUT OK";
+  logoutRedirect(@Req() req: Request, @Res() res: Response) {
+    this.ssoService.handleLogoutResponse(req, res);
   }
 
-  // SSO logout, post binding. Suomi.fi will call this on 3rd party logouts?
+  // SSO logout, post binding. Suomi.fi will call this on IdP-initiated logouts.
   @Post('slo')
-  logoutPost(): string {
-    //TODO
-    console.log("logout post");
-    return null;
+  logoutPost(@Req() req: Request, @Res() res: Response) {
+    console.log("SLO LOGOUT POST");
+    this.ssoService.handleLogoutRequest(req, res);
   }
 
 }

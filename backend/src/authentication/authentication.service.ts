@@ -84,7 +84,7 @@ export class AuthenticationService {
     validateSecurityContext(@Body() securityContext: SecurityContextDto): boolean {
         const { sessionIndex, nameId, firstName, lastName, zipCode, expiryTime, signedString } = securityContext;
         const timestampValid = Number(expiryTime) > new Date().getTime() / 1000;
-        const signatureValid = unsign(signedString, secretString) === `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
+        const signatureValid = unsign(signedString || "", secretString) === `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
         return timestampValid && signatureValid;
     }
 }
