@@ -85,10 +85,7 @@ export class SAMLHelper {
   checkLogoutResponse(req_url: string): boolean {
     try {
       const response = url.parse(req_url, true).query.SAMLResponse;
-      const deflated = Buffer.from(
-        response ? response.toString() : '',
-        'base64',
-      );
+      const deflated = Buffer.from(response.toString(), 'base64');
       const xml_string = zlib.inflateRawSync(deflated).toString();
       const xml_json = XML.parse(xml_string, { preserveAttributes: true });
       const status_value =
@@ -102,6 +99,9 @@ export class SAMLHelper {
   }
 
   getLogoutResponseBody(request_body: string): string {
+    // DEBUG
+    console.log('DEBUG REQUEST BODY: ' + request_body);
+
     // TODO return a response as defined in https://palveluhallinta.suomi.fi/fi/tuki/artikkelit/591ac75b14bbb10001966f9d
     return '';
   }
