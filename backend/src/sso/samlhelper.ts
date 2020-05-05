@@ -82,15 +82,27 @@ export class SAMLHelper {
     return samlQueryString;
   }
 
+  checkLogoutResponse(req_url: string): boolean {
+    try {
+      const response = url.parse(req_url, true).query.SAMLResponse;
+      const deflated = Buffer.from(
+        response ? response.toString() : '',
+        'base64',
+      );
+      const xml_string = zlib.inflateRawSync(deflated).toString();
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+      const status_value =
+        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs['Value'];
+      const val_array = status_value.split(':');
+      if (val_array[val_array.length - 1] === 'Success') {
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
   getLogoutResponseBody(request_body: string): string {
     // TODO return a response as defined in https://palveluhallinta.suomi.fi/fi/tuki/artikkelit/591ac75b14bbb10001966f9d
     return '';
-  }
-
-  checkLogoutResponse(req_url: string): boolean {
-    const query = url.parse(req_url, true).query;
-    // TODO check status from response
-    console.log(query);
-    return true;
   }
 }
