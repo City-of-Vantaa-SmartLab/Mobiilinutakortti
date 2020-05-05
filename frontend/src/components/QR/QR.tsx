@@ -51,19 +51,11 @@ const SuccessIcon = styled.div<{size: number}>`
 `;
 
 interface QRProps {
-    id: string,
-    checkedIn: boolean
+    id: string
 } 
 
 const QR: React.FC<QRProps> = (props) => {
     const [size, setSize] = useState(0);
-    let content:any;
-
-    if (!props.checkedIn) {
-        content = <QRCode value={props.id} includeMargin={true} size={size}/>
-    } else {
-        content = <SuccessIcon size={size}/>
-    }
 
     return (
         <Measure
@@ -77,7 +69,7 @@ const QR: React.FC<QRProps> = (props) => {
             >
             {({ measureRef }) => (
                 <QRContainer ref={measureRef} active={props.id !== ''}>
-                    {content}
+                    <QRCode value={props.id} includeMargin={true} size={size}/>
                 </QRContainer>
             )}
         </Measure>   
