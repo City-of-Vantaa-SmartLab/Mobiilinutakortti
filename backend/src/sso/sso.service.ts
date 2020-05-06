@@ -8,7 +8,6 @@ import { AuthenticationService } from '../authentication/authentication.service'
 
 @Injectable()
 export class SsoService {
-
   private readonly entity_id: string;
   private readonly sp: saml2.ServiceProvider;
   private readonly idp: saml2.IdentityProvider;
@@ -44,7 +43,6 @@ export class SsoService {
     this.idp = new saml2.IdentityProvider(idp_options);
 
     this.samlHelper = new SAMLHelper(sp_options.private_key, idp_options.sso_logout_url);
-
   }
 
   getLoginRequestUrl(res: Response) {
@@ -60,6 +58,7 @@ export class SsoService {
   handleLoginResponse(req: Request, res: Response) {
     const options = { request_body: req.body };
     const response = this.sp.post_assert(this.idp, options, (err, saml_response) => {
+      // TODO check status code?
       if (this._handleError(err, res))
         return;
 
@@ -114,12 +113,11 @@ export class SsoService {
       session_index: cookie.sessionIndex
     }
 
-    console.log('Got logout request, session index: ' + options.session_index);
-
     this.sp.create_logout_request_url(this.idp, options, (err, logout_url) => {
       if (this._handleError(err, res))
         return;
 
+      console.log('Created logout request URL, session index: ' + options.session_index);
       let fixed_url = '';
       try {
         fixed_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
@@ -129,6 +127,8 @@ export class SsoService {
         return;
       }
 
+      // Suomi.fi documentation says the local session should be ended before SSO logout.
+      res.clearCookie(this.entity_id);
       res.redirect(fixed_url);
     });
   }
@@ -136,10 +136,11 @@ export class SsoService {
   // When SP initiates a logout and response comes from IdP.
   handleLogoutResponse(req: Request, res: Response) {
     if (!this.samlHelper.checkLogoutResponse(req.url)) {
+      // NOTE: we don't probably have to care about nonsuccessful statutes at all.
       this._handleError('Suomi.fi returned nonsuccessful logout status.', res);
       return;
     }
-    res.clearCookie(this.entity_id);
+
     res.send("LOGOUT SUCCESSFUL");
     // TODO URL
     // res.redirect('http://localhost:3001/uloskirjaus');
@@ -147,8 +148,14 @@ export class SsoService {
 
   // When IdP initiates a logout and response should be sent to IdP.
   handleLogoutRequest(req: Request, res: Response) {
-    const response_body = this.samlHelper.getLogoutResponseBody(req.body);
-    res.send(response_body);
+    const request_id = this.samlHelper.getInResponseToId(req.body);
+    const options = {
+      in_response_to: request_id
+    }
+    this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
+      console.log('Created logout response URL for request ID: ' + options.in_response_to);
+      res.redirect(response_url);
+    });
   }
 
   private _getUserAttribute(user_attributes: Array<Array<string>>, attribute: string): string {
@@ -165,5 +172,4 @@ export class SsoService {
     }
     return false;
   }
-
 }

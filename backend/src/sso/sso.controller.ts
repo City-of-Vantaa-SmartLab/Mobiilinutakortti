@@ -39,7 +39,6 @@ export class SsoController {
   // SSO logout, post binding. Suomi.fi will call this on IdP-initiated logouts.
   @Post('slo')
   logoutPost(@Req() req: Request, @Res() res: Response) {
-    console.log("SLO LOGOUT POST");
     this.ssoService.handleLogoutRequest(req, res);
   }
 

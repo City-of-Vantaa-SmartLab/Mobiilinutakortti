@@ -83,6 +83,8 @@ export class SAMLHelper {
   }
 
   checkLogoutResponse(req_url: string): boolean {
+    // The status is in an XML element attribute like this:
+    // <saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
     try {
       const response = url.parse(req_url, true).query.SAMLResponse;
       const deflated = Buffer.from(response.toString(), 'base64');
@@ -98,11 +100,16 @@ export class SAMLHelper {
     return false;
   }
 
-  getLogoutResponseBody(request_body: string): string {
-    // DEBUG
+  getInResponseToId(request_body: string): string {
+    // TODO check if request_body is the XML POST
     console.log('DEBUG REQUEST BODY: ' + request_body);
-
-    // TODO return a response as defined in https://palveluhallinta.suomi.fi/fi/tuki/artikkelit/591ac75b14bbb10001966f9d
-    return '';
+    let id = '';
+    try {
+      const xml_json = XML.parse(request_body.toString(), {
+        preserveAttributes: true,
+      });
+      id = xml_json._Attribs['ID'];
+    } catch {}
+    return id;
   }
 }
