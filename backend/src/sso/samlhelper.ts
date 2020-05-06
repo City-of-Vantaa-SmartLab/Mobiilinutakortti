@@ -47,8 +47,11 @@ export class SAMLHelper {
           'saml:Issuer': xml_json['saml:Issuer'],
           'saml:NameID': {
             '@Format': 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-            '@NameQualifier': process.env.IDP_ENTITY_ID || 'https://testi.apro.tunnistus.fi/idp1',
-            '@SPNameQualifier': process.env.SDP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi',
+            '@NameQualifier':
+              process.env.IDP_ENTITY_ID ||
+              'https://testi.apro.tunnistus.fi/idp1',
+            '@SPNameQualifier':
+              process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi',
             '#text': xml_json['saml:NameID'],
           },
           'samlp:SessionIndex': xml_json['samlp:SessionIndex'],
