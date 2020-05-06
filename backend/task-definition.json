@@ -39,6 +39,26 @@
         {
           "name": "FRONTEND",
           "value":"http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com"
+        },
+        {
+          "name": "SP_ENTITY_ID",
+          "value":"https://nutakortti-test.vantaa.fi"
+        },
+        {
+          "name": "SP_ASSERT_ENDPOINT",
+          "value":"https://api.mobiilinuta-admin-test.com/api/acs"
+        },
+        {
+          "name": "SSO_LOGIN_URL",
+          "value":"https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SSO"
+        },
+        {
+          "name": "SSO_LOGOUT_URL",
+          "value":"https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO"
+        },
+        {
+          "name": "IDP_ENTITY_ID",
+          "value":"https://testi.apro.tunnistus.fi/idp1"
         }
       ],
       "secrets": [
@@ -53,6 +73,10 @@
         {
           "name": "TELIA_PASSWORD",
           "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:telia-password-X0u4T7"
+        },
+        {
+          "name": "SP_PKEY",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:sp-pkey-ZWdmOL"
         }
       ],
       "name": "youth-club-server",

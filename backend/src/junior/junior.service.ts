@@ -1,4 +1,11 @@
-import { Injectable, ConflictException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+    Injectable,
+    ConflictException,
+    BadRequestException,
+    InternalServerErrorException,
+    Inject,
+    forwardRef
+} from '@nestjs/common';
 import { Junior, Challenge } from './entities';
 import { Repository, Like } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +17,8 @@ import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
+import { ParentFormDto } from '../junior/dto/';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable()
 export class JuniorService {
@@ -19,6 +28,8 @@ export class JuniorService {
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Challenge)
         private readonly challengeRepo: Repository<Challenge>,
+        @Inject(forwardRef(() => AuthenticationService))
+        private readonly authenticationService: AuthenticationService,
         private readonly smsService: SmsService,
     ) { }
 
@@ -82,6 +93,14 @@ export class JuniorService {
         if (!user) { return undefined; }
         await this.challengeRepo.remove(entry);
         return user.id;
+    }
+
+    async registerByParent(formData: ParentFormDto): Promise<string> {
+        const { userData, securityContext } = formData;
+        if (this.authenticationService.validateSecurityContext(securityContext)) {
+            return await this.registerJunior(userData);
+        }
+        throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
     async registerJunior(registrationData: RegisterJuniorDto): Promise<string> {

@@ -29,5 +29,6 @@
     "admin": "nuorisotyontekijat"
   },
   "PhoneNumberNotValid":"Puhelinnumero on virheellinen",
-  "ParentsPhoneNumberNotValid": "Huoltajan puhelinnumero on virheellinen"
+  "ParentsPhoneNumberNotValid": "Huoltajan puhelinnumero on virheellinen",
+  "SecurityContextNotValid": "Turvallisuuskonteksti virheellinen. Tunnistaudu Suomi.fi kautta uudellleen"
 }

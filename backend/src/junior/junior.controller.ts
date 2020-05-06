@@ -3,7 +3,7 @@ import {
     Get, Param, BadRequestException, Delete, Query, Res,
 } from '@nestjs/common';
 import { JuniorService } from './junior.service';
-import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto } from './dto';
+import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto, ParentFormDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AllowedRoles } from '../roles/roles.decorator';
@@ -37,6 +37,15 @@ export class JuniorController {
     @Post('register')
     async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    // @UseGuards(AuthGuard('jwt'), RolesGuard)
+    // @AllowedRoles(Roles.ADMIN)
+    @Post('parent-register')
+    async registerJuniorByParent(@Body(PhoneNumberValidationPipe) parentFormData: ParentFormDto): Promise<Message> {
+        const { userData, securityContext } = parentFormData;
+        return new Message(await this.juniorService.registerByParent(parentFormData));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
