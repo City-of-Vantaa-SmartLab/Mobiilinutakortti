@@ -18,7 +18,7 @@ export class SsoService {
   ) {
 
     // TODO make configs configurable per env; make stuff readable from env variables.
-    this.entity_id = 'https://nutakortti-test.vantaa.fi';
+    this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
 
     let pkey = '';
     if (fs.existsSync('./certs/nutakortti-test_private_key.pem')) {
@@ -27,18 +27,21 @@ export class SsoService {
 
     const sp_options = {
       entity_id: this.entity_id,
-      private_key: pkey,
+      private_key: process.env.SP_PKEY || pkey,
       certificate: fs.readFileSync('certs/nutakortti-test.cer').toString(),
-      assert_endpoint: 'https://api.mobiilinuta-admin-test.com/api/acs',
+      assert_endpoint: process.env.SP_ASSERT_ENDPOINT || 'https://api.mobiilinuta-admin-test.com/api/acs',
       sign_get_request: true,
       allow_unencrypted_assertion: false
     }
     this.sp = new saml2.ServiceProvider(sp_options);
 
     const idp_options = {
-      sso_login_url: 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SSO',
-      sso_logout_url: 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO',
-      certificates: [fs.readFileSync('certs/tunnistus-test-1.cer').toString(), fs.readFileSync('certs/tunnistus-test-2.cer').toString()],
+      sso_login_url: process.env.SSO_LOGIN_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SSO',
+      sso_logout_url: process.env.SSO_LOGOUT_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO',
+      certificates: [
+        fs.readFileSync('certs/tunnistus-test-1.cer').toString(),
+        fs.readFileSync('certs/tunnistus-test-2.cer').toString(),
+      ],
     };
     this.idp = new saml2.IdentityProvider(idp_options);
 
