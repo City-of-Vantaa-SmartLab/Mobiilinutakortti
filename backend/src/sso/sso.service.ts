@@ -48,9 +48,9 @@ export class SsoService {
   getLoginRequestUrl(res: Response) {
     this.sp.create_login_request_url(this.idp, {}, (err, login_url, request_id) => {
       console.log('Created login request, ID: ' + request_id);
-      if (this._handleError(err, res))
+      if (this._handleError(err, res)) 
         return;
-
+         
       res.redirect(login_url);
     });
   }
