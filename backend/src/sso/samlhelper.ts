@@ -4,14 +4,17 @@ import * as zlib from 'zlib';
 import * as xmlbuilder from 'xmlbuilder';
 import * as XML from 'pixl-xml';
 import { assignIn } from 'lodash';
+import {Logger} from "@nestjs/common";
 
 export class SAMLHelper {
   private_key: string;
   sso_logout_url: string;
+  logger: Logger;
 
   constructor(private_key: string, sso_logout_url: string) {
     this.private_key = private_key;
     this.sso_logout_url = sso_logout_url;
+    this.logger = new Logger();
   }
 
   /*
@@ -105,7 +108,8 @@ export class SAMLHelper {
 
   getInResponseToId(request_body: string): string {
     // TODO check if request_body is the XML POST
-    console.log('DEBUG REQUEST BODY: ' + request_body);
+    this.logger.log('DEBUG REQUEST BODY: ')
+    this.logger.log(request_body)
     let id = '';
     try {
       const xml_json = XML.parse(request_body.toString(), {
