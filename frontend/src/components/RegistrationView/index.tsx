@@ -9,15 +9,14 @@ const RegistrationView: React.FC = (props) => {
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
 
-
     useEffect(()=> {
         post('/auth/validate-signature', {})
             .then(response => {
                 if (response.valid) {
                     setAuth(true);
                 } else {
-                    get('/acs', '', true)
-                    .then(response => {})
+                    get('/acs')
+                    .then(response => window.location.replace(response.url))
                     .catch(e => console.log(e))
                 }
             })

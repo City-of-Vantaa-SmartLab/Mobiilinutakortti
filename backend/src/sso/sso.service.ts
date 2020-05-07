@@ -50,8 +50,8 @@ export class SsoService {
       console.log('Created login request, ID: ' + request_id);
       if (this._handleError(err, res)) 
         return;
-         
-      res.redirect(login_url);
+
+      res.send({url: login_url});
     });
   }
 

@@ -1,10 +1,9 @@
 const baseURL = process.env.REACT_APP_ENDPOINT;
 
-export const get = async (uri: string, token?: string, noCors?: boolean): Promise<any> => {
+export const get = async (uri: string, token?: string): Promise<any> => {
     const url: string = `${baseURL}${uri}`;
     const init: RequestInit = {
         method: 'GET',
-        mode: noCors ? 'no-cors' : 'cors',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
