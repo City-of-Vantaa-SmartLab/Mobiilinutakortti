@@ -106,15 +106,14 @@ export class SAMLHelper {
     return false;
   }
 
-  getInResponseToId(request_body: string): string {
-    // TODO check if request_body is the XML POST
-    this.logger.log('DEBUG REQUEST BODY: ')
-    this.logger.log(request_body)
+  getSAMLRequestId(saml_request: string): string {
+    this.logger.log('DEBUG SAML REQUEST: ');
+    this.logger.log(saml_request);
     let id = '';
     try {
-      const xml_json = XML.parse(request_body.toString(), {
-        preserveAttributes: true,
-      });
+      const deflated = Buffer.from(saml_request.toString(), 'base64');
+      const xml_string = zlib.inflateRawSync(deflated).toString();
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
       id = xml_json._Attribs['ID'];
     } catch {}
     return id;

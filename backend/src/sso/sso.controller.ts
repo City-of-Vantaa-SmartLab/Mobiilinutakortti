@@ -30,16 +30,13 @@ export class SsoController {
     this.ssoService.getLogoutRequestUrl(req, res);
   }
 
-  // SSO logout, redirect binding. Suomi.fi will redirect the user here after SP-initiated logout.
+  // SSO logout, redirect binding.
+  // Suomi.fi will redirect the user here after SP-initiated logout. There will be a SAMLResponse in the query.
+  // Suomi.fi will also call this on IdP-initiated logouts. There will be a SAMLRequest in the query.
+  // A HTTP-POST binding to this URL is also defined in the metadata, but it appears not called by anyone.
   @Get('slo')
   logoutRedirect(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.handleLogoutResponse(req, res);
-  }
-
-  // SSO logout, post binding. Suomi.fi will call this on IdP-initiated logouts.
-  @Post('slo')
-  logoutPost(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.handleLogoutRequest(req, res);
+    this.ssoService.handleLogout(req, res);
   }
 
 }

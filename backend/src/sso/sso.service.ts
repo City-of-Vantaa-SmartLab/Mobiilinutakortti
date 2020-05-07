@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
 import * as fs from 'fs';
+import * as url from 'url';
 import { SAMLHelper } from './samlhelper';
 import { AcsDto, SecurityContextDto } from '../authentication/dto';
 import { AuthenticationService } from '../authentication/authentication.service';
@@ -136,29 +137,36 @@ export class SsoService {
     });
   }
 
-  // When SP initiates a logout and response comes from IdP.
-  handleLogoutResponse(req: Request, res: Response) {
-    if (!this.samlHelper.checkLogoutResponse(req.url)) {
-      // NOTE: we don't probably have to care about nonsuccessful statutes at all.
-      this._handleError('Suomi.fi returned nonsuccessful logout status.', res);
-      return;
-    }
+  // When SP initiates a logout and response comes from IdP, request will have a SAMLResponse.
+  // When IdP initiates a logout, request will have a SAMLRequest.
+  handleLogout(req: Request, res: Response) {
+    const query = url.parse(req.url, true).query;
+    const idp_initiated = 'SAMLRequest' in query;
 
-    res.send("LOGOUT SUCCESSFUL");
-    // TODO URL
-    // res.redirect('http://localhost:3001/uloskirjaus');
-  }
+    // We have to respond to the request if IdP-initiated.
+    if (idp_initiated) {
 
-  // When IdP initiates a logout and response should be sent to IdP.
-  handleLogoutRequest(req: Request, res: Response) {
-    const request_id = this.samlHelper.getInResponseToId(req.body);
-    const options = {
-      in_response_to: request_id
+      const request_id = this.samlHelper.getSAMLRequestId(query.SAMLRequest);
+      const options = {
+        in_response_to: request_id
+      }
+      this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
+        console.log('Created logout response URL for request ID: ' + options.in_response_to);
+        res.redirect(response_url);
+      });
+
+    } else {
+
+      // NOTE: we don't probably have to care about nonsuccessful statutes at all but here goes anyway.
+      if (!this.samlHelper.checkLogoutResponse(req.url)) {
+        this._handleError('Suomi.fi returned nonsuccessful logout status.', res);
+        return;
+      }
+
+      res.send("LOGOUT SUCCESSFUL");
+      // TODO URL
+      // res.redirect('http://localhost:3001/uloskirjaus');
     }
-    this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
-      console.log('Created logout response URL for request ID: ' + options.in_response_to);
-      res.redirect(response_url);
-    });
   }
 
   private _getUserAttribute(user_attributes: Array<Array<string>>, attribute: string): string {
