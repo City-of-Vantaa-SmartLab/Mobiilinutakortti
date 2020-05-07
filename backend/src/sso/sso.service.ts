@@ -18,14 +18,14 @@ export class SsoService {
     private readonly authenticationService: AuthenticationService
   ) {
 
-    // TODO make configs configurable per env; make stuff readable from env variables.
-    this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
-
+    // This is for local testing if you have the private key.
     let pkey = '';
     if (fs.existsSync('./certs/nutakortti-test_private_key.pem')) {
       pkey = fs.readFileSync('certs/nutakortti-test_private_key.pem').toString();
     }
 
+    // NOTE: Default configuration variables refer to AWS and Suomi.fi-tunnistus test environments.
+    this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
     const sp_options = {
       entity_id: this.entity_id,
       private_key: process.env.SP_PKEY || pkey,
@@ -62,7 +62,7 @@ export class SsoService {
   handleLoginResponse(req: Request, res: Response) {
     const options = { request_body: req.body };
     const response = this.sp.post_assert(this.idp, options, (err, saml_response) => {
-      // TODO check status code?
+      // If the user cancels the authentication or SAML response status is not success, there will be an error.
       if (this._handleError(err, res))
         return;
 
@@ -146,7 +146,7 @@ export class SsoService {
     // We have to respond to the request if IdP-initiated.
     if (idp_initiated) {
 
-      const request_id = this.samlHelper.getSAMLRequestId(query.SAMLRequest);
+      const request_id = this.samlHelper.getSAMLRequestId(query.SAMLRequest.toString());
       const options = {
         in_response_to: request_id
       }
@@ -157,7 +157,7 @@ export class SsoService {
 
     } else {
 
-      // NOTE: we don't probably have to care about nonsuccessful statutes at all but here goes anyway.
+      // NOTE: we don't probably have to care about nonsuccessful status at all but here goes anyway.
       if (!this.samlHelper.checkLogoutResponse(req.url)) {
         this._handleError('Suomi.fi returned nonsuccessful logout status.', res);
         return;

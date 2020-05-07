@@ -4,17 +4,14 @@ import * as zlib from 'zlib';
 import * as xmlbuilder from 'xmlbuilder';
 import * as XML from 'pixl-xml';
 import { assignIn } from 'lodash';
-import {Logger} from "@nestjs/common";
 
 export class SAMLHelper {
   private_key: string;
   sso_logout_url: string;
-  logger: Logger;
 
   constructor(private_key: string, sso_logout_url: string) {
     this.private_key = private_key;
     this.sso_logout_url = sso_logout_url;
-    this.logger = new Logger();
   }
 
   /*
@@ -71,6 +68,36 @@ export class SAMLHelper {
     return url.format(new_logout_url);
   }
 
+  checkLogoutResponse(req_url: string): boolean {
+    try {
+      const response = url.parse(req_url, true).query.SAMLResponse;
+      const deflated = Buffer.from(response.toString(), 'base64');
+      const xml_string = zlib.inflateRawSync(deflated).toString();
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+
+      // The status is in an XML element attribute like this:
+      // <saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
+      const status_value =
+        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs['Value'];
+      const val_array = status_value.split(':');
+      if (val_array[val_array.length - 1] === 'Success') {
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+
+  getSAMLRequestId(saml_request: string): string {
+    let id = '';
+    try {
+      const deflated = Buffer.from(saml_request, 'base64');
+      const xml_string = zlib.inflateRawSync(deflated).toString();
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+      id = xml_json._Attribs['ID'];
+    } catch {}
+    return id;
+  }
+
   private _signSamlRequest(saml_request: string) {
     const saml_request_data = 'SAMLRequest=' + encodeURIComponent(saml_request);
     const sigalg_data =
@@ -86,36 +113,5 @@ export class SAMLHelper {
       'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
     samlQueryString.Signature = sign.sign(this.private_key, 'base64');
     return samlQueryString;
-  }
-
-  checkLogoutResponse(req_url: string): boolean {
-    // The status is in an XML element attribute like this:
-    // <saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
-    try {
-      const response = url.parse(req_url, true).query.SAMLResponse;
-      const deflated = Buffer.from(response.toString(), 'base64');
-      const xml_string = zlib.inflateRawSync(deflated).toString();
-      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
-      const status_value =
-        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs['Value'];
-      const val_array = status_value.split(':');
-      if (val_array[val_array.length - 1] === 'Success') {
-        return true;
-      }
-    } catch {}
-    return false;
-  }
-
-  getSAMLRequestId(saml_request: string): string {
-    this.logger.log('DEBUG SAML REQUEST: ');
-    this.logger.log(saml_request);
-    let id = '';
-    try {
-      const deflated = Buffer.from(saml_request.toString(), 'base64');
-      const xml_string = zlib.inflateRawSync(deflated).toString();
-      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
-      id = xml_json._Attribs['ID'];
-    } catch {}
-    return id;
   }
 }
