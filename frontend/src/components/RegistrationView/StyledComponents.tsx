@@ -23,6 +23,24 @@ export const Header = styled.h1`
     margin: 0.5em 0.5em 0;
 `;
 
+export const LogoutButton = styled.button`
+    background-color: rgb(249, 229, 30);
+    cursor: pointer;
+    font-family: 'GT-Walsheim';
+    font-size: 0.8em;
+    height: 30px;
+    width: 80px;
+    position:absolute;
+    top: 2%;
+    right: 2%;
+`;
+
+export const LogoutLink = styled.span`
+    cursor: pointer;
+    color: #0042a5;
+    font-weight: bold;
+`;
+
 export const Confirmation = styled.div`
     margin: auto;
     max-width: 800px;

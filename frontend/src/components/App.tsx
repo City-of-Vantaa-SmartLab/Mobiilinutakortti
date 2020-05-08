@@ -10,6 +10,7 @@ import A2hs from './A2hs';
 import ParentRedirectView from './ParentRedirectView';
 import RegistrationView from './RegistrationView';
 import ProtectedRoute from './ProtectedRoute';
+import LogoutView from './LogoutPage';
 import { userTypes, userActions } from '../types/userTypes';
 import { authTypes, authActions } from '../types/authTypes';
 import { AppState } from '../reducers';
@@ -63,6 +64,7 @@ const App: React.FC<AppProps> = (props) => {
         <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
         <Route path='/hae' component={ParentRedirectView} />
         <Route path='/hakemus' component={RegistrationView} />
+        <Route path='/logout' component={LogoutView} />
       </Switch>
       <A2hs isVisible={showA2hs} close={onClose} />
     </Wrapper>

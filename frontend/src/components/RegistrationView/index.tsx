@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
-import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button } from './StyledComponents';
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, LogoutLink } from './StyledComponents';
 import { get, post } from '../../apis';
 
 const RegistrationView: React.FC = (props) => {
@@ -24,7 +24,17 @@ const RegistrationView: React.FC = (props) => {
     }, [])
 
 
-//fetch club list
+    const logout = () => {
+        get('/logout')
+            .then(
+                // TODO: handle response for logout
+            )
+            .catch((e) => {
+                setError(true);
+            })
+    }
+
+    //fetch club list
     useEffect(() => {
         get('/club/list')
             .then(response => setClubs(response))
@@ -35,6 +45,10 @@ const RegistrationView: React.FC = (props) => {
     return (
         <Wrapper>
             <Header>Nutakortti-hakemus</Header>
+            // TODO: needs && auth?
+            {!submitted && !error &&
+                <LogoutButton onClick={logout}>Logout</LogoutButton>
+            }
             {!submitted && !error && auth &&
                 <RegistrationForm onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
@@ -42,7 +56,9 @@ const RegistrationView: React.FC = (props) => {
             <Confirmation>
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
-                    <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
+                    <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun. You may now
+                    <LogoutLink onClick={logout}> logout</LogoutLink>
+                    </p>
                     <SuccessIcon/>
                 </div>
             </Confirmation>
