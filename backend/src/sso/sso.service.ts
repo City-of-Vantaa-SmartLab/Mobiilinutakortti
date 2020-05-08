@@ -25,11 +25,13 @@ export class SsoService {
     }
 
     // NOTE: Default configuration variables refer to AWS and Suomi.fi-tunnistus test environments.
+    const cert_selection = process.env.CERT_SELECTION || 'test';
     this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
+
     const sp_options = {
       entity_id: this.entity_id,
       private_key: process.env.SP_PKEY || pkey,
-      certificate: fs.readFileSync('certs/nutakortti-test.cer').toString(),
+      certificate: fs.readFileSync('certs/nutakortti-' + cert_selection + '.cer').toString(),
       assert_endpoint: process.env.SP_ASSERT_ENDPOINT || 'https://api.mobiilinuta-admin-test.com/api/acs',
       sign_get_request: true,
       allow_unencrypted_assertion: false
@@ -40,8 +42,8 @@ export class SsoService {
       sso_login_url: process.env.SSO_LOGIN_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SSO',
       sso_logout_url: process.env.SSO_LOGOUT_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO',
       certificates: [
-        fs.readFileSync('certs/tunnistus-test-1.cer').toString(),
-        fs.readFileSync('certs/tunnistus-test-2.cer').toString(),
+        fs.readFileSync('certs/tunnistus-' + cert_selection + '-1.cer').toString(),
+        fs.readFileSync('certs/tunnistus-' + cert_selection + '-2.cer').toString(),
       ],
     };
     this.idp = new saml2.IdentityProvider(idp_options);
@@ -55,7 +57,7 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
-      res.redirect(login_url);
+      res.send({url: login_url});
     });
   }
 
