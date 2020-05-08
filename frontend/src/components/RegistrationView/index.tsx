@@ -3,14 +3,14 @@ import RegistrationForm from './Form';
 import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button } from './StyledComponents';
 import { get, post } from '../../apis';
 
-const RegistrationView: React.FC = (props) => {  
+const RegistrationView: React.FC = (props) => {
     const  [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
 
     useEffect(()=> {
-        post('/auth/validate-signature', {})
+        post('/auth/validate-signature', {}) // TODO pass the security context, not empty object
             .then(response => {
                 if (response.valid) {
                     setAuth(true);
@@ -38,7 +38,7 @@ const RegistrationView: React.FC = (props) => {
             {!submitted && !error && auth &&
                 <RegistrationForm onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
-            {submitted && !error && 
+            {submitted && !error &&
             <Confirmation>
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
