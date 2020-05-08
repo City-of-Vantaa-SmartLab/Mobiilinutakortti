@@ -93,19 +93,23 @@ export class SsoService {
   }
 
   getLogoutRequestUrl(req: Request, res: Response) {
-    const cookie = req.cookies[this.entity_id];
-    if (!cookie) {
+    let sc_token = {};
+    const token = req.headers['authorization'];
+    if (token.startsWith('Bearer ')) {
+      sc_token = JSON.parse(token.slice(7, token.length));
+    }
+    if (!sc_token) {
       this._handleError('Security context missing.', res);
       return;
     }
     const sc = {
-      sessionIndex: cookie.sessionIndex,
-      nameId: cookie.nameId,
-      firstName: cookie.firstName,
-      lastName: cookie.lastName,
-      zipCode: cookie.zipCode,
-      expiryTime: cookie.expiryTime,
-      signedString: cookie.signedString
+      sessionIndex: sc_token['sessionIndex'],
+      nameId: sc_token['nameId'],
+      firstName: sc_token['firstName'],
+      lastName: sc_token['lastName'],
+      zipCode: sc_token['zipCode'],
+      expiryTime: sc_token['expiryTime'],
+      signedString: sc_token['signedString']
     } as SecurityContextDto;
 
     if (!this.authenticationService.validateSecurityContext(sc)) {
@@ -114,8 +118,8 @@ export class SsoService {
     }
 
     const options = {
-      name_id: cookie.nameId,
-      session_index: cookie.sessionIndex
+      name_id: sc_token['nameId'],
+      session_index: sc_token['sessionIndex']
     }
 
     this.sp.create_logout_request_url(this.idp, options, (err, logout_url) => {
@@ -123,18 +127,16 @@ export class SsoService {
         return;
 
       console.log('Created logout request URL, session index: ' + options.session_index);
-      let fixed_url = '';
+      let fixed_logout_url = '';
       try {
-        fixed_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
+        fixed_logout_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
       }
       catch(ex) {
         this._handleError(ex.message, res);
         return;
       }
 
-      // Suomi.fi documentation says the local session should be ended before SSO logout.
-      res.clearCookie(this.entity_id);
-      res.redirect(fixed_url);
+      res.send({url: fixed_logout_url});
     });
   }
 
@@ -164,9 +166,7 @@ export class SsoService {
         return;
       }
 
-      res.send("LOGOUT SUCCESSFUL");
-      // TODO URL
-      // res.redirect('http://localhost:3001/uloskirjaus');
+      res.redirect(`${this.frontend_base_url}/uloskirjaus`);
     }
   }
 

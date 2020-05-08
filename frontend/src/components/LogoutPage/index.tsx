@@ -90,8 +90,8 @@ const LogoutView: React.FC = (props) => {
             </Header>
             <Description>
               <div>
-                <h2>Kiitos !</h2>
-                <p>You have successfully signed out. Thanks for using the service.</p>
+                <h2>Kiitos!</h2>
+                <p>Olet nyt kirjautunut ulos. Kiitos palvelun käytöstä!</p>
               </div>
             </Description>
         </Content>

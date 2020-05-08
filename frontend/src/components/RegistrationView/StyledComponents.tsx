@@ -27,9 +27,7 @@ export const LogoutButton = styled.button`
     background-color: rgb(249, 229, 30);
     cursor: pointer;
     font-family: 'GT-Walsheim';
-    font-size: 0.8em;
-    height: 30px;
-    width: 80px;
+    padding: 10px;
     position:absolute;
     top: 2%;
     right: 2%;

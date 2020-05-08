@@ -47,8 +47,8 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                 } else {
                     sessionStorage.removeItem('sc');
                     get('/acs')
-                    .then(response => window.location.replace(response.url))
-                    .catch(e => setError(true))
+                        .then(response => window.location.replace(response.url))
+                        .catch(e => setError(true))
                 }
             })
             .catch(e => setError(true))
@@ -56,16 +56,23 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
 
 
     const logout = () => {
-        get('/logout')
-            .then(
-                // TODO: handle response for logout
-            )
+        const sc = getSecurityContext();
+        // Suomi.fi documentation says the local session should be ended before SSO logout.
+        sessionStorage.removeItem('sc');
+        get('/logout', JSON.stringify(sc))
+            .then(response => {
+                if (response.url) {
+                    window.location.replace(response.url);
+                } else {
+                    setError(true);
+                    // TODO: remove query string from url (by going to some generic error page?)
+                }
+            })
             .catch((e) => {
                 setError(true);
             })
     }
 
-    //fetch club list
     useEffect(() => {
         get('/club/list')
             .then(response => setClubs(response))
@@ -77,7 +84,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
         <Wrapper>
             <Header>Nutakortti-hakemus</Header>
             {!submitted && !error && auth &&
-                <LogoutButton onClick={logout}>Logout</LogoutButton>
+                <LogoutButton onClick={logout}>Kirjaudu ulos</LogoutButton>
             }
             {!submitted && !error && auth &&
                 <RegistrationForm securityContext={securityContext} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
@@ -86,8 +93,8 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
             <Confirmation>
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
-                    <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun. You may now
-                    <LogoutLink onClick={logout}> logout</LogoutLink>
+                    <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun. Voit nyt
+                    <LogoutLink onClick={logout}> kirjautua ulos</LogoutLink>.
                     </p>
                     <SuccessIcon/>
                 </div>
@@ -96,8 +103,8 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
              {error &&
              <Error>
                  <div>
-                 <p>Something went wrong. Please, try again!</p>
-                    <Button onClick={() => window.location.reload(false)}>Go back</Button>
+                 <p>Hups, jokin meni pieleen! Ole hyvä ja yritä uudelleen.</p>
+                    <Button onClick={() => window.location.reload(false)}>Takaisin</Button>
                  </div>
             </Error>
             }
