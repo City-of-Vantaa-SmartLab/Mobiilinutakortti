@@ -111,7 +111,7 @@ export class JuniorService {
             phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
             parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
             school: registrationData.school, class: registrationData.class,
-            gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub, status: registrationData.status, 
+            gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub, status: registrationData.status,
             photoPermission: registrationData.photoPermission,
         } as Junior;
         if (registrationData.nickName) { junior.nickName = registrationData.nickName; }
@@ -185,10 +185,10 @@ export class JuniorService {
 
     // Modified to return challenge, this will be improved upon SMS intergration.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
-        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString(); 
+        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
         const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: ['junior'] });
-        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }    
+        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
         return await this.challengeRepo.findOne({ junior });
