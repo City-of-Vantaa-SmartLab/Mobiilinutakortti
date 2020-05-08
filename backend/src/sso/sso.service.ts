@@ -84,12 +84,16 @@ export class SsoService {
       } as AcsDto;
 
       const sc = this.authenticationService.generateSecurityContext(acs_data);
+      const querystr = Buffer.from(JSON.stringify(sc)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 
-      res.cookie(this.entity_id, sc);
+      // To decode (in validation):
+      //function Base64DecodeUrl(str){
+      // str = (str + '===').slice(0, str.length + (str.length % 4));
+      // return str.replace(/-/g, '+').replace(/_/g, '/');
+      // }
 
-      // TODO URL and cookie if domain changes?
-      //res.redirect('http://localhost:3001/hakemus');
-      res.send('LOGIN SUCCESSFUL');
+      const temp_page = '<html lang="en"><head><meta charset="utf-8"></head> <body> <script> location="http://localhost:3001/hakemus&QUERY"; </script> </body> </html>';
+      res.send(temp_page.replace('QUERY', querystr));
     });
   }
 

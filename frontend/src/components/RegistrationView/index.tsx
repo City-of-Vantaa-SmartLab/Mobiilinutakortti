@@ -4,13 +4,13 @@ import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton
 import { get, post } from '../../apis';
 
 const RegistrationView: React.FC = (props) => {
-    const  [submitted, setSubmitted] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
 
     useEffect(()=> {
-        post('/auth/validate-signature', {}) // TODO pass the security context, not empty object
+        post('/auth/validate-signature', { sc: sessionStorage.getItem('nutakortti') }) // TODO pass the security context, not empty object
             .then(response => {
                 if (response.valid) {
                     setAuth(true);
