@@ -13,6 +13,7 @@ export class SsoService {
   private readonly sp: saml2.ServiceProvider;
   private readonly idp: saml2.IdentityProvider;
   private readonly samlHelper;
+  private readonly frontend_base_url: string;
 
   constructor(
     private readonly authenticationService: AuthenticationService
@@ -27,6 +28,7 @@ export class SsoService {
     // NOTE: Default configuration variables refer to AWS and Suomi.fi-tunnistus test environments.
     const cert_selection = process.env.CERT_SELECTION || 'test';
     this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
+    this.frontend_base_url = process.env.FRONTEND_BASE_URL || 'http://localhost:3001';
 
     const sp_options = {
       entity_id: this.entity_id,
@@ -84,12 +86,9 @@ export class SsoService {
       } as AcsDto;
 
       const sc = this.authenticationService.generateSecurityContext(acs_data);
-
-      res.cookie(this.entity_id, sc);
-
-      // TODO URL and cookie if domain changes?
-      //res.redirect('http://localhost:3001/hakemus');
-      res.send('LOGIN SUCCESSFUL');
+      const querystr = Buffer.from(JSON.stringify(sc)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+      const url = `${this.frontend_base_url}/hakemus?sc=${querystr}`
+      res.redirect(url);
     });
   }
 
