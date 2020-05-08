@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
 import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button } from './StyledComponents';
-import { get } from '../../apis';
+import { get, post } from '../../apis';
 
-const RegistrationView: React.FC = (props) => {  
+const RegistrationView: React.FC = (props) => {
     const  [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
+    const [auth, setAuth] = useState(false);
+
+    useEffect(()=> {
+        post('/auth/validate-signature', {}) // TODO pass the security context, not empty object
+            .then(response => {
+                if (response.valid) {
+                    setAuth(true);
+                } else {
+                    get('/acs')
+                    .then(response => window.location.replace(response.url))
+                    .catch(e => console.log(e))
+                }
+            })
+            .catch(e => console.log(e))
+    }, [])
+
 
 //fetch club list
     useEffect(() => {
@@ -19,7 +35,7 @@ const RegistrationView: React.FC = (props) => {
     return (
         <Wrapper>
             <Header>Nutakortti-hakemus</Header>
-            {!submitted && !error && 
+            {!submitted && !error && auth &&
                 <RegistrationForm onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
             {submitted && !error &&
@@ -35,7 +51,7 @@ const RegistrationView: React.FC = (props) => {
              <Error>
                  <div>
                  <p>Something went wrong. Please, try again!</p>
-                    <Button onClick={() => setError(false)}>Go back</Button>
+                    <Button onClick={() => window.location.reload(false)}>Go back</Button>
                  </div>
             </Error>
             }

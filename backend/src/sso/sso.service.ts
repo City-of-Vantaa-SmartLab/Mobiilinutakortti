@@ -55,7 +55,7 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
-      res.redirect(login_url);
+      res.send({url: login_url});
     });
   }
 

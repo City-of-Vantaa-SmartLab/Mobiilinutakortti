@@ -150,7 +150,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
     mapPropsToStatus: props => {
         return {
             clubs: props.clubs.map(club => club.name)
-        }   
+        }  
     },
     validationSchema: object().shape({
                 juniorFirstName: string().required("Täytä tiedot"),
