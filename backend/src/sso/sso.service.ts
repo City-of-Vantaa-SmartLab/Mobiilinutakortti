@@ -91,9 +91,8 @@ export class SsoService {
       // str = (str + '===').slice(0, str.length + (str.length % 4));
       // return str.replace(/-/g, '+').replace(/_/g, '/');
       // }
-
-      const temp_page = '<html lang="en"><head><meta charset="utf-8"></head> <body> <script> location="http://localhost:3001/hakemus&QUERY"; </script> </body> </html>';
-      res.send(temp_page.replace('QUERY', querystr));
+      const url = `http://localhost:3001/hakemus?sc=${querystr}`
+      res.redirect(url);
     });
   }
 

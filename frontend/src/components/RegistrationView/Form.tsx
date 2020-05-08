@@ -63,8 +63,8 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                 <Column>
                     <Fieldset>
                         <FieldTitle>Huoltajan tiedot</FieldTitle>
-                        <Field name='parentFirstName' component={InputField} title='Etunimi'/>
-                        <Field name='parentLastName' component={InputField} title='Sukunimi'/>
+                        <Field disabled name='parentFirstName' component={InputField} title='Etunimi'/>
+                        <Field disabled name='parentLastName' component={InputField} title='Sukunimi'/>
                         <Field name='parentPhoneNumber' component={InputField} title='Puhelinnumero'/>
                     </Fieldset>
 
@@ -96,32 +96,34 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 }
 
 interface RegFormProps {
-    parentFirstName?: string,
-    parentLastName?: string,
+    securityContext: any,
     clubs: any[],
     onSubmit: () => void,
     onError: ()=> void
 }
 
-const submitForm = async (values: FormValues) => {
+const submitForm = async (values: FormValues, securityContext: any) => {
     const birthday = values.juniorBirthday.split('.');
     const data = {
-        phoneNumber: values.juniorPhoneNumber,
-        lastName: values.juniorLastName,
-        firstName: values.juniorFirstName,
-        nickName: values.juniorNickName,
-        gender: values.juniorGender,
-        school: values.school,
-        class: values.class,
-        birthday: new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0])),
-        homeYouthClub: values.youthClub,
-        postCode: values.postCode,
-        parentsName: `${values.parentFirstName} ${values.parentLastName}`,
-        parentsPhoneNumber: values.parentPhoneNumber,
-        status: 'pending',
-        photoPermission: values.photoPermission === 'y'
+        userData: {
+            phoneNumber: values.juniorPhoneNumber,
+            lastName: values.juniorLastName,
+            firstName: values.juniorFirstName,
+            nickName: values.juniorNickName,
+            gender: values.juniorGender,
+            school: values.school,
+            class: values.class,
+            birthday: new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0])),
+            homeYouthClub: values.youthClub,
+            postCode: values.postCode,
+            parentsName: `${values.parentFirstName} ${values.parentLastName}`,
+            parentsPhoneNumber: values.parentPhoneNumber,
+            status: 'pending',
+            photoPermission: values.photoPermission === 'y'
+        },
+        securityContext: securityContext
     };
-        const response = await post('/junior/register', data);
+        const response = await post('/junior/parent-register', data);
         return response;
 }
 
@@ -139,8 +141,8 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
             photoPermission: '',
             school: '',
             class: '',
-            parentFirstName: '',
-            parentLastName: '',
+            parentFirstName: props.securityContext.firstName,
+            parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
             youthClub: '',
             termsOfUse: false
@@ -170,7 +172,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 termsOfUse: boolean().required()
             }),
     handleSubmit: (values, formikBag) => {
-        submitForm(values)
+        submitForm(values, formikBag.props.securityContext)
             .then(formikBag.props.onSubmit)
             .catch(formikBag.props.onError);      
     },
