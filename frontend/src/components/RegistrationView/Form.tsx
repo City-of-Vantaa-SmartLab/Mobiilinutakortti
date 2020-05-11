@@ -55,7 +55,8 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             title="Kuvauslupa" 
                             name="photoPermission" 
                             description="Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden jalkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä."
-                            options={[{value: 'y', label: 'Kyllä'},{value: 'n', label: 'Ei'}]}/>
+                            options={[{value: 'y', label: 'Kyllä'},{value: 'n', label: 'Ei'}]}
+                        />
 
                     </Fieldset>
                 </Column>
@@ -70,9 +71,10 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 
                     <Fieldset>
                         <FieldTitle>Kotinuorisotila</FieldTitle>
-                        <Field name='youthClub' 
-                            component={DropdownField} 
-                            title='Kotinuorisotila' 
+                        <Field
+                            name='youthClub'
+                            component={DropdownField}
+                            title='Kotinuorisotila'
                             options={status.clubs}
                             defaultChoice='Valitse nuorisotila'
                             description="Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy."
@@ -102,8 +104,13 @@ interface RegFormProps {
     onError: ()=> void
 }
 
+const getParsedBirthday = (value: any) => {
+    const birthday = value.split('.');
+    const parsedDate = new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0]));
+    return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), parsedDate.getHours(), parsedDate.getMinutes()));
+}
+
 const submitForm = async (values: FormValues, securityContext: any) => {
-    const birthday = values.juniorBirthday.split('.');
     const data = {
         userData: {
             phoneNumber: values.juniorPhoneNumber,
@@ -113,7 +120,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             gender: values.juniorGender,
             school: values.school,
             class: values.class,
-            birthday: new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0])),
+            birthday: getParsedBirthday(values.juniorBirthday),
             homeYouthClub: values.youthClub,
             postCode: values.postCode,
             parentsName: `${values.parentFirstName} ${values.parentLastName}`,
