@@ -17,7 +17,6 @@ export class AuthenticationController {
 
   @Post('validate-signature')
   validateSignature(@Body() securityContext: SecurityContextDto): ContextValidViewModel {
-    console.log("TEST: " + JSON.stringify(securityContext));
     return new ContextValidViewModel(this.authenticationService.validateSecurityContext(securityContext));
   }
 }

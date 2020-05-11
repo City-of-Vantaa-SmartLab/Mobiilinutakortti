@@ -73,8 +73,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     useEffect(() => {
         get('/club/list')
             .then(response => setClubs(response))
-            .catch((e) => { console.log(e);
-                setError(true)})
+            .catch((e) => setError(true))
     }, []);
 
     return (
