@@ -37,7 +37,7 @@
           "value":"vantaa-nuta-2020-2.cekah5govxhb.eu-west-1.rds.amazonaws.com"
         },
         {
-          "name": "FRONTEND",
+          "name": "FRONTEND_BASE_URL",
           "value":"http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com"
         },
         {
@@ -59,6 +59,10 @@
         {
           "name": "IDP_ENTITY_ID",
           "value":"https://testi.apro.tunnistus.fi/idp1"
+        },
+        {
+          "name": "CERT_SELECTION",
+          "value": "test"
         }
       ],
       "secrets": [

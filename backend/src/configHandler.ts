@@ -28,6 +28,6 @@ export class ConfigHelper {
     }
 
     static getFrontendPort(): string {
-        return process.env.FRONTEND || 'http://localhost:3001';
+        return process.env.FRONTEND_BASE_URL || 'http://localhost:3001';
     }
 }
