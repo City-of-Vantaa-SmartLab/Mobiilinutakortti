@@ -53,6 +53,25 @@ To change password for a PostgreSQL user, use the psql command `\password <user>
 
 Once the backend and database are up and running locally, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
 
+**Network configuration**
+
+Since the Suomi.fi identity provider for SSO is configured against a test environment in AWS cloud, it expects to talk with the AWS. Therefore it responds with AWS URLs. To make them work locally, the easiest way is to override the Amazon hostname in `/etc/hosts` file:
+
+  127.0.0.1 api.mobiilinuta-admin-test.com
+
+Since Suomi.fi expects to communicate over HTTPS and not HTTP, we will also need to have:
+
+  * The RSA private key of the test environment. When you have it, store it in `backend/certs/nutakortti-test_private_key.pem`. This will make the backend service use that for TLS communication also, enabling HTTPS automatically.
+  * The default HTTPS port 443 redirected to your local backend port.
+
+In many systems (e.g. Linux), port numbers below 1024 are privileged. If you don't want to run the service with elevated privileges, in Linux you could forward the port for example with *iptables*:
+
+  sudo iptables -t nat -A OUTPUT -p tcp -o lo --dport 443 -j REDIRECT --to-ports 3000
+
+Or, in Mac OSX (might not work exactly like this, check out if you have lo0):
+
+  echo "rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 127.0.0.1 port 3000" | sudo pfctl -ef -
+
 ## Creating an admin user
 
 The application needs at least one admin user to work properly. See the generic README.md at the root of the repository (../README.md) on instructions how to create one.
@@ -60,3 +79,29 @@ The application needs at least one admin user to work properly. See the generic 
 ## Testing SMS functionality
 
 To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
+
+## Task definition / environment variables / secrets
+
+AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets.
+
+The secrets are:
+* `RDS_PASSWORD`: Amazon RDS password.
+* `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. (Not the TLS private key.)
+* `TELIA_PASSWORD`: Telia SMS service password.
+* `TELIA_USERNAME`: Telia SMS service user name.
+* `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
+
+The environment variables are:
+* `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
+* `FRONTEND_BASE_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
+* `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
+* `RDS_DB_NAME`: Amazon RDS database name.
+* `RDS_HOSTNAME`: Amazon RDS URL host part.
+* `RDS_PORT`: Amazon RDS port.
+* `RDS_USERNAME`: Amazon RDS user name.
+* `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
+* `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
+* `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
+* `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
+* `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
+* `TELIA_USER`: The name of the sender as it appears on SMS messages.
