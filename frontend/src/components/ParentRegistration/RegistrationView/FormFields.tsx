@@ -1,7 +1,7 @@
 import React from 'react';
 import { FieldProps, Field } from 'formik';
 import { get } from 'lodash';
-import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLabel, Radio, Dropdown } from './StyledComponents'
+import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLabel, Radio, Dropdown } from '../StyledComponents'
 
 
 interface InputProps {
