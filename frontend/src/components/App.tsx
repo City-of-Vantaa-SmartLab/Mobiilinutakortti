@@ -64,7 +64,7 @@ const App: React.FC<AppProps> = (props) => {
         <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
         <Route path='/hae' component={ParentRedirectView} />
         <Route path='/hakemus' component={RegistrationView} />
-        <Route path='/logout' component={LogoutView} />
+        <Route path='/uloskirjaus' component={LogoutView} />
       </Switch>
       <A2hs isVisible={showA2hs} close={onClose} />
     </Wrapper>

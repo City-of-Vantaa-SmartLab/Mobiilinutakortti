@@ -13,6 +13,7 @@ export class SsoService {
   private readonly sp: saml2.ServiceProvider;
   private readonly idp: saml2.IdentityProvider;
   private readonly samlHelper;
+  private readonly frontend_base_url: string;
 
   constructor(
     private readonly authenticationService: AuthenticationService
@@ -27,6 +28,7 @@ export class SsoService {
     // NOTE: Default configuration variables refer to AWS and Suomi.fi-tunnistus test environments.
     const cert_selection = process.env.CERT_SELECTION || 'test';
     this.entity_id = process.env.SP_ENTITY_ID || 'https://nutakortti-test.vantaa.fi';
+    this.frontend_base_url = process.env.FRONTEND_BASE_URL || 'http://localhost:3001';
 
     const sp_options = {
       entity_id: this.entity_id,
@@ -84,29 +86,30 @@ export class SsoService {
       } as AcsDto;
 
       const sc = this.authenticationService.generateSecurityContext(acs_data);
-
-      res.cookie(this.entity_id, sc);
-
-      // TODO URL and cookie if domain changes?
-      //res.redirect('http://localhost:3001/hakemus');
-      res.send('LOGIN SUCCESSFUL');
+      const querystr = Buffer.from(JSON.stringify(sc)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+      const url = `${this.frontend_base_url}/hakemus?sc=${querystr}`
+      res.redirect(url);
     });
   }
 
   getLogoutRequestUrl(req: Request, res: Response) {
-    const cookie = req.cookies[this.entity_id];
-    if (!cookie) {
+    let sc_token = {};
+    const token = req.headers['authorization'];
+    if (token.startsWith('Bearer ')) {
+      sc_token = JSON.parse(token.slice(7, token.length));
+    }
+    if (!sc_token) {
       this._handleError('Security context missing.', res);
       return;
     }
     const sc = {
-      sessionIndex: cookie.sessionIndex,
-      nameId: cookie.nameId,
-      firstName: cookie.firstName,
-      lastName: cookie.lastName,
-      zipCode: cookie.zipCode,
-      expiryTime: cookie.expiryTime,
-      signedString: cookie.signedString
+      sessionIndex: sc_token['sessionIndex'],
+      nameId: sc_token['nameId'],
+      firstName: sc_token['firstName'],
+      lastName: sc_token['lastName'],
+      zipCode: sc_token['zipCode'],
+      expiryTime: sc_token['expiryTime'],
+      signedString: sc_token['signedString']
     } as SecurityContextDto;
 
     if (!this.authenticationService.validateSecurityContext(sc)) {
@@ -115,8 +118,8 @@ export class SsoService {
     }
 
     const options = {
-      name_id: cookie.nameId,
-      session_index: cookie.sessionIndex
+      name_id: sc_token['nameId'],
+      session_index: sc_token['sessionIndex']
     }
 
     this.sp.create_logout_request_url(this.idp, options, (err, logout_url) => {
@@ -124,18 +127,16 @@ export class SsoService {
         return;
 
       console.log('Created logout request URL, session index: ' + options.session_index);
-      let fixed_url = '';
+      let fixed_logout_url = '';
       try {
-        fixed_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
+        fixed_logout_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
       }
       catch(ex) {
         this._handleError(ex.message, res);
         return;
       }
 
-      // Suomi.fi documentation says the local session should be ended before SSO logout.
-      res.clearCookie(this.entity_id);
-      res.redirect(fixed_url);
+      res.send({url: fixed_logout_url});
     });
   }
 
@@ -165,9 +166,7 @@ export class SsoService {
         return;
       }
 
-      res.send("LOGOUT SUCCESSFUL");
-      // TODO URL
-      // res.redirect('http://localhost:3001/uloskirjaus');
+      res.redirect(`${this.frontend_base_url}/uloskirjaus`);
     }
   }
 
