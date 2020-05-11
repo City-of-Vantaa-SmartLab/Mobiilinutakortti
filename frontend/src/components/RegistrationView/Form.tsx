@@ -25,13 +25,13 @@ export interface FormValues {
     termsOfUse: boolean
 }
 
-const InnerForm = (props: FormikProps<FormValues>) => {  
+const InnerForm = (props: FormikProps<FormValues>) => {
     const { handleSubmit, handleReset, touched, errors, status } = props;
-    return (           
-            <Form onReset={handleReset} onSubmit={handleSubmit}>  
+    return (
+            <Form onReset={handleReset} onSubmit={handleSubmit}>
                 <Column>
                     <Fieldset>
-                        <FieldTitle>Nuoren tiedot</FieldTitle>                      
+                        <FieldTitle>Nuoren tiedot</FieldTitle>
                         <Field name='juniorFirstName' component={InputField} title='Etunimi'/>
                         <Field name='juniorLastName' component={InputField} title='Sukunimi'/>
                         <Field name='juniorNickName' component={InputField} title='Kutsumanimi'/>
@@ -41,19 +41,19 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field name='school' component={InputField} title='Koulun nimi'/>
                         <Field name='class' component={InputField} title='Luokka'/>
 
-                        <SelectGroup 
-                            error={errors.juniorGender} 
-                            touched={touched.juniorGender} 
-                            title="Sukupuoli" 
-                            name="juniorGender" 
+                        <SelectGroup
+                            error={errors.juniorGender}
+                            touched={touched.juniorGender}
+                            title="Sukupuoli"
+                            name="juniorGender"
                             options={[{value: 'f', label: 'Tyttö'},{value: 'm', label: 'Poika'},{value: 'o', label: 'Muu'},{value: '-', label: 'En halua määritellä'}]}
                         />
 
-                        <SelectGroup 
-                            error={errors.photoPermission} 
-                            touched={touched.photoPermission} 
-                            title="Kuvauslupa" 
-                            name="photoPermission" 
+                        <SelectGroup
+                            error={errors.photoPermission}
+                            touched={touched.photoPermission}
+                            title="Kuvauslupa"
+                            name="photoPermission"
                             description="Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden jalkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä."
                             options={[{value: 'y', label: 'Kyllä'},{value: 'n', label: 'Ei'}]}
                         />
@@ -78,18 +78,18 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             options={status.clubs}
                             defaultChoice='Valitse nuorisotila'
                             description="Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy."
-                        />        
+                        />
                 </Fieldset>
             </Column>
             <FormFooter>
-                <Field name='termsOfUse'>  
+                <Field name='termsOfUse'>
                     {({ field } : FieldProps) => (
                         <div>
                             <Checkbox type='checkbox' checked={field.value} id={field.name} {...field} />
                             <label htmlFor={field.name}>Hyväksyn&#160;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a></label>
                         </div>
                     )}
-                </Field> 
+                </Field>
                 <Button type="submit" disabled={!props.values.termsOfUse}>Lähetä hakemus</Button>
                 <a target='_blank' rel="noopener noreferrer" href="https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/148977_Henkilotietojen_kasittely_nuorisopalveluissa.pdf">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </FormFooter>
@@ -159,13 +159,13 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
     mapPropsToStatus: props => {
         return {
             clubs: props.clubs.map(club => club.name)
-        }  
+        }
     },
     validationSchema: object().shape({
                 juniorFirstName: string().required("Täytä tiedot"),
                 juniorLastName: string().required("Täytä tiedot"),
                 juniorNickName: string(),
-                juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp.kk.vvvv').required('Anna syntymäaika muodossa pp.kk.vvvv'), 
+                juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp.kk.vvvv').required('Anna syntymäaika muodossa pp.kk.vvvv'),
                 juniorPhoneNumber: string().matches(/(^(\+358|0)\d{9}$)/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
                 postCode: string().length(5, 'Tarkista, että antamasi postinumero on oikein').matches(/^[0-9]*$/, 'Tarkista, että antamasi postinumero on oikein').required("Täytä tiedot"),
                 school: string().required("Täytä tiedot"),
@@ -181,7 +181,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
     handleSubmit: (values, formikBag) => {
         submitForm(values, formikBag.props.securityContext)
             .then(formikBag.props.onSubmit)
-            .catch(formikBag.props.onError);      
+            .catch(formikBag.props.onError);
     },
     validateOnBlur: false,
     validateOnChange: false
