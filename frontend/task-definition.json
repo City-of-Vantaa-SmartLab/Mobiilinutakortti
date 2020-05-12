@@ -15,10 +15,6 @@
         {
           "name": "REACT_APP_ENDPOINT",
           "value": "https://api.mobiilinuta-admin-test.com/api"
-        },
-        {
-          "name": "REACT_APP_WEBSOCKET",
-          "value": "https://api.mobiilinuta-admin-test.com/"
         }
       ],
       "name": "youth-club-mobile-front",

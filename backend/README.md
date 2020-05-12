@@ -82,7 +82,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 
 ## Task definition / environment variables / secrets
 
-AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets.
+AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets. Note that in the cloud environment, the secrets are read from environment variables eventually during runtime so these are all basically environment variables, just the inital source of them (ACM or task definition) might vary.
 
 The secrets are:
 * `RDS_PASSWORD`: Amazon RDS password.
@@ -105,3 +105,6 @@ The environment variables are:
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
+
+Additionally, the frontend apps require this environment variable:
+* `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
