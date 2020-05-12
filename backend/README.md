@@ -82,14 +82,14 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 
 ## Task definition / environment variables / secrets
 
-AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets. Note that in the cloud environment, the secrets are read from environment variables eventually during runtime so these are all basically environment variables, just the inital source of them (ACM or task definition) might vary.
+AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets. Note that in the cloud environment, the secrets are read from environment variables eventually during runtime so these are all basically environment variables, just the inital source of them (AWS Secrets Manager or task definition) might vary.
 
 The secrets are:
+* `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 * `RDS_PASSWORD`: Amazon RDS password.
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. (Not the TLS private key.)
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USERNAME`: Telia SMS service user name.
-* `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 
 The environment variables are:
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
