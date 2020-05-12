@@ -1,10 +1,10 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
 import { string, object, boolean } from 'yup';
-import { post } from '../../apis';
+import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
-import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button } from './StyledComponents';
+import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button } from '../StyledComponents';
 
 
 export interface FormValues {

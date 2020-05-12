@@ -32,16 +32,14 @@ export class JuniorController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    // @UseGuards(AuthGuard('jwt'), RolesGuard)
-    // @AllowedRoles(Roles.ADMIN)
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Post('register')
     async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    // @UseGuards(AuthGuard('jwt'), RolesGuard)
-    // @AllowedRoles(Roles.ADMIN)
     @Post('parent-register')
     async registerJuniorByParent(@Body(PhoneNumberValidationPipe) parentFormData: ParentFormDto): Promise<Message> {
         const { userData, securityContext } = parentFormData;

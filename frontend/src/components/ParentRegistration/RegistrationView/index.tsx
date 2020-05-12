@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
-import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, LogoutLink } from './StyledComponents';
-import { get, post } from '../../apis';
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, LogoutLink } from '../StyledComponents';
+import { get, post } from '../../../apis';
 import { RouteComponentProps } from 'react-router-dom';
-import { isEmpty } from 'lodash';
 
 
 const RegistrationView: React.FC<RouteComponentProps> = (props) => {
@@ -11,7 +10,6 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
-    const [securityContext, setSecurityContext] = useState({})
 
     const queryToSecurityContext = () => {
         const query = new URLSearchParams(props.location.search);
@@ -21,13 +19,13 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
             const pad = sc_encoded.length % 4;
             if (pad) {
                 if (pad === 1) {
-                    // TODO: this is an error, throw exception or something?
-                    console.log('base64url string is the wrong length');
+                    setError(true);
                 }
                 b64str += new Array(5-pad).join('=');
             }
             const sc = atob(b64str);
             sessionStorage.setItem('sc', sc);
+            props.history.replace('/hakemus')
         }
     }
 
@@ -39,7 +37,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     useEffect(()=> {
         queryToSecurityContext();
         const sc = getSecurityContext();
-        setSecurityContext(sc); // <- TODO what does this do?
+        
         post('/auth/validate-signature', sc)
             .then(response => {
                 if (response.valid) {
@@ -65,7 +63,6 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                     window.location.replace(response.url);
                 } else {
                     setError(true);
-                    // TODO: remove query string from url (by going to some generic error page?)
                 }
             })
             .catch((e) => {
@@ -76,20 +73,19 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     useEffect(() => {
         get('/club/list')
             .then(response => setClubs(response))
-            .catch((e) => { console.log(e);
-                setError(true)})
+            .catch((e) => setError(true))
     }, []);
 
     return (
         <Wrapper>
-            <Header>Nutakortti-hakemus</Header>
             {!submitted && !error && auth &&
                 <LogoutButton onClick={logout}>Kirjaudu ulos</LogoutButton>
             }
+            <Header>Nutakortti-hakemus</Header>
             {!submitted && !error && auth &&
-                <RegistrationForm securityContext={securityContext} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
+                <RegistrationForm securityContext={getSecurityContext()} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
-            {submitted && !error &&
+            {submitted && !error && auth &&
             <Confirmation>
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
@@ -104,7 +100,12 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
              <Error>
                  <div>
                  <p>Hups, jokin meni pieleen! Ole hyvä ja yritä uudelleen.</p>
-                    <Button onClick={() => window.location.reload(false)}>Takaisin</Button>
+                    <Button onClick={() => {
+                        //cleans query string if error happened during query string parsing
+                        props.history.replace('/hakemus')
+                        window.location.reload(false)
+                        }
+                    }>Takaisin</Button>
                  </div>
             </Error>
             }

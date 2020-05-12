@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-// Main view components
+// Registration view components
 
 export const Wrapper = styled.div`
     background: linear-gradient(-10deg, transparent, transparent 55%, #0042a5 calc(55% + 1px), #0042a5); 
@@ -20,17 +20,7 @@ export const Header = styled.h1`
     text-align: center;
     color: rgb(249, 229, 30);
     font-size: 3em;
-    margin: 0.5em 0.5em 0;
-`;
-
-export const LogoutButton = styled.button`
-    background-color: rgb(249, 229, 30);
-    cursor: pointer;
-    font-family: 'GT-Walsheim';
-    padding: 10px;
-    position:absolute;
-    top: 2%;
-    right: 2%;
+    margin: 1.5em 0.5em 0;
 `;
 
 export const LogoutLink = styled.span`
@@ -88,20 +78,48 @@ export const Button = styled.button`
     text-transform: uppercase;
     background: #3c8fde;
     border: none;
+    cursor: pointer;
     color: #fff;
-    padding: 1em;
+    padding: 1em 2em;
     margin: 1.5em 0;
     font-size: 1em;
     font-weight: 600;
-    &:focus {
-        outline: None;
+    position: relative;
+    overflow: hidden;
+    &:before {
+        top: 50%;
+        left:50%;
+        content: '';
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        transform: translate(-50%, -50%) scale(0);
+        transform-origin: center center;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 50%; 
+    }
+    &:hover {
+        &:before {
+            transform: translate(-50%, -50%) scale(1.5);
+            transition: all 0.3s ease-in;
+        }   
     }
     &:active {
-        background: #0042a5;
-    }
+        transform:translate(0,1px);
+        transition: all 0.3s ease-in-out;  
+        background: #0042a5;    
+        }
+    &:focus {
+        outline: None;
+        }
     &:disabled {
         opacity: 0.8;
     }
+`;
+
+export const LogoutButton = styled(Button)`
+    float: right;
+    margin: 1em 1em 0 0;
 `;
 
 //Form components
@@ -355,4 +373,88 @@ export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 &:not(:checked) + label:after {
     opacity: 0;
 }
+`;
+
+// Main view components ('about' page)
+
+export const MainWrapper = styled.div`
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(-5deg, white, white 40%, #0042a5 calc(40% + 1px), #0042a5);
+    padding: 0;
+    display: flex;
+    position: fixed;
+    overflow: scroll;
+    flex-direction: column;
+    @media (max-width: 450px) {
+        font-size: 14px;
+    }
+    @media (min-width: 1150px) {
+        font-size: 18px;
+    }
+`;
+
+export const Logo = styled.div`
+    color: white;
+    height: calc(100px + 8vw);
+    min-height: calc(100px + 8vw);
+    width: 100%;
+    background: linear-gradient(5deg, transparent, transparent 40%, #3c8fde calc(40% + 1px), #3c8fde);
+    position: relative;
+    box-sizing: border-box;
+    @media (min-width: 2015px) {
+        background: linear-gradient(3deg, transparent, transparent 40%, #3c8fde calc(40% + 1px), #3c8fde);
+        height: calc(100px + 6vw);
+    }
+    & > h2 {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        font-size: 2em;
+        padding-top: 0.5em;
+        @media (max-width: 450px) {
+            margin-bottom: 3em;
+        }
+        @media (min-width: 1050px) {
+            font-size: 2.5em;
+            padding-top: 1.5vw;
+        }        
+    }
+`;
+
+export const MainHeader = styled.header`  
+    & > h1 {
+        text-transform: uppercase;
+        margin: 0;
+        font-size: 3em;
+        line-height: 50px;
+        font-family: 'GT-Walsheim';
+        color: white;
+    }
+    & > p {
+        color: white;
+        margin: 0.5rem 0 1.5rem;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+`;
+
+export const MainDescription = styled.div`
+    background: rgb(249, 229, 30);
+    padding: 1.5em;
+    font-sise: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
+    & > p {
+        margin: 0;
+    }
+`;
+
+export const MainContent = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem 2rem;
+
 `;
