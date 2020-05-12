@@ -172,7 +172,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Sukunimi" source="lastName" validate={required()}/>
                 <TextInput label="Kutsumanimi" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o', '-'])]}/>
-                <DateInput label="Syntymäaika" source="birthday" validate={ageValidator} validate={required()}/>
+                <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <TextInput label="Postinumero" source="postCode" validate={required()}/>
                 <TextInput label="Koulu" source="school" validate={required()}/>

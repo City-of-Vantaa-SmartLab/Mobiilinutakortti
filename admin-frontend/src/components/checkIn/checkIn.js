@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
-import QrReader from 'react-qr-reader'
-import ding from '../../audio/ding.mp3'
+import QrReader from 'react-qr-reader';
 import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
 import { showNotification } from 'react-admin';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { httpClient, httpClientWithResponse } from '../../httpClients';
+import { httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { Prompt } from "react-router-dom";
-import { isSubstring } from '../../utils.js';
 import audio from "../../audio/audio.js"
 
 const Container = styled.div`
@@ -105,8 +103,6 @@ const CheckInView = (props) => {
     const { showNotification } = props;
     showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
-
-  const navigatingToCheckIn = (location) => isSubstring(location.pathname, "checkIn");
 
   return (
     <Container>
