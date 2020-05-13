@@ -67,6 +67,10 @@
       ],
       "secrets": [
         {
+          "name": "AUTH_SIGNKEY",
+          "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:nuta-auth-token-signkey-QmeTob"
+        },
+        {
           "name": "RDS_PASSWORD",
           "valueFrom": "arn:aws:secretsmanager:eu-west-1:876630367030:secret:nuta-rds-password-g45tON"
         },
