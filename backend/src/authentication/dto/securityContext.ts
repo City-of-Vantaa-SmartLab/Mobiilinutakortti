@@ -10,6 +10,7 @@ export class SecurityContextDto {
   @IsNotEmpty()
   readonly signedString: string;
 
+  // Note: there might be several names separated by a space.
   @IsNotEmpty()
   readonly firstName: string;
 

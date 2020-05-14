@@ -80,6 +80,7 @@ export class SsoService {
       const acs_data = {
         sessionIndex: saml_response.user.session_index,
         nameId: saml_response.user.name_id,
+        // Note: there might be several names, separated by spaces in a single string.
         firstName: this._getUserAttribute(saml_response.user.attributes, 'http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName'),
         lastName: user_surname,
         zipCode: this._getUserAttribute(saml_response.user.attributes, 'urn:oid:1.2.246.517.2002.2.6')
@@ -96,7 +97,9 @@ export class SsoService {
     let sc_token = {};
     const token = req.headers['authorization'];
     if (token.startsWith('Bearer ')) {
-      sc_token = JSON.parse(token.slice(7, token.length));
+      const b64sc = token.slice(7, token.length);
+      const binsc = Buffer.from(b64sc, 'base64').toString();
+      sc_token = JSON.parse(binsc);
     }
     if (!sc_token) {
       this._handleError('Security context missing.', res);

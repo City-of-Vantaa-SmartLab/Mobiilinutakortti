@@ -7,6 +7,7 @@ export class AcsDto {
   @IsNotEmpty()
   readonly nameId: string;
 
+  // Note: there might be several names separated by a space.
   @IsNotEmpty()
   readonly firstName: string;
 

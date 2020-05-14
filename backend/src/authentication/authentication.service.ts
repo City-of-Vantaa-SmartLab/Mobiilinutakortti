@@ -66,9 +66,9 @@ export class AuthenticationService {
     }
 
     generateSecurityContext(@Body() acsData: AcsDto): SecurityContextDto {
+        // Note: there might be multiple first names but it doesn't matter here.
         const { sessionIndex, nameId, firstName, lastName, zipCode } = acsData;
         const expiryTime = ((new Date().getTime() / 1000) + 3600).toString();
-        // TODO/FIXME: if multiple first names, this will fail?
         const signed = sign(`${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
         return {
             sessionIndex,

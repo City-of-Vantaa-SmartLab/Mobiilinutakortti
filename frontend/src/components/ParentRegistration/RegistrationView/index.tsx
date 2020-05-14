@@ -23,7 +23,10 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                 }
                 b64str += new Array(5-pad).join('=');
             }
-            const sc = atob(b64str);
+            // Note: atob doesn't work right away with UTF-8 characters beyond the first 8 bits. Hence we read every character as base-16 string and percent-decode them.
+            const sc = decodeURIComponent(atob(b64str).split('').map((c) => {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
             sessionStorage.setItem('sc', sc);
             props.history.replace('/hakemus')
         }
@@ -37,7 +40,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     useEffect(()=> {
         queryToSecurityContext();
         const sc = getSecurityContext();
-        
+
         post('/auth/validate-signature', sc)
             .then(response => {
                 if (response.valid) {
@@ -57,7 +60,14 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
         const sc = getSecurityContext();
         // Suomi.fi documentation says the local session should be ended before SSO logout.
         sessionStorage.removeItem('sc');
-        get('/logout', JSON.stringify(sc))
+
+        // Have to base64-encode the string if there are exotic characters in the user name, otherwise fetch fails to invalid headers.
+        // Since btoa fails with with non-Latin1 characters we first encode them to hex and then to raw bytes.
+        const b64sc = btoa(encodeURIComponent(JSON.stringify(sc)).replace(/%([0-9A-F]{2})/g,
+            (match, p1) => {
+                return String.fromCharCode(parseInt('0x' + p1));
+        }));
+        get('/logout', b64sc)
             .then(response => {
                 if (response.url) {
                     window.location.replace(response.url);
