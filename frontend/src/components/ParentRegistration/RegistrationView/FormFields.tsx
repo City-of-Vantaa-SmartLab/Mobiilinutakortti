@@ -29,13 +29,13 @@ export const InputField: React.FC<FieldProps & InputProps> = ({
     );
 }
 
-interface RadioItem {
+interface SelectItem {
     value: string,
     label: string
 }
 
 interface RadioProps {
-    data: RadioItem,
+    data: SelectItem,
 }
 
 const RadioField: React.FC<RadioProps & FieldProps> = ({
@@ -61,7 +61,7 @@ const RadioField: React.FC<RadioProps & FieldProps> = ({
 
 
 interface GroupProps extends InputProps {
-    options: RadioItem[],
+    options: SelectItem[],
     name: string,
     error?: string,
     touched?: boolean
@@ -92,7 +92,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
 }
 
 interface DropdownProps extends InputProps {
-    options: string[],
+    options: SelectItem[],
     defaultChoice: string
 }
 
@@ -107,7 +107,7 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     const isTouched = get(touched, field.name);
     const error = get(errors, field.name);
     const inputs = options.map(option => (
-            <option key={option} value={option}>{option}</option>
+            <option key={option.value} value={option.value}>{option.label}</option>
     ));
     return(
         <div>

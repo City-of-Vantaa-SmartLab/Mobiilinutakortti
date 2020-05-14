@@ -46,7 +46,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
             const parsedYouthClubs = await getYouthClubs();
             setYouthClubs(parsedYouthClubs);
         };
-        addYouthClubsToState();
+        addYouthClubsToState();      
     }, []);
 
     const JuniorFilter = (props) => (
@@ -89,7 +89,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 <DateField label="Syntymäaika" source="birthday" />
                 <TextField label="Puhelinnumero" source="phoneNumber" />
                 <TextField label="Postinumero" source="postCode" />
-                <TextField label="Kotinuorisotalo" source="homeYouthClub" />
+                <SelectField label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
                 <TextField label="Huoltajan nimi" source="parentsName" />
                 <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
                 <SelectField label="Status" source="status" choices={statusChoices} />

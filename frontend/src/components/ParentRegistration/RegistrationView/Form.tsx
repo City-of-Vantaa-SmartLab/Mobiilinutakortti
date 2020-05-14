@@ -158,7 +158,9 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
     enableReinitialize: true,
     mapPropsToStatus: props => {
         return {
-            clubs: props.clubs.map(club => club.name)
+            clubs: props.clubs
+                .map((youthClub) => ({ value: youthClub.id.toString(), label: youthClub.name }))
+                .sort((a,b) => a.label.localeCompare(b.label, 'fi', { sensitivity: 'base' }))
         }
     },
     validationSchema: object().shape({
