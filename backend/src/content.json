@@ -25,8 +25,8 @@
   "SMSSignature": "Vantaan nuorisopalvelut",
   "Deleted": "Käyttäjä poistettu.",
   "Routes": {
-    "api": "api",
-    "admin": "nuorisotyontekijat"
+    "api": "/api",
+    "admin": "/nuorisotyontekijat"
   },
   "PhoneNumberNotValid":"Puhelinnumero on virheellinen",
   "ParentsPhoneNumberNotValid": "Huoltajan puhelinnumero on virheellinen",
