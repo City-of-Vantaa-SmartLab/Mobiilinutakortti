@@ -110,6 +110,7 @@ export class ClubService {
         genders.set('m', allJuniorGenders.filter(j => j === 'm').length);
         genders.set('f', allJuniorGenders.filter(j => j === 'f').length);
         genders.set('o', allJuniorGenders.filter(j => j === 'o').length);
+        genders.set('-', allJuniorGenders.filter(j => j === '-').length);
         return genders;
     }
 

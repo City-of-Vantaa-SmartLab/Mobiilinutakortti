@@ -7,7 +7,7 @@ import * as content from './content.json';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get(`/${content.Routes.api}`)
+  @Get(`${content.Routes.api}`)
   getStatus(): string {
     return this.appService.getStatus();
   }
