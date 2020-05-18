@@ -48,6 +48,7 @@ NOTE:
 ## Creating an admin user
 
 The application needs at least one admin user to work properly. The backend must be running when executing this step.
+When creating admin, the endpoint needs to be opened temporarily by removing AuthGuards, since by default it is closed.
 
 ### Use curl
 
@@ -83,6 +84,7 @@ POST to [http://localhost:3000/api/admin/registerTemp](http://localhost:3000/ap
 ```
 
 Now you can login to admin-frontend with given credentials.
+
 
 ## Testing SMS functionality
 
