@@ -90,6 +90,10 @@ Now you can login to admin-frontend with given credentials.
 
 To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
 
+## QR-code reading
+
+Qr-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
+
 ## Troubleshooting
 
 ### Login not working
