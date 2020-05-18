@@ -12,7 +12,8 @@ export const juniorProvider = (type, params, httpClient) => {
             const controls = {
                 filters: {
                     name: params.filter.name,
-                    homeYouthClub: params.filter.homeYouthClub
+                    homeYouthClub: params.filter.homeYouthClub,
+                    status: params.filter.status
                 },
                 pagination: {
                     page: params.pagination.page,
@@ -22,7 +23,6 @@ export const juniorProvider = (type, params, httpClient) => {
                     field: params.sort.field,
                     order: params.sort.order
                 }
-
             };
 
             options = {

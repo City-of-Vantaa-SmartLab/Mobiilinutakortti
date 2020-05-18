@@ -33,12 +33,12 @@ export const ageValidator = (value, allValues) => {
   const current = new Date().getTime();
 
   if (current < valueAsTimestamp) {
-    return 'Juniori ei voi syntyä tulevaisuudessa.';
+    return 'Syntymäpäivä ei voi olla tulevaisuudessa.';
   }
   return undefined;
 }
 
 export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
-  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name }))) 
-  
+  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name })))
+
 export const isSubstring = (mainString, subString) => mainString.includes(subString);

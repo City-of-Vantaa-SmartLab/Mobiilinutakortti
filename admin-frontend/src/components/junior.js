@@ -13,7 +13,6 @@ import {
     DateInput,
     BooleanInput,
     required,
-    choices,
     EditButton,
     Edit,
     Filter,
@@ -46,13 +45,14 @@ export const JuniorList = connect(null, { showNotification })(props => {
             const parsedYouthClubs = await getYouthClubs();
             setYouthClubs(parsedYouthClubs);
         };
-        addYouthClubsToState();      
+        addYouthClubsToState();
     }, []);
 
     const JuniorFilter = (props) => (
         <Filter {...props}>
             <TextInput label="Nimi" source="name" />
             <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+            <SelectInput label="Status" source="status" choices={statusChoices} />
         </Filter>
     );
 
@@ -80,7 +80,6 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 }
             });
     }
-
     return (
         <List title="Nuoret" pagination={<CustomPagination />} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
@@ -116,7 +115,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
                 <TextInput label="Kutsumanimi" source="nickName" />
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o', '-'])]} />
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
@@ -126,7 +125,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
-                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]} />
+                <SelectInput label="Status" source="status" choices={statusChoices} validate={required()} />
                 <FormDataConsumer>
                  {({ formData }) => formData.status === 'accepted' &&
                     <SMSwarning/>
@@ -135,7 +134,6 @@ export const JuniorCreate = (props) => {
             </SimpleForm>
         </Create>
     );
-
 }
 
 export const JuniorEdit = (props) => {
@@ -171,7 +169,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Etunimi" source="firstName" validate={required()}/>
                 <TextInput label="Sukunimi" source="lastName" validate={required()}/>
                 <TextInput label="Kutsumanimi" source="nickName" />
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={[required(), choices(['m', 'f', 'o', '-'])]}/>
+                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <TextInput label="Postinumero" source="postCode" validate={required()}/>
@@ -181,9 +179,9 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
                 <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()}/>
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
-                <SelectInput label="Status" source="status" choices={statusChoices} validate={[required(), choices(['accepted', 'pending'])]}/>
+                <SelectInput label="Status" source="status" choices={statusChoices} validate={required()}/>
                 <FormDataConsumer>
-                 {({ formData, record }) => (formData.status === 'accepted' && record.status==='pending') && 
+                 {({ formData, record }) => (formData.status === 'accepted' && record.status==='pending') &&
                     <SMSwarning/>
                  }
              </FormDataConsumer>

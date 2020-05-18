@@ -37,7 +37,7 @@ export class JuniorService {
         const query = { order: {}, where: {}, skip: 0, take: 0 };
         if (controls) {
             query.order = controls.sort ? this.applySort(controls.sort) : {};
-            query.where = controls.filters ? this.applyWhereYouthClub(controls.filters) : {};
+            query.where = controls.filters ? this.applyWhereFilters(controls.filters) : {};
             query.take = controls.pagination ? controls.pagination.perPage : 0;
             query.skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
@@ -57,12 +57,17 @@ export class JuniorService {
         return order;
     }
 
-    private applyWhereYouthClub(filterOptions: FilterDto) {
+    private applyWhereFilters(filterOptions: FilterDto) {
         const homeYouthClub = 'homeYouthClub';
+        const status = 'status';
         const where = [];
+        const query = {};
         if (filterOptions.homeYouthClub) {
-            const query = {};
             query[homeYouthClub] = filterOptions.homeYouthClub;
+            where.push(query);
+        }
+        if (filterOptions.status) {
+            query[status] = filterOptions.status;
             where.push(query);
         }
         return where;
@@ -205,5 +210,4 @@ export class JuniorService {
         if (!user) { throw new ConflictException(content.UserNotFound); }
         return await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
     }
-
 }
