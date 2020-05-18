@@ -126,3 +126,37 @@ There's a lot of files under node_modules and they are all being watched, reachi
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
 Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
+
+
+## Environments, AWS and CI
+
+### CI
+
+Github uses github-actions to push master branch to test-environment, when push or merge occurs. More information on "Actions" tab.
+
+### Test-environment
+Application runs in Elastic Container Service (eu-west-1), with 3 different services:
+
+youth-club-server-service, https://api.mobiilinuta-admin-test.com/api
+
+youth-club-mobile-front, http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com
+
+youth-club-admin-front-2, https://mobiilinuta-admin-test.com
+    
+Application images are stored in Elastic Container Registry.
+You shouldn't need to update images or services manually, since Github does that for you.
+
+### Production-environment
+Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. Current environment in use is Vantaa-Youth-PWA-dev, and old, deprecated one is VantaaYouthPwa-env. When deploying new version to production, use
+```
+eb-deploy
+```
+to update selected environment.
+
+Junior-app: https://nutakortti.vantaa.fi
+
+Admin-app: https://nutakortti.vantaa.fi/nuorisotyontekijat
+
+Api: https://nutakortti.vantaa.fi/api
+
+
