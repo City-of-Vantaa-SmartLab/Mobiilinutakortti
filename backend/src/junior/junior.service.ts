@@ -204,8 +204,6 @@ export class JuniorService {
      * @param phoneNumber - juniors phone number
      */
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
-        // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
-        // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
         return await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });

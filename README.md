@@ -47,14 +47,14 @@ NOTE:
 
 ## Creating an admin user
 
-The application needs at least one admin user to work properly. The backend must be running when executing this step.
+The application needs at least one admin user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend.
 
 ### Use curl
 
 Run the following `curl` command to create an admin user
 
 ```bash
-curl --location --request POST 'http://localhost:3000/api/admin/registerTemp' \
+curl --location --request POST 'http://localhost:3000/api/admin/registerSuperAdmin' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "test@test.com",
@@ -70,7 +70,7 @@ curl --location --request POST 'http://localhost:3000/api/admin/registerTemp' \
 
 Alternatively, you can use GUI tools such as Postman or Insomnia to create an admin user.
 
-POST to [http://localhost:3000/api/admin/registerTemp](http://localhost:3000/api/admin/registerTemp) with following body:
+POST to [http://localhost:3000/api/admin/registerSuperAdmin](http://localhost:3000/api/admin/registerSuperAdmin) with following body:
 
 ```json
 {
@@ -84,10 +84,11 @@ POST to [http://localhost:3000/api/admin/registerTemp](http://localhost:3000/ap
 
 Now you can login to admin-frontend with given credentials.
 
-## Note about production
+### Note about production
 
-When deploying application to production, endpoint should initially be open(remove the AuthGuards), and after creation of admin, it should be closed asap. 
+When deploying application to production, endpoint should initially be open, and after creation of admin, it should be closed ASAP. The endpoint is toggled by environment variable `SUPER_ADMIN_FEATURES`. Set its value to "yes" to allow registering admins via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
 
+Note that in the task-definition.json the default value is "yes". Keep this in mind if you use the task definitions for production.
 
 ## Testing SMS functionality
 
@@ -127,14 +128,14 @@ There's a lot of files under node_modules and they are all being watched, reachi
 
 Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
 
-
 ## Environments, AWS and CI
 
 ### CI
 
-Github uses github-actions to push master branch to test-environment, when push or merge occurs. More information on "Actions" tab.
+Github uses github-actions to push master branch to test-environment, when push or merge occurs to the master branch. More information on "Actions" tab.
 
-### Test-environment
+### Test environment
+
 Application runs in Elastic Container Service (eu-west-1), with 3 different services:
 
 youth-club-server-service, https://api.mobiilinuta-admin-test.com/api
@@ -142,21 +143,16 @@ youth-club-server-service, https://api.mobiilinuta-admin-test.com/api
 youth-club-mobile-front, http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com
 
 youth-club-admin-front-2, https://mobiilinuta-admin-test.com
-    
+
 Application images are stored in Elastic Container Registry.
 You shouldn't need to update images or services manually, since Github does that for you.
 
-### Production-environment
-Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. Current environment in use is Vantaa-Youth-PWA-dev, and old, deprecated one is VantaaYouthPwa-env. When deploying new version to production, use
-```
-eb-deploy
-```
-to update selected environment.
+### Production environment
+
+Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. Current environment in use is Vantaa-Youth-PWA-dev, and old, deprecated one is VantaaYouthPwa-env. When deploying new version to production, use `eb-deploy` to update selected environment.
 
 Junior-app: https://nutakortti.vantaa.fi
 
 Admin-app: https://nutakortti.vantaa.fi/nuorisotyontekijat
 
 Api: https://nutakortti.vantaa.fi/api
-
-
