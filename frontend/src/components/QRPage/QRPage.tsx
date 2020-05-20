@@ -13,7 +13,7 @@ const Wrapper = styled.div`
     height: 100%;
     padding: 0 2.5rem;
     text-align: center;
-    background: linear-gradient(-15deg, white, white 55%, transparent 55%, transparent);   
+    background: linear-gradient(-15deg, white, white 55%, transparent 55%, transparent);
 `;
 
 const Header = styled.section`
@@ -43,10 +43,10 @@ const QRPage: React.FC<QRPageProps> = (props) => {
         <Container>
             <Wrapper>
                 <Header>
-                    <Title title='Kirjaudu nutalle' subtitle={props.name} />
+                    <Title title='Kirjaudu' subtitle={props.name} />
                 </Header>
                 <QR id={props.id}/>
-                <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotalolle</Footer>
+                <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.</Footer>
             </Wrapper>
         </Container>
     );

@@ -51,15 +51,15 @@ export const JuniorList = connect(null, { showNotification })(props => {
     const JuniorFilter = (props) => (
         <Filter {...props}>
             <TextInput label="Nimi" source="name" />
-            <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
-            <SelectInput label="Status" source="status" choices={statusChoices} />
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
+            <SelectInput label="Kotisoitto" source="status" choices={statusChoices} />
         </Filter>
     );
 
     const ResendSMSButton = (data) => (
         data.record.status === "accepted"
-            ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä tekstiviesti uudestaan</Button>
-            : <Button disabled>Lähetä tekstiviesti uudestaan</Button>
+            ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä SMS uudestaan</Button>
+            : <Button disabled>Kotisoitto tekemättä</Button>
     )
 
     const resendSMS = async (phoneNumber) => {
@@ -88,10 +88,10 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 <DateField label="Syntymäaika" source="birthday" />
                 <TextField label="Puhelinnumero" source="phoneNumber" />
                 <TextField label="Postinumero" source="postCode" />
-                <SelectField label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} />
+                <SelectField label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
                 <TextField label="Huoltajan nimi" source="parentsName" />
                 <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
-                <SelectField label="Status" source="status" choices={statusChoices} />
+                <SelectField label="Kotisoitto" source="status" choices={statusChoices} />
                 <ResendSMSButton />
                 <EditButton />
             </Datagrid>
@@ -123,9 +123,9 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Luokka" source="class" validate={required()} />
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
-                <SelectInput label="Status" source="status" choices={statusChoices} validate={required()} />
+                <SelectInput label="Kotisoitto" source="status" choices={statusChoices} validate={required()} />
                 <FormDataConsumer>
                  {({ formData }) => formData.status === 'accepted' &&
                     <SMSwarning/>
@@ -177,9 +177,9 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Luokka" source="class" validate={required()}/>
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
-                <SelectInput label="Kotinuorisotalo" source="homeYouthClub" choices={youthClubs} validate={required()}/>
+                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()}/>
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
-                <SelectInput label="Status" source="status" choices={statusChoices} validate={required()}/>
+                <SelectInput label="Kotisoitto" source="status" choices={statusChoices} validate={required()}/>
                 <FormDataConsumer>
                  {({ formData, record }) => (formData.status === 'accepted' && record.status==='pending') &&
                     <SMSwarning/>

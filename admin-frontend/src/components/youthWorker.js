@@ -21,7 +21,7 @@ export const YouthWorkerList = (props) => (
     <Datagrid>
       <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
       <TextField label="Sähköposti" source="email" />
-      <TextField label="Kotinuorisotalo" source="mainYouthClub" />
+      <TextField label="Kotinuorisotila" source="mainYouthClub" />
       <BooleanField label="Ylläpitäjä" source="isSuperUser" />
       <EditButton />
     </Datagrid>
@@ -45,7 +45,7 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -84,7 +84,7 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Sähköposti" source="email" type="email" />
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
-        <SelectInput label="Kotinuorisotalo" source="mainYouthClub" choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
     </Edit >
