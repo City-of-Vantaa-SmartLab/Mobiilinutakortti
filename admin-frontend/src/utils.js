@@ -9,8 +9,8 @@ export const genderChoices = [
 ];
 
 export const statusChoices = [
-  { id: 'accepted', name: 'Kotisoitto tehty' },
-  { id: 'pending', name: 'Kotisoitto tekemättä' }
+  { id: 'accepted', name: 'Tehty' },
+  { id: 'pending', name: 'Tekemättä' }
 ];
 
 export const token = 'admin-token';

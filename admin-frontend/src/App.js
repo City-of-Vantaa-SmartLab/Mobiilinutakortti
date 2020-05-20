@@ -53,7 +53,7 @@ const App = () => {
                     : null,
 
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
-                    ? <Resource name="youthClub" options={{ label: 'Nuorisotalot' }} list={YouthClubList} />
+                    ? <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />
                     : null,
 
                 permissions === 'SUPERADMIN'
