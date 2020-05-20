@@ -35,18 +35,18 @@ export class AdminController {
   ) { }
 
   /**
-   * This is a test route.
-   *
-   * This is currently used to inject a new super user.
+   * This is used to inject a new super user. For security, needs environment variable set to work.
    * @param userData - RegisterAdminDto
    * @returns - string success message
    */
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Post('registerTemp')
-  async createTest(@Body() userData: RegisterAdminDto): Promise<Message> {
-    if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); } else {
+  @Post('registerSuperAdmin')
+  async registerSuperAdmin(@Body() userData: RegisterAdminDto): Promise<Message> {
+    const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+    if ( allow === "yes" ) {
       return new Message(await this.adminService.registerAdmin(userData));
     }
+    throw new BadRequestException(content.NonProdFeature);
   }
 
   /**

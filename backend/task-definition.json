@@ -63,6 +63,10 @@
         {
           "name": "CERT_SELECTION",
           "value": "test"
+        },
+        {
+          "name": "SUPER_ADMIN_FEATURES",
+          "value": "yes"
         }
       ],
       "secrets": [

@@ -114,9 +114,11 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Get('getChallenge/:phoneNumber')
     async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
-        // TODO: uncomment this line once a method has been provided to allow us to inject a Super Admin to prod.
-        // if (ConfigHelper.isLive()) { throw new BadRequestException(content.NonProdFeature); }
-        return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
+        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        if ( allow === "yes" ) {
+          return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
+        }
+        throw new BadRequestException(content.NonProdFeature);
     }
 
     /**

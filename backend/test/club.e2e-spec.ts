@@ -55,7 +55,7 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/api/admin/registerTemp')
+            .post('/api/admin/registerSuperAdmin')
             .send(testAdminRegister);
         token = (await request(app.getHttpServer())
             .post('/api/admin/login')

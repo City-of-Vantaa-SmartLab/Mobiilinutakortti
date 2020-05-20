@@ -46,7 +46,7 @@ describe('AdminController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/api/admin/registerTemp')
+            .post('/api/admin/registerSuperAdmin')
             .send(testSuperRegister);
         superToken = (await request(app.getHttpServer())
             .post('/api/admin/login')
@@ -258,7 +258,7 @@ describe('AdminController (e2e)', () => {
                 firstName: 'qegqegqeg', lastName: 'paejq', isSuperUser: false,
             } as RegisterAdminDto;
             await request(app.getHttpServer())
-                .post('/api/admin/registerTemp')
+                .post('/api/admin/registerSuperAdmin')
                 .send(newAdminToDelete);
             const response = (await request(app.getHttpServer())
                 .get('/api/admin/list')
