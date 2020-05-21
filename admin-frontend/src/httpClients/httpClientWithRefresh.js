@@ -4,7 +4,7 @@ import { token } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
-export const httpClientWithResponse = (url, options = {}) => {
+export const httpClientWithResponse = (url, options = {}, disableAuth = false) => {
     const refreshOptions = {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -24,7 +24,9 @@ export const httpClientWithResponse = (url, options = {}) => {
             return refreshResponse;
         }
     }).then(({ access_token }) => {
-        localStorage.setItem(token, access_token);
+        if (!disableAuth) {
+            localStorage.setItem(token, access_token);
+        }
         return httpClient(url, options);
     });
 };
