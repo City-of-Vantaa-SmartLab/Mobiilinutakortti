@@ -1,6 +1,6 @@
 import {
   Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors,
-  Get, Param, BadRequestException, Delete,
+  Get, Param, BadRequestException, Delete
 } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
 import { AdminService } from './admin.service';
@@ -124,7 +124,7 @@ export class AdminController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @AllowedRoles(Roles.SUPERUSER)
+  @AllowedRoles(Roles.SUPERUSER, Roles.ADMIN)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('changePassword')
   async changePassword(@Admin() adminData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
