@@ -10,7 +10,7 @@ import { httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { Prompt } from "react-router-dom";
-import audio from "../../audio/audio.js"
+import { successSound, errorSound } from "../../audio/audio.js"
 
 const Container = styled.div`
   height: 100%;
@@ -53,8 +53,12 @@ const CheckInView = (props) => {
     }
   }, [])
 
-  const tryToPlayAudio = () => {
-    return audio.play();
+  const tryToPlayAudio = (success) => {
+    if (success) {
+      return successSound.play();
+    } else {
+      return errorSound.play();
+    }
   };
 
   const handleCheckInReturn = (success) => {
@@ -62,14 +66,12 @@ const CheckInView = (props) => {
     setShowQRCode(false)
     setCheckInSuccess(success)
     setShowQrCheckNotification(true);
-    if(success) {
-      tryToPlayAudio().catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
-    }
+    tryToPlayAudio(success).catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
     setTimeout(() => {
       setShowQrCheckNotification(false);
       setCheckInSuccess(null);
       setShowQRCode(true);
-    }, success ? 2500 : 2000);
+    }, success ? 2500 : 3000);
   };
 
   const handleScan = async (qrData) => {
