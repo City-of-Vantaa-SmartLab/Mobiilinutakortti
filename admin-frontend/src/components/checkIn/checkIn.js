@@ -87,7 +87,7 @@ const CheckInView = (props) => {
         method: 'POST',
         body
       };
-      await httpClientWithResponse(url, options)
+      await httpClientWithResponse(url, options, true)
         .then(response => {
           const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
