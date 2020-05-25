@@ -25,4 +25,9 @@ export const isInStandaloneMode = () => {
     let nav:any = window.navigator;
     return ('standalone' in nav && nav.standalone);
 }
-  
+
+export const messages = {
+    authFail: "Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin",
+    linkRequestSuccess: "Uusi linkki lähetettiin syöttämääsi numeroon",
+    linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen"
+}

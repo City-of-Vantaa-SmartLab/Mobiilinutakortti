@@ -4,7 +4,7 @@ import { string, object, boolean } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
-import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button } from '../StyledComponents';
+import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
 
 
 export interface FormValues {
@@ -90,7 +90,8 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         </div>
                     )}
                 </Field>
-                <Button type="submit" disabled={!props.values.termsOfUse}>Lähetä hakemus</Button>
+                <ErrorMessage>{errors['termsOfUse']}</ErrorMessage>
+                <Button type="submit">Lähetä hakemus</Button>
                 <a target='_blank' rel="noopener noreferrer" href="https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/148977_Henkilotietojen_kasittely_nuorisopalveluissa.pdf">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </FormFooter>
         </Form>
@@ -178,7 +179,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 parentLastName: string().required("Täytä tiedot"),
                 parentPhoneNumber: string().matches(/(^(\+358|0)\d{9})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
                 youthClub: string().required("Valitse kotinuorisotila valikosta"),
-                termsOfUse: boolean().required()
+                termsOfUse: boolean().oneOf([true], 'Hyväksy käyttöehdot jatkaaksesi').required('Hyväksy käyttöehdot jatkaaksesi')
             }),
     handleSubmit: (values, formikBag) => {
         submitForm(values, formikBag.props.securityContext)
