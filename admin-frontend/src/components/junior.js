@@ -80,12 +80,13 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 }
             });
     }
+
     return (
         <List title="Nuoret" pagination={<CustomPagination />} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
-                <DateField label="Syntymäaika" source="birthday" />
+                <DateField label="Syntymäaika" source="birthday" locales={['fi']} />
                 <TextField label="Puhelinnumero" source="phoneNumber" />
                 <TextField label="Postinumero" source="postCode" />
                 <SelectField label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
