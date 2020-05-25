@@ -6,6 +6,7 @@ const initialState: authState = {
     loggedIn: false,
     token: '',
     error: false,
+    message: '',
 }
 
 export default (state = initialState, action: authActions): authState => {
@@ -15,9 +16,13 @@ export default (state = initialState, action: authActions): authState => {
         case authTypes.AUTH_SUCCESS:
             return { ...state, loggingIn: false, loggedIn: true, token: action.payload, error: false };
         case authTypes.AUTH_FAIL:
-            return { ...state, loggingIn: false, error: true };
+            return { ...state, loggingIn: false, error: true, message: action.payload };
         case authTypes.AUTH_LINK_REQUEST:
             return { ...state, error: false };
+        case authTypes.LINK_REQUEST_SUCCESS:
+            return { ...state, error: false, message: action.payload };
+        case authTypes.LINK_REQUEST_FAIL:
+            return { ...state, error: true, message: action.payload };
         case authTypes.LOGOUT:
             return { ...state, loggedIn: false, error: false}
         default:

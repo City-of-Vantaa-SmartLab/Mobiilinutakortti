@@ -32,7 +32,7 @@ const Header = styled.h1`
 `;
 
 
-const Message = styled.div<{ active: boolean, error: boolean }>` 
+const Message = styled.div<{ active: boolean, error: boolean }>`
     display: ${(props) => props.active ? "flex" : "None"};
     align-items: center;
     flex-direction: row;
@@ -42,7 +42,7 @@ const Message = styled.div<{ active: boolean, error: boolean }>`
     margin-bottom: 1.5rem;
     box-sizing: border-box;
     color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
-    
+
 
 `;
 
@@ -66,6 +66,7 @@ interface LoginProps extends RouteComponentProps {
     authLinkRequest: (phone: string) => void,
 
     authError: boolean,
+    authMessage: string,
     loggingIn: boolean,
     loggedIn: boolean
 }
@@ -85,11 +86,11 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (props.authError && !error) {
-            setError(true);
-            setMessage('Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin');
+        if ((props.authError || props.authMessage) && !error) {
+            setError(props.authError);
+            setMessage(props.authMessage);
         }
-    }, [props.authError, error]);
+    }, [props.authError, props.authMessage, error]);
 
     useEffect(() => {
         if (props.loggedIn) {
@@ -129,6 +130,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
 
 const mapStateToProps = (state: AppState) => ({
     authError: state.auth.error,
+    authMessage: state.auth.message,
     loggingIn: state.auth.loggingIn,
     loggedIn: state.auth.loggedIn
 });

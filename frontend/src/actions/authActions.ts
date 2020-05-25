@@ -2,7 +2,7 @@ import { takeLatest, call, put } from 'redux-saga/effects';
 import { post, get, getCachedToken } from '../apis';
 import { authTypes, AuthAttempt, LinkRequest, AuthWithCache } from '../types/authTypes';
 import { userTypes, getUser } from '../types/userTypes';
-import { saveTokenToStorage, cacheToken } from '../utils';
+import { saveTokenToStorage, cacheToken, messages } from '../utils';
 
 import { push } from 'connected-react-router';
 
@@ -46,15 +46,15 @@ function* auth(action: AuthAttempt) {
         yield put({ type: authTypes.AUTH_SUCCESS, payload: response.access_token });
         yield put({ type: userTypes.GET_USER, payload: response.access_token });
     } catch (error) {
-        yield put({ type: authTypes.AUTH_FAIL });
+        yield put({ type: authTypes.AUTH_FAIL, payload: messages.authFail });
     }
 }
 
 function* requestLink(action: LinkRequest) {
     try {
-        //response not used and doesn't affect the app for now
-        const response = yield call(post, '/junior/reset', action.payload);
+        yield call(post, '/junior/reset', action.payload);
+        yield put({ type: authTypes.LINK_REQUEST_SUCCESS, payload: messages.linkRequestSuccess });
     } catch (error) {
-
+        yield put({ type: authTypes.LINK_REQUEST_FAIL, payload: messages.linkRequestFail });
     }
 }
