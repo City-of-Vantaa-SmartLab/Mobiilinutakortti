@@ -3,7 +3,7 @@ import styled from 'styled-components';
 // Registration view components
 
 export const Wrapper = styled.div`
-    background: linear-gradient(-10deg, transparent, transparent 55%, #0042a5 calc(55% + 1px), #0042a5); 
+    background: linear-gradient(-10deg, transparent, transparent 55%, #0042a5 calc(55% + 1px), #0042a5);
     width: 100%;
     height: 100%;
     position: fixed;
@@ -32,7 +32,7 @@ export const LogoutLink = styled.span`
 export const Confirmation = styled.div`
     margin: auto;
     max-width: 800px;
-    
+
     padding: 2em;
     & > div {
         background: #fff;
@@ -60,7 +60,7 @@ export const SuccessIcon = styled.div`
 export const Error = styled.div`
     margin: auto;
     max-width: 800px;
-    
+
     padding: 2em;
     & > div {
         background: #fff;
@@ -96,18 +96,18 @@ export const Button = styled.button`
         transform: translate(-50%, -50%) scale(0);
         transform-origin: center center;
         background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 50%; 
+        border-radius: 50%;
     }
     &:hover {
         &:before {
             transform: translate(-50%, -50%) scale(1.5);
             transition: all 0.3s ease-in;
-        }   
+        }
     }
     &:active {
         transform:translate(0,1px);
-        transition: all 0.3s ease-in-out;  
-        background: #0042a5;    
+        transition: all 0.3s ease-in-out;
+        background: #0042a5;
         }
     &:focus {
         outline: None;
@@ -153,7 +153,7 @@ export const Fieldset = styled.div`
     border: 0;
     background: white;
     padding: 1.5em 1.5em;
-    margin: 1.5em 0 0; 
+    margin: 1.5em 0 0;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
 
     & > span {
@@ -220,7 +220,7 @@ export const Input = styled.input`
     -moz-appearance: non
     &:focus {
         outline: none;
-    }  
+    }
 `;
 
 export const Select = styled.div`
@@ -418,11 +418,11 @@ export const Logo = styled.div`
         @media (min-width: 1050px) {
             font-size: 2.5em;
             padding-top: 1.5vw;
-        }        
+        }
     }
 `;
 
-export const MainHeader = styled.header`  
+export const MainHeader = styled.header`
     & > h1 {
         text-transform: uppercase;
         margin: 0;
