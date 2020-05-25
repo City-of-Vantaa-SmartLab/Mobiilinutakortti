@@ -12,21 +12,33 @@ import {
   SelectInput,
   required,
   EditButton,
-  Edit
+  Edit,
+  SelectField
 } from 'react-admin';
 import { getYouthClubs } from '../utils';
 
-export const YouthWorkerList = (props) => (
-  <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-    <Datagrid>
-      <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
-      <TextField label="Sähköposti" source="email" />
-      <TextField label="Kotinuorisotila" source="mainYouthClub" />
-      <BooleanField label="Ylläpitäjä" source="isSuperUser" />
-      <EditButton />
-    </Datagrid>
-  </List>
-);
+export const YouthWorkerList = (props) => {
+  const [youthClubs, setYouthClubs] = useState([]);
+  useEffect(() => {
+    const addYouthClubsToState = async () => {
+      const parsedYouthClubs = await getYouthClubs();
+      setYouthClubs(parsedYouthClubs);
+    };
+    addYouthClubsToState();
+  }, []);
+
+  return (
+    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+      <Datagrid>
+        <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+        <TextField label="Sähköposti" source="email" />
+        <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
+        <BooleanField label="Ylläpitäjä" source="isSuperUser" />
+        <EditButton />
+      </Datagrid>
+    </List>
+  );
+}
 
 export const YouthWorkerCreate = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
