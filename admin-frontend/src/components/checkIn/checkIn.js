@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
+import NavigationPrompt from "react-router-navigation-prompt";
+import ConfirmNavigationModal from "../ConfirmNavigationModal";
 import QrReader from 'react-qr-reader';
 import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
@@ -38,6 +40,9 @@ const CheckInView = (props) => {
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
 
+  const logout = () => {
+    document.location.href = "/";
+  }
 
   useEffect(() => {
     localStorage.removeItem("admin-token")
@@ -110,10 +115,18 @@ const CheckInView = (props) => {
     <Container>
       <Notification />
       <CheckinBackground />
-      <Prompt
-          when={true}
-          message={`Näkymästä poistuminen vaatii uudelleenkirjautumisen. Oletko varma että haluat jatkaa?`}
-      />
+      <NavigationPrompt
+        afterConfirm={logout}
+        disableNative={true}
+        when={true}
+      >
+        {({ onConfirm, onCancel }) => (
+          <ConfirmNavigationModal
+            onCancel={onCancel}
+            onConfirm={onConfirm}
+          />
+        )}
+      </NavigationPrompt>;
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
