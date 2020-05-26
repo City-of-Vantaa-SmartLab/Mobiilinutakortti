@@ -9,13 +9,17 @@ import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from "../audio/audio.js"
 
 const prepareCheckIn = (id) => {
-  successSound.play()
-  successSound.pause()
-  successSound.currentTime = 0
-  errorSound.play()
-  errorSound.pause()
-  errorSound.currentTime = 0
-  sessionStorage.setItem("initialCheckIn", id)
+  successSound.volume = 0;
+  successSound.play();
+  successSound.pause();
+  successSound.currentTime = 0;
+  errorSound.volume = 0;
+  errorSound.play();
+  errorSound.pause();
+  errorSound.currentTime = 0;
+  sessionStorage.setItem("initialCheckIn", id);
+  successSound.volume = 1;
+  errorSound.volume = 1;
 }
 
 const OpenCheckInButton = (props) => {

@@ -48,6 +48,9 @@ const CheckInView = (props) => {
   useEffect(() => {
     localStorage.removeItem("admin-token")
     const initialCheckIn = sessionStorage.getItem("initialCheckIn");
+    const path = props.location.pathname;
+    const m = path.match(/\d+/);
+    const id = m !== null ? m.shift() : null;
     if (props.location.pathname.slice(9) !== initialCheckIn) {
       logout();
     }
@@ -68,6 +71,7 @@ const CheckInView = (props) => {
     if (success) {
       return successSound.play();
     } else {
+      errorSound.volume = 0.1;
       return errorSound.play();
     }
   };
@@ -132,7 +136,7 @@ const CheckInView = (props) => {
             onConfirm={onConfirm}
           />
         )}
-      </NavigationPrompt>;
+      </NavigationPrompt>
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
