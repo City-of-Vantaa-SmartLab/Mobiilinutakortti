@@ -41,11 +41,17 @@ const CheckInView = (props) => {
   const [checkInSuccess, setCheckInSuccess] = useState(null);
 
   const logout = () => {
+    sessionStorage.removeItem("initialCheckin")
     document.location.href = "/";
   }
 
   useEffect(() => {
     localStorage.removeItem("admin-token")
+    const initialCheckIn = sessionStorage.getItem("initialCheckIn");
+    if (props.location.pathname.slice(9) !== initialCheckIn) {
+      logout();
+    }
+
   },[])
 
   useEffect(() => {

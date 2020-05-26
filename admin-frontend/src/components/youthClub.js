@@ -8,13 +8,14 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from "../audio/audio.js"
 
-const prepareAudio = () => {
+const prepareCheckIn = (id) => {
   successSound.play()
   successSound.pause()
   successSound.currentTime = 0
   errorSound.play()
   errorSound.pause()
   errorSound.currentTime = 0
+  sessionStorage.setItem("initialCheckIn", id)
 }
 
 const OpenCheckInButton = (props) => {
@@ -23,7 +24,7 @@ const OpenCheckInButton = (props) => {
       pathname: `/checkIn/${props.record.id}`,
       state: {record: props.record}
     }}>
-      <Button onClick={prepareAudio} variant="contained" >Kirjautuminen</Button>
+      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" >Kirjautuminen</Button>
     </Link>
 )}
 
