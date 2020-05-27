@@ -51,7 +51,7 @@ const CheckInView = (props) => {
     const path = props.location.pathname;
     const m = path.match(/\d+/);
     const id = m !== null ? m.shift() : null;
-    if (props.location.pathname.slice(9) !== initialCheckIn) {
+    if (id !== initialCheckIn) {
       logout();
     }
 
