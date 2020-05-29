@@ -51,9 +51,9 @@ const ErrorMark = () =>  (
         <circle id="circle" cx="0" cy="0" r="186" fill="#f7423a" />
         <g >
           <line x1="-100" y1="-100" x2="100" y2="100"  id="line-1"  strokeWidth="50" stroke="white"
-                stroke-linecap="round" />
+                strokeLinecap="round" />
           <line x1="100" y1="-100" x2="-100" y2="100" id="line-2" strokeWidth="50" stroke="white"
-                stroke-linecap="round" />
+                strokeLinecap="round" />
         </g>
       </g>
     </svg>
