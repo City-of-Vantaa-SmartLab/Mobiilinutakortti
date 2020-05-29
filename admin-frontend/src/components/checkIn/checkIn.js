@@ -11,7 +11,6 @@ import styled from 'styled-components';
 import { httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
-import { Prompt } from "react-router-dom";
 import { successSound, errorSound } from "../../audio/audio.js"
 
 const Container = styled.div`
