@@ -87,7 +87,7 @@ AWS sets up task definitions based on the `task-definition.json` file. This incl
 The secrets are:
 * `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 * `RDS_PASSWORD`: Amazon RDS password.
-* `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. (Not the TLS private key.)
+* `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. Separate new lines using "\n", they are converted to real newline characters while reading the key.
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USERNAME`: Telia SMS service user name.
 

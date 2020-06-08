@@ -32,7 +32,7 @@ export class SsoService {
 
     const sp_options = {
       entity_id: this.entity_id,
-      private_key: process.env.SP_PKEY || pkey,
+      private_key: process.env.SP_PKEY.replace(/\\n/g, '\n') || pkey,
       certificate: fs.readFileSync('certs/nutakortti-' + cert_selection + '.cer').toString(),
       assert_endpoint: process.env.SP_ASSERT_ENDPOINT || 'https://api.mobiilinuta-admin-test.com/api/acs',
       sign_get_request: true,

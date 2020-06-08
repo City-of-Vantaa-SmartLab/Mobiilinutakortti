@@ -15,7 +15,6 @@ export class SsoController {
   // Call this to initiate login process.
   @Get('acs')
   getLoginRequestUrl(@Res() res: Response) {
-    console.log("Got ACS login request.");
     this.ssoService.getLoginRequestUrl(res);
   }
 
