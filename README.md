@@ -149,7 +149,7 @@ You shouldn't need to update images or services manually, since Github does that
 
 ### Production environment
 
-Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. Current environment in use is Vantaa-Youth-PWA-dev, and old, deprecated one is VantaaYouthPwa-env. When deploying new version to production, use `eb-deploy` to update selected environment.
+Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. The name is Vantaa-Youth-PWA-prod. When deploying new version to production, use `eb deploy` to update selected environment (install the EB CLI tools first).
 
 Junior-app: https://nutakortti.vantaa.fi
 
