@@ -18,9 +18,11 @@ export class RoutersMiddleware implements NestMiddleware {
         let { baseUrl } = req;
         baseUrl = baseUrl.toLowerCase();
         if (baseUrl.includes(content.Routes.api)) {
+            console.log("Got API route request: " + baseUrl);
             next();
         } else {
             const publicDirectory = baseUrl.includes(content.Routes.admin) ? 'public-admin' : 'public';
+            console.log("Got route request: " + baseUrl);
             if (fs.existsSync(`${publicDirectory}/index.html`)) {
                 res.sendFile(join('index.html'), { root: publicDirectory });
             } else {
