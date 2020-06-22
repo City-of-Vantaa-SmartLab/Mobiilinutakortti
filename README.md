@@ -30,7 +30,7 @@ To start up everything using Docker compose, **run `docker-compose up` in this d
 To make sure everything is working, navigate to:
 - [http://localhost:3001](http://localhost:3001) - frontend
 - [http://localhost:5000](http://localhost:5000) - admin-frontend (default port will be 3000 if running without Docker)
-- [http://localhost:3000](http://localhost:3000/api) - backend
+- [http://localhost:3000/api](http://localhost:3000/api) - backend
 
 If you see the webpage for frontend and admin-frontend, and "API is running" message for backend, you're good.
 
@@ -132,17 +132,15 @@ Increasing memory limits for Docker might also help if for example you are using
 
 ### CI
 
-Github uses github-actions to push master branch to test-environment, when push or merge occurs to the master branch. More information on "Actions" tab.
+GitHub uses github-actions to push master branch to test-environment, when push or merge occurs to the master branch. For more information, see the "Actions" tab in GitHub.
 
 ### Test environment
 
 Application runs in Elastic Container Service (eu-west-1), with 3 different services:
 
-youth-club-server-service, https://api.mobiilinuta-admin-test.com/api
-
-youth-club-mobile-front, http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com
-
-youth-club-admin-front-2, https://mobiilinuta-admin-test.com
+* [youth-club-server-service](https://api.mobiilinuta-admin-test.com/api)
+* [youth-club-mobile-front](http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com)
+* [youth-club-admin-front-2](https://mobiilinuta-admin-test.com)
 
 Application images are stored in Elastic Container Registry.
 You shouldn't need to update images or services manually, since Github does that for you.
@@ -151,8 +149,6 @@ You shouldn't need to update images or services manually, since Github does that
 
 Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. The name is Vantaa-Youth-PWA-prod. When deploying new version to production, use `eb deploy` to update selected environment (install the EB CLI tools first).
 
-Junior-app: https://nutakortti.vantaa.fi
-
-Admin-app: https://nutakortti.vantaa.fi/nuorisotyontekijat
-
-Api: https://nutakortti.vantaa.fi/api
+* [Junior-app](https://nutakortti.vantaa.fi)
+* [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
+* [Api](https://nutakortti.vantaa.fi/api)
