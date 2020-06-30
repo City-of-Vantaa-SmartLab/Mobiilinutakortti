@@ -103,7 +103,7 @@ The environment variables are:
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
-* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new super admin via _registerSuperAdmin_ endpoint. See the project root readme for details.
+* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new super admin via _registerSuperAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 
