@@ -102,6 +102,14 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
+    @Get('nextAvailableDummyPhoneNumber')
+    async getNextAvailableDummyPhoneNumber(): Promise<Message> {
+        return new Message(await this.juniorService.getNextAvailableDummyPhoneNumber());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Get(':id')
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));

@@ -7,7 +7,8 @@ export default {
     list: `${appUrl}/junior/list`,
     total: `${appUrl}/junior/total`,
     reset: `${appUrl}/junior/reset`,
-    base: `${appUrl}/junior/`
+    base: `${appUrl}/junior/`,
+    dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
   },
   auth: {
     login: `${appUrl}/admin/login`

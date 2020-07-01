@@ -30,9 +30,30 @@ const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
+const juniorPhoneNumberInput = "juniorPhoneNumberInput";
+
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
 );
+
+const getDummyPhoneNumber = async (record) => {
+    const url = api.junior.dummynumber;
+    await httpClientWithResponse(url)
+        .then(response => {
+            if (response.message) {
+                // TODO: remove the id and getelementbyid and replace by setting react model state
+                const field = document.getElementById(juniorPhoneNumberInput);
+                field.value = response.message;
+                record.phoneNumber = response.message; // TODO so here something; also crashes on new since record is empty
+            }
+        });
+}
+
+const DummyPhoneNumberButton = (data) => (
+    <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(data.record)}>
+        Käytä korvikepuhelinnumeroa
+    </Button>
+)
 
 export const JuniorList = connect(null, { showNotification })(props => {
 
@@ -143,6 +164,7 @@ export const JuniorCreate = (props) => {
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
+                <DummyPhoneNumberButton />
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
                 <TextInput label="Koulu" source="school" validate={required()} />
                 <TextInput label="Luokka" source="class" validate={required()} />
@@ -196,7 +218,8 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Kutsumanimi" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
-                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <TextInput id={juniorPhoneNumberInput} label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <DummyPhoneNumberButton />
                 <TextInput label="Postinumero" source="postCode" validate={required()}/>
                 <TextInput label="Koulu" source="school" validate={required()}/>
                 <TextInput label="Luokka" source="class" validate={required()}/>

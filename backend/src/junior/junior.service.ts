@@ -199,6 +199,19 @@ export class JuniorService {
         return await this.challengeRepo.findOne({ junior });
     }
 
+    async getNextAvailableDummyPhoneNumber(): Promise<string> {
+        const juniors = await this.listAllJuniors();
+        const phoneNumbers = juniors.filter(j => j.phoneNumber.substr(0, 6) === "358999").map(j => j.phoneNumber);
+        let next = "";
+        for (var i = 0; i < 1000000; i++) {
+            next = "358999" + i.toString().padStart(6, '0');
+            if (!phoneNumbers.includes(next)) {
+                break;
+            }
+        }
+        return next;
+    }
+
     /**
      * This is a test method, only to be used during testing.
      * @param phoneNumber - juniors phone number
