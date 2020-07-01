@@ -64,7 +64,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
     )
 
 
-    const generateQRAndOpen = async (id) => {
+    const generateQRAndOpen = async (id, owner) => {
         try {
             const data = await QRCode.toDataURL(id);
             const image = new Image();
@@ -72,6 +72,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
             image.width = 400;
 
             const w = window.open("");
+            setTimeout(() => w.document.title = `QR-koodi ${owner}`, 0);
             w.document.write(image.outerHTML);
         } catch (err) {
             alert("Virhe QR-koodin luonnissa")
@@ -80,7 +81,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
 
 
     const PrintQrCodeButton = (data) => (
-      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id)} >Tulosta QR-koodi</Button>
+      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
     )
 
 
