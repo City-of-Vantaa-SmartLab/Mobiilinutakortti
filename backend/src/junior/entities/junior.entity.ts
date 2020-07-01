@@ -50,8 +50,11 @@ export class Junior {
     @Column()
     status: string;
 
+    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    creationDate: string;
+
     @Column()
-    photoPermission: boolean; 
+    photoPermission: boolean;
 
     @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     checkIns: CheckIn[];
