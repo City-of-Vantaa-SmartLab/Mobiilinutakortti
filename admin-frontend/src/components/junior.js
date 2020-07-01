@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import QRCode from 'qrcode'
 import {
     List,
     Datagrid,
@@ -62,6 +63,28 @@ export const JuniorList = connect(null, { showNotification })(props => {
             : <Button disabled>Kotisoitto tekemättä</Button>
     )
 
+
+    const generateQRAndOpen = async (id, owner) => {
+        try {
+            const data = await QRCode.toDataURL(id);
+            const image = new Image();
+            image.src = data;
+            image.width = 400;
+
+            const w = window.open("");
+            setTimeout(() => w.document.title = `QR-koodi ${owner}`, 0);
+            w.document.write(image.outerHTML);
+        } catch (err) {
+            alert("Virhe QR-koodin luonnissa")
+        }
+    }
+
+
+    const PrintQrCodeButton = (data) => (
+      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
+    )
+
+
     const resendSMS = async (phoneNumber) => {
         const url = api.junior.reset;
         const body = JSON.stringify({
@@ -94,6 +117,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
                 <DateField label="Päiväys" source="creationDate" locales={['fi']} />
                 <SelectField label="Kotisoitto" source="status" choices={statusChoices} />
+                <PrintQrCodeButton></PrintQrCodeButton>
                 <ResendSMSButton />
                 <EditButton />
             </Datagrid>

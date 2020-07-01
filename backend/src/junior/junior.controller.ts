@@ -131,6 +131,25 @@ export class JuniorController {
     @Delete(':id')
     async deleteJunior(@Param('id') id: string) {
         return new Message(await this.juniorService.deleteJunior(id));
-
     }
+
+    @Post('createTestDataJuniors')
+    async createTestDataJuniors(@Body() body: any): Promise<Message> {
+        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        if ( allow === "yes" ) {
+            const { numberOfCases } = body;
+            return new Message(await this.juniorService.createTestDataJuniors(numberOfCases));
+        }
+        throw new BadRequestException(content.NonProdFeature);
+    }
+
+    @Post('deleteTestDataJuniors')
+    async deleteTestDataJuniors(): Promise<Message> {
+        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        if ( allow === "yes" ) {
+            return new Message(await this.juniorService.deleteTestDataJuniors());
+        }
+        throw new BadRequestException(content.NonProdFeature);
+    }
+
 }
