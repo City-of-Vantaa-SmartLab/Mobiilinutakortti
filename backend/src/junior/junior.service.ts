@@ -19,6 +19,7 @@ import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { validateParentData } from './junior.helper';
 
 @Injectable()
 export class JuniorService {
@@ -102,7 +103,7 @@ export class JuniorService {
 
     async registerByParent(formData: ParentFormDto): Promise<string> {
         const { userData, securityContext } = formData;
-        if (this.authenticationService.validateSecurityContext(securityContext)) {
+        if (this.authenticationService.validateSecurityContext(securityContext) && validateParentData(userData.parentsName, securityContext)) {
             return await this.registerJunior(userData);
         }
         throw new InternalServerErrorException(content.SecurityContextNotValid);
