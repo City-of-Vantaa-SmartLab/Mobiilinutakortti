@@ -27,6 +27,11 @@ export const YouthWorkerList = (props) => {
     addYouthClubsToState();
   }, []);
 
+
+  if (youthClubs.length === 0) {
+    return null
+  }
+
   return (
     <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
@@ -68,11 +73,13 @@ export const YouthWorkerEdit = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs);
+        const parsedYouthClubs = await getYouthClubs();
+        setYouthClubs(parsedYouthClubs);
     };
     addYouthClubsToState();
+  }, []);
 
+  useEffect(() => {
     const targetNode = document;
     const config = { attributes: true, childList: false, subtree: true };
 
@@ -88,7 +95,7 @@ export const YouthWorkerEdit = (props) => {
     return () => {
       observer.disconnect();
     }
-  }, []);
+  }, [])
 
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
