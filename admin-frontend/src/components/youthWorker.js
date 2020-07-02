@@ -57,7 +57,7 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -96,7 +96,7 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Sähköposti" source="email" type="email" />
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
     </Edit >
