@@ -19,6 +19,7 @@ import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { validateParentData } from './junior.helper';
 
 @Injectable()
 export class JuniorService {
@@ -102,7 +103,7 @@ export class JuniorService {
 
     async registerByParent(formData: ParentFormDto): Promise<string> {
         const { userData, securityContext } = formData;
-        if (this.authenticationService.validateSecurityContext(securityContext)) {
+        if (this.authenticationService.validateSecurityContext(securityContext) && validateParentData(userData.parentsName, securityContext)) {
             return await this.registerJunior(userData);
         }
         throw new InternalServerErrorException(content.SecurityContextNotValid);
@@ -113,10 +114,17 @@ export class JuniorService {
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
             firstName: registrationData.firstName, lastName: registrationData.lastName,
-            phoneNumber: registrationData.phoneNumber, postCode: registrationData.postCode,
-            parentsName: registrationData.parentsName, parentsPhoneNumber: registrationData.parentsPhoneNumber,
-            school: registrationData.school, class: registrationData.class,
-            gender: registrationData.gender, birthday: registrationData.birthday, homeYouthClub: registrationData.homeYouthClub, status: registrationData.status,
+            phoneNumber: registrationData.phoneNumber,
+            postCode: registrationData.postCode,
+            parentsName: registrationData.parentsName,
+            parentsPhoneNumber: registrationData.parentsPhoneNumber,
+            school: registrationData.school,
+            class: registrationData.class,
+            gender: registrationData.gender,
+            birthday: registrationData.birthday,
+            homeYouthClub: registrationData.homeYouthClub,
+            status: registrationData.status,
+            creationDate: new Date(Date.now()).toISOString(),
             photoPermission: registrationData.photoPermission,
         } as Junior;
         if (registrationData.nickName) { junior.nickName = registrationData.nickName; }

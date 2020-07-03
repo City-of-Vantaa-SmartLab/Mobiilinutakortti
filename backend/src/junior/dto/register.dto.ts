@@ -42,7 +42,7 @@ export class RegisterJuniorDto {
 
     @IsNotEmpty()
     readonly status: string;
-    
+
     @IsNotEmpty()
     readonly photoPermission: boolean;
 }

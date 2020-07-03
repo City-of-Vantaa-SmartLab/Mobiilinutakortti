@@ -136,6 +136,7 @@ export const JuniorList = connect(null, { showNotification })(props => {
                 <SelectField label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
                 <TextField label="Huoltajan nimi" source="parentsName" />
                 <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <DateField label="Päiväys" source="creationDate" locales={['fi']} />
                 <SelectField label="Kotisoitto" source="status" choices={statusChoices} />
                 <PrintQrCodeButton></PrintQrCodeButton>
                 <ResendSMSButton />
