@@ -34,8 +34,7 @@ export class AdminEditInterceptor implements NestInterceptor {
         body.email ? dataChanged = dataChanged || body.email.toLowerCase() !== userToEdit.email : body.email = userToEdit.email;
         body.firstName ? dataChanged = dataChanged || body.firstName !== userToEdit.firstName : body.firstName = userToEdit.firstName;
         body.lastName ? dataChanged = dataChanged || body.lastName !== userToEdit.lastName : body.lastName = userToEdit.lastName;
-        body.mainYouthClub ? dataChanged = dataChanged || body.mainYouthClub !== userToEdit.mainYouthClub
-            : body.mainYouthClub = userToEdit.mainYouthClub;
+        dataChanged = dataChanged || body.mainYouthClub !== userToEdit.mainYouthClub;
         typeof body.isSuperUser !== 'undefined' ? dataChanged = dataChanged || body.isSuperUser !== userToEdit.isSuperUser
             : body.isSuperUser = userToEdit.isSuperUser;
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); }
