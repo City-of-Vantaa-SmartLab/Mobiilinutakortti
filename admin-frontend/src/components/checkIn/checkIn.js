@@ -41,12 +41,9 @@ const CheckInView = (props) => {
 
   const logout = () => {
     sessionStorage.removeItem("initialCheckin")
-    console.log("env params: ", process.env)
-    if(process.env.REACT_APP_ENV !== undefined && process.env.REACT_APP_ENV === "prod"){
-      console.log("REDIRECT to nuorisotyöntekijät/login")
+    if(process.env.NODE_ENV !== undefined && process.env.NODE_ENV === "production"){
       document.location.href = "https://nutakortti.vantaa.fi/nuorisotyontekijat#/login";
     } else {
-      console.log("REDIRECT to root")
       document.location.href = "/";
     }
   }
