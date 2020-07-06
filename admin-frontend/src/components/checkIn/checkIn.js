@@ -42,7 +42,7 @@ const CheckInView = (props) => {
   const logout = () => {
     sessionStorage.removeItem("initialCheckin")
     if(process.env.NODE_ENV !== undefined && process.env.NODE_ENV === "production"){
-      document.location.href = "https://nutakortti.vantaa.fi/nuorisotyontekijat#/login";
+      document.location.href = "https://nutakortti.vantaa.fi/nuorisotyontekijat/";
     } else {
       document.location.href = "/";
     }
