@@ -33,7 +33,6 @@ const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
-const juniorPhoneNumberInput = "juniorPhoneNumberInput";
 
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
@@ -131,6 +130,22 @@ export const JuniorList = connect(null, { showNotification })(props => {
     )
 });
 
+const getDummyPhoneNumber = async (formState, cb) => {
+    const url = api.junior.dummynumber;
+    await httpClientWithResponse(url)
+      .then(response => {
+          if (response.message) {
+              cb(REDUX_FORM_NAME, "phoneNumber", response.message)
+          }
+      });
+}
+
+const DummyPhoneNumberButton = (props) => (
+  <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(props.formState, props.cb)}>
+      Käytä korvikepuhelinnumeroa
+  </Button>
+)
+
 export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
 
@@ -143,33 +158,15 @@ export const JuniorCreate = (props) => {
         addYouthClubsToState();
     }, []);
 
-    const getDummyPhoneNumber = async (formState, cb) => {
-        const url = api.junior.dummynumber;
-        await httpClientWithResponse(url)
-          .then(response => {
-              if (response.message) {
-                  // TODO: remove the id and getelementbyid and replace by setting react model state
-                  cb(REDUX_FORM_NAME, "phoneNumber", response.message)
-              }
-          });
-    }
-
-    const DummyPhoneNumberButton = (props) => (
-      <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(props.formState, props.cb)}>
-          Käytä korvikepuhelinnumeroa
-      </Button>
-    )
-
     return (
         <Create title="Rekisteröi nuori" {...props}>
             <SimpleForm redirect="list">
-                {console.log(props)}
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
                 <TextInput label="Kutsumanimi" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
-                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} value={"test"}/>
+                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
                     {({ formData, dispatch, ...rest }) => (
                       <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
@@ -195,24 +192,6 @@ export const JuniorCreate = (props) => {
 
 export const JuniorEdit = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
-
-
-    const getDummyPhoneNumber = async (formState, cb) => {
-        const url = api.junior.dummynumber;
-        await httpClientWithResponse(url)
-          .then(response => {
-              if (response.message) {
-                  // TODO: remove the id and getelementbyid and replace by setting react model state
-                  cb(REDUX_FORM_NAME, "phoneNumber", response.message)
-              }
-          });
-    }
-
-    const DummyPhoneNumberButton = (props) => (
-      <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(props.formState, props.cb)}>
-          Käytä korvikepuhelinnumeroa
-      </Button>
-    )
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
@@ -245,7 +224,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Kutsumanimi" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
-                <TextInput id={juniorPhoneNumberInput} label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
                     {({ formData, dispatch, ...rest }) => (
                           <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
