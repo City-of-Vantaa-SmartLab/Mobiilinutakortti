@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import { change } from 'redux-form';
 import QRCode from 'qrcode'
 import {
     List,
@@ -19,20 +20,24 @@ import {
     Filter,
     showNotification,
     Pagination,
-    FormDataConsumer
+    FormDataConsumer,
+    REDUX_FORM_NAME
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
 import Button from '@material-ui/core/Button';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
+
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
+
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
 );
+
 
 export const JuniorList = connect(null, { showNotification })(props => {
 
@@ -125,8 +130,26 @@ export const JuniorList = connect(null, { showNotification })(props => {
     )
 });
 
+const getDummyPhoneNumber = async (formState, cb) => {
+    const url = api.junior.dummynumber;
+    await httpClientWithResponse(url)
+      .then(response => {
+          if (response.message) {
+              cb(REDUX_FORM_NAME, "phoneNumber", response.message)
+          }
+      });
+}
+
+const DummyPhoneNumberButton = (props) => (
+  <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(props.formState, props.cb)}>
+      Käytä korvikepuhelinnumeroa
+  </Button>
+)
+
 export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
+
+
     useEffect(() => {
         const addYouthClubsToState = async () => {
             const parsedYouthClubs = await getYouthClubs();
@@ -143,7 +166,12 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Kutsumanimi" source="nickName" />
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
-                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} />
+                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <FormDataConsumer>
+                    {({ formData, dispatch, ...rest }) => (
+                      <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
+                    )}
+                </FormDataConsumer>
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
                 <TextInput label="Koulu" source="school" validate={required()} />
                 <TextInput label="Luokka" source="class" validate={required()} />
@@ -189,7 +217,6 @@ export const JuniorEdit = (props) => {
         }
     }, []);
     return (
-
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
             <SimpleForm>
                 <TextInput label="Etunimi" source="firstName" validate={required()}/>
@@ -198,6 +225,11 @@ export const JuniorEdit = (props) => {
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <FormDataConsumer>
+                    {({ formData, dispatch, ...rest }) => (
+                          <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
+                    )}
+                </FormDataConsumer>
                 <TextInput label="Postinumero" source="postCode" validate={required()}/>
                 <TextInput label="Koulu" source="school" validate={required()}/>
                 <TextInput label="Luokka" source="class" validate={required()}/>
