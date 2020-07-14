@@ -36,7 +36,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field name='juniorLastName' component={InputField} title='Sukunimi'/>
                         <Field name='juniorNickName' component={InputField} title='Kutsumanimi'/>
                         <Field name='juniorBirthday' component={InputField} title='Syntymäaika' placeholder='pp.kk.vvvv'/>
-                        <Field name='juniorPhoneNumber' component={InputField} title='Puhelinnumero'/>
+                        <Field name='juniorPhoneNumber' component={InputField} type='phone' title='Puhelinnumero'/>
                         <Field name='postCode' component={InputField} title='Postinumero'/>
                         <Field name='school' component={InputField} title='Koulun nimi'/>
                         <Field name='class' component={InputField} title='Luokka'/>
@@ -66,7 +66,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <FieldTitle>Huoltajan tiedot</FieldTitle>
                         <Field disabled name='parentFirstName' component={InputField} title='Etunimi'/>
                         <Field disabled name='parentLastName' component={InputField} title='Sukunimi'/>
-                        <Field name='parentPhoneNumber' component={InputField} title='Puhelinnumero'/>
+                        <Field name='parentPhoneNumber' component={InputField} type='phone' title='Puhelinnumero'/>
                     </Fieldset>
 
                     <Fieldset>
