@@ -72,8 +72,11 @@ const CheckInView = (props) => {
 
   const tryToPlayAudio = (success) => {
     if (success) {
+      successSound.currentTime = 0;
+      successSound.volume = 1;
       return successSound.play();
     } else {
+      errorSound.currentTime = 0;
       errorSound.volume = 0.1;
       return errorSound.play();
     }
