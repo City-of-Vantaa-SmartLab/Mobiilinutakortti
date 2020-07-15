@@ -7,7 +7,7 @@ import {
     forwardRef
 } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { Repository, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
@@ -35,43 +35,45 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorUserViewModel[]> {
-        const query = { order: {}, where: {}, skip: 0, take: 0 };
+        let order={}, filterValues={}, query='', take=0, skip=0;
         if (controls) {
-            query.order = controls.sort ? this.applySort(controls.sort) : {};
-            query.where = controls.filters ? this.applyWhereFilters(controls.filters) : {};
-            query.take = controls.pagination ? controls.pagination.perPage : 0;
-            query.skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
+            order = controls.sort ? this.applySort(controls.sort) : {};
+            ({query, filterValues} = controls.filters ? this.applyFilters(controls.filters) : {query: '', filterValues: []});
+            take = controls.pagination ? controls.pagination.perPage : 0;
+            skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
-        const unSearchedResponse = (await this.juniorRepo.find(query)).map(e => new JuniorUserViewModel(e));
-        if (controls && controls.filters.name) {
-            return unSearchedResponse.filter(junior => junior.firstName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1 ||
-                junior.nickName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1 ||
-                junior.lastName.toLowerCase().indexOf(controls.filters.name.toLowerCase()) > -1);
-        }
-        return unSearchedResponse;
+        const response = (await this.juniorRepo.createQueryBuilder('user')
+            .where(query ? query : '1=1', filterValues)
+            .orderBy(order)
+            .take(take)
+            .skip(skip)
+            .getMany())
+        .map(e => new JuniorUserViewModel(e));
+        return response;
+    }
+
+    private applyFilters(filterOptions: FilterDto) {
+        const filterValues = {}
+        const queryParams = []
+
+        Object.keys(filterOptions).forEach(property => {
+            if (property === 'name') {
+                queryParams.push(`CONCAT (user.firstName, ' ', user.lastName) ILIKE :${property}`)
+                filterValues[property] = `%${filterOptions[property]}%`
+            } else {
+                queryParams.push(`user.${property} = :${property}`)
+                filterValues[property] = filterOptions[property]
+            }
+        })
+        const query = queryParams.join(' AND ')
+        return {query, filterValues}
     }
 
     private applySort(sortOptions: SortDto) {
         const order = {};
         if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
-        if (sortOptions.field) { order[sortOptions.field] = sortOptions.order; }
+        if (sortOptions.field) { order[`user.${sortOptions.field}`] = sortOptions.order; }
         return order;
-    }
-
-    private applyWhereFilters(filterOptions: FilterDto) {
-        const homeYouthClub = 'homeYouthClub';
-        const status = 'status';
-        const where = [];
-        const query = {};
-        if (filterOptions.homeYouthClub) {
-            query[homeYouthClub] = filterOptions.homeYouthClub;
-            where.push(query);
-        }
-        if (filterOptions.status) {
-            query[status] = filterOptions.status;
-            where.push(query);
-        }
-        return where;
     }
 
     async getTotalJuniors(): Promise<number> {
