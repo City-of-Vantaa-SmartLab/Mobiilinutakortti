@@ -30,13 +30,13 @@ export const juniorProvider = (type, params, httpClient) => {
             };
 
             url += `?controls=${encodeURIComponent(JSON.stringify(controls))}`
-
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return httpClient(api.junior.total, { method: 'GET' })
+                    const totalUrl = `${api.junior.total}?filterOptions=${encodeURIComponent(JSON.stringify(controls.filters))}`
+                    return httpClient(totalUrl, { method: 'GET' })
                         .then(countResponse => {
                             if (countResponse.statusCode < 200 || countResponse.statusCode >= 300) {
                                 throw new HttpError(parseErrorMessages(response.message), response.statusCode);

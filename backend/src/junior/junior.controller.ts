@@ -19,7 +19,7 @@ import { Challenge } from './entities';
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
-import { ListControlDto } from '../common/dto';
+import { ListControlDto, FilterDto } from '../common/dto';
 import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
 import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';
 
@@ -86,8 +86,9 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('total')
-    async getTotalJuniors(): Promise<TotalViewModel> {
-        return new TotalViewModel(await this.juniorService.getTotalJuniors());
+    async getTotalJuniors(@Query('filterOptions') query): Promise<TotalViewModel> {
+        const filterOptions = query ? JSON.parse(query) as FilterDto : undefined;
+        return new TotalViewModel(await this.juniorService.getTotalJuniors(filterOptions));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

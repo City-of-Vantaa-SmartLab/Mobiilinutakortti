@@ -76,8 +76,15 @@ export class JuniorService {
         return order;
     }
 
-    async getTotalJuniors(): Promise<number> {
-        return await this.juniorRepo.count();
+    async getTotalJuniors(filterOptions?: FilterDto): Promise<number> {
+        let query = '', filterValues = {};
+        if (filterOptions) {
+            ({query, filterValues} = this.applyFilters(filterOptions));
+        }
+        const total = await this.juniorRepo.createQueryBuilder('user')
+            .where(query ? query : '1=1', filterValues)
+            .getCount()
+        return total;
     }
 
     async getJunior(id: string): Promise<Junior> {
