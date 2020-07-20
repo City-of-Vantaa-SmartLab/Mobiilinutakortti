@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
-import { JuniorUserViewModel } from './vm';
+import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
@@ -34,7 +34,7 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(controls?: ListControlDto): Promise<JuniorUserViewModel[]> {
+    async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
         let order={}, filterValues={}, query='', take=0, skip=0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
@@ -42,6 +42,10 @@ export class JuniorService {
             take = controls.pagination ? controls.pagination.perPage : 0;
             skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
+        const total = await this.juniorRepo.createQueryBuilder('user')
+            .where(query ? query : '1=1', filterValues)
+            .getCount()
+
         const response = (await this.juniorRepo.createQueryBuilder('user')
             .where(query ? query : '1=1', filterValues)
             .orderBy(order)
@@ -49,7 +53,7 @@ export class JuniorService {
             .skip(skip)
             .getMany())
         .map(e => new JuniorUserViewModel(e));
-        return response;
+        return new JuniorListViewModel(response, total);
     }
 
     private applyFilters(filterOptions: FilterDto) {
@@ -74,17 +78,6 @@ export class JuniorService {
         if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
         if (sortOptions.field) { order[`user.${sortOptions.field}`] = sortOptions.order; }
         return order;
-    }
-
-    async getTotalJuniors(filterOptions?: FilterDto): Promise<number> {
-        let query = '', filterValues = {};
-        if (filterOptions) {
-            ({query, filterValues} = this.applyFilters(filterOptions));
-        }
-        const total = await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .getCount()
-        return total;
     }
 
     async getJunior(id: string): Promise<Junior> {
@@ -218,7 +211,7 @@ export class JuniorService {
 
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const phoneNumbers = juniors.filter(j => j.phoneNumber.substr(0, 6) === "358999").map(j => j.phoneNumber);
+        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358999").map(j => j.phoneNumber);
         let next = "";
         for (var i = 0; i < 1000000; i++) {
             next = "358999" + i.toString().padStart(6, '0');
@@ -279,7 +272,7 @@ export class JuniorService {
      */
     async deleteTestDataJuniors(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const ids = juniors.filter(j => j.phoneNumber.substr(0, 6) === "358777").map(j => j.id);
+        const ids = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358777").map(j => j.id);
         for (var i = 0; i < ids.length; i++) {
             await this.deleteJunior(ids[i]);
         }

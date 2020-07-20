@@ -35,14 +35,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    const totalUrl = `${api.junior.total}?filterOptions=${encodeURIComponent(JSON.stringify(controls.filters))}`
-                    return httpClient(totalUrl, { method: 'GET' })
-                        .then(countResponse => {
-                            if (countResponse.statusCode < 200 || countResponse.statusCode >= 300) {
-                                throw new HttpError(parseErrorMessages(response.message), response.statusCode);
-                            }
-                            return { data: response, total: countResponse.total };
-                        });
+                    return response;
                 });
         }
         case CREATE: {
