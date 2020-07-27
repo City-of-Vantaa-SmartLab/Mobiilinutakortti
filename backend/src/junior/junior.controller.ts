@@ -10,16 +10,16 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
-import { JuniorUserViewModel, JuniorQRViewModel } from './vm';
+import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
 import { Junior } from './junior.decorator';
-import { Message, Check, TotalViewModel } from '../common/vm';
+import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
-import { ListControlDto } from '../common/dto';
+import { ListControlDto, FilterDto } from '../common/dto';
 import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
 import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';
 
@@ -85,16 +85,8 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
-    @Get('total')
-    async getTotalJuniors(): Promise<TotalViewModel> {
-        return new TotalViewModel(await this.juniorService.getTotalJuniors());
-    }
-
-    @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.ADMIN)
     @Get('list')
-    async getAllJuniors(@Query('controls') query): Promise<JuniorUserViewModel[]> {
+    async getAllJuniors(@Query('controls') query): Promise<JuniorListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
         return await this.juniorService.listAllJuniors(controls);
     }
