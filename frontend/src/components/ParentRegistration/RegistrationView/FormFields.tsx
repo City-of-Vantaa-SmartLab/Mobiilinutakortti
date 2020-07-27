@@ -7,22 +7,31 @@ import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLa
 interface InputProps {
     title: string,
     placeholder?: string,
-    description?: string
+    description?: string,
+    type?: string
 }
 
 export const InputField: React.FC<FieldProps & InputProps> = ({
     field,
     title,
     placeholder,
-    form: {touched, errors, handleBlur},
+    type,
+    form: {touched, errors, handleBlur, setFieldValue},
     ...props
 }) => {
+    const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (type === 'phone') {
+            const val = e.target.value.replace(/[^\d+]/g, '');
+            setFieldValue(field.name, val);
+        }
+        handleBlur(e)
+    }
     const isTouched = get(touched, field.name);
     const error = get(errors, field.name);
     return (
         <div>
             <Label>{title}</Label>
-            <Input placeholder={placeholder} {...field} {...props} onBlur={handleBlur} />
+            <Input placeholder={placeholder} {...field} {...props} onBlur={onBlur} />
             {isTouched &&
             error && <ErrorMessage>{error}</ErrorMessage>}
         </div>
@@ -46,13 +55,13 @@ const RadioField: React.FC<RadioProps & FieldProps> = ({
   }) => {
     return (
         <SelectOption>
-            <Radio type="radio" id={data.value} 
-                name={field.name} 
-                value={data.value} 
-                checked={field.value === data.value} 
+            <Radio type="radio" id={data.value}
+                name={field.name}
+                value={data.value}
+                checked={field.value === data.value}
                 onChange={field.onChange}
                 {...props}
-                onBlur={field.onBlur} 
+                onBlur={field.onBlur}
                 />
             <SelectLabel htmlFor={data.value}>{data.label}</SelectLabel>
         </SelectOption>
@@ -72,7 +81,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
     title,
     error,
     touched,
-    options, 
+    options,
     description
 }) => {
     const inputs = options.map(option => (
