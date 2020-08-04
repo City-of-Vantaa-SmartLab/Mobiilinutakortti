@@ -54,7 +54,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             touched={touched.photoPermission}
                             title="Kuvauslupa"
                             name="photoPermission"
-                            description="Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden jalkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä."
+                            description="Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden julkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä."
                             options={[{value: 'y', label: 'Kyllä'},{value: 'n', label: 'Ei'}]}
                         />
 
