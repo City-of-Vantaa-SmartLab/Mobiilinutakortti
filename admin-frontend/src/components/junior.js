@@ -79,6 +79,8 @@ export const JuniorList = connect(null, { showNotification })(props => {
             const w = window.open("");
             setTimeout(() => w.document.title = `QR-koodi ${owner}`, 0);
             w.document.write(image.outerHTML);
+            w.document.location = "#";
+            w.document.close();
         } catch (err) {
             alert("Virhe QR-koodin luonnissa")
         }
