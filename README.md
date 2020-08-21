@@ -153,8 +153,30 @@ You shouldn't need to update images or services manually, since Github does that
 
 ### Production environment
 
-Application runs in Elastic Beanstalk (eu-central-1), and is deployed via command-line manually. The name is Vantaa-Youth-PWA-prod. When deploying new version to production, use `eb deploy` to update selected environment (install the EB CLI tools first).
+Application runs in Elastic Beanstalk and is deployed via command-line manually. The name is Vantaa-Youth-PWA-prod. See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
 * [Api](https://nutakortti.vantaa.fi/api)
+
+Production logs are found in AWS CloudWatch in the Frankfurt (eu-central-1) region under `/aws/elasticbeanstalk/Vantaa-Youth-PWA-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel).
+
+### Updating the production environment using EB CLI tools
+
+Install the tools (for quick setup, follow the README in GitHub):
+* [AWS docs](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
+* [GitHub](https://github.com/aws/aws-elastic-beanstalk-cli-setup)
+* Remember to add EB CLI to PATH (e.g. `export PATH="/home/username/.ebcli-virtual-env/executables:$PATH"`).
+
+Configure the EB CLI:
+* [AWS docs](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-configuration.html)
+* Note: this process only initializes the current directory/repository on your computer. The relevant files have been added to gitignore.
+1. Go to project directory root (where this file is). Type: `eb init`.
+2. Select `eu-central-1` as the location (unless something's been changed).
+3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/config`.
+4. Select the `Vantaa-Youth-PWA` as application. Don't continue with CodeCommit (defaults to N).
+5. Ensure the environment is set up by typing `eb list`. You should see **Vantaa-Youth-PWA-prod**.
+
+**Deploy a new version to production:**
+* While in the project root directory, type: `eb deploy Vantaa-Youth-PWA-prod`
+* To see how things are progressing, type: `eb events -f`
