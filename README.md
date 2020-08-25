@@ -153,13 +153,15 @@ You shouldn't need to update images or services manually, since Github does that
 
 ### Production environment
 
-Application runs in Elastic Beanstalk and is deployed via command-line manually. The name is Vantaa-Youth-PWA-prod. See next section for updating the production environment using EB CLI tools.
+Application runs in Elastic Beanstalk and is deployed via command-line manually. The name is **Vantaa-Youth-PWA-prod**. See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
 * [Api](https://nutakortti.vantaa.fi/api)
 
-Production logs are found in AWS CloudWatch in the Frankfurt (eu-central-1) region under `/aws/elasticbeanstalk/Vantaa-Youth-PWA-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel).
+Production logs are found in AWS CloudWatch in the Frankfurt (eu-central-1) region under `/aws/elasticbeanstalk/Vantaa-Youth-PWA-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
+
+NOTE: **The production database** (AWS RDS) is attached to the Elastic Beanstalk environment, so it depends on the lifecycle of the Beanstalk environment (which is not optimal for production environment but that's how it is).
 
 ### Updating the production environment using EB CLI tools
 
