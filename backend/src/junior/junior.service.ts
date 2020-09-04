@@ -3,6 +3,7 @@ import {
     ConflictException,
     BadRequestException,
     InternalServerErrorException,
+    ForbiddenException,
     Inject,
     forwardRef
 } from '@nestjs/common';
@@ -145,11 +146,14 @@ export class JuniorService {
     }
 
     async resetLogin(phoneNumber: string): Promise<string> {
-        const challenge = await this.setChallenge(phoneNumber);
         const junior = await this.juniorRepo.findOne({ phoneNumber });
-        const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
-        if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
-        return `${phoneNumber} ${content.Reset}`;
+        if (junior && junior.status === 'accepted') {
+            const challenge = await this.setChallenge(phoneNumber);
+            const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+            return `${phoneNumber} ${content.Reset}`;
+        }
+        else throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
     async editJunior(details: EditJuniorDto): Promise<string> {
