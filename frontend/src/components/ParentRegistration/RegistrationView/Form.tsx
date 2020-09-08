@@ -169,7 +169,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 juniorLastName: string().required("Täytä tiedot"),
                 juniorNickName: string(),
                 juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp.kk.vvvv').required('Anna syntymäaika muodossa pp.kk.vvvv'),
-                juniorPhoneNumber: string().matches(/(^(\+358|0)\d{9}$)/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
+                juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
                 postCode: string().length(5, 'Tarkista, että antamasi postinumero on oikein').matches(/^[0-9]*$/, 'Tarkista, että antamasi postinumero on oikein').required("Täytä tiedot"),
                 school: string().required("Täytä tiedot"),
                 class: string().required("Täytä tiedot"),
@@ -177,7 +177,7 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 photoPermission: string().required("Täytä tiedot"),
                 parentFirstName: string().required("Täytä tiedot"),
                 parentLastName: string().required("Täytä tiedot"),
-                parentPhoneNumber: string().matches(/(^(\+358|0)\d{9})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
+                parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
                 youthClub: string().required("Valitse kotinuorisotila valikosta"),
                 termsOfUse: boolean().oneOf([true], 'Hyväksy käyttöehdot jatkaaksesi').required('Hyväksy käyttöehdot jatkaaksesi')
             }),
