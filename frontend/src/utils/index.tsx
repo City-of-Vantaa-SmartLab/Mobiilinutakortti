@@ -10,7 +10,7 @@ export const cacheToken = (token: string) => {
 
 
 export const validatePhone = (number: string) => {
-    if (number.match(/(^(\+358|0)\d{9})/)) {
+    if (number.match(/(^(\+358|0)\d{6,10})/)) {
         return true;
     }
     return false;
