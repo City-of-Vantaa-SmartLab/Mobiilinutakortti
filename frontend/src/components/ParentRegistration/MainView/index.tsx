@@ -2,14 +2,14 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Button, MainWrapper, MainContent, MainHeader, MainDescription, Logo } from '../StyledComponents';
 
-const ParentRedirectView: React.FC<RouteComponentProps> = (props) => {    
+const ParentRedirectView: React.FC<RouteComponentProps> = (props) => {
     return (
     <MainWrapper>
         <Logo><h2>Vantaa</h2></Logo>
         <MainContent>
             <MainHeader>
                 <h1>Nutakortin hakeminen</h1>
-                <p>Nutakortti on mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan.</p>
+                <p>Nutakortti on maksuton mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan.</p>
             </MainHeader>
             <MainDescription>
                 <p>Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan kaupungin Nuorisopalveluiden jäsenkorttia. Kirjaudu sisään pankkitunnuksilla, mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot. <br/><br/> Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.</p>
