@@ -23,7 +23,7 @@ export const Header = styled.h1`
     margin: 1.5em 0.5em 0;
 `;
 
-export const LogoutLink = styled.span`
+export const ActionLink = styled.span`
     cursor: pointer;
     color: #0042a5;
     font-weight: bold;
@@ -442,7 +442,7 @@ export const MainHeader = styled.header`
 export const MainDescription = styled.div`
     background: rgb(249, 229, 30);
     padding: 1.5em;
-    font-sise: 1em;
+    font-size: 1em;
     display: flex;
     flex-direction: column;
     align-items: center;
