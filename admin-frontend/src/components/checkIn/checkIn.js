@@ -59,9 +59,9 @@ const CheckInView = (props) => {
     }
 
   },[])
-  // reload the page in 10 minutes to fix qr reader stopping scanning after a period of time
+  // reload the page in 3 minutes to fix qr reader stopping scanning after a period of time
   useEffect(() => {
-    const timer = setTimeout(() => window.location.reload(), 600000);
+    const timer = setTimeout(() => window.location.reload(), 180000);
     return () => clearTimeout(timer);
   }, [])
 
