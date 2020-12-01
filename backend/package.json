@@ -44,7 +44,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.5",
-    "saml2-js": "^2.0.5",
+    "saml2-js": "^2.0.6",
     "socket.io": "2.3.0",
     "typeorm": "^0.2.24"
   },

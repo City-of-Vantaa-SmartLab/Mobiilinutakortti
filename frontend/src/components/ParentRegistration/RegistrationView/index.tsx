@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
-import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, LogoutLink } from '../StyledComponents';
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, ActionLink } from '../StyledComponents';
 import { get, post } from '../../../apis';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -100,7 +100,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
                     <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun. Voit nyt
-                    <LogoutLink onClick={logout}> kirjautua ulos</LogoutLink>.
+                    <ActionLink onClick={logout}> kirjautua ulos</ActionLink> tai <ActionLink onClick={() => setSubmitted(false)}>aloittaa alusta</ActionLink> rekisteröidäksesi nutakortin toiselle lapselle.
                     </p>
                     <SuccessIcon/>
                 </div>

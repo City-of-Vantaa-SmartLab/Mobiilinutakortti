@@ -28,7 +28,7 @@ export interface FormValues {
 const InnerForm = (props: FormikProps<FormValues>) => {
     const { handleSubmit, handleReset, touched, errors, status } = props;
     return (
-            <Form onReset={handleReset} onSubmit={handleSubmit}>
+            <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete={`off-random-${Math.random()}`}>
                 <Column>
                     <Fieldset>
                         <FieldTitle>Nuoren tiedot</FieldTitle>
