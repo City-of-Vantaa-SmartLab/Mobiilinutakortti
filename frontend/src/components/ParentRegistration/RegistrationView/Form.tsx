@@ -92,7 +92,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                 </Field>
                 <ErrorMessage>{errors['termsOfUse']}</ErrorMessage>
                 <Button type="submit">Lähetä hakemus</Button>
-                <a target='_blank' rel="noopener noreferrer" href="https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/148977_Henkilotietojen_kasittely_nuorisopalveluissa.pdf">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
+                <a target='_blank' rel="noopener noreferrer" href="https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
             </FormFooter>
         </Form>
     )
