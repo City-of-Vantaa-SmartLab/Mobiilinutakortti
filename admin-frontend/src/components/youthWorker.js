@@ -57,7 +57,7 @@ export const YouthWorkerCreate = (props) => {
 
   return (
     <Create title="Rekisteröi nuorisotyöntekijä" {...props}>
-      <SimpleForm redirect="list">
+      <SimpleForm variant="standard" margin="normal" redirect="list">
         <TextInput label="Sähköposti" source="email" type="email" validate={required()} />
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
@@ -99,7 +99,7 @@ export const YouthWorkerEdit = (props) => {
 
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
-      <SimpleForm redirect="list">
+      <SimpleForm variant="standard" margin="normal" redirect="list">
         <TextInput label="Sähköposti" source="email" type="email" />
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />

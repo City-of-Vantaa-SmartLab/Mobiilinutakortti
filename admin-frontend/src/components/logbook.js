@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { showNotification, DateInput } from 'react-admin';
-import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
+import { DateInput, useNotify } from 'react-admin';
+import { Form } from 'react-final-form';
 import { Button } from '@material-ui/core';
 import {
     Container,
@@ -18,12 +17,12 @@ import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 import { genderChoices } from '../utils';
 
-
 let LogBookView = (props) => {
     const [clubName, setClubName] = useState('');
     const [ages, setAges] = useState([]);
     const [genders, setGenders] = useState([]);
     const [searchDate, setSearchDate] = useState('');
+    const notify = useNotify();
 
     const getGenderTitles = (keyValueArray) => {
         keyValueArray.map(pair => pair.key = genderChoices.find(g => g.id === pair.key).name);
@@ -56,8 +55,8 @@ let LogBookView = (props) => {
         return UI;
     }
 
-    const getLogBookEntry = async () => {
-        const date = new Date(props.selectedDate);
+    const getLogBookEntry = async values => {
+        const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.logBook;
             const body = JSON.stringify({
@@ -72,8 +71,7 @@ let LogBookView = (props) => {
             await httpClientWithResponse(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        const { showNotification } = props;
-                        showNotification(response.message, "warning");
+                        notify(response.message, "warning");
                     } else {
                         setSearchDate(date.toLocaleDateString());
                         setClubName(response.clubName);
@@ -86,15 +84,21 @@ let LogBookView = (props) => {
 
     return (
         <Container>
-            <LogBookCard>
-                <LogBookCardHeader title="Valitse Päivämäärä" />
-                <LogBookCardContentSelect>
-                    <DateInput label="Päivämäärä" source="queryDate" />
-                    <Button onClick={getLogBookEntry} >Hae</Button>
-                </LogBookCardContentSelect>
-            </LogBookCard>
+            <Form 
+                onSubmit={getLogBookEntry}
+                render={({ handleSubmit }) => (
+                    <form onSubmit={handleSubmit}>
+                        <LogBookCard>
+                            <LogBookCardHeader title="Valitse Päivämäärä" />
+                            <LogBookCardContentSelect>
+                                <DateInput label="Päivämäärä" source="queryDate" />
+                                <Button type="submit">Hae</Button>
+                            </LogBookCardContentSelect>
+                        </LogBookCard>
+                    </form>
+                )}
+            />
             <VerticalCardPadding />
-
             {clubName !== '' &&
                 <LogBookCard>
                     <LogBookCardHeader title={clubName} subheader={searchDate} />
@@ -113,15 +117,5 @@ let LogBookView = (props) => {
         </Container>
     )
 }
-
-LogBookView = reduxForm({
-    form: 'logBookView'
-})(LogBookView);
-
-const selector = formValueSelector('logBookView');
-LogBookView = connect(state => {
-    const date = selector(state, 'queryDate')
-    return { selectedDate: date };
-}, { showNotification })(LogBookView);
 
 export default LogBookView;
