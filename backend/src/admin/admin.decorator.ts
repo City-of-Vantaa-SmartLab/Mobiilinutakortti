@@ -1,6 +1,8 @@
-import { createParamDecorator } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-/**
- * A cleaner decorator to Access data from request.
- */
-export const Admin = createParamDecorator((data, req) => req.user);
+export const Admin = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user;
+  },
+);
