@@ -12,6 +12,7 @@ import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
+import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -19,7 +20,7 @@ const messages = {
     'fi': finnishMessages,
 };
 
-const i18nProvider = locale => messages[locale];
+const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
 const App = () => {
 
@@ -46,7 +47,7 @@ const App = () => {
     }, []);
 
     return (
-        <Admin appLayout={CustomLayout} loginPage={CustomLoginPage} locale="fi" i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
+        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
             {permissions => [
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { showNotification, DateInput } from 'react-admin';
-import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
+import { DateInput, useNotify } from 'react-admin';
+import { Form } from 'react-final-form';
 import {
     Button, Table, TableHead,
     TableRow, TableCell, TableBody,
@@ -22,6 +21,7 @@ let LogBookListView = (props) => {
     const [clubName, setClubName] = useState('');
     const [table, setTable] = useState([]);
     const [searchDate, setSearchDate] = useState('');
+    const notify = useNotify();
 
     const resetState = () => {
         setClubName('');
@@ -48,8 +48,8 @@ let LogBookListView = (props) => {
         return UI;
     }
 
-    const getCheckIns = async () => {
-        const date = new Date(props.selectedDate);
+    const getCheckIns = async values => {
+        const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkIns;
             const body = JSON.stringify({
@@ -64,8 +64,7 @@ let LogBookListView = (props) => {
             await httpClientWithResponse(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        const { showNotification } = props;
-                        showNotification(response.message, "warning");
+                        notify(response.message, "warning");
                     } else {
                         setSearchDate(date.toLocaleDateString());
                         setClubName(response.clubName);
@@ -77,15 +76,21 @@ let LogBookListView = (props) => {
 
     return (
         <Container>
-            <LogBookCard>
-                <LogBookCardHeader title="Valitse Päivämäärä" />
-                <LogBookCardContentSelect>
-                    <DateInput label="Päivämäärä" source="queryDate" />
-                    <Button onClick={getCheckIns} >Hae</Button>
-                </LogBookCardContentSelect>
-            </LogBookCard>
+            <Form
+                onSubmit={getCheckIns}
+                render={({ handleSubmit }) => (
+                    <form onSubmit={handleSubmit}>
+                        <LogBookCard>
+                            <LogBookCardHeader title="Valitse Päivämäärä" />
+                            <LogBookCardContentSelect>
+                                <DateInput label="Päivämäärä" source="queryDate" />
+                                <Button type="submit">Hae</Button>
+                            </LogBookCardContentSelect>
+                        </LogBookCard>
+                    </form>
+                )}
+            />
             <VerticalCardPadding />
-
             {clubName !== '' &&
                 <LogBookCard>
                     <LogBookCardHeader title={clubName} subheader={searchDate} />
@@ -107,15 +112,5 @@ let LogBookListView = (props) => {
         </Container>
     )
 }
-
-LogBookListView = reduxForm({
-    form: 'logBookListView'
-})(LogBookListView);
-
-const selector = formValueSelector('logBookListView');
-LogBookListView = connect(state => {
-    const date = selector(state, 'queryDate')
-    return { selectedDate: date };
-}, { showNotification })(LogBookListView);
 
 export default LogBookListView;

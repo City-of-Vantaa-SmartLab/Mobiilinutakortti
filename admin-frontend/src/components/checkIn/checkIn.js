@@ -5,8 +5,7 @@ import ConfirmNavigationModal from "../ConfirmNavigationModal";
 import QrReader from 'react-qr-reader';
 import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
-import { showNotification } from 'react-admin';
-import { connect } from 'react-redux';
+import { useNotify } from 'react-admin';
 import styled from 'styled-components';
 import { httpClientWithResponse } from '../../httpClients';
 import api from '../../api';
@@ -38,6 +37,7 @@ const CheckInView = (props) => {
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
+  const notify = useNotify();
 
   const logout = () => {
     sessionStorage.removeItem("initialCheckin")
@@ -92,7 +92,7 @@ const CheckInView = (props) => {
     setShowQRCode(false)
     setCheckInSuccess(success)
     setShowQrCheckNotification(true);
-    tryToPlayAudio(success).catch(() => showNotification('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
+    tryToPlayAudio(success).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
     setTimeout(() => {
       setShowQrCheckNotification(false);
       setCheckInSuccess(null);
@@ -115,10 +115,9 @@ const CheckInView = (props) => {
       };
       await httpClientWithResponse(url, options, true)
         .then(response => {
-          const { showNotification } = props;
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);
-              showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+              notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
             setShowQRCode(true)
           } else {
             handleCheckInReturn(response.success);
@@ -128,8 +127,7 @@ const CheckInView = (props) => {
   };
 
   const handleError = () => {
-    const { showNotification } = props;
-    showNotification('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+    notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
   return (
@@ -168,6 +166,4 @@ const CheckInView = (props) => {
   )
 };
 
-export default connect(null, {
-  showNotification
-})(CheckInView);
+export default CheckInView;

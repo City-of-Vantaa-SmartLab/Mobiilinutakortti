@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
-import { SimpleForm, showNotification } from 'react-admin';
-import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { SimpleForm, useNotify } from 'react-admin';
 import { TextField, Button, Toolbar } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 
-let ChangePasswordView = (props) => {
-
+let ChangePasswordView = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
+    
     const dataProvided = () => (oldPassword && newPassword && confirmPassword);
     const passwordsMatch = () => (newPassword === confirmPassword);
     const buttonDisabled = () => !(dataProvided() && passwordsMatch());
+    const notify = useNotify();
 
     const changePassword = async () => {
         if (!buttonDisabled()) {
@@ -29,11 +27,10 @@ let ChangePasswordView = (props) => {
             };
             await httpClientWithResponse(url, options)
                 .then(response => {
-                    const { showNotification } = props;
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        showNotification(response.message, "warning");
+                        notify(response.message, "warning");
                     } else {
-                        showNotification(response.message, "success");
+                        notify(response.message, "success");
                     }
                 })
         }
@@ -55,18 +52,12 @@ let ChangePasswordView = (props) => {
     }
 
     return (
-        <SimpleForm toolbar={<CustomToolbar />} >
+        <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar />} >
             <TextField value={oldPassword} label="Vanha Salasana" type="password" onChange={(e) => setOldPassword(e.target.value)} required />
             <TextField value={newPassword} label="Uusi Salasana" type="password" onChange={(e) => setNewPassword(e.target.value)} required />
             <TextField value={confirmPassword} label="Vahvista uusi salasana" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required />
         </SimpleForm>
     );
 };
-
-ChangePasswordView = reduxForm({
-    form: 'changePasswordView'
-})(ChangePasswordView);
-
-ChangePasswordView = connect(null, { showNotification })(ChangePasswordView);
 
 export default ChangePasswordView;

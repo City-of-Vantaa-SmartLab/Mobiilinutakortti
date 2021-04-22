@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { change } from 'redux-form';
+import { useForm } from 'react-final-form';
 import QRCode from 'qrcode'
 import {
     List,
@@ -18,10 +17,9 @@ import {
     EditButton,
     Edit,
     Filter,
-    showNotification,
+    useNotify,
     Pagination,
-    FormDataConsumer,
-    REDUX_FORM_NAME
+    FormDataConsumer
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
 import Button from '@material-ui/core/Button';
@@ -39,11 +37,10 @@ const SMSwarning = () => (
 );
 
 
-export const JuniorList = connect(null, { showNotification })(props => {
+export const JuniorList = (props) => {
 
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
-
-    const { showNotification } = props;
+    const notify = useNotify();
 
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
@@ -104,9 +101,9 @@ export const JuniorList = connect(null, { showNotification })(props => {
         await httpClientWithResponse(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
-                    showNotification(response.message, "warning");
+                    notify(response.message, "warning");
                 } else {
-                    showNotification(response.message);
+                    notify(response.message);
                 }
             });
     }
@@ -130,27 +127,29 @@ export const JuniorList = connect(null, { showNotification })(props => {
             </Datagrid>
         </List>
     )
-});
+};
 
-const getDummyPhoneNumber = async (formState, cb) => {
+const getDummyPhoneNumber = async (cb) => {
     const url = api.junior.dummynumber;
     await httpClientWithResponse(url)
       .then(response => {
           if (response.message) {
-              cb(REDUX_FORM_NAME, "phoneNumber", response.message)
+              cb("phoneNumber", response.message)
           }
       });
 }
 
-const DummyPhoneNumberButton = (props) => (
-  <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(props.formState, props.cb)}>
-      Käytä korvikepuhelinnumeroa
-  </Button>
-)
+const DummyPhoneNumberButton = () => {
+    const form = useForm();
+    return (
+        <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((field, value) => form.change(field, value))}>
+            Käytä korvikepuhelinnumeroa
+        </Button>
+    )
+}
 
 export const JuniorCreate = (props) => {
     const [youthClubs, setYouthClubs] = useState([]);
-
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
@@ -162,7 +161,7 @@ export const JuniorCreate = (props) => {
 
     return (
         <Create title="Rekisteröi nuori" {...props}>
-            <SimpleForm redirect="list">
+            <SimpleForm variant="standard" margin="normal" redirect="list">
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
                 <TextInput label="Kutsumanimi" source="nickName" />
@@ -170,9 +169,7 @@ export const JuniorCreate = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
-                    {({ formData, dispatch, ...rest }) => (
-                      <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
-                    )}
+                    {() => <DummyPhoneNumberButton />}
                 </FormDataConsumer>
                 <TextInput label="Postinumero" source="postCode" validate={required()} />
                 <TextInput label="Koulu" source="school" validate={required()} />
@@ -220,7 +217,7 @@ export const JuniorEdit = (props) => {
     }, []);
     return (
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
-            <SimpleForm>
+            <SimpleForm variant="standard" margin="normal">
                 <TextInput label="Etunimi" source="firstName" validate={required()}/>
                 <TextInput label="Sukunimi" source="lastName" validate={required()}/>
                 <TextInput label="Kutsumanimi" source="nickName" />
@@ -228,9 +225,7 @@ export const JuniorEdit = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
-                    {({ formData, dispatch, ...rest }) => (
-                          <DummyPhoneNumberButton formState={formData} cb={(form, field, value) => dispatch(change(form, field, value))}/>
-                    )}
+                    {() => (<DummyPhoneNumberButton />)}
                 </FormDataConsumer>
                 <TextInput label="Postinumero" source="postCode" validate={required()}/>
                 <TextInput label="Koulu" source="school" validate={required()}/>
