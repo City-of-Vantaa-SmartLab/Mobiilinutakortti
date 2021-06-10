@@ -109,3 +109,7 @@ The environment variables are:
 
 Additionally, the frontend apps require this environment variable:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+
+## Additional information
+
+The UML for the database is Nutakortti.vsdx. Last updated June 10th using Microsoft Visio. Remember to update the UML and last update time whenever the db structure change
