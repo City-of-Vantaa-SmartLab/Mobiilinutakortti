@@ -12,6 +12,7 @@ export const juniorProvider = (type, params, httpClient) => {
             const controls = {
                 filters: {
                     name: params.filter.name,
+                    parentsPhoneNumber: params.filter.parentsPhoneNumber,
                     homeYouthClub: params.filter.homeYouthClub,
                     status: params.filter.status
                 },
