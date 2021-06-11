@@ -8,7 +8,7 @@ import {
     forwardRef
 } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
@@ -229,6 +229,11 @@ export class JuniorService {
             }
         }
         return next;
+    }
+
+    async createNewSeason(): Promise<string> {
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({status: "expired"}).execute()
+        return `New season created. ${result.affected} juniors expired`;
     }
 
     /**
