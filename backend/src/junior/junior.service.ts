@@ -187,7 +187,7 @@ export class JuniorService {
         }
         await this.juniorRepo.save(user);
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
-        if (prevStatus === 'pending' && details.status === 'accepted') {
+        if ((prevStatus === 'pending' || prevStatus === 'failedCall') && details.status === 'accepted') {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({ name: updatedJunior.firstName, phoneNumber: updatedJunior.phoneNumber }, challenge);

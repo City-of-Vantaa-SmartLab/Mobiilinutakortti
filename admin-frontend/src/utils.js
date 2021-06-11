@@ -9,8 +9,10 @@ export const genderChoices = [
 ];
 
 export const statusChoices = [
-  { id: 'accepted', name: 'Tehty' },
-  { id: 'pending', name: 'Tekemättä' }
+  { id: 'accepted', name: 'Kotisoitto tehty' },
+  { id: 'pending', name: 'Kotisoitto tekemättä' },
+  { id: 'expired', name:  'Tunnus vanhentunut' },
+  { id: 'failedCall', name: 'Kotisoittoa yritetty' }
 ];
 
 export const token = 'admin-token';

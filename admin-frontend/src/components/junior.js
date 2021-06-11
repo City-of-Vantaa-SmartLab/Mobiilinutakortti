@@ -237,7 +237,7 @@ export const JuniorEdit = (props) => {
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
                 <SelectInput label="Kotisoitto" source="status" choices={statusChoices} validate={required()}/>
                 <FormDataConsumer>
-                 {({ formData, record }) => (formData.status === 'accepted' && record.status==='pending') &&
+                 {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
                     <SMSwarning/>
                  }
              </FormDataConsumer>
