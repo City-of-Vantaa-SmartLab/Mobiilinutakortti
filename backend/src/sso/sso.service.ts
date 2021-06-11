@@ -34,7 +34,7 @@ export class SsoService {
       entity_id: this.entity_id,
       private_key: !!process.env.SP_PKEY ? process.env.SP_PKEY.replace(/\\n/g, '\n') : pkey,
       certificate: fs.readFileSync('certs/nutakortti-' + cert_selection + '.cer').toString(),
-      assert_endpoint: process.env.SP_ASSERT_ENDPOINT || 'https://api.mobiilinuta-admin-test.com/api/acs',
+      assert_endpoint: process.env.SP_ASSERT_ENDPOINT || 'http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api/acs',
       sign_get_request: true,
       allow_unencrypted_assertion: false
     }

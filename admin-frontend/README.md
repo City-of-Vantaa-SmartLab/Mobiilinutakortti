@@ -23,4 +23,4 @@ The application needs at least one admin user to work properly. See the generic 
 ## Task definition / environment variables / secrets
 
 There's one environment variable:
-* `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `REACT_APP_ENDPOINT`: the base API URL, e.g. "http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api"

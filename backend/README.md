@@ -57,7 +57,7 @@ Once the backend and database are up and running locally, to make sure the every
 
 Since the Suomi.fi identity provider for SSO is configured against a test environment in AWS cloud, it expects to talk with the AWS. Therefore it responds with AWS URLs. To make them work locally, the easiest way is to override the Amazon hostname in `/etc/hosts` file:
 
-  127.0.0.1 api.mobiilinuta-admin-test.com
+  127.0.0.1 http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api
 
 Since Suomi.fi expects to communicate over HTTPS and not HTTP, we will also need to have:
 
@@ -108,7 +108,7 @@ The environment variables are:
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 
 Additionally, the frontend apps require this environment variable:
-* `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `REACT_APP_ENDPOINT`: the base API URL, e.g. "http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api"
 
 ## Additional information
 

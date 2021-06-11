@@ -144,9 +144,9 @@ GitHub uses github-actions to push master branch to test-environment, when push 
 
 Application runs in Elastic Container Service (eu-west-1), with 3 different services:
 
-* [youth-club-server-service](https://api.mobiilinuta-admin-test.com/api)
+* [youth-club-server-service](http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api)
 * [youth-club-mobile-front](http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com)
-* [youth-club-admin-front-2](https://mobiilinuta-admin-test.com)
+* [youth-club-admin-front-2](http://youth-club-admin-front-lb-1853131936.eu-west-1.elb.amazonaws.com)
 
 Application images are stored in Elastic Container Registry.
 You shouldn't need to update images or services manually, since Github does that for you.
