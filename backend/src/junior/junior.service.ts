@@ -36,10 +36,10 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
-        let order={}, filterValues={}, query='', take=0, skip=0;
+        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
-            ({query, filterValues} = controls.filters ? this.applyFilters(controls.filters) : {query: '', filterValues: []});
+            ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
             take = controls.pagination ? controls.pagination.perPage : 0;
             skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
@@ -53,7 +53,7 @@ export class JuniorService {
             .take(take)
             .skip(skip)
             .getMany())
-        .map(e => new JuniorUserViewModel(e));
+            .map(e => new JuniorUserViewModel(e));
         return new JuniorListViewModel(response, total);
     }
 
@@ -74,7 +74,7 @@ export class JuniorService {
             }
         })
         const query = queryParams.join(' AND ')
-        return {query, filterValues}
+        return { query, filterValues }
     }
 
     private applySort(sortOptions: SortDto) {
@@ -90,6 +90,10 @@ export class JuniorService {
 
     async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior> {
         return await this.juniorRepo.findOne({ phoneNumber });
+    }
+
+    async getUniqueJunior(phoneNumber: string, birthday: string, firstName: string, lastName: string): Promise<Junior> {
+        return await this.juniorRepo.findOne({ where: { phoneNumber, birthday, firstName, lastName } })
     }
 
     async createJunior(details: Junior) {
@@ -115,29 +119,40 @@ export class JuniorService {
         throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
-    async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean=false): Promise<string> {
-        const userExists = await this.getJuniorByPhoneNumber(registrationData.phoneNumber);
-        if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
-        const junior = {
-            firstName: registrationData.firstName, lastName: registrationData.lastName,
-            phoneNumber: registrationData.phoneNumber,
-            postCode: registrationData.postCode,
-            parentsName: registrationData.parentsName,
-            parentsPhoneNumber: registrationData.parentsPhoneNumber,
-            school: registrationData.school,
-            class: registrationData.class,
-            gender: registrationData.gender,
-            birthday: registrationData.birthday,
-            homeYouthClub: registrationData.homeYouthClub,
-            status: registrationData.status,
-            creationDate: new Date(Date.now()).toISOString(),
-            photoPermission: registrationData.photoPermission,
-        } as Junior;
-        if (registrationData.nickName) { junior.nickName = registrationData.nickName; }
+    async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
+        const userExists = await this.getUniqueJunior(
+            registrationData.phoneNumber,
+            registrationData.birthday,
+            registrationData.firstName,
+            registrationData.lastName
+        );
+
+        let junior: Junior
+        let renew = false
+        if (userExists) {
+            if (userExists.status === "expired") {
+                // Renew junior for new season
+                junior = userExists
+                renew = true
+            } else {
+                // Try to register an old user is not valid
+                throw new ConflictException(content.JuniorAlreadyExists);
+            }
+        } else {
+            // Completely new junior creating
+            junior = new Junior()
+        }
+
+        Object.keys(registrationData).map((key: string) => {
+            junior[key] = registrationData[key]
+        })
+        junior.creationDate = new Date(Date.now()).toISOString()
+
         const errors = await validate(junior);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
         }
+
         await this.createJunior(junior);
         if (junior.status === 'accepted' && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
@@ -145,7 +160,7 @@ export class JuniorService {
             const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
-        return `${registrationData.phoneNumber} ${content.Created}`;
+        return renew ? `${registrationData.phoneNumber} ${content.Renew}` : `${registrationData.phoneNumber} ${content.Created}`;
     }
 
     async resetLogin(phoneNumber: string): Promise<string> {
