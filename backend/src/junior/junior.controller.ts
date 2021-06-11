@@ -141,6 +141,14 @@ export class JuniorController {
         return new Message(await this.juniorService.createNewSeason());
     }
 
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Delete('newSeason/clearExpired')
+    async deleteExpiredJuniors() {
+        return new Message(await this.juniorService.deleteExpired());
+    }
+
     @Post('createTestDataJuniors')
     async createTestDataJuniors(@Body() body: any): Promise<Message> {
         const allow = process.env.SUPER_ADMIN_FEATURES || "no";
