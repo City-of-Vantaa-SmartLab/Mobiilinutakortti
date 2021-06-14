@@ -2,7 +2,7 @@
   "AdminAlreadyExists": "Käyttäjätili on jo luotu tällä sähköpostilla.",
   "NotAnAdmin": "Ainoastaan nuorisotyöntekijät voivat suorittaa pyynnön.",
   "Created": "luotu.",
-  "Renew": "renew",
+  "Renew": "uudistettu",
   "ClubNotFound": "Kyseistä nuorisotilaa ei löydy.",
   "CheckInSuccess": "Tervetuloa",
   "CheckInFailed": "Kirjautuminen epäonnistui. Yritä uudestaan.",
