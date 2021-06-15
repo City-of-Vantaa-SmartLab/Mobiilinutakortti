@@ -8,7 +8,7 @@ import {
     forwardRef
 } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto } from './dto';
 import * as content from '../content.json';
@@ -36,10 +36,10 @@ export class JuniorService {
     ) { }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
-        let order={}, filterValues={}, query='', take=0, skip=0;
+        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
-            ({query, filterValues} = controls.filters ? this.applyFilters(controls.filters) : {query: '', filterValues: []});
+            ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
             take = controls.pagination ? controls.pagination.perPage : 0;
             skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
         }
@@ -53,7 +53,7 @@ export class JuniorService {
             .take(take)
             .skip(skip)
             .getMany())
-        .map(e => new JuniorUserViewModel(e));
+            .map(e => new JuniorUserViewModel(e));
         return new JuniorListViewModel(response, total);
     }
 
@@ -74,7 +74,7 @@ export class JuniorService {
             }
         })
         const query = queryParams.join(' AND ')
-        return {query, filterValues}
+        return { query, filterValues }
     }
 
     private applySort(sortOptions: SortDto) {
@@ -115,7 +115,7 @@ export class JuniorService {
         throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
-    async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean=false): Promise<string> {
+    async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
         const userExists = await this.getJuniorByPhoneNumber(registrationData.phoneNumber);
         if (userExists) { throw new ConflictException(content.JuniorAlreadyExists); }
         const junior = {
@@ -229,6 +229,16 @@ export class JuniorService {
             }
         }
         return next;
+    }
+
+    async createNewSeason(): Promise<string> {
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
+        return `New season created. ${result.affected} juniors expired`;
+    }
+
+    async deleteExpired(): Promise<string> {
+        const result: DeleteResult = await this.juniorRepo.delete({ status: 'expired' })
+        return `Delete ${result.affected} expired juniors`;
     }
 
     /**

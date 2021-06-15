@@ -115,8 +115,8 @@ export class JuniorController {
     @Get('getChallenge/:phoneNumber')
     async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
         const allow = process.env.SUPER_ADMIN_FEATURES || "no";
-        if ( allow === "yes" ) {
-          return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
+        if (allow === "yes") {
+            return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
         }
         throw new BadRequestException(content.NonProdFeature);
     }
@@ -133,10 +133,26 @@ export class JuniorController {
         return new Message(await this.juniorService.deleteJunior(id));
     }
 
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Post('newSeason')
+    async createNewSeason() {
+        return new Message(await this.juniorService.createNewSeason());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @AllowedRoles(Roles.ADMIN)
+    @Delete('newSeason/clearExpired')
+    async deleteExpiredJuniors() {
+        return new Message(await this.juniorService.deleteExpired());
+    }
+
     @Post('createTestDataJuniors')
     async createTestDataJuniors(@Body() body: any): Promise<Message> {
         const allow = process.env.SUPER_ADMIN_FEATURES || "no";
-        if ( allow === "yes" ) {
+        if (allow === "yes") {
             const { numberOfCases } = body;
             return new Message(await this.juniorService.createTestDataJuniors(numberOfCases));
         }
@@ -146,7 +162,7 @@ export class JuniorController {
     @Post('deleteTestDataJuniors')
     async deleteTestDataJuniors(): Promise<Message> {
         const allow = process.env.SUPER_ADMIN_FEATURES || "no";
-        if ( allow === "yes" ) {
+        if (allow === "yes") {
             return new Message(await this.juniorService.deleteTestDataJuniors());
         }
         throw new BadRequestException(content.NonProdFeature);
