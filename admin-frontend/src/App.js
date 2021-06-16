@@ -6,13 +6,14 @@ import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
-import routes from './customRoutes';
+import { routes, superAdminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
+import usePermissions from './hooks/usePermissions';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -23,6 +24,8 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
 const App = () => {
+    const { isSuperAdmin } = usePermissions();
+    const customRoutes = routes.concat(...isSuperAdmin ? superAdminRoutes : []);
 
     useEffect(() => {
         let validCheck = setInterval(async () => {
@@ -47,7 +50,7 @@ const App = () => {
     }, []);
 
     return (
-        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={routes}>
+        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} >
             {permissions => [
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />

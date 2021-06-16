@@ -8,6 +8,7 @@ export default {
     reset: `${appUrl}/junior/reset`,
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
+    newSeason: `${appUrl}/junior/newSeason`
   },
   auth: {
     login: `${appUrl}/admin/login`

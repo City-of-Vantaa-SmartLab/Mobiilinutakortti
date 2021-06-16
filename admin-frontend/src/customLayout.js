@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, AppBar, UserMenu, MenuItemLink, Notification } from 'react-admin';
 import LockIcon from '@material-ui/icons/Lock';
 import styled from 'styled-components';
+import Menu from './menu';
 
 const CustomUserMenu = props => (
     <UserMenu {...props}>
@@ -26,6 +27,6 @@ const CustomNotification = styled(Notification)`
 
 const CustomAppBar = props => <AppBar {...props} userMenu={<CustomUserMenu />} />;
 
-const CustomLayout = props => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} />;
+const CustomLayout = props => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} menu={Menu} />;
 
 export default CustomLayout;
