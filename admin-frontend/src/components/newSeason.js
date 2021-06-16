@@ -6,12 +6,7 @@ import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
-
-const STATE = {
-  INITIAL: 'initial',
-  LOADING: 'loading',
-  DONE: 'done',
-};
+import { STATE } from '../state';
 
 const NewSeason = () => {
   const notify = useNotify();
