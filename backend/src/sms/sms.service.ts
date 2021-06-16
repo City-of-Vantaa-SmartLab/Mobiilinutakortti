@@ -42,6 +42,23 @@ export class SmsService {
         }
     }
 
+    async sendNewSeasonSMS(recipient: Recipient, expireDate: string): Promise<boolean> {
+        const settings = SMSConfig.getTeliaConfig();
+
+        const message = this.getExpiredMessage(recipient.name, expireDate);
+
+        const messageRequest = {
+            username: settings.username, password: settings.password,
+            from: settings.user, to: [recipient.phoneNumber], message,
+        } as TeliaMessageRequest;
+        const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
+        if (attemptMessage) {
+            return true;
+        } else {
+            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+        }
+    }
+
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
         this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
@@ -66,5 +83,13 @@ export class SmsService {
 
     private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
         return `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
+    }
+
+    private getExpiredMessage(recipientName: string, expiredDate: string): string {
+        return `Hei\n\nNuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}. Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}\n\nTerveisin,\nVantaan nuorisopalvelut\n`
+    }
+
+    private getSeasonPeriod(): string {
+        return `${new Date().getFullYear()} - ${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).getFullYear()}`
     }
 }

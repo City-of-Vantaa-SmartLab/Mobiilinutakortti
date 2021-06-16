@@ -3,7 +3,7 @@ import {
     Get, Param, BadRequestException, Delete, Query, Res,
 } from '@nestjs/common';
 import { JuniorService } from './junior.service';
-import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto, ParentFormDto } from './dto';
+import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto, ParentFormDto, SeasonExpiredDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AllowedRoles } from '../roles/roles.decorator';
@@ -135,15 +135,15 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.SUPERUSER)
     @Post('newSeason')
-    async createNewSeason() {
-        return new Message(await this.juniorService.createNewSeason());
+    async createNewSeason(@Body() expireDate: SeasonExpiredDto) {
+        return new Message(await this.juniorService.createNewSeason(expireDate));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.SUPERUSER)
     @Delete('newSeason/clearExpired')
     async deleteExpiredJuniors() {
         return new Message(await this.juniorService.deleteExpired());
