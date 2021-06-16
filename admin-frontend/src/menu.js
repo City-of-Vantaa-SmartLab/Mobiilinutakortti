@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import ListIcon from '@material-ui/icons/ViewList';
 import NewSeasonIcon from '@material-ui/icons/Autorenew';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 import usePermissions from './hooks/usePermissions';
 
 const MenuContainer = styled.div`
@@ -36,6 +37,11 @@ const Menu = () => {
             to="/newSeason"
             primaryText="Aloita uusi kausi"
             leftIcon={<NewSeasonIcon />}
+          />
+          <MenuItemLink
+            to="/deleteExpiredUsers"
+            primaryText="Poista vanhat käyttäjät"
+            leftIcon={<DeleteIcon />}
           />
         </React.Fragment>
       )}
