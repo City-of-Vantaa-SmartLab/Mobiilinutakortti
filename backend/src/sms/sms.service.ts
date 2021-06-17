@@ -4,6 +4,7 @@ import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
 import * as content from '../content.json';
 import { ConfigHelper } from '../configHandler';
+import moment = require('moment');
 
 @Injectable()
 export class SmsService {
@@ -20,7 +21,7 @@ export class SmsService {
         const checkRegisterJuniorCalls = new Error().stack.split("at ")[2].includes("registerJunior");
 
         if (!settings) {
-            if(checkRegisterJuniorCalls) {
+            if (checkRegisterJuniorCalls) {
                 throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
             }
             else {
@@ -86,10 +87,21 @@ export class SmsService {
     }
 
     private getExpiredMessage(recipientName: string, expiredDate: string): string {
-        return `Hei\n\nNuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}. Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}\n\nTerveisin,\nVantaan nuorisopalvelut\n`
+        return `Hei
+
+Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}. Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. Edellisen kauden QR-koodi lakkaa toimimasta ${moment(expiredDate).format('DD.MM.YYYY')}.
+
+${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}
+
+Terveisin,
+Vantaan nuorisopalvelut`
     }
 
     private getSeasonPeriod(): string {
-        return `${new Date().getFullYear()} - ${new Date(new Date().setFullYear(new Date().getFullYear() + 1)).getFullYear()}`
+        const currentYear = new Date().getFullYear()
+        const thisTimeNextYear = new Date(new Date().setFullYear(currentYear + 1))
+        const nextYear = thisTimeNextYear.getFullYear()
+
+        return `${currentYear} - ${nextYear}`
     }
 }

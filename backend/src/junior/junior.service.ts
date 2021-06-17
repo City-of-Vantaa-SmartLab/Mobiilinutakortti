@@ -258,7 +258,9 @@ export class JuniorService {
             if (!messageSent) { smsFailure.push(junior.parentsPhoneNumber) }
         }))
 
-        return `New season created. ${result.affected} juniors expired. ${smsFailure.length} sms sent unsuccessful.`;
+        const failPhoneNumber: string = smsFailure.length > 0 ? `Fail numbers are: ${smsFailure.toString()}` : ''
+
+        return `New season created. ${result.affected} juniors expired. ${smsFailure.length} sms sent unsuccessful.` +  failPhoneNumber;
     }
 
     async deleteExpired(): Promise<string> {
