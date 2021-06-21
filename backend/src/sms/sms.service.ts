@@ -87,21 +87,16 @@ export class SmsService {
     }
 
     private getExpiredMessage(recipientName: string, expiredDate: string): string {
-        return `Hei
-
-Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}. Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. Edellisen kauden QR-koodi lakkaa toimimasta ${moment(expiredDate).format('DD.MM.YYYY')}.
-
-${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}
-
-Terveisin,
-Vantaan nuorisopalvelut`
+        return "Hei\n\n"
+            + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}.`
+            + "Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot."
+            + `Edellisen kauden QR-koodi lakkaa toimimasta ${moment(expiredDate).format('DD.MM.YYYY')}.\n\n`
+            + `${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}\n\n`
+            + "Terveisin,\nVantaan Nuorisopalvelut"
     }
 
     private getSeasonPeriod(): string {
         const currentYear = new Date().getFullYear()
-        const thisTimeNextYear = new Date(new Date().setFullYear(currentYear + 1))
-        const nextYear = thisTimeNextYear.getFullYear()
-
-        return `${currentYear} - ${nextYear}`
+        return `${currentYear} - ${currentYear + 1}`
     }
 }

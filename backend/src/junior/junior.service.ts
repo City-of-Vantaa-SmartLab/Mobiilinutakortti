@@ -251,16 +251,17 @@ export class JuniorService {
 
         const listJunior = await this.juniorRepo.find();
 
-        let smsFailure: string[] = []
+        let smsFailureNumber: number = 0
 
         await Promise.all(listJunior.map(async (junior: Junior) => {
             const messageSent = await this.smsService.sendNewSeasonSMS({ name: `${junior.firstName} ${junior.lastName}`, phoneNumber: junior.parentsPhoneNumber }, expireDate.expireDate);
-            if (!messageSent) { smsFailure.push(junior.parentsPhoneNumber) }
+            if (!messageSent) {
+                smsFailureNumber++;
+                console.warn(`Failed to send SMS to ${junior.parentsPhoneNumber}`);
+            }
         }))
 
-        const failPhoneNumber: string = smsFailure.length > 0 ? `Fail numbers are: ${smsFailure.toString()}` : ''
-
-        return `New season created. ${result.affected} juniors expired. ${smsFailure.length} sms sent unsuccessful.` +  failPhoneNumber;
+        return `New season created. ${result.affected} juniors expired. ${smsFailureNumber} sms sent unsuccessful.`;
     }
 
     async deleteExpired(): Promise<string> {
