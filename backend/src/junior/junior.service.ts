@@ -10,7 +10,7 @@ import {
 import { Junior, Challenge } from './entities';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RegisterJuniorDto, EditJuniorDto } from './dto';
+import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content.json';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
@@ -246,9 +246,22 @@ export class JuniorService {
         return next;
     }
 
-    async createNewSeason(): Promise<string> {
+    async createNewSeason(expireDate: SeasonExpiredDto): Promise<string> {
         const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
-        return `New season created. ${result.affected} juniors expired`;
+
+        const listJunior = await this.juniorRepo.find();
+
+        let smsFailureNumber: number = 0
+
+        await Promise.all(listJunior.map(async (junior: Junior) => {
+            const messageSent = await this.smsService.sendNewSeasonSMS({ name: `${junior.firstName} ${junior.lastName}`, phoneNumber: junior.parentsPhoneNumber }, expireDate.expireDate);
+            if (!messageSent) {
+                smsFailureNumber++;
+                console.warn(`Failed to send SMS to ${junior.parentsPhoneNumber}`);
+            }
+        }))
+
+        return `New season created. ${result.affected} juniors expired. ${smsFailureNumber} sms sent unsuccessful.`;
     }
 
     async deleteExpired(): Promise<string> {

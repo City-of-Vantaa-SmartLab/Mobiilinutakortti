@@ -4,6 +4,7 @@ import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
 import * as content from '../content.json';
 import { ConfigHelper } from '../configHandler';
+import moment = require('moment');
 
 @Injectable()
 export class SmsService {
@@ -20,7 +21,7 @@ export class SmsService {
         const checkRegisterJuniorCalls = new Error().stack.split("at ")[2].includes("registerJunior");
 
         if (!settings) {
-            if(checkRegisterJuniorCalls) {
+            if (checkRegisterJuniorCalls) {
                 throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
             }
             else {
@@ -30,6 +31,23 @@ export class SmsService {
 
         const oneTimeLink = this.getOneTimeLink(challenge);
         const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
+        const messageRequest = {
+            username: settings.username, password: settings.password,
+            from: settings.user, to: [recipient.phoneNumber], message,
+        } as TeliaMessageRequest;
+        const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
+        if (attemptMessage) {
+            return true;
+        } else {
+            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+        }
+    }
+
+    async sendNewSeasonSMS(recipient: Recipient, expireDate: string): Promise<boolean> {
+        const settings = SMSConfig.getTeliaConfig();
+
+        const message = this.getExpiredMessage(recipient.name, expireDate);
+
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -66,5 +84,19 @@ export class SmsService {
 
     private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
         return `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
+    }
+
+    private getExpiredMessage(recipientName: string, expiredDate: string): string {
+        return "Hei\n\n"
+            + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}.`
+            + "Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot."
+            + `Edellisen kauden QR-koodi lakkaa toimimasta ${moment(expiredDate).format('DD.MM.YYYY')}.\n\n`
+            + `${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}\n\n`
+            + "Terveisin,\nVantaan Nuorisopalvelut"
+    }
+
+    private getSeasonPeriod(): string {
+        const currentYear = new Date().getFullYear()
+        return `${currentYear} - ${currentYear + 1}`
     }
 }
