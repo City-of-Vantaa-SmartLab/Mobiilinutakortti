@@ -7,24 +7,28 @@ import CardContent from '@material-ui/core/CardContent';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
+import NewSeasonModal from './newSeasonModal';
 
 const NewSeason = () => {
   const notify = useNotify();
 
   const [state, setState] = useState(STATE.INITIAL);
-  const disabled = [STATE.LOADING, STATE.DONE].includes(state);
-  const label = state === STATE.INITIAL ? 'Kyllä' : 'Odota';
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const createNewSeason = async () => {
+  const createNewSeason = async (expireDate) => {
     setState(STATE.LOADING);
     const response = await httpClientWithResponse(api.junior.newSeason, {
       method: 'POST',
+      body: JSON.stringify({
+        expireDate,
+      }),
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
       notify(response.message, 'warning');
       setState(STATE.INITIAL);
     } else {
       notify(response.message);
+      setModalVisible(false);
       setState(STATE.DONE);
     }
   };
@@ -45,16 +49,21 @@ const NewSeason = () => {
         </p>
         <p>Oletko varma, että haluat jatkaa?</p>
         <Button
-          onClick={createNewSeason}
+          onClick={() => setModalVisible(true)}
           variant="contained"
-          disabled={disabled}
           color="primary"
-          label="Kyllä"
           size="large"
         >
-          {label}
+          Kyllä
         </Button>
       </CardContent>
+      {modalVisible && (
+        <NewSeasonModal
+          onCancel={() => setModalVisible(false)}
+          onConfirm={(date) => createNewSeason(new Date(date).toISOString())}
+          loadingState={state}
+        />
+      )}
     </Card>
   );
 };
