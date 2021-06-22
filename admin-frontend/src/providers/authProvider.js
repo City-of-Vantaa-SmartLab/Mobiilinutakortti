@@ -28,6 +28,8 @@ export const authProvider = (type, params) => {
                 } else {
                     localStorage.setItem('role', 'ADMIN');
                 }
+                // Dirty hack; forces recalculation of custom routes based on user role inside App.js
+                window.location.reload();
             })
     }
     if (type === AUTH_ERROR) {
