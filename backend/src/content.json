@@ -32,5 +32,9 @@
   "PhoneNumberNotValid":"Puhelinnumero on virheellinen",
   "ParentsPhoneNumberNotValid": "Huoltajan puhelinnumero on virheellinen",
   "SecurityContextNotValid": "Käyttäjätunnistuksessa tapahtui virhe, tunnistaudu Suomi.fi:n kautta uudelleen",
-  "JuniorAccountNotConfirmedOrFound": "Käyttäjätiliä ei ole tai sitä ei ole vielä hyväksytty"
+  "JuniorAccountNotConfirmedOrFound": "Käyttäjätiliä ei ole tai sitä ei ole vielä hyväksytty",
+  "NewSeasonCreated": "Uusi kausi aloitettu",
+  "JuniorsExpired": "käyttäjää asetettu tilaan \"tunnus vanhentunut\"",
+  "FailedToSendSMS": "viestin lähetys epäonnistui",
+  "ExpiredUsersDeleted": "vanhentunutta tunnusta poistettu"
 }

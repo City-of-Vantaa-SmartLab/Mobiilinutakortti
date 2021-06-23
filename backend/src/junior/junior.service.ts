@@ -261,12 +261,13 @@ export class JuniorService {
             }
         }))
 
-        return `New season created. ${result.affected} juniors expired. ${smsFailureNumber} sms sent unsuccessful.`;
+        return `${content.NewSeasonCreated}. ${result.affected} ${content.JuniorsExpired}.`
+            + (smsFailureNumber ? ` ${smsFailureNumber} ${content.FailedToSendSMS}.` : '');
     }
 
     async deleteExpired(): Promise<string> {
         const result: DeleteResult = await this.juniorRepo.delete({ status: 'expired' })
-        return `Delete ${result.affected} expired juniors`;
+        return `${result.affected} ${content.ExpiredUsersDeleted}`;
     }
 
     /**
