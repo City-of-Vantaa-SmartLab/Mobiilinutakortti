@@ -22,9 +22,12 @@ async function bootstrap() {
     .setTitle('Nutakortti')
     .setDescription('API for Nutakortti project')
     .setVersion('1.0')
-    .addTag('Examples')
+    .addTag('Admin')
+    .addTag('Junior')
+    .addTag('Club')
+    .addTag('SSO')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' })
     .build();
-
 
   const app = httpsOptions ?
     await NestFactory.create(AppModule, { httpsOptions }) :

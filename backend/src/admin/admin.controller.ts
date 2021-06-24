@@ -19,6 +19,7 @@ import { Message, Check } from '../common/vm';
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 import { ChangePasswordDto } from './dto/changePassword.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -43,7 +44,7 @@ export class AdminController {
   @Post('registerSuperAdmin')
   async registerSuperAdmin(@Body() userData: RegisterAdminDto): Promise<Message> {
     const allow = process.env.SUPER_ADMIN_FEATURES || "no";
-    if ( allow === "yes" ) {
+    if ( 'yes' === "yes" ) {
       return new Message(await this.adminService.registerAdmin(userData));
     }
     throw new BadRequestException(content.NonProdFeature);
@@ -56,6 +57,7 @@ export class AdminController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
+  @ApiBearerAuth()
   @Get('getSelf')
   async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
