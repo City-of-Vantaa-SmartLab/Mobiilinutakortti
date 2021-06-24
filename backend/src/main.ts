@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as express from 'express';
 import { join } from 'path';
 import { ConfigHelper } from './configHandler';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
 
@@ -17,6 +18,14 @@ async function bootstrap() {
     };
   }
 
+  const config = new DocumentBuilder()
+    .setTitle('Nutakortti')
+    .setDescription('API for Nutakortti project')
+    .setVersion('1.0')
+    .addTag('Examples')
+    .build();
+
+
   const app = httpsOptions ?
     await NestFactory.create(AppModule, { httpsOptions }) :
     await NestFactory.create(AppModule);
@@ -24,6 +33,10 @@ async function bootstrap() {
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
   app.use(cookieParser());
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(process.env.APPLICATION_PORT || 3000);
 }
 bootstrap();
