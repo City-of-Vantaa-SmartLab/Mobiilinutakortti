@@ -14,7 +14,7 @@ const ParentRedirectView: React.FC<RouteComponentProps> = (props) => {
             <MainDescription>
                 <p>
                     Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan
-                    kaupungin Nuorisopalveluiden jäsenkorttia. Nutakortti uusitaan
+                    kaupungin nuorisopalveluiden jäsenkorttia. Nutakortti uusitaan
                     toimintakausittain saman lomakkeen kautta. Kirjaudu sisään pankkitunnuksilla,
                     mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot.
                     <br /><br />
