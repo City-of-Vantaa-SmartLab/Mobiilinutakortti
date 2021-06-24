@@ -22,8 +22,10 @@ import * as content from '../content.json';
 import { ListControlDto, FilterDto } from '../common/dto';
 import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
 import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller(`${content.Routes.api}/junior`)
+@ApiTags('Junior')
 export class JuniorController {
 
     constructor(
@@ -35,6 +37,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('register')
+    @ApiBearerAuth('admin')
     async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));
     }
@@ -49,6 +52,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
     @Get('getSelf')
+    @ApiBearerAuth('junior')
     async getSelf(@Junior() juniorData: any): Promise<JuniorQRViewModel> {
         return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.userId));
     }
@@ -56,6 +60,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.JUNIOR)
     @Get('login')
+    @ApiBearerAuth('junior')
     async autoLogin(): Promise<Check> {
         // This is a simple route the frontend can hit to verify a valid JWT.
         return new Check(true);
@@ -78,6 +83,7 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
+    @ApiBearerAuth('admin')
     async edit(@Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.editJunior(userData));
     }
@@ -86,6 +92,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
+    @ApiBearerAuth('admin')
     async getAllJuniors(@Query('controls') query): Promise<JuniorListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
         return await this.juniorService.listAllJuniors(controls);
@@ -95,6 +102,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('nextAvailableDummyPhoneNumber')
+    @ApiBearerAuth('admin')
     async getNextAvailableDummyPhoneNumber(): Promise<Message> {
         return new Message(await this.juniorService.getNextAvailableDummyPhoneNumber());
     }
@@ -103,6 +111,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get(':id')
+    @ApiBearerAuth('admin')
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
@@ -129,6 +138,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.ADMIN)
     @Delete(':id')
+    @ApiBearerAuth('admin')
     async deleteJunior(@Param('id') id: string) {
         return new Message(await this.juniorService.deleteJunior(id));
     }
@@ -137,6 +147,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.SUPERUSER)
     @Post('newSeason')
+    @ApiBearerAuth('super-admin')
     async createNewSeason(@Body() expireDate: SeasonExpiredDto) {
         return new Message(await this.juniorService.createNewSeason(expireDate));
     }
@@ -145,6 +156,7 @@ export class JuniorController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @AllowedRoles(Roles.SUPERUSER)
     @Delete('newSeason/clearExpired')
+    @ApiBearerAuth('super-admin')
     async deleteExpiredJuniors() {
         return new Message(await this.juniorService.deleteExpired());
     }

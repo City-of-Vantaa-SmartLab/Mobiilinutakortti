@@ -22,11 +22,9 @@ async function bootstrap() {
     .setTitle('Nutakortti')
     .setDescription('API for Nutakortti project')
     .setVersion('1.0')
-    .addTag('Admin')
-    .addTag('Junior')
-    .addTag('Club')
-    .addTag('SSO')
-    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' })
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'super-admin')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'admin')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' }, 'junior')
     .build();
 
   const app = httpsOptions ?

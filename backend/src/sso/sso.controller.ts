@@ -4,8 +4,10 @@ import {
 import { Request, Response } from 'express';
 import { SsoService } from './sso.service';
 import { Routes } from '../content.json';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller(`${Routes.api}`)
+@ApiTags('Sso')
 export class SsoController {
 
   constructor(
