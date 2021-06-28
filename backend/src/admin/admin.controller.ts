@@ -19,6 +19,7 @@ import { Message, Check } from '../common/vm';
 import { ConfigHelper } from '../configHandler';
 import * as content from '../content.json';
 import { ChangePasswordDto } from './dto/changePassword.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 /**
  * This controller contains all actions to be carried out on the '/admin' route.
@@ -27,6 +28,7 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
  * - successful POSTS return a 201.
  * - all errors return a status code and message relevant to the issue.
  */
+@ApiTags('Admin')
 @Controller(`${content.Routes.api}/admin`)
 export class AdminController {
   constructor(
@@ -57,6 +59,8 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
+  @ApiBearerAuth('super-admin')
+  @ApiBearerAuth('admin')
   async getSelf(@Admin() adminData: any): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
   }
@@ -65,6 +69,8 @@ export class AdminController {
   @AllowedRoles(Roles.ADMIN)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('refresh')
+  @ApiBearerAuth('super-admin')
+  @ApiBearerAuth('admin')
   async refreshJWT(@Admin() adminData: any): Promise<JWTToken> {
     return this.authenticationService.signToken(adminData.userId, true);
   }
@@ -77,6 +83,8 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
+  @ApiBearerAuth('super-admin')
+  @ApiBearerAuth('admin')
   async autoLogin(@Admin() adminData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
     return new Check(!(await this.adminService.isLockedOut(adminData.userId)));
@@ -104,6 +112,7 @@ export class AdminController {
   @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
+  @ApiBearerAuth('super-admin')
   async create(@Body() userData: RegisterAdminDto): Promise<Message> {
     return new Message(await this.adminService.registerAdmin(userData));
   }
@@ -119,6 +128,7 @@ export class AdminController {
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('edit')
+  @ApiBearerAuth('super-admin')
   async edit(@Body() userData: EditAdminDto): Promise<Message> {
     return new Message(await this.adminService.editAdmin(userData));
   }
@@ -127,6 +137,7 @@ export class AdminController {
   @AllowedRoles(Roles.SUPERUSER, Roles.ADMIN)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('changePassword')
+  @ApiBearerAuth('super-admin')
   async changePassword(@Admin() adminData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
     return new Message(await this.adminService.changePassword(adminData.userId, userDate));
   }
@@ -139,6 +150,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get('list')
+  @ApiBearerAuth('super-admin')
   async getAllAdmins(): Promise<AdminUserViewModel[]> {
     return await this.adminService.listAllAdmins();
   }
@@ -151,6 +163,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get(':id')
+  @ApiBearerAuth('super-admin')
   async getOneAdmin(@Param('id') id: string): Promise<AdminUserViewModel> {
     return new AdminUserViewModel(await this.adminService.getAdmin(id));
   }
@@ -163,6 +176,7 @@ export class AdminController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Delete(':id')
+  @ApiBearerAuth('super-admin')
   async deleteAdmin(@Param('id') id: string): Promise<Message> {
     return new Message(await this.adminService.deleteAdmin(id));
   }

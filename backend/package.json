@@ -29,6 +29,7 @@
     "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.6.15",
     "@nestjs/platform-socket.io": "^7.6.15",
+    "@nestjs/swagger": "^4.8.1",
     "@nestjs/typeorm": "^7.1.5",
     "@nestjs/websockets": "^7.6.15",
     "@types/saml2-js": "^1.6.8",
@@ -46,6 +47,7 @@
     "rxjs": "^6.5.5",
     "saml2-js": "^3.0.1",
     "socket.io": "^2.4.1",
+    "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
