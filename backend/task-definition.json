@@ -46,7 +46,7 @@
         },
         {
           "name": "SP_ASSERT_ENDPOINT",
-          "value":"http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api/acs"
+          "value":"https://api.mobiilinuta-admin-test.com/api/acs"
         },
         {
           "name": "SSO_LOGIN_URL",

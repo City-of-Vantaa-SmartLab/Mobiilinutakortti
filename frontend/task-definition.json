@@ -14,7 +14,7 @@
       "environment": [
         {
           "name": "REACT_APP_ENDPOINT",
-          "value": "http://youth-club-server-26453484.eu-west-1.elb.amazonaws.com/api"
+          "value": "https://api.mobiilinuta-admin-test.com/api"
         }
       ],
       "name": "youth-club-mobile-front",
