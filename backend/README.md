@@ -110,6 +110,10 @@ The environment variables are:
 Additionally, the frontend apps require this environment variable:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
 
-## Additional information
+## Swagger documentation
 
-The UML for the database is Nutakortti.vsdx. Last updated June 10th using Microsoft Visio. Remember to update the UML and last update time whenever the db structure change
+Swagger documentation endpoint located at "api/swagger". The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoint only need to mark which tag it belong to and which authentication level it have. Optional comments can be added for context.
+
+There are 3 authentication level corespond to 3 level of user: super admin, admin (normal youth worker), and junior. Each level of user get access to different endpoint.
+
+Swagger documentation does not document api response. If desire api response can be documented manually in the future.
