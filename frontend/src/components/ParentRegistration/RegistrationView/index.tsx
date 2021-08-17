@@ -99,7 +99,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
             <Confirmation>
                 <div>
                     <h2>Kiitos hakemuksestasi!</h2>
-                    <p>Soitamme sinulle, kun olemme käsitelleet hakemuksen. Tämän jälkeen lähetämme nuorelle tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun. Voit nyt
+                    <p>Kun nuoren jäsenkorttihakemus on käsitelty, hänelle lähetetään tekstiviestillä henkilökohtainen kirjautumislinkki palveluun. Voit nyt
                     <ActionLink onClick={logout}> kirjautua ulos</ActionLink> tai <ActionLink onClick={() => setSubmitted(false)}>aloittaa alusta</ActionLink> rekisteröidäksesi nutakortin toiselle lapselle.
                     </p>
                     <SuccessIcon/>
