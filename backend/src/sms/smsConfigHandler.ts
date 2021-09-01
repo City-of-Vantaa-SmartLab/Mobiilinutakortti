@@ -13,6 +13,7 @@ export class SMSConfig {
             password: process.env.TELIA_PASSWORD,
             user: process.env.TELIA_USER,
             endPoint: process.env.TELIA_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/send',
+            batchEndPoint: process.env.TELIA_BATCH_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/batchsend/json',
         } as TeliaSettings;
         return this.checkSettings(config);
     }
@@ -23,7 +24,7 @@ export class SMSConfig {
      * @returns TeliaSettings
      */
     private static checkSettings(config: TeliaSettings): TeliaSettings {
-        if (config.username && config.user && config.password && config.endPoint) {
+        if (Object.values(config).every(Boolean)) {
             return config;
         }
         return undefined;

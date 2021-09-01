@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, HttpService, Logger } from '@nestjs/common';
-import { Recipient, TeliaMessageRequest } from './models';
+import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
 import * as content from '../content.json';
@@ -43,16 +43,26 @@ export class SmsService {
         }
     }
 
-    async sendNewSeasonSMS(recipient: Recipient, expireDate: string): Promise<boolean> {
-        const settings = SMSConfig.getTeliaConfig();
+    async sendNewSeasonSMS(recipients: Recipient[], expireDate: string): Promise<boolean> {
+        const {
+            user,
+            username,
+            password,
+            batchEndPoint,
+        } = SMSConfig.getTeliaConfig();
 
-        const message = this.getExpiredMessage(recipient.name, expireDate);
+        const batch: BatchItem[] = recipients.map(recipient => ({
+            t: recipient.phoneNumber,
+            m: this.getExpiredMessage(recipient.name, expireDate),
+        }));
 
         const messageRequest = {
-            username: settings.username, password: settings.password,
-            from: settings.user, to: [recipient.phoneNumber], message,
-        } as TeliaMessageRequest;
-        const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
+            username: username,
+            password: password,
+            from: user,
+            batch,
+        } as TeliaBatchMessageRequest;
+        const attemptMessage = await this.batchSendMessagesToUsers(messageRequest, batchEndPoint);
         if (attemptMessage) {
             return true;
         } else {
@@ -60,6 +70,37 @@ export class SmsService {
         }
     }
 
+    /**
+     * Sends multiple messages in a single batch. The service withstands payloads in excess of 
+     * 100 000 individual messages per batch.
+     */
+    private async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
+        this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
+        return this.httpService.post(endpoint, messageRequest).toPromise().then(
+            response => {
+                const { batchid, batchstatuscode, batchstatusdescription } = response.data;
+                if (batchstatuscode === 1) {
+                    this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
+                    return true;
+                } else {
+                    this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
+                    return false;
+                }
+            }).catch(() => {
+                this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+                return false;
+            });
+    }
+
+    /**
+     * Send a message to one or more recipients. The maximum number of recipients inside the `to`
+     * property of the message request is 1000. Currently this is only used to send messages to
+     * single users. If this is used for sending multiple messages, the logging needs to be 
+     * changed to include all the phone numbers in the `to` property.
+     * 
+     * Use the batchSendMessagesToUsers method to send a message to more than 1000 recipients, or
+     * to send individual messages to multiple users.
+     */
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
         this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(

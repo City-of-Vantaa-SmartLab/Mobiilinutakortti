@@ -246,23 +246,18 @@ export class JuniorService {
         return next;
     }
 
-    async createNewSeason(expireDate: SeasonExpiredDto): Promise<string> {
+    async createNewSeason({ expireDate }: SeasonExpiredDto): Promise<string> {
         const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
 
-        const listJunior = await this.juniorRepo.find();
+        const juniors = await this.juniorRepo.find();
+        const recipients = juniors.map(junior => ({
+            name: `${junior.firstName} ${junior.lastName}`,
+            phoneNumber: junior.parentsPhoneNumber,
+        }));
 
-        let smsFailureNumber: number = 0
+        await this.smsService.sendNewSeasonSMS(recipients, expireDate);
 
-        await Promise.all(listJunior.map(async (junior: Junior) => {
-            const messageSent = await this.smsService.sendNewSeasonSMS({ name: `${junior.firstName} ${junior.lastName}`, phoneNumber: junior.parentsPhoneNumber }, expireDate.expireDate);
-            if (!messageSent) {
-                smsFailureNumber++;
-                console.warn(`Failed to send SMS to ${junior.parentsPhoneNumber}`);
-            }
-        }))
-
-        return `${content.NewSeasonCreated}. ${result.affected} ${content.JuniorsExpired}.`
-            + (smsFailureNumber ? ` ${smsFailureNumber} ${content.FailedToSendSMS}.` : '');
+        return `${content.NewSeasonCreated}. ${result.affected} ${content.JuniorsExpired}.`;
     }
 
     async deleteExpired(): Promise<string> {
