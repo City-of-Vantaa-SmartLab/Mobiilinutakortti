@@ -109,7 +109,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
              {error &&
              <Error>
                  <div>
-                 <p>Hups, jokin meni pieleen! Ole hyvä ja yritä uudelleen.</p>
+                 <p>Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi.</p>
                     <Button onClick={() => {
                         //cleans query string if error happened during query string parsing
                         props.history.replace('/hakemus')
