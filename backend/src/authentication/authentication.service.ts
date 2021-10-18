@@ -89,7 +89,7 @@ export class AuthenticationService {
         const now = new Date();
         const timestampValid = Number(expiryTime) > now.getTime() / 1000;
         if (!timestampValid) {
-            this.logger.warn(`Invalid timestamp: expected greater than ${now.toISOString()}, got ${new Date(Number(expiryTime)).toISOString()}`);
+            this.logger.warn(`Invalid timestamp`);
         }
 
         const unsigned = unsign(signedString || "", secretString);
