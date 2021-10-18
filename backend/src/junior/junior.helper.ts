@@ -1,4 +1,8 @@
+import { Logger } from '@nestjs/common';
 import { SecurityContextDto } from "src/authentication/dto";
+import { obfuscate } from 'src/utils/helpers';
+
+const logger = new Logger('Junior Service Helper');
 
 export function formatName(firstName: string, lastName: string, nickName: string): string {
     let formattedName = `${firstName} `;
@@ -7,5 +11,10 @@ export function formatName(firstName: string, lastName: string, nickName: string
 }
 
 export function validateParentData(parentsName: string, securityContext: SecurityContextDto): boolean {
-    return parentsName === `${securityContext.firstName} ${securityContext.lastName}`
+    const expected = `${securityContext.firstName} ${securityContext.lastName}`;
+    if (parentsName !== expected) {
+        logger.warn(`Invalid parent data: expected ${obfuscate(expected)}, got ${obfuscate(parentsName)}`)
+    }
+
+    return parentsName === expected;
 }

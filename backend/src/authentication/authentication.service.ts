@@ -8,6 +8,7 @@ import {
     UnauthorizedException
 } from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
+import { Logger } from '@nestjs/common';
 import {compare} from 'bcrypt';
 import {AdminService} from '../admin/admin.service';
 import {LoginAdminDto} from '../admin/dto';
@@ -23,6 +24,8 @@ import * as moment from 'moment';
 
 @Injectable()
 export class AuthenticationService {
+    private readonly logger = new Logger('Authentication Service');
+
     constructor(
         @Inject(forwardRef(() => AdminService))
         private readonly adminService: AdminService,
@@ -83,8 +86,22 @@ export class AuthenticationService {
 
     validateSecurityContext(@Body() securityContext: SecurityContextDto): boolean {
         const { sessionIndex, nameId, firstName, lastName, zipCode, expiryTime, signedString } = securityContext;
-        const timestampValid = Number(expiryTime) > new Date().getTime() / 1000;
-        const signatureValid = unsign(signedString || "", secretString) === `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
+        const now = new Date();
+        const timestampValid = Number(expiryTime) > now.getTime() / 1000;
+        if (!timestampValid) {
+            this.logger.warn(`Invalid timestamp: expected greater than ${now.toISOString()}, got ${new Date(Number(expiryTime)).toISOString()}`);
+        }
+
+        const unsigned = unsign(signedString || "", secretString);
+        const expected = `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
+        const signatureValid = unsigned === expected;
+        if (!unsigned) {
+            this.logger.error('Unable to decrypt signature')
+        }
+        if (!signatureValid) {
+            this.logger.error(`Signatures don't match`)
+        }
+
         return timestampValid && signatureValid;
     }
 }
