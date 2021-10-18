@@ -5,10 +5,11 @@ import {
     InternalServerErrorException,
     ForbiddenException,
     Inject,
-    forwardRef
+    forwardRef,
+    Logger
 } from '@nestjs/common';
 import { Junior, Challenge } from './entities';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content.json';
@@ -21,9 +22,11 @@ import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
+import { obfuscate } from 'src/utils/helpers';
 
 @Injectable()
 export class JuniorService {
+    private readonly logger = new Logger('Junior Service');
 
     constructor(
         @InjectRepository(Junior)
@@ -120,7 +123,8 @@ export class JuniorService {
     }
 
     async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
-        const userExists = await this.getUniqueJunior(
+        this.logger.log(`Finding junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
+        const existingJunior = await this.getUniqueJunior(
             registrationData.phoneNumber,
             registrationData.birthday,
             registrationData.firstName,
@@ -129,17 +133,20 @@ export class JuniorService {
 
         let junior: Junior
         let renew = false
-        if (userExists) {
-            if (userExists.status === "expired") {
-                // Renew junior for new season
-                junior = userExists
+        if (existingJunior) {
+            this.logger.log(`Found existing junior with ID ${existingJunior.id}, phone ${existingJunior.phoneNumber}, status ${existingJunior.status}`)
+
+            // Only allow account renewal if existing junior's status is expired
+            if (existingJunior.status === "expired") {
+                this.logger.log(`Overwriting expired junior ${existingJunior.phoneNumber} with registration form data`)
+                junior = existingJunior
                 renew = true
             } else {
-                // Try to register an old user is not valid
-                throw new ConflictException(content.JuniorAlreadyExists);
+                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired.`)
+                throw new ConflictException(content.JuniorNotExpired);
             }
         } else {
-            // Completely new junior creating
+            this.logger.log('Existing junior not found, attempting to create a new junior with registration form data')
             junior = new Junior()
         }
 
@@ -150,16 +157,29 @@ export class JuniorService {
 
         const errors = await validate(junior);
         if (errors.length > 0) {
+            this.logger.error(`Validation error: ${errors}`)
             throw new BadRequestException(errors);
         }
 
-        await this.createJunior(junior);
+        try {
+            this.logger.log(`Saving junior ${junior.phoneNumber}`);
+            await this.createJunior(junior);
+        } catch (e) {
+            this.logger.error(`Error saving junior ${junior.phoneNumber}: ${e.name}: ${e.message}`);
+            if (e instanceof QueryFailedError) {
+                throw new ConflictException(content.JuniorAlreadyExists);
+            }
+            throw e;
+        }
+
         if (junior.status === 'accepted' && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
+
+        this.logger.log('Junior saved, all OK')
         return renew ? `${registrationData.phoneNumber} ${content.Renew}` : `${registrationData.phoneNumber} ${content.Created}`;
     }
 
