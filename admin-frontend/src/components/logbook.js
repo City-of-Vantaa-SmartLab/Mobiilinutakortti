@@ -15,46 +15,26 @@ import {
 } from './styledComponents/logbook';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
-import { genderChoices } from '../utils';
 
+// Alternative labels for mapping the genders 1-to-1 to LogBook 
+const genderLabel = {
+    m: 'Poika',
+    f: 'Tyttö',
+    o: 'Ei binäärinen',
+};
+  
 let LogBookView = (props) => {
     const [clubName, setClubName] = useState('');
-    const [ages, setAges] = useState([]);
-    const [genders, setGenders] = useState([]);
+    const [data, setData] = useState([]);
     const [searchDate, setSearchDate] = useState('');
     const notify = useNotify();
 
-    const getGenderTitles = (keyValueArray) => {
-        keyValueArray.map(pair => pair.key = genderChoices.find(g => g.id === pair.key).name);
-        return keyValueArray;
-    }
-
     const resetState = () => {
         setClubName('');
-        setAges([]);
-        setGenders([]);
+        setData([]);
         setSearchDate('');
     }
-
-    const mapKeyValueToUI = (keyValueArray) => {
-        const UI = [];
-        keyValueArray.forEach(pair => {
-            UI.push(
-                <LogBookTextField
-                    key={pair.key}
-                    label={pair.key}
-                    defaultValue={pair.value}
-                    margin="normal"
-                    variant="filled"
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                />
-            );
-        });
-        return UI;
-    }
-
+    
     const getLogBookEntry = async values => {
         const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
@@ -75,8 +55,7 @@ let LogBookView = (props) => {
                     } else {
                         setSearchDate(date.toLocaleDateString());
                         setClubName(response.clubName);
-                        setGenders(mapKeyValueToUI(getGenderTitles(response.genders)));
-                        setAges(mapKeyValueToUI(response.ages));
+                        setData(response.statistics);
                     }
                 });
         }
@@ -103,14 +82,34 @@ let LogBookView = (props) => {
                 <LogBookCard>
                     <LogBookCardHeader title={clubName} subheader={searchDate} />
                     <LogBookCardContent>
-                        <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
-                        <LogBookTextFieldContainer>
-                            {genders}
-                        </LogBookTextFieldContainer>
-                        <StyledDialogTitle>Ikä</StyledDialogTitle>
-                        <LogBookTextFieldContainer>
-                            {ages}
-                        </LogBookTextFieldContainer>
+                        {data.map(({ gender, count, ageRanges }) => (
+                            <div key={`${gender} container`}>
+                                <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
+                                <LogBookTextFieldContainer>
+                                    <LogBookTextField
+                                        key={gender}
+                                        label={genderLabel[gender]}
+                                        defaultValue={count}
+                                        margin="normal"
+                                        variant="filled"
+                                        InputProps={{ readOnly: true }}
+                                    />
+                                </LogBookTextFieldContainer>
+                                <StyledDialogTitle>Ikä</StyledDialogTitle>
+                                <LogBookTextFieldContainer>
+                                    {ageRanges.map(({ ageRange, count: countByAgeRange }) => (
+                                        <LogBookTextField
+                                            key={`${gender} ${ageRange}`}
+                                            label={ageRange}
+                                            defaultValue={countByAgeRange}
+                                            margin="normal"
+                                            variant="filled"
+                                            InputProps={{ readOnly: true }}
+                                        />
+                                    ))}
+                                </LogBookTextFieldContainer>
+                            </div>
+                        ))}
                     </LogBookCardContent>
                 </LogBookCard>
             }
