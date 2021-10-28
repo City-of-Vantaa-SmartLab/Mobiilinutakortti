@@ -1,22 +1,37 @@
 export class LogBookViewModel {
-    clubName: string;
-    genders: KeyValuePair[];
-    ages: KeyValuePair[];
+  clubName: string;
+  statistics: LogBookStatistics[];
 
-    constructor(clubName: string, genders: Map<string, number>, ages: Map<string, number>) {
-        this.clubName = clubName;
-        this.genders = [];
-        this.ages = [];
-        Array.from(genders.keys()).forEach(key => {
-            this.genders.push({ key, value: genders.get(key) } as KeyValuePair);
-        });
-        Array.from(ages.keys()).forEach(key => {
-            this.ages.push({ key, value: ages.get(key) } as KeyValuePair);
-        });
-    }
+  constructor(clubName: string, byGenderAndAge: GroupedAggregate) {
+    this.clubName = clubName;
+    this.statistics = Object.entries(byGenderAndAge).map(([gender, ranges]) => {
+      const count = Array.from(ranges.values()).reduce(
+        (sum, value) => sum + value,
+      );
+      const keys = Array.from(ranges.keys());
+      const ageRanges = keys.map(ageRange => ({
+        ageRange,
+        count: ranges.get(ageRange),
+      }));
+
+      return {
+        gender,
+        count,
+        ageRanges,
+      };
+    });
+  }
 }
 
-interface KeyValuePair {
-    key: string;
-    value: number;
+interface LogBookStatistics {
+  gender: string;
+  count: number;
+  ageRanges: {
+    ageRange: string;
+    count: number;
+  }[];
+}
+
+interface GroupedAggregate {
+  [key: string]: Map<string, number>;
 }

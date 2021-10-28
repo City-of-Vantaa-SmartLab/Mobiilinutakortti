@@ -9,6 +9,7 @@ import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
 import * as clubs from './youthClubs.json';
 import { datesDifferLessThan } from '../utils/helpers';
+import { Gender } from '../utils/constants';
 
 @Injectable()
 export class ClubService {
@@ -98,20 +99,24 @@ export class ClubService {
                 uniqueJuniors.push(checkIn.junior);
             }
         });
-        const [genders, ages] = [
-            this.getGendersForLogBook(uniqueJuniors.map(j => j.gender)),
-            this.getAgesForLogBook(uniqueJuniors.map(j => new Date(j.birthday))),
-        ];
-        return new LogBookViewModel(checkIns[0].club.name, genders, ages);
-    }
 
-    private getGendersForLogBook(allJuniorGenders: string[]): Map<string, number> {
-        const genders = new Map();
-        genders.set('m', allJuniorGenders.filter(j => j === 'm').length);
-        genders.set('f', allJuniorGenders.filter(j => j === 'f').length);
-        genders.set('o', allJuniorGenders.filter(j => j === 'o').length);
-        genders.set('-', allJuniorGenders.filter(j => j === '-').length);
-        return genders;
+        // "Not disclosed" and "other" genders are combined for statistics.
+        const byGender = {
+            [Gender.Female]: [],
+            [Gender.Male]: [],
+            [Gender.Other]: [],
+        };
+        uniqueJuniors.forEach(junior => {
+            const { gender } = junior;
+            const key = gender === Gender.NotDisclosed ? Gender.Other : gender;
+            byGender[key].push(junior);
+        });
+        const byGenderAndAge = Object.entries(byGender).reduce((result, [gender, juniors]) => ({
+            ...result,
+            [gender]: this.getAgesForLogBook(juniors.map(junior => new Date(junior.birthday))),
+        }), {});
+
+        return new LogBookViewModel(checkIns[0].club.name, byGenderAndAge);
     }
 
     private getAgesForLogBook(allJuniorAges: Date[]): Map<string, number> {
