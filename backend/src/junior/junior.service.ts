@@ -68,6 +68,9 @@ export class JuniorService {
             if (property === 'name') {
                 queryParams.push(`CONCAT (user.firstName, ' ', user.lastName) ILIKE :${property}`)
                 filterValues[property] = `%${filterOptions[property]}%`
+            } else if (property === 'phoneNumber') {
+                queryParams.push(`user.phoneNumber ILIKE :${property}`)
+                filterValues[property] = `%${filterOptions[property]}%`
             } else if (property === 'parentsPhoneNumber') {
                 queryParams.push(`user.parentsPhoneNumber ILIKE :${property}`)
                 filterValues[property] = `%${filterOptions[property]}%`

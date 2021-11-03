@@ -53,8 +53,9 @@ export const JuniorList = (props) => {
 
     const JuniorFilter = (props) => (
         <Filter {...props}>
-            <TextInput label="Nimi" source="name" />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+            <TextInput label="Nimi" source="name" autoFocus />
+            <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" autoFocus />
             <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
             <SelectInput label="Tila" source="status" choices={statusChoices} />
         </Filter>
@@ -110,7 +111,7 @@ export const JuniorList = (props) => {
     }
 
     return (
-        <List title="Nuoret" pagination={<CustomPagination />} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
+        <List title="Nuoret" pagination={<CustomPagination />} debounce={1000} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
