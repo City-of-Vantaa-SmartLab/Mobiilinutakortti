@@ -54,7 +54,7 @@ export const JuniorList = (props) => {
     const JuniorFilter = (props) => (
         <Filter {...props}>
             <TextInput label="Nimi" source="name" autoFocus />
-            <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus />
+            <TextInput label="Nuoren puhelinnumero" source="phoneNumber" autoFocus />
             <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" autoFocus />
             <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
             <SelectInput label="Tila" source="status" choices={statusChoices} />
