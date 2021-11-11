@@ -16,7 +16,7 @@
   "NoNewCheckins": "Ei kirjautumisia.",
   "NotADate": "Väärä päivämäärä.",
   "JuniorAlreadyExists": "Käyttäjätili on jo luotu tällä puhelinnumerolla.",
-  "JuniorNotExpired": "Uusittava jäsenkortti ei ole vanhentunut.",
+  "JuniorNotExpiredOrPending": "Uusittava jäsenkortti ei ole tilassa \"tunnus vanhentunut\" tai \"kotisoitto tekemättä\".",
   "LockedOut": "Liian monta väärää yritystä.",
   "Reset": "Palautuslinkki lähetetty.",
   "Updated": "Päivitetty.",

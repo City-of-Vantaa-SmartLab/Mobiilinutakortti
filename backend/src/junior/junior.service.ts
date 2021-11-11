@@ -139,14 +139,14 @@ export class JuniorService {
         if (existingJunior) {
             this.logger.log(`Found existing junior with ID ${existingJunior.id}, phone ${existingJunior.phoneNumber}, status ${existingJunior.status}`)
 
-            // Only allow account renewal if existing junior's status is expired
-            if (existingJunior.status === "expired") {
-                this.logger.log(`Overwriting expired junior ${existingJunior.phoneNumber} with registration form data`)
+            // Only allow account renewal if existing junior's status is expired or pending
+            if (["expired", "pending"].includes(existingJunior.status)) {
+                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber} with registration form data`)
                 junior = existingJunior
                 renew = true
             } else {
-                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired.`)
-                throw new ConflictException(content.JuniorNotExpired);
+                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired or pending.`)
+                throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
             this.logger.log('Existing junior not found, attempting to create a new junior with registration form data')
