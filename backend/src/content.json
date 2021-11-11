@@ -37,5 +37,6 @@
   "NewSeasonCreated": "Uusi kausi aloitettu",
   "JuniorsExpired": "käyttäjää asetettu tilaan \"tunnus vanhentunut\"",
   "FailedToSendSMS": "viestin lähetys epäonnistui",
-  "ExpiredUsersDeleted": "vanhentunutta tunnusta poistettu"
+  "ExpiredUsersDeleted": "vanhentunutta tunnusta poistettu",
+  "ForbiddenToChangeExpiredStatus": "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 }
