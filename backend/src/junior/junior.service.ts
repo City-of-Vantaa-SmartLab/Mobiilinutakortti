@@ -8,6 +8,7 @@ import {
     forwardRef,
     Logger
 } from '@nestjs/common';
+import { Admin } from '../admin/entities';
 import { Junior, Challenge } from './entities';
 import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,6 +30,8 @@ export class JuniorService {
     private readonly logger = new Logger('Junior Service');
 
     constructor(
+        @InjectRepository(Admin)
+        private readonly adminRepo: Repository<Admin>,
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Challenge)
@@ -197,7 +200,7 @@ export class JuniorService {
         else throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
-    async editJunior(details: EditJuniorDto): Promise<string> {
+    async editJunior(details: EditJuniorDto, adminUserId: string): Promise<string> {
         const user = await this.juniorRepo.findOne(details.id);
         const prevStatus = user.status;
         if (!user) { throw new BadRequestException(content.UserNotFound); }
@@ -222,6 +225,14 @@ export class JuniorService {
         const errors = await validate(user);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
+        }
+        if (prevStatus === 'expired' && details.status !== prevStatus) {
+            const admin = await this.adminRepo.findOne(adminUserId);
+            if (!admin?.isSuperUser) {
+                // ForbiddenRequestException would be semantically more appropriate, but it would result in
+                // automatic logout in the frontend.
+                throw new BadRequestException(content.ForbiddenToChangeExpiredStatus)
+            }
         }
         await this.juniorRepo.save(user);
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format

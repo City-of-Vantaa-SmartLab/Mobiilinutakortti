@@ -12,6 +12,7 @@ import { RolesGuard } from '../roles/roles.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
+import { Admin } from '../admin/admin.decorator';
 import { Junior } from './junior.decorator';
 import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';
@@ -84,8 +85,8 @@ export class JuniorController {
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
     @ApiBearerAuth('admin')
-    async edit(@Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
-        return new Message(await this.juniorService.editJunior(userData));
+    async edit(@Admin() admin: { userId: string }, @Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.editJunior(userData, admin.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
