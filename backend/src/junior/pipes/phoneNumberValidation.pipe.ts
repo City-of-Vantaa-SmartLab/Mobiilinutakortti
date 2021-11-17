@@ -1,9 +1,10 @@
 import { PipeTransform, BadRequestException } from '@nestjs/common';
+import { allowedPhoneNumber } from './constants';
 import * as content from '../../content.json';
 
 // Custom pipe for handling "phoneNumber" and "parentsPhoneNumber" validation while adding/editing junior details
 export class PhoneNumberValidationPipe implements PipeTransform {
-  readonly allowedPhoneNumber = /(^(\+358|0|358)\d{6,10}$)/;
+  readonly allowedPhoneNumber = allowedPhoneNumber
 
   transform(value: any) {
     const { phoneNumber, parentsPhoneNumber, userData } = value;

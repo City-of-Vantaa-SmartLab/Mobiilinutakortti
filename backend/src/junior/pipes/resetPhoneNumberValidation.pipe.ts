@@ -1,9 +1,10 @@
 import { PipeTransform, BadRequestException } from "@nestjs/common";
+import { allowedPhoneNumber } from "./constants";
 import * as content from '../../content.json';
 
 // Custom pipe for handling "phoneNumber" validation while resending SMS
 export class ResetPhoneNumberValidationPipe implements PipeTransform {
-  readonly allowedPhoneNumber = /(^(\+358|0|358)\d{9}$)/;
+  readonly allowedPhoneNumber = allowedPhoneNumber
 
   transform(value: any) {
     const { phoneNumber } = value;
