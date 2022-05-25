@@ -23,16 +23,13 @@
 #    See the documentation for each action used below for the recommended IAM policies for this IAM user,
 #    and best practices on handling the access key credentials.
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
 
 name: Deploy to Amazon ECS
 
 jobs:
-  deploy-admin-frontend:
-    name: Deploy admin-frontend
+  build-admin-frontend:
+    name: Build admin-frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -49,7 +46,7 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
+
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -63,6 +60,19 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./admin-frontend
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+
+  deploy-admin-frontend:
+    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    name: Deploy admin-frontend
+    runs-on: ubuntu-latest
+    needs:
+      - build-admin-frontend
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -70,7 +80,7 @@ jobs:
       with:
         task-definition: admin-frontend/task-definition.json
         container-name: youth-club-admin-front
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ needs.build-admin-frontend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -79,9 +89,9 @@ jobs:
         service: youth-club-admin-front-2
         cluster: youth-club
         wait-for-service-stability: true
-        
-  deploy-mobile-frontend:
-    name: Deploy mobile-frontend
+
+  build-mobile-frontend:
+    name: Build mobile-frontend
     runs-on: ubuntu-latest
 
     steps:
@@ -98,7 +108,7 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
+
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -113,13 +123,27 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+
+  deploy-mobile-frontend:
+    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    name: Deploy mobile-frontend
+    runs-on: ubuntu-latest
+    needs:
+      - build-mobile-frontend
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: frontend/task-definition.json
         container-name: youth-club-mobile-front
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ needs.build-mobile-frontend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -128,9 +152,9 @@ jobs:
         service: youth-club-mobile-front
         cluster: youth-club
         wait-for-service-stability: true
-  
-  deploy-backend:
-    name: Deploy backend
+
+  build-backend:
+    name: Build backend
     runs-on: ubuntu-latest
 
     steps:
@@ -147,7 +171,7 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
+
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       env:
@@ -162,13 +186,27 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+
+  deploy-backend:
+    if: secrets.deploy_enabled == 'true' && github.ref == 'refs/heads/master'
+    name: Deploy backend
+    runs-on: ubuntu-latest
+    needs:
+      - build-backend
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: backend/task-definition.json
         container-name: youth-club-server
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ needs.build-backend.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
