@@ -8,7 +8,19 @@ import { authTypes, authActions } from '../../types/authTypes';
 import { AppState } from '../../reducers';
 import LoginBackground from '../loginBackground';
 import LoginForm from '../loginForm/loginForm';
-import { Container } from '../Container';
+
+export const Container = styled.div`
+    width: 100%;
+    height: 100%;
+    background: ${p => p.theme.pages.login.background};
+    overflow: scroll;
+    box-shadow: 12px 24px 100px rgba(0, 0, 0, 0.5);
+    @media (min-width: 600px) {
+        max-height: 812px
+        max-width: 480px;
+        margin: auto;
+    }
+`;
 
 const Wrapper = styled.div`
     height: 100%;

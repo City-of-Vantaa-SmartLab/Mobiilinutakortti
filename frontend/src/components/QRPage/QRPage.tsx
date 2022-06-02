@@ -4,7 +4,19 @@ import { connect } from 'react-redux';
 import { AppState } from '../../reducers';
 import Title from '../Title/Title';
 import QR from '../QR/QR';
-import { Container } from '../Container';
+
+export const Container = styled.div`
+    width: 100%;
+    height: 100%;
+    background: ${p => p.theme.pages.qr.stripe};
+    overflow: scroll;
+    box-shadow: 12px 24px 100px rgba(0, 0, 0, 0.5);
+    @media (min-width: 600px) {
+        max-height: 812px
+        max-width: 480px;
+        margin: auto;
+    }
+`;
 
 const Wrapper = styled.div`
     display: flex;
@@ -13,7 +25,7 @@ const Wrapper = styled.div`
     height: 100%;
     padding: 0 2.5rem;
     text-align: center;
-    background: linear-gradient(-15deg, white, white 55%, transparent 55%, transparent);
+    background: linear-gradient(-15deg, ${p => p.theme.pages.qr.background}, ${p => p.theme.pages.qr.background} 55%, transparent 55%, transparent);
 `;
 
 const Header = styled.section`
