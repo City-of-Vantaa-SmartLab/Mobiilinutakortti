@@ -16,7 +16,7 @@ export function* rootSaga() {
 //sagas
 
 
-function* getUserInfo(action: getUser) {
+function* getUserInfo(action: getUser): Generator<any, any, any> {
     try {
         const response = yield call(get, '/junior/getSelf', action.payload);
         yield put({ type: userTypes.GET_SELF_SUCCESS, payload: response });
@@ -27,7 +27,7 @@ function* getUserInfo(action: getUser) {
     }
 }
 
-function* authWithCachedToken(action: AuthWithCache) {
+function* authWithCachedToken(action: AuthWithCache): Generator<any, any, any> {
     try {
         const response = yield call(getCachedToken);
         if (response.token) {
@@ -38,7 +38,7 @@ function* authWithCachedToken(action: AuthWithCache) {
     } catch (error) {}
 }
 
-function* auth(action: AuthAttempt) {
+function* auth(action: AuthAttempt): Generator<any, any, any> {
     try {
         const response = yield call(post, '/junior/login', action.payload);
         yield call(saveTokenToStorage, response.access_token);
