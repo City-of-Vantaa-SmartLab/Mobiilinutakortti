@@ -113,7 +113,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                     <Button onClick={() => {
                         //cleans query string if error happened during query string parsing
                         props.history.replace('/hakemus')
-                        window.location.reload(false)
+                        window.location.reload()
                         }
                     }>Takaisin</Button>
                  </div>
