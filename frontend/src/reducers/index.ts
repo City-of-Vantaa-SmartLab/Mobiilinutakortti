@@ -7,12 +7,13 @@ import { History } from 'history';
 
 import { connectRouter } from 'connected-react-router';
 
-export default (history: History) => combineReducers({
+const defaultExp = (history: History) => combineReducers({
     router: connectRouter(history),
     auth: authReducer,
     user: userReducer
 });
 
+export default defaultExp
 
 export interface AppState {
     auth: authState,
