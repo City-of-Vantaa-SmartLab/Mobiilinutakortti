@@ -1,6 +1,6 @@
 const appUrl = process.env.REACT_APP_ENDPOINT
 
-export default {
+const apiEndpoints = {
   junior: {
     create: `${appUrl}/junior/register`,
     edit: `${appUrl}/junior/edit`,
@@ -30,3 +30,5 @@ export default {
     base: `${appUrl}/admin/`
   }
 }
+
+export default apiEndpoints
