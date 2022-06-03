@@ -33,7 +33,7 @@ export class ClubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   checkInEvent(
     @ConnectedSocket() client: Socket,
   ): WsResponse<unknown> {
-    const id = client.handshake.query.token;
+    const id = Array.isArray(client.handshake.query.token) ? client.handshake.query.token[0] : client.handshake.query.token
     this.connectedJuniors[id] = client;
     const response = new CheckInResponseViewModel(true);
     return { event: gatewayEvents.checkIn, data: response };

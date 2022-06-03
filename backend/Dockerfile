@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:16
 ENV TZ=Europe/Helsinki
 RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
