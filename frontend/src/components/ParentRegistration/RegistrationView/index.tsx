@@ -3,9 +3,11 @@ import RegistrationForm from './Form';
 import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, ActionLink } from '../StyledComponents';
 import { get, post } from '../../../apis';
 import { RouteComponentProps } from 'react-router-dom';
+import { useTranslations } from '../../translations'
 
 
 const RegistrationView: React.FC<RouteComponentProps> = (props) => {
+    const t = useTranslations()
     const [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
@@ -89,19 +91,20 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     return (
         <Wrapper>
             {!submitted && !error && auth &&
-                <LogoutButton onClick={logout}>Kirjaudu ulos</LogoutButton>
+                <LogoutButton onClick={logout}>{t.parentRegistration.logout}</LogoutButton>
             }
-            <Header>Nutakortti-hakemus</Header>
+            <Header>{t.parentRegistration.title}</Header>
             {!submitted && !error && auth &&
                 <RegistrationForm securityContext={getSecurityContext()} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
             }
             {submitted && !error && auth &&
             <Confirmation>
                 <div>
-                    <h2>Kiitos hakemuksestasi!</h2>
-                    <p>Kun nuoren jäsenkorttihakemus on käsitelty, hänelle lähetetään tekstiviestillä henkilökohtainen kirjautumislinkki palveluun. Voit nyt
-                    <ActionLink onClick={logout}> kirjautua ulos</ActionLink> tai <ActionLink onClick={() => setSubmitted(false)}>aloittaa alusta</ActionLink> rekisteröidäksesi nutakortin toiselle lapselle.
-                    </p>
+                    <h2>{t.parentRegistration.confirmation.heading}</h2>
+                    {t.parentRegistration.confirmation.message(
+                      (linkText) => <ActionLink onClick={logout}>{linkText}</ActionLink>,
+                      (linkText) => <ActionLink onClick={() => setSubmitted(false)}>{linkText}</ActionLink>
+                    )}
                     <SuccessIcon/>
                 </div>
             </Confirmation>
@@ -109,13 +112,13 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
              {error &&
              <Error>
                  <div>
-                 <p>Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (arkisin 8–16).</p>
+                 <p>{t.parentRegistration.error.message}</p>
                     <Button onClick={() => {
                         //cleans query string if error happened during query string parsing
                         props.history.replace('/hakemus')
                         window.location.reload()
                         }
-                    }>Takaisin</Button>
+                    }>{t.parentRegistration.error.back}</Button>
                  </div>
             </Error>
             }

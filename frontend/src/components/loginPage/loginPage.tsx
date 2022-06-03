@@ -8,6 +8,7 @@ import { authTypes, authActions } from '../../types/authTypes';
 import { AppState } from '../../reducers';
 import LoginBackground from '../loginBackground';
 import LoginForm from '../loginForm/loginForm';
+import { useTranslations } from '../translations';
 
 export const Container = styled.div`
     width: 100%;
@@ -84,6 +85,7 @@ interface LoginProps extends RouteComponentProps {
 }
 
 const LoginPage: React.FC<LoginProps> = (props) => {
+    const t = useTranslations()
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
 
@@ -114,7 +116,7 @@ const LoginPage: React.FC<LoginProps> = (props) => {
     const sendLink = (phoneNumber: string, error: boolean) => {
         if (error) {
             setError(true);
-            setMessage('Tarkista, että antamasi puhelinnumero on oikein');
+            setMessage(t.login.errorMessage);
         } else {
             setError(false);
             props.authLinkRequest(phoneNumber);
@@ -128,9 +130,9 @@ const LoginPage: React.FC<LoginProps> = (props) => {
         <Wrapper>
             <LoginBackground />
             <LoginWrapper>
-                <Header>Nutakortti</Header>
+                <Header>{t.login.title}</Header>
                 <Message active={message !== ''} error={error}>
-                    <ErrorMessageIcon visible={error}></ErrorMessageIcon>
+                    <ErrorMessageIcon visible={error} />
                     <MessageText>{message}</MessageText>
                 </Message>
                 <LoginForm onSubmit={sendLink} disabled={props.loggingIn} />

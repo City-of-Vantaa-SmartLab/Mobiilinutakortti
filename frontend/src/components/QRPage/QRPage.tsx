@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { AppState } from '../../reducers';
 import Title from '../Title/Title';
 import QR from '../QR/QR';
+import { useTranslations } from '../translations'
 
 export const Container = styled.div`
     width: 100%;
@@ -51,14 +52,15 @@ interface QRPageProps {
 }
 
 const QRPage: React.FC<QRPageProps> = (props) => {
+    const t = useTranslations()
     return (
         <Container>
             <Wrapper>
                 <Header>
-                    <Title title='Kirjaudu' subtitle={props.name} />
+                    <Title title={t.qrPage.login} subtitle={props.name} />
                 </Header>
                 <QR id={props.id}/>
-                <Footer>Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.</Footer>
+                <Footer>{t.qrPage.instruction}</Footer>
             </Wrapper>
         </Container>
     );
