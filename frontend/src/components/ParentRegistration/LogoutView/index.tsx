@@ -1,14 +1,16 @@
 import React from 'react';
 import { Wrapper, Header, Confirmation } from '../StyledComponents'
+import { useTranslations } from '../../translations'
 
 const LogoutView: React.FC = (props) => {
+    const t = useTranslations()
     return (
         <Wrapper>
-            <Header>Nutakortti-hakemus</Header>
+            <Header>{t.logout.title}</Header>
             <Confirmation>
                 <div>
-                    <h2>Kiitos!</h2>
-                    <p>Olet nyt kirjautunut ulos. Kiitos palvelun käytöstä!</p>
+                    <h2>{t.logout.heading}</h2>
+                    <p>{t.logout.message}</p>
                 </div>
             </Confirmation>
         </Wrapper>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { validatePhone } from '../../utils';
+import { useTranslations } from '../translations';
 
 
 const Form = styled.form`
@@ -45,8 +46,8 @@ interface LoginFormI {
 }
 
 const LoginForm: React.FC<LoginFormI> = (props) => {
+    const t = useTranslations()
     const [phone, setPhone] = useState('');
-
 
     const handleSubmit = () => {
         if (validatePhone(phone)) {
@@ -63,16 +64,16 @@ const LoginForm: React.FC<LoginFormI> = (props) => {
             e.preventDefault();
             if (phone) handleSubmit()
         }}>
-            <FormHeader>Puhelinnumerosi</FormHeader>
+            <FormHeader>{t.login.label}</FormHeader>
             <Input
                 onChange={e => {
                     setPhone(e.target.value)
                 }
                 }
                 value={phone}
-                placeholder='Ex: 05051190912'
+                placeholder={t.login.placeholder}
                 disabled={props.disabled} />
-            <Button type='submit' disabled={props.disabled}>Lähetä uusi kirjautumislinkki</Button>
+            <Button type='submit' disabled={props.disabled}>{t.login.submit}</Button>
         </Form>
     );
 }

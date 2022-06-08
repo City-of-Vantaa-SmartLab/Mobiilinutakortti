@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -14,6 +14,7 @@ import LogoutView from './ParentRegistration/LogoutView';
 import { userTypes, userActions } from '../types/userTypes';
 import { authTypes, authActions } from '../types/authTypes';
 import { AppState } from '../reducers';
+import { theme } from '../customizations'
 
 import { isIos, isInStandaloneMode } from '../utils';
 
@@ -58,16 +59,18 @@ const App: React.FC<AppProps> = (props) => {
   }
 
   return (
-    <Wrapper>
-      <Switch>
-        <Route path='/login' component={LoginPage} />
-        <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
-        <Route path='/hae' component={ParentRedirectView} />
-        <Route path='/hakemus' component={RegistrationView} />
-        <Route path='/uloskirjaus' component={LogoutView} />
-      </Switch>
-      <A2hs isVisible={showA2hs} close={onClose} />
-    </Wrapper>
+    <ThemeProvider theme={theme}>
+      <Wrapper>
+        <Switch>
+          <Route path='/login' component={LoginPage} />
+          <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
+          <Route path='/hae' component={ParentRedirectView} />
+          <Route path='/hakemus' component={RegistrationView} />
+          <Route path='/uloskirjaus' component={LogoutView} />
+        </Switch>
+        <A2hs isVisible={showA2hs} close={onClose} />
+      </Wrapper>
+    </ThemeProvider>
   );
 }
 

@@ -5,6 +5,7 @@ import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
+import { useTranslations } from '../../translations'
 
 
 export interface FormValues {
@@ -26,58 +27,66 @@ export interface FormValues {
 }
 
 const InnerForm = (props: FormikProps<FormValues>) => {
+    const t = useTranslations()
     const { handleSubmit, handleReset, touched, errors, status } = props;
     return (
             <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete={`off-random-${Math.random()}`}>
                 <Column>
                     <Fieldset>
                         <FieldTitle>Nuoren tiedot</FieldTitle>
-                        <Field name='juniorFirstName' component={InputField} title='Etunimi'/>
-                        <Field name='juniorLastName' component={InputField} title='Sukunimi'/>
-                        <Field name='juniorNickName' component={InputField} title='Kutsumanimi'/>
-                        <Field name='juniorBirthday' component={InputField} title='Syntymäaika' placeholder='pp.kk.vvvv'/>
-                        <Field name='juniorPhoneNumber' component={InputField} type='phone' title='Puhelinnumero'/>
-                        <Field name='postCode' component={InputField} title='Postinumero'/>
-                        <Field name='school' component={InputField} title='Koulun nimi'/>
-                        <Field name='class' component={InputField} title='Luokka'/>
+                        <Field name='juniorFirstName' component={InputField} title={t.parentRegistration.form.juniorFirstName} />
+                        <Field name='juniorLastName' component={InputField} title={t.parentRegistration.form.juniorLastName} />
+                        <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />
+                        <Field name='juniorBirthday' component={InputField} title={t.parentRegistration.form.juniorBirthday} placeholder={t.parentRegistration.form.juniorBirthdayPlaceholder} />
+                        <Field name='juniorPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.juniorPhoneNumber} />
+                        <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} />
+                        <Field name='school' component={InputField} title={t.parentRegistration.form.school} />
+                        <Field name='class' component={InputField} title={t.parentRegistration.form.class} />
 
                         <SelectGroup
                             error={errors.juniorGender}
                             touched={touched.juniorGender}
-                            title="Sukupuoli"
+                            title={t.parentRegistration.form.juniorGender}
                             name="juniorGender"
-                            options={[{value: 'f', label: 'Tyttö'},{value: 'm', label: 'Poika'},{value: 'o', label: 'Muu'},{value: '-', label: 'En halua määritellä'}]}
+                            options={[
+                              { value: 'f', label: t.parentRegistration.form.juniorGenderOptions.f },
+                              { value: 'm', label: t.parentRegistration.form.juniorGenderOptions.m },
+                              { value: 'o', label: t.parentRegistration.form.juniorGenderOptions.o },
+                              { value: '-', label: t.parentRegistration.form.juniorGenderOptions['-'] }
+                            ]}
                         />
 
                         <SelectGroup
                             error={errors.photoPermission}
                             touched={touched.photoPermission}
-                            title="Kuvauslupa"
+                            title={t.parentRegistration.form.photoPermission}
                             name="photoPermission"
-                            description="Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden julkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä."
-                            options={[{value: 'y', label: 'Kyllä'},{value: 'n', label: 'Ei'}]}
+                            description={t.parentRegistration.form.photoPermissionDescription}
+                            options={[
+                              { value: 'y', label: t.parentRegistration.form.photoPermissionOptions.y },
+                              { value: 'n', label: t.parentRegistration.form.photoPermissionOptions.n }
+                            ]}
                         />
 
                     </Fieldset>
                 </Column>
-
                 <Column>
                     <Fieldset>
                         <FieldTitle>Huoltajan tiedot</FieldTitle>
-                        <Field disabled name='parentFirstName' component={InputField} title='Etunimi'/>
-                        <Field disabled name='parentLastName' component={InputField} title='Sukunimi'/>
-                        <Field name='parentPhoneNumber' component={InputField} type='phone' title='Puhelinnumero'/>
+                        <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
+                        <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
+                        <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
                     </Fieldset>
 
                     <Fieldset>
-                        <FieldTitle>Kotinuorisotila</FieldTitle>
+                        <FieldTitle>{t.parentRegistration.form.youthClubHeading}</FieldTitle>
                         <Field
                             name='youthClub'
                             component={DropdownField}
-                            title='Kotinuorisotila'
+                            title={t.parentRegistration.form.youthClub}
                             options={status.clubs}
-                            defaultChoice='Valitse nuorisotila'
-                            description="Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy."
+                            defaultChoice={t.parentRegistration.form.youthClubDefault}
+                            description={t.parentRegistration.form.youthClubDescription}
                         />
                 </Fieldset>
             </Column>
@@ -86,13 +95,13 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                     {({ field } : FieldProps) => (
                         <div>
                             <Checkbox type='checkbox' checked={field.value} id={field.name} {...field} />
-                            <label htmlFor={field.name}>Hyväksyn&#160;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a></label>
+                            <label htmlFor={field.name}>{t.parentRegistration.form.termsOfUse}</label>
                         </div>
                     )}
                 </Field>
                 <ErrorMessage>{errors['termsOfUse']}</ErrorMessage>
-                <Button type="submit">Lähetä hakemus</Button>
-                <a target='_blank' rel="noopener noreferrer" href="https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja">Lue tarkemmin, kuinka käsittelemme tietojasi.</a>
+                <Button type="submit">{t.parentRegistration.form.submit}</Button>
+                {t.parentRegistration.form.termsOfUse}
             </FormFooter>
         </Form>
     )
