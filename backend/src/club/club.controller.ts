@@ -17,8 +17,6 @@ import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheck
 import { CheckInDto, LogBookDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
-import { Socket } from 'socket.io';
-import * as gatewayEvents from './gateway-events.json';
 import * as content from '../content.json';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
