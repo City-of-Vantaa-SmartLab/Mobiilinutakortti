@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import icon from '../../assets/ios-icon.png';
+import { useTranslations } from '../translations';
 
 interface A2hsProps {
    isVisible: boolean;
@@ -59,11 +60,11 @@ const Close = styled.div`
 
 
 const A2hs: React.FC<A2hsProps> = (props) => {
-
+    const t = useTranslations()
     return (
         <Wrapper visible={props.isVisible}>
             <Popup>
-            <p>Klikkaa <i></i>-kuvaketta ja valitse ”Lisää Koti-valikkoon” lisätäksesi sovelluksen</p>
+            <p>{t.addToHomescreen}</p>
             <Close onClick={props.close}>&times;</Close>
             </Popup>
         </Wrapper>

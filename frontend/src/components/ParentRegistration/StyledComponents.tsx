@@ -3,7 +3,7 @@ import styled from 'styled-components';
 // Registration view components
 
 export const Wrapper = styled.div`
-    background: linear-gradient(-10deg, transparent, transparent 55%, #0042a5 calc(55% + 1px), #0042a5);
+    background: linear-gradient(-10deg, transparent, transparent 55%, ${p => p.theme.pages.registration.stripe} calc(55% + 1px), ${p => p.theme.pages.registration.stripe});
     width: 100%;
     height: 100%;
     position: fixed;
@@ -35,7 +35,7 @@ export const Confirmation = styled.div`
 
     padding: 2em;
     & > div {
-        background: #fff;
+        background: ${p => p.theme.pages.registration.confirmationBackground};
         box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
         padding: 2em;
         & > h2 {
@@ -151,7 +151,7 @@ export const Column = styled.div`
 export const Fieldset = styled.div`
     box-sizing: border-box;
     border: 0;
-    background: white;
+    background: ${p => p.theme.pages.registration.background};
     padding: 1.5em 1.5em;
     margin: 1.5em 0 0;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
@@ -177,7 +177,7 @@ export const FormFooter = styled.div`
     width: 100%;
     padding: 2rem;
     margin-top: 1.5rem;
-    background: rgb(249, 229, 30);
+    background: ${p => p.theme.pages.registration.footerBackground};
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -217,7 +217,7 @@ export const Input = styled.input`
     box-shadow: 0;
     border-radius: 0;
     -webkit-appearance: none;
-    -moz-appearance: non
+    -moz-appearance: none;
     &:focus {
         outline: none;
     }
@@ -380,7 +380,7 @@ export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 export const MainWrapper = styled.div`
     height: 100%;
     width: 100%;
-    background: linear-gradient(-5deg, white, white 40%, #0042a5 calc(40% + 1px), #0042a5);
+    background: linear-gradient(-5deg, white, white 40%, ${p => p.theme.pages.parentRedirect.stripe2} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe2});
     padding: 0;
     display: flex;
     position: fixed;
@@ -399,11 +399,11 @@ export const Logo = styled.div`
     height: calc(100px + 8vw);
     min-height: calc(100px + 8vw);
     width: 100%;
-    background: linear-gradient(5deg, transparent, transparent 40%, #3c8fde calc(40% + 1px), #3c8fde);
+    background: linear-gradient(5deg, transparent, transparent 40%, ${p => p.theme.pages.parentRedirect.stripe1} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe1});
     position: relative;
     box-sizing: border-box;
     @media (min-width: 2015px) {
-        background: linear-gradient(3deg, transparent, transparent 40%, #3c8fde calc(40% + 1px), #3c8fde);
+        background: linear-gradient(3deg, transparent, transparent 40%, ${p => p.theme.pages.parentRedirect.stripe1} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe1});
         height: calc(100px + 6vw);
     }
     & > h2 {
@@ -440,7 +440,7 @@ export const MainHeader = styled.header`
 `;
 
 export const MainDescription = styled.div`
-    background: rgb(249, 229, 30);
+    background: ${p => p.theme.pages.parentRedirect.descriptionBackground};
     padding: 1.5em;
     font-size: 1em;
     display: flex;
