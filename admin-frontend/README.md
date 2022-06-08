@@ -6,7 +6,7 @@ Admin-frontend is build using `react-admin` (running on port 5000).
 
 ## System Requirements:
 
-- Node JS - v10
+- Node JS - v16
 
 ## Running locally
 

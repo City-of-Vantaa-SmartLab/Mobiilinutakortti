@@ -5,7 +5,7 @@ const initialState: userState = {
     name: ''
 }
 
-export default (state = initialState, action: userActions): userState => {
+const defaultExp = (state = initialState, action: userActions): userState => {
     switch (action.type) {
         case userTypes.GET_SELF_SUCCESS:
             return { ...state, id: action.payload.id, name: action.payload.name };
@@ -13,3 +13,5 @@ export default (state = initialState, action: userActions): userState => {
             return state;
     }
 }
+
+export default defaultExp

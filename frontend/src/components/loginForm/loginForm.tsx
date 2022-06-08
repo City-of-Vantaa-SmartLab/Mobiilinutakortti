@@ -40,12 +40,12 @@ const FormHeader = styled.label`
     color: white;
 `;
 
-interface LoginForm {
+interface LoginFormI {
     onSubmit: (phone: string, error: boolean) => void,
     disabled: boolean
 }
 
-const LoginForm: React.FC<LoginForm> = (props) => {
+const LoginForm: React.FC<LoginFormI> = (props) => {
     const t = useTranslations()
     const [phone, setPhone] = useState('');
 

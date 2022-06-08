@@ -9,7 +9,7 @@ const initialState: authState = {
     message: '',
 }
 
-export default (state = initialState, action: authActions): authState => {
+const defaultExp = (state = initialState, action: authActions): authState => {
     switch (action.type) {
         case authTypes.AUTH_ATTEMPT:
             return { ...state, loggingIn: true, error: false };
@@ -29,3 +29,5 @@ export default (state = initialState, action: authActions): authState => {
             return state;
     }
 }
+
+export default defaultExp
