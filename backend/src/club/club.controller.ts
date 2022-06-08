@@ -17,7 +17,6 @@ import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheck
 import { CheckInDto, LogBookDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
-import { ClubGateway } from './club.gateway';
 import { Socket } from 'socket.io';
 import * as gatewayEvents from './gateway-events.json';
 import * as content from '../content.json';
@@ -29,7 +28,6 @@ export class ClubController {
 
     constructor(
         private readonly clubService: ClubService,
-        private readonly clubGateway: ClubGateway,
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -62,11 +60,6 @@ export class ClubController {
             return new CheckInResponseViewModel(check.result, 'Duplicate check-in');
         } else {
             check = new Check((await this.clubService.checkInJunior(userData)));
-        }
-        const socket = this.clubGateway.connectedJuniors[userData.juniorId] as Socket;
-        if (socket) {
-            const response = check.result ? (await this.clubService.getClubById(userData.clubId)).name : content.CheckInFailed;
-            socket.emit(gatewayEvents.checkIn, new CheckInResponseViewModel(check.result, response));
         }
         return new CheckInResponseViewModel(check.result);
     }

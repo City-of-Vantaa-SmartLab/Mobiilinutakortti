@@ -5,7 +5,6 @@ import { Junior } from '../junior/entities';
 import { Club, CheckIn } from './entities';
 import { ClubController } from './club.controller';
 import { Admin } from '../admin/entities';
-import { ClubGateway } from './club.gateway';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -14,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
   JwtModule.register({
     secret: jwt.secret,
   })],
-  providers: [ClubService, ClubGateway],
+  providers: [ClubService],
   controllers: [ClubController],
 })
 export class ClubModule { }
