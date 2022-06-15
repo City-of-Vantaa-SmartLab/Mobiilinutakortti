@@ -380,7 +380,7 @@ export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 export const MainWrapper = styled.div`
     height: 100%;
     width: 100%;
-    background: linear-gradient(-5deg, white, white 40%, ${p => p.theme.pages.parentRedirect.stripe2} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe2});
+    background: linear-gradient(-5deg, ${p => p.theme.pages.parentRedirect.background}, ${p => p.theme.pages.parentRedirect.background} 40%, ${p => p.theme.pages.parentRedirect.stripe2} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe2});
     padding: 0;
     display: flex;
     position: fixed;
@@ -456,5 +456,4 @@ export const MainContent = styled.div`
     max-width: 800px;
     margin: 0 auto;
     padding: 0 2rem 2rem;
-
 `;
