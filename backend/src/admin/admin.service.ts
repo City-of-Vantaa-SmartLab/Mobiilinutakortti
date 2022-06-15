@@ -37,7 +37,7 @@ export class AdminService {
      * @returns Promise<Admin> - the Admin entity being searched for.
      */
     async getAdmin(id: string): Promise<Admin> {
-        return await this.adminRepo.findOne(id);
+        return await this.adminRepo.findOneBy({ id });
     }
 
     /**
@@ -45,7 +45,7 @@ export class AdminService {
      * @returns Promise<Admin> - the Admin entity being searched for.
      */
     async getAdminByEmail(email: string): Promise<Admin> {
-        return await this.adminRepo.findOne({ email });
+        return await this.adminRepo.findOneBy({ email });
     }
 
     /**
@@ -88,7 +88,7 @@ export class AdminService {
     }
 
     async changePassword(adminId: string, changePasswordDto: ChangePasswordDto): Promise<string> {
-        const user = await this.adminRepo.findOne(adminId);
+        const user = await this.adminRepo.findOneBy({ id: adminId });
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         const passwordsMatch = await compare(changePasswordDto.oldPassword, user.password);
         if (!passwordsMatch) { throw new BadRequestException(content.IncorrectPassword); }
@@ -103,7 +103,7 @@ export class AdminService {
      * @return Promise<string>  a success message.
      */
     async editAdmin(details: EditAdminDto): Promise<string> {
-        const user = await this.adminRepo.findOne(details.id);
+        const user = await this.adminRepo.findOneBy({ id: details.id });
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.email !== details.email.toLowerCase()) {
             const emailInUse = await this.getAdminByEmail(details.email);

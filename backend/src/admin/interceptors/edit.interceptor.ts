@@ -28,7 +28,7 @@ export class AdminEditInterceptor implements NestInterceptor {
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const body = request.body as EditAdminDto;
-        const userToEdit = await this.adminRepo.findOne(body.id);
+        const userToEdit = await this.adminRepo.findOneBy({ id: body.id });
         if (!userToEdit) { throw new BadRequestException(content.UserNotFound); }
         let dataChanged = false;
         body.email ? dataChanged = dataChanged || body.email.toLowerCase() !== userToEdit.email : body.email = userToEdit.email;

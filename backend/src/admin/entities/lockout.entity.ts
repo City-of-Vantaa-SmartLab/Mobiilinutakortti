@@ -1,11 +1,13 @@
-import { Entity, OneToOne, JoinColumn, Column } from 'typeorm';
+import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 import { Admin } from './admin.entity';
 import { ConfigHelper } from '../../configHandler';
 
 @Entity()
 export class Lockout {
+    @PrimaryColumn()
+    adminId: string
 
-    @OneToOne(type => Admin, { primary: true, onDelete: 'CASCADE' })
+    @OneToOne(type => Admin, { onDelete: 'CASCADE' })
     @JoinColumn()
     admin: Admin;
 
