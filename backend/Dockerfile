@@ -4,6 +4,6 @@ RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 WORKDIR /backend
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
 CMD ["npm", "run", "start:dev"]
