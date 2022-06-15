@@ -46,7 +46,7 @@ export class ClubService {
     }
 
     async getClubById(clubId: string): Promise<Club> {
-        return await this.clubRepo.findOne(clubId);
+        return await this.clubRepo.findOneBy({ id: clubId });
     }
 
     async getClubs(): Promise<ClubViewModel[]> {
@@ -65,7 +65,7 @@ export class ClubService {
     }
 
     async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
-        const club = await this.clubRepo.findOne(clubId);
+        const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
@@ -81,8 +81,8 @@ export class ClubService {
 
     async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
         const [junior, club] = await Promise.all([
-            this.juniorRepo.findOne(checkInData.juniorId),
-            this.clubRepo.findOne(checkInData.clubId),
+            this.juniorRepo.findOneBy({ id: checkInData.juniorId }),
+            this.clubRepo.findOneBy({ id: checkInData.clubId }),
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }

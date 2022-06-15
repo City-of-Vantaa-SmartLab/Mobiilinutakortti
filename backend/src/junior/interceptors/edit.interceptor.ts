@@ -15,7 +15,7 @@ export class JuniorEditInterceptor implements NestInterceptor {
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const body = request.body as EditJuniorDto;
-        const userToEdit = await this.juniorRepo.findOne(body.id);
+        const userToEdit = await this.juniorRepo.findOneBy({ id: body.id });
         if (!userToEdit) { throw new BadRequestException(content.UserNotFound); }
         let dataChanged = false;
         body.phoneNumber ? dataChanged = dataChanged || body.phoneNumber !== userToEdit.phoneNumber : body.phoneNumber = userToEdit.phoneNumber;

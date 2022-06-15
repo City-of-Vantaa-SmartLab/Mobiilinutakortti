@@ -94,11 +94,11 @@ export class JuniorService {
     }
 
     async getJunior(id: string): Promise<Junior> {
-        return await this.juniorRepo.findOne(id);
+        return await this.juniorRepo.findOneBy({ id });
     }
 
     async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior> {
-        return await this.juniorRepo.findOne({ phoneNumber });
+        return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
     async getUniqueJunior(phoneNumber: string, birthday: string, firstName: string, lastName: string): Promise<Junior> {
@@ -190,7 +190,7 @@ export class JuniorService {
     }
 
     async resetLogin(phoneNumber: string): Promise<string> {
-        const junior = await this.juniorRepo.findOne({ phoneNumber });
+        const junior = await this.juniorRepo.findOneBy({ phoneNumber });
         if (junior && junior.status === 'accepted') {
             const challenge = await this.setChallenge(phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
@@ -201,7 +201,7 @@ export class JuniorService {
     }
 
     async editJunior(details: EditJuniorDto, adminUserId: string): Promise<string> {
-        const user = await this.juniorRepo.findOne(details.id);
+        const user = await this.juniorRepo.findOneBy({ id: details.id });
         const prevStatus = user.status;
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.phoneNumber !== details.phoneNumber) {
@@ -227,7 +227,7 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         if (prevStatus === 'expired' && details.status !== prevStatus) {
-            const admin = await this.adminRepo.findOne(adminUserId);
+            const admin = await this.adminRepo.findOneBy({ id: adminUserId });
             if (!admin?.isSuperUser) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
                 // automatic logout in the frontend.
@@ -264,7 +264,7 @@ export class JuniorService {
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
-        return await this.challengeRepo.findOne({ junior });
+        return await this.challengeRepo.findOneBy({ junior });
     }
 
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
