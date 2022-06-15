@@ -7,7 +7,6 @@ import { ClubViewModel, LogBookViewModel } from './vm';
 import * as content from '../content.json';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
-import * as clubs from './youthClubs.json';
 import { datesDifferLessThan } from '../utils/helpers';
 import { Gender } from '../utils/constants';
 
@@ -23,27 +22,7 @@ export class ClubService {
         private readonly checkInRepo: Repository<CheckIn>,
         @InjectRepository(Club)
         private readonly clubRepo: Repository<Club>,
-    ) {
-        // This if statement allows tests to run correctly.
-        try {
-            this.setInitialClubs().then(() =>
-                this.logger.log('Synched youth clubs with list'),
-            );
-        } catch (e) {
-            this.logger.log('Youth clubs synching');
-        }
-    }
-
-    async setInitialClubs() {
-        const clubsInSystem = await this.clubRepo.find();
-        const missingClubs = [];
-        clubs.youthClubs.forEach(neededClub => {
-            if (clubsInSystem.findIndex(c => c.name === neededClub) < 0) {
-                missingClubs.push({ name: neededClub } as Club);
-            }
-        });
-        await this.clubRepo.save(missingClubs);
-    }
+    ) {}
 
     async getClubById(clubId: string): Promise<Club> {
         return await this.clubRepo.findOneBy({ id: clubId });
