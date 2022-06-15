@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:16.15.1
 ENV TZ=Europe/Helsinki
 RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 ADD ./backend /backend
