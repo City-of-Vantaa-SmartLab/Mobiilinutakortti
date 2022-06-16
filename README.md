@@ -19,7 +19,7 @@ More detailed documentation is found in a README in respective directories of ea
 
 - Frontend : React *(running on port 3001)*
 - Backend : NestJS *(running on port 3000)*
-- Admin-Frontend : React Admin *(running on port 5000)*
+- Admin-Frontend : React Admin *(running on port 3002)*
 - Database : PostgreSQL *(running on port 5432)*
 
 ## Running the app
@@ -29,7 +29,7 @@ To start up everything using Docker compose, **run `docker-compose up` in this d
 
 To make sure everything is working, navigate to:
 - [http://localhost:3001](http://localhost:3001) - frontend
-- [http://localhost:5000](http://localhost:5000) - admin-frontend (default port will be 3000 if running without Docker)
+- [http://localhost:3002](http://localhost:3002) - admin-frontend (default port will be 3000 if running without Docker)
 - [http://localhost:3000/api](http://localhost:3000/api) - backend
 
 If you see the webpage for frontend and admin-frontend, and "API is running" message for backend, you're good.

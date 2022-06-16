@@ -2,7 +2,7 @@
 
 The admin-frontend directory includes the admin side code for Mobiilinutakortti app.
 
-Admin-frontend is build using `react-admin` (running on port 5000).
+Admin-frontend is build using `react-admin` (running on port 3002).
 
 ## System Requirements:
 
@@ -13,8 +13,8 @@ Admin-frontend is build using `react-admin` (running on port 5000).
 1. Run `npm install` to get all admin-frontend pacakges needed
 2. Before running the admin-frontend:
     *  ../backend should running *(see ../backend/README.md on how to get backend running)*
-    * since the default port react app runs locally *(3000)* is taken by backend, you can set a new port for admin-frontend to run in package.json. `"start": " PORT=5000 react-scripts start"`
-3. Run `npm run start` - and you'll see admin-frontend running at [http://localhost:5000](http://localhost:5000)
+    * since the default port react app runs locally *(3000)* is taken by backend, you can set a new port for admin-frontend to run in package.json. `"start": " PORT=3002 react-scripts start"`
+3. Run `npm run start` - and you'll see admin-frontend running at [http://localhost:3002](http://localhost:3002)
 
 ## Creating an admin user
 

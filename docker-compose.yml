@@ -30,7 +30,7 @@ services:
       - /admin-frontend/node_modules
     command: npm run start
     ports:
-      - 5000:3000
+      - 3002:3000
     depends_on:
       - backend
 
