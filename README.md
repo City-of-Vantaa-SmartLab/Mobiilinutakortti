@@ -90,6 +90,10 @@ When deploying application to production, endpoint should initially be open, and
 
 Note that in the task-definition.json the default value is "yes". Keep this in mind if you use the task definitions for production.
 
+## Creating youth clubs
+
+Currently, there's no user interface for creating youth clubs. You can insert them directly to the database to the `clubs` table.
+
 ## Testing SMS functionality
 
 To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
