@@ -17,7 +17,7 @@
           "value": "https://api.mobiilinuta-admin-test.com/api"
         },
         {
-          "name": "ADMIN_FRONTEND_URL",
+          "name": "REACT_APP_ADMIN_FRONTEND_URL",
           "value": "https://mobiilinuta-admin-test.com/"
         }
       ],

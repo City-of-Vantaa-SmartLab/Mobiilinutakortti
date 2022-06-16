@@ -42,8 +42,8 @@ const CheckInView = (props) => {
   const logout = () => {
     sessionStorage.removeItem("initialCheckin")
 
-    if (process.env.ADMIN_FRONTEND_URL) {
-      document.location.href = process.env.ADMIN_FRONTEND_URL;
+    if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
+      document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
     } else {
       document.location.href = "/";
     }
