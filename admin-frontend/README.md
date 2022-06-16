@@ -22,5 +22,6 @@ The application needs at least one admin user to work properly. See the generic 
 
 ## Task definition / environment variables / secrets
 
-There's one environment variable:
+There are two environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
