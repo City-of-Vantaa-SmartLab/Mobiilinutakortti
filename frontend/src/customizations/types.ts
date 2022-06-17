@@ -77,23 +77,31 @@ export interface Translations {
         y: string,
         n: string,
       },
-      
+
       parentHeading: string,
       parentFirstName: string,
       parentLastName: string,
       parentPhoneNumber: string,
-      
+
       youthClubHeading: string,
       youthClub: string,
       youthClubDefault: string,
       youthClubDescription: string,
-      
+
       termsOfUse: ReactNode,
       submit: ReactNode,
       privacyPolicy: {
         title: ReactNode,
         href: string,
       }
+    },
+    errors: {
+      required: string,
+      birthdayFormat: string,
+      phoneNumberFormat: string,
+      postCodeFormat: string,
+      selectYouthClub: string,
+      acceptTermsOfUse: string,
     },
     confirmation: {
       heading: ReactNode

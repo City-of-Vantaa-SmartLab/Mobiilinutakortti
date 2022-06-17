@@ -1,12 +1,17 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean } from 'yup';
+import { string, object, boolean, Schema } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
 import { useTranslations } from '../../translations'
+import { Translations } from "../../../customizations/types";
 
+export interface Club {
+    id: number
+    name: string
+}
 
 export interface FormValues {
     juniorFirstName: string,
@@ -25,6 +30,9 @@ export interface FormValues {
     youthClub: string,
     termsOfUse: boolean
 }
+
+export type ErrorKey = keyof Translations['parentRegistration']['errors']
+
 
 const InnerForm = (props: FormikProps<FormValues>) => {
     const t = useTranslations()
@@ -99,19 +107,12 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         </div>
                     )}
                 </Field>
-                <ErrorMessage>{errors['termsOfUse']}</ErrorMessage>
+                <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
                 <Button type="submit">{t.parentRegistration.form.submit}</Button>
                 {t.parentRegistration.form.termsOfUse}
             </FormFooter>
         </Form>
     )
-}
-
-interface RegFormProps {
-    securityContext: any,
-    clubs: any[],
-    onSubmit: () => void,
-    onError: ()=> void
 }
 
 const getParsedBirthday = (value: any) => {
@@ -144,8 +145,14 @@ const submitForm = async (values: FormValues, securityContext: any) => {
         return response;
 }
 
-const RegistrationForm = withFormik<RegFormProps, FormValues>({
+interface Props {
+  securityContext: any,
+  clubs: Club[],
+  onSubmit: () => void,
+  onError: () => void
+}
 
+const RegistrationForm = withFormik<Props, FormValues>({
     mapPropsToValues: props => {
         return {
             juniorFirstName: '',
@@ -173,23 +180,23 @@ const RegistrationForm = withFormik<RegFormProps, FormValues>({
                 .sort((a,b) => a.label.localeCompare(b.label, 'fi', { sensitivity: 'base' }))
         }
     },
-    validationSchema: object().shape({
-                juniorFirstName: string().required("Täytä tiedot"),
-                juniorLastName: string().required("Täytä tiedot"),
-                juniorNickName: string(),
-                juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Anna syntymäaika muodossa pp.kk.vvvv').required('Anna syntymäaika muodossa pp.kk.vvvv'),
-                juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
-                postCode: string().length(5, 'Tarkista, että antamasi postinumero on oikein').matches(/^[0-9]*$/, 'Tarkista, että antamasi postinumero on oikein').required("Täytä tiedot"),
-                school: string().required("Täytä tiedot"),
-                class: string().required("Täytä tiedot"),
-                juniorGender: string().required("Täytä tiedot"),
-                photoPermission: string().required("Täytä tiedot"),
-                parentFirstName: string().required("Täytä tiedot"),
-                parentLastName: string().required("Täytä tiedot"),
-                parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'Tarkista, että antamasi puhelinnumero on oikein').required("Täytä tiedot"),
-                youthClub: string().required("Valitse kotinuorisotila valikosta"),
-                termsOfUse: boolean().oneOf([true], 'Hyväksy käyttöehdot jatkaaksesi').required('Hyväksy käyttöehdot jatkaaksesi')
-            }),
+    validationSchema: (): Schema<FormValues> => object().shape({
+        juniorFirstName: string().required('required'),
+        juniorLastName: string().required('required'),
+        juniorNickName: string(),
+        juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
+        juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
+        postCode: string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'),
+        school: string().required('required'),
+        class: string().required('required'),
+        juniorGender: string().required('required'),
+        photoPermission: string().required('required'),
+        parentFirstName: string().required('required'),
+        parentLastName: string().required('required'),
+        parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
+        youthClub: string().required('selectYouthClub'),
+        termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')
+    }),
     handleSubmit: (values, formikBag) => {
         submitForm(values, formikBag.props.securityContext)
             .then(formikBag.props.onSubmit)
