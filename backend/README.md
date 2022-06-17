@@ -107,8 +107,9 @@ The environment variables are:
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 
-Additionally, the frontend apps require this environment variable:
+Additionally, the frontend apps require these environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `REACT_APP_ADMIN_FRONTEND_URL`: (only for admin-frontend) URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
 
 ## Swagger documentation
 

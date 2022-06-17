@@ -10,6 +10,26 @@ services:
       - db
     ports:
       - 3000:3000
+    environment:
+      AUTH_SIGNKEY:
+      CERT_SELECTION:
+      FRONTEND_BASE_URL:
+      IDP_ENTITY_ID:
+      RDS_DB_NAME:
+      RDS_HOSTNAME:
+      RDS_PASSWORD:
+      RDS_PORT:
+      RDS_USERNAME:
+      SP_ASSERT_ENDPOINT:
+      SP_ENTITY_ID:
+      SP_PKEY:
+      SSO_LOGIN_URL:
+      SSO_LOGOUT_URL:
+      SUPER_ADMIN_FEATURES:
+      TELIA_ENDPOINT:
+      TELIA_PASSWORD:
+      TELIA_USER:
+      TELIA_USERNAME:
 
   frontend:
     build: ./frontend
@@ -21,6 +41,8 @@ services:
       - backend
     ports:
       - 3001:3000
+    environment:
+      REACT_APP_ENDPOINT:
 
   admin-frontend:
     build: ./admin-frontend
@@ -33,6 +55,9 @@ services:
       - 3002:3000
     depends_on:
       - backend
+    environment:
+      REACT_APP_ADMIN_FRONTEND_URL:
+      REACT_APP_ENDPOINT:
 
   db:
     image: postgres:11
