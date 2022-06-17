@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from '../entities';
 import { Repository } from 'typeorm';
 import { EditAdminDto } from '../dto';
-import * as content from '../../content.json';
+import * as content from '../../content';
 
 /**
  * An interceptor designed to provide accurate models when editting an admin.

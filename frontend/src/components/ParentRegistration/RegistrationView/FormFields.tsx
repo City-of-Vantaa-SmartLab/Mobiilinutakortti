@@ -1,7 +1,19 @@
 import React from 'react';
-import { FieldProps, Field } from 'formik';
+import { FieldProps, Field, FormikErrors } from 'formik';
 import { get } from 'lodash';
 import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLabel, Radio, Dropdown } from '../StyledComponents'
+import { useTranslations } from '../../translations'
+import { Translations } from '../../../customizations/types'
+import { ErrorKey, FormValues } from './Form'
+
+const getFieldError = (t: Translations, errors: FormikErrors<FormValues>, fieldName: keyof FormValues): string | undefined => {
+    const error = errors[fieldName] as ErrorKey
+    if (error) {
+        return t.parentRegistration.errors[error]
+    } else {
+        return undefined
+    }
+}
 
 
 interface InputProps {
@@ -11,7 +23,7 @@ interface InputProps {
     type?: string
 }
 
-export const InputField: React.FC<FieldProps & InputProps> = ({
+export const InputField: React.FC<FieldProps<string, FormValues> & InputProps> = ({
     field,
     title,
     placeholder,
@@ -19,6 +31,7 @@ export const InputField: React.FC<FieldProps & InputProps> = ({
     form: {touched, errors, handleBlur, setFieldValue},
     ...props
 }) => {
+    const t = useTranslations()
     const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (type === 'phone') {
             const val = e.target.value.replace(/[^\d+]/g, '');
@@ -27,13 +40,12 @@ export const InputField: React.FC<FieldProps & InputProps> = ({
         handleBlur(e)
     }
     const isTouched = get(touched, field.name);
-    const error = get(errors, field.name);
+    const error = getFieldError(t, errors, field.name as keyof FormValues);
     return (
         <div>
             <Label>{title}</Label>
             <Input placeholder={placeholder} {...field} {...props} onBlur={onBlur} />
-            {isTouched &&
-            error && <ErrorMessage>{error}</ErrorMessage>}
+            {isTouched && error && <ErrorMessage>{error}</ErrorMessage>}
         </div>
     );
 }
@@ -84,6 +96,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
     options,
     description
 }) => {
+    const t = useTranslations()
     const inputs = options.map(option => (
         <Field key={option.value} component={RadioField} name={name} data={option}/>
     ));
@@ -94,8 +107,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
             <Select>
                 {inputs}
             </Select>
-            {touched &&
-            error && <ErrorMessage>{error}</ErrorMessage>}
+            {touched && error && <ErrorMessage>{t.parentRegistration.errors[error as ErrorKey]}</ErrorMessage>}
         </div>
     )
 }
@@ -113,8 +125,9 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     form: {touched, errors, handleBlur},
     ...props
 }) => {
+    const t = useTranslations()
     const isTouched = get(touched, field.name);
-    const error = get(errors, field.name);
+    const error = getFieldError(t, errors, field.name as keyof FormValues);
     const inputs = options.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>
     ));

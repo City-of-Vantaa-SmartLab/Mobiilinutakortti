@@ -4,7 +4,7 @@ import { CheckIn, Club } from './entities';
 import { Repository } from 'typeorm';
 import { Junior } from '../junior/entities';
 import { ClubViewModel, LogBookViewModel } from './vm';
-import * as content from '../content.json';
+import * as content from '../content';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
 import { datesDifferLessThan } from '../utils/helpers';

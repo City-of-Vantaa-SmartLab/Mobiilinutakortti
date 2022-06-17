@@ -19,7 +19,7 @@ import { Challenge } from './entities';
 // Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
 // The same note is made for the earlier imported BadRequestException
 import { ConfigHelper } from '../configHandler';
-import * as content from '../content.json';
+import * as content from '../content';
 import { ListControlDto, FilterDto } from '../common/dto';
 import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
 import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';

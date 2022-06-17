@@ -6,7 +6,7 @@ import {
 import { AuthenticationService } from './authentication.service';
 import { SecurityContextDto } from './dto';
 import { ContextValidViewModel } from './vm';
-import * as content from '../content.json';
+import * as content from '../content';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller(`${content.Routes.api}/auth`)

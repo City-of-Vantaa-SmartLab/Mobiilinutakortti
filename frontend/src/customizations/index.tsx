@@ -88,17 +88,17 @@ export const translations: Translations = {
         y: 'Kyllä',
         n: 'Ei',
       },
-      
+
       parentHeading: 'Huoltajan tiedot',
       parentFirstName: 'Etunimi',
       parentLastName: 'Sukunimi',
       parentPhoneNumber: 'Puhelinnumero',
-      
+
       youthClubHeading: 'Kotinuorisotila',
       youthClub: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',
-      
+
       termsOfUse: (
         <>
           Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a>
@@ -109,6 +109,14 @@ export const translations: Translations = {
         title: 'Lue tarkemmin, kuinka käsittelemme tietojasi.',
         href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
       }
+    },
+    errors: {
+      required: 'Täytä tiedot',
+      birthdayFormat: 'Anna syntymäaika muodossa pp.kk.vvvv',
+      phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
+      postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
+      selectYouthClub: 'Valitse kotinuorisotila valikosta',
+      acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
     },
     confirmation: {
       heading: 'Kiitos hakemuksestasi!',

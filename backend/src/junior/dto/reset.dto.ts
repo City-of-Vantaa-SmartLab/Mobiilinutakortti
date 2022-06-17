@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import * as content from '../../content.json';
+import * as content from '../../content';
 
 export class ResetJuniorDto {
 

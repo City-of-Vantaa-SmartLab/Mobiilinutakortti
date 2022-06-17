@@ -2,7 +2,7 @@ import { Injectable, ConflictException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin, Lockout } from './entities';
-import * as content from '../content.json';
+import * as content from '../content';
 import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash, compare } from 'bcrypt';
 import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
@@ -84,7 +84,7 @@ export class AdminService {
             mainYouthClub: registrationData.mainYouthClub,
         } as Admin;
         await this.createAdmin(admin);
-        return `${registrationData.email} ${content.Created}`;
+        return content.Created(registrationData.email);
     }
 
     async changePassword(adminId: string, changePasswordDto: ChangePasswordDto): Promise<string> {
