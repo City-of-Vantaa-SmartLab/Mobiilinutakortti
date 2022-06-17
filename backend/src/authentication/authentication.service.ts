@@ -12,7 +12,7 @@ import { Logger } from '@nestjs/common';
 import {compare} from 'bcrypt';
 import {AdminService} from '../admin/admin.service';
 import {LoginAdminDto} from '../admin/dto';
-import * as content from '../content.json';
+import * as content from '../content';
 import {LoginJuniorDto} from '../junior/dto';
 import {JuniorService} from '../junior/junior.service';
 import {JWTToken} from './jwt.model';

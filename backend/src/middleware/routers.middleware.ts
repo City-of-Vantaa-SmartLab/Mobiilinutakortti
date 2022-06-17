@@ -1,6 +1,6 @@
 import { NestMiddleware, Injectable, HttpStatus } from '@nestjs/common';
 import { join } from 'path';
-import * as content from '../content.json';
+import * as content from '../content';
 import * as fs from 'fs';
 
 @Injectable()

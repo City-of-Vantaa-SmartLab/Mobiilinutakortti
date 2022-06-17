@@ -1,6 +1,6 @@
 import { PipeTransform, BadRequestException } from '@nestjs/common';
 import { allowedPhoneNumber } from './constants';
-import * as content from '../../content.json';
+import * as content from '../../content';
 
 // Custom pipe for handling "phoneNumber" and "parentsPhoneNumber" validation while adding/editing junior details
 export class PhoneNumberValidationPipe implements PipeTransform {

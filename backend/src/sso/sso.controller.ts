@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SsoService } from './sso.service';
-import { Routes } from '../content.json';
+import { Routes } from '../content';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller(`${Routes.api}`)

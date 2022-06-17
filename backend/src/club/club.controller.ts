@@ -17,7 +17,7 @@ import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheck
 import { CheckInDto, LogBookDto } from './dto';
 import { Check } from '../common/vm';
 import { CheckIn } from './entities';
-import * as content from '../content.json';
+import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller(`${content.Routes.api}/club`)

@@ -1,5 +1,5 @@
 import { IsNotEmpty, Length, IsDateString, IsDate } from 'class-validator';
-import * as content from '../../content.json';
+import * as content from '../../content';
 
 export class EditJuniorDto {
 

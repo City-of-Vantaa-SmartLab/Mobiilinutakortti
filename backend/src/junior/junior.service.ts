@@ -13,7 +13,7 @@ import { Junior, Challenge } from './entities';
 import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
-import * as content from '../content.json';
+import * as content from '../content';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Junior } from '../entities';
 import { Repository } from 'typeorm';
 import { EditJuniorDto } from '../dto/';
-import * as content from '../../content.json';
+import * as content from '../../content';
 
 @Injectable()
 export class JuniorEditInterceptor implements NestInterceptor {
