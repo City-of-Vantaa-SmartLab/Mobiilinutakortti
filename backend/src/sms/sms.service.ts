@@ -124,16 +124,16 @@ export class SmsService {
     }
 
     private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
-        return `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
+        return content.RegisteredSmsContent(recipientName, link, signature);
     }
 
     private getExpiredMessage(recipientName: string, expiredDate: string): string {
-        return "Hei\n\n"
-            + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${this.getSeasonPeriod()}. `
-            + "Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. "
-            + `Edellisen kauden QR-koodi lakkaa toimimasta ${moment(expiredDate).format('DD.MM.YYYY')}.\n\n`
-            + `${process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'}\n\n`
-            + "Terveisin,\nVantaan Nuorisopalvelut"
+        return content.ExpiredSmsContent(
+            recipientName,
+            this.getSeasonPeriod(),
+            moment(expiredDate).format('DD.MM.YYYY'),
+            process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'
+        )
     }
 
     private getSeasonPeriod(): string {

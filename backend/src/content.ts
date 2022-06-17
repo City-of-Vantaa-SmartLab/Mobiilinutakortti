@@ -38,3 +38,10 @@ export const JuniorsExpired = "käyttäjää asetettu tilaan \"tunnus vanhentunu
 export const FailedToSendSMS = "viestin lähetys epäonnistui"
 export const ExpiredUsersDeleted = "vanhentunutta tunnusta poistettu"
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
+export const RegisteredSmsContent = (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
+export const ExpiredSmsContent = (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
+  + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
+  + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
+  + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
+  + `${link}\n\n`
+  + "Terveisin,\nVantaan Nuorisopalvelut"
