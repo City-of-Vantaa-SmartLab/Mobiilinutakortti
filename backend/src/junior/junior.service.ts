@@ -186,7 +186,7 @@ export class JuniorService {
         }
 
         this.logger.log('Junior saved, all OK')
-        return renew ? `${registrationData.phoneNumber} ${content.Renew}` : `${registrationData.phoneNumber} ${content.Created}`;
+        return renew ? content.Renew(registrationData.phoneNumber) : content.Created(registrationData.phoneNumber);
     }
 
     async resetLogin(phoneNumber: string): Promise<string> {
@@ -291,12 +291,12 @@ export class JuniorService {
 
         await this.smsService.sendNewSeasonSMS(recipients, expireDate);
 
-        return `${content.NewSeasonCreated}. ${result.affected} ${content.JuniorsExpired}.`;
+        return content.NewSeasonCreated(result.affected);
     }
 
     async deleteExpired(): Promise<string> {
         const result: DeleteResult = await this.juniorRepo.delete({ status: 'expired' })
-        return `${result.affected} ${content.ExpiredUsersDeleted}`;
+        return content.ExpiredUsersDeleted(result.affected);
     }
 
     /**

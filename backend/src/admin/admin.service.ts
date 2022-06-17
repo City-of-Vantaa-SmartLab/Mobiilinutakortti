@@ -84,7 +84,7 @@ export class AdminService {
             mainYouthClub: registrationData.mainYouthClub,
         } as Admin;
         await this.createAdmin(admin);
-        return `${registrationData.email} ${content.Created}`;
+        return content.Created(registrationData.email);
     }
 
     async changePassword(adminId: string, changePasswordDto: ChangePasswordDto): Promise<string> {

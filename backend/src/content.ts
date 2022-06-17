@@ -1,18 +1,13 @@
 export const AdminAlreadyExists = "Käyttäjätili on jo luotu tällä sähköpostilla."
-export const NotAnAdmin = "Ainoastaan nuorisotyöntekijät voivat suorittaa pyynnön."
-export const Created = "luotu."
-export const Renew = "uudistettu"
+export const Created = (what: string) => `${what} luotu.`
+export const Renew = (what: string) => `${what} uudistettu.`
 export const ClubNotFound = "Kyseistä nuorisotilaa ei löydy."
-export const CheckInSuccess = "Tervetuloa"
-export const CheckInFailed = "Kirjautuminen epäonnistui. Yritä uudestaan."
 export const DataNotChanged = "Tietoja ei muutettu."
-export const DataIncorrect = "Annetut tiedot ovat virheelliset tai ne puuttuvat."
 export const IncorrectPassword = "Nykyinen salasana on väärä."
 export const PasswordUpdated = "Salasana päivitetty."
 export const FailedLogin = "Virheellinen käyttäjätunnus tai salasana."
 export const NonProdFeature = "This feature is not available in production."
 export const NoCheckins = "Kyseisenä päivänä ei kirjautumisia."
-export const NoNewCheckins = "Ei kirjautumisia."
 export const NotADate = "Väärä päivämäärä."
 export const JuniorAlreadyExists = "Käyttäjätili on jo luotu tällä puhelinnumerolla."
 export const JuniorNotExpiredOrPending = "Uusittava jäsenkortti ei ole tilassa \"tunnus vanhentunut\" tai \"kotisoitto tekemättä\"."
@@ -33,10 +28,8 @@ export const PhoneNumberNotValid = "Puhelinnumero on virheellinen"
 export const ParentsPhoneNumberNotValid = "Huoltajan puhelinnumero on virheellinen"
 export const SecurityContextNotValid = "Käyttäjätunnistuksessa tapahtui virhe, tunnistaudu Suomi.fi:n kautta uudelleen"
 export const JuniorAccountNotConfirmedOrFound = "Käyttäjätiliä ei ole tai sitä ei ole vielä hyväksytty"
-export const NewSeasonCreated = "Uusi kausi aloitettu"
-export const JuniorsExpired = "käyttäjää asetettu tilaan \"tunnus vanhentunut\""
-export const FailedToSendSMS = "viestin lähetys epäonnistui"
-export const ExpiredUsersDeleted = "vanhentunutta tunnusta poistettu"
+export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${count} käyttäjää asetettu tilaan "tunnus vanhentunut"`
+export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
 export const ExpiredSmsContent = (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
