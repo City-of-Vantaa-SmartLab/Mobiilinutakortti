@@ -25,7 +25,7 @@ More detailed documentation is found in a README in respective directories of ea
 ## Running the app
 
 Each subproject may be run individually, with or without docker - see README.md files of the projects.
-To start up everything using Docker compose, **run `docker-compose up` in this directory**.
+To start up everything using Docker compose, **run `docker-compose -f docker-compose.yml.local up` in this directory**.
 
 To make sure everything is working, navigate to:
 - [http://localhost:3001](http://localhost:3001) - frontend
@@ -157,15 +157,13 @@ You shouldn't need to update images or services manually, since Github does that
 
 ### Production environment
 
-Application runs in Elastic Beanstalk and is deployed via command-line manually. The name is **Vantaa-Youth-PWA-prod**. See next section for updating the production environment using EB CLI tools.
+Application runs in Elastic Beanstalk in a single container (using Dockerfile) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
 * [Api](https://nutakortti.vantaa.fi/api)
 
-Production logs are found in AWS CloudWatch in the Frankfurt (eu-central-1) region under `/aws/elasticbeanstalk/Vantaa-Youth-PWA-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
-
-NOTE: **The production database** (AWS RDS) is attached to the Elastic Beanstalk environment, so it depends on the lifecycle of the Beanstalk environment (which is not optimal for production environment but that's how it is).
+Production logs are found in AWS CloudWatch under `/aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
 
 ### Updating the production environment using EB CLI tools
 
@@ -180,9 +178,9 @@ Configure the EB CLI:
 1. Go to project directory root (where this file is). Type: `eb init`.
 2. Select `eu-central-1` as the location (unless something's been changed).
 3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/config`.
-4. Select the `Vantaa-Youth-PWA` as application. Don't continue with CodeCommit (defaults to N).
-5. Ensure the environment is set up by typing `eb list`. You should see **Vantaa-Youth-PWA-prod**.
+4. Select the `Nutakortti` as application. Don't continue with CodeCommit (defaults to N).
+5. Ensure the environment is set up by typing `eb list`. You should see **nutakortti-vantaa-prod**.
 
 **Deploy a new version to production:**
-* While in the project root directory, type: `eb deploy Vantaa-Youth-PWA-prod`
+* While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
 * To see how things are progressing, type: `eb events -f`

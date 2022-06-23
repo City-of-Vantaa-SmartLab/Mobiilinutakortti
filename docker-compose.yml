@@ -1,25 +1,26 @@
-version: "3"
+version: '3.3'
+
 services:
-  backend:
-    build: ./backend
-    command: npm run start:dev
-    volumes:
-      - ./backend/src:/backend/src
-      - /backend/node_modules
-    depends_on:
-      - db
+  nutakortti:
     ports:
       - 3000:3000
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: nutakortti/latest
     environment:
       AUTH_SIGNKEY:
       CERT_SELECTION:
       FRONTEND_BASE_URL:
       IDP_ENTITY_ID:
+      NODE_ENV: production
       RDS_DB_NAME:
       RDS_HOSTNAME:
       RDS_PASSWORD:
       RDS_PORT:
       RDS_USERNAME:
+      REACT_APP_ADMIN_FRONTEND_URL:
+      REACT_APP_ENDPOINT:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:
@@ -30,44 +31,3 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
-
-  frontend:
-    build: ./frontend
-    command: npm run start
-    volumes:
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
-    links:
-      - backend
-    ports:
-      - 3001:3000
-    environment:
-      REACT_APP_ENDPOINT:
-
-  admin-frontend:
-    build: ./admin-frontend
-    volumes:
-      - ./admin-frontend/src:/admin-frontend/src
-      - ./admin-frontend/public:/admin-frontend/public
-      - /admin-frontend/node_modules
-    command: npm run start
-    ports:
-      - 3002:3000
-    depends_on:
-      - backend
-    environment:
-      REACT_APP_ADMIN_FRONTEND_URL:
-      REACT_APP_ENDPOINT:
-
-  db:
-    image: postgres:11
-    ports:
-      - 5432:5432
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: nuta
-volumes:
-  db-data:
