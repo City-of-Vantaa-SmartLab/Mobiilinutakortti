@@ -65,7 +65,13 @@ export class ClubService {
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        const checkIn = { junior, club, checkInTime: new Date().toLocaleString() } as CheckIn;
+        const d = new Date();
+        // checkInTime format: YYYY-MM-DD HH:MM:SS+TZ
+        const checkIn = { junior, club, checkInTime:
+          d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2)
+          + " " + ("0"+d.getHours()).slice(-2) + ":" + ("0"+d.getMinutes()).slice(-2) + ":" + ("0"+d.getSeconds()).slice(-2)
+          + "+" + ("0"+d.getTimezoneOffset()/-60).slice(-2)
+        } as CheckIn;
         await this.checkInRepo.save(checkIn);
         return true;
     }
