@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
 import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, ActionLink } from '../StyledComponents';
 import { get, post } from '../../../apis';
-import { RouteComponentProps } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslations } from '../../translations'
 
 
-const RegistrationView: React.FC<RouteComponentProps> = (props) => {
+const RegistrationView: React.FC = () => {
+    const location = useLocation()
+    const navigate = useNavigate()
     const t = useTranslations()
     const [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
@@ -14,7 +16,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
     const [auth, setAuth] = useState(false);
 
     const queryToSecurityContext = () => {
-        const query = new URLSearchParams(props.location.search);
+        const query = new URLSearchParams(location.search);
         const sc_encoded = query.get('sc');
         if (sc_encoded) {
             let b64str = sc_encoded.replace(/-/g, '+').replace(/_/g, '/');
@@ -30,7 +32,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
             sessionStorage.setItem('sc', sc);
-            props.history.replace('/hakemus')
+            navigate('/hakemus', { replace: true })
         }
     }
 
@@ -115,7 +117,7 @@ const RegistrationView: React.FC<RouteComponentProps> = (props) => {
                  <p>{t.parentRegistration.error.message}</p>
                     <Button onClick={() => {
                         //cleans query string if error happened during query string parsing
-                        props.history.replace('/hakemus')
+                        navigate('/hakemus', { replace: true })
                         window.location.reload()
                         }
                     }>{t.parentRegistration.error.back}</Button>

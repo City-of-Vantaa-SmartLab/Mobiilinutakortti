@@ -4,8 +4,6 @@ import { authTypes, AuthAttempt, LinkRequest, AuthWithCache } from '../types/aut
 import { userTypes, getUser } from '../types/userTypes';
 import { saveTokenToStorage, cacheToken, messages } from '../utils';
 
-import { push } from 'connected-react-router';
-
 export function* rootSaga() {
     yield takeLatest(authTypes.AUTH_ATTEMPT, auth);
     yield takeLatest(authTypes.AUTH_LINK_REQUEST, requestLink);
@@ -23,7 +21,7 @@ function* getUserInfo(action: getUser): Generator<any, any, any> {
     } catch (error) {
         localStorage.removeItem('token');
         yield put({ type: authTypes.LOGOUT });
-        yield put(push('/login'));
+        window.location.href = '/login'
     }
 }
 

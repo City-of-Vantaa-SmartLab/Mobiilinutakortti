@@ -1,6 +1,5 @@
 import { createStore, Store, applyMiddleware, compose } from 'redux';
 import { createBrowserHistory } from 'history';
-import { routerMiddleware } from 'connected-react-router'
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { AppState } from '../reducers';
 import { rootSaga } from '../actions/authActions';
@@ -19,18 +18,11 @@ const persistedState = {
 }
 
 export function configureStore(): Store<AppState> {
-
-
     const sagaMiddleware = createSagaMiddleware();
     const store = createStore(
-        rootReducer(history),
+        rootReducer(),
         persistedState,
-        compose(
-            applyMiddleware(
-                routerMiddleware(history),
-                sagaMiddleware
-            )
-        )
+        compose(applyMiddleware(sagaMiddleware))
     );
 
     sagaMiddleware.run(rootSaga);

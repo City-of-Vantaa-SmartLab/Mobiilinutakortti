@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -9,7 +9,6 @@ import QRPage from './QRPage/QRPage';
 import A2hs from './A2hs';
 import ParentRedirectView from './ParentRegistration/MainView';
 import RegistrationView from './ParentRegistration/RegistrationView';
-import ProtectedRoute from './ProtectedRoute';
 import LogoutView from './ParentRegistration/LogoutView';
 import { userTypes, userActions } from '../types/userTypes';
 import { authTypes, authActions } from '../types/authTypes';
@@ -31,19 +30,19 @@ interface AppProps {
   token: string
 }
 
-const App: React.FC<AppProps> = (props) => {
+const App: React.FC<AppProps> = ({ getUser, authWithCache, loggedIn, token }) => {
   const [showA2hs, setShowA2hs] = useState(false);
 
   useEffect(() => {
-    if (props.loggedIn) {
-      props.getUser(props.token)
+    if (loggedIn) {
+      getUser(token)
     }
-  }, [props.loggedIn, props.token]);
+  }, [loggedIn, token]);
 
   //if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
   useEffect(() => {
-    if (!props.loggedIn) {
-      props.authWithCache()
+    if (!loggedIn) {
+      authWithCache()
     }
   }, []);
 
@@ -61,18 +60,31 @@ const App: React.FC<AppProps> = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <Wrapper>
-        <Switch>
-          <Route path='/login' component={LoginPage} />
-          <ProtectedRoute exact path='/' auth={props.loggedIn} component={QRPage} />
-          <Route path='/hae' component={ParentRedirectView} />
-          <Route path='/hakemus' component={RegistrationView} />
-          <Route path='/uloskirjaus' component={LogoutView} />
-        </Switch>
+        <Routes>
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/' element={<LoginRequired loggedIn={loggedIn}><QRPage /></LoginRequired>} />
+          <Route path='/hae' element={<ParentRedirectView />} />
+          <Route path='/hakemus' element={<RegistrationView />} />
+          <Route path='/uloskirjaus' element={<LogoutView />} />
+         </Routes>
         <A2hs isVisible={showA2hs} close={onClose} />
       </Wrapper>
     </ThemeProvider>
   );
 }
+
+const LoginRequired = React.memo(function LoginRequired({
+  loggedIn,
+  children,
+}: {
+  loggedIn: boolean
+  children: JSX.Element
+}) {
+  if (!loggedIn) {
+    return <Navigate to="/login" />
+  }
+  return children
+})
 
 const mapStateToProps = (state: AppState) => ({
   loggedIn: state.auth.loggedIn,
