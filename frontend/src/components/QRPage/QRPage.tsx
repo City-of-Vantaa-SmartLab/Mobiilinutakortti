@@ -5,6 +5,7 @@ import { AppState } from '../../reducers';
 import Title from '../Title/Title';
 import QR from '../QR/QR';
 import { useTranslations } from '../translations'
+import LanguageSelect from '../LanguageSelect'
 
 export const Container = styled.div`
     width: 100%;
@@ -33,8 +34,7 @@ const Header = styled.section`
     text-align: center;
     width: 100%;
     color: #f9e51e;
-    margin-top: 2.5rem;
-    height: 100%;
+    margin: 5rem 0;
     & > p {
         font-size: 7vw;
         margin: 0;
@@ -56,6 +56,7 @@ const QRPage: React.FC<QRPageProps> = (props) => {
     return (
         <Container>
             <Wrapper>
+                <LanguageSelect />
                 <Header>
                     <Title title={t.qrPage.login} subtitle={props.name} />
                 </Header>

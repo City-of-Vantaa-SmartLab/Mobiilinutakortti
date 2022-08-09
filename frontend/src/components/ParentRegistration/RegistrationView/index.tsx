@@ -4,6 +4,7 @@ import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton
 import { get, post } from '../../../apis';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslations } from '../../translations'
+import LanguageSelect from '../../LanguageSelect'
 
 
 const RegistrationView: React.FC = () => {
@@ -95,6 +96,7 @@ const RegistrationView: React.FC = () => {
             {!submitted && !error && auth &&
                 <LogoutButton onClick={logout}>{t.parentRegistration.logout}</LogoutButton>
             }
+            <LanguageSelect />
             <Header>{t.parentRegistration.title}</Header>
             {!submitted && !error && auth &&
                 <RegistrationForm securityContext={getSecurityContext()} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>

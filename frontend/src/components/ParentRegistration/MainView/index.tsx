@@ -1,13 +1,15 @@
 import React from 'react';
 import { Button, MainWrapper, MainContent, MainHeader, MainDescription, Logo } from '../StyledComponents';
 import { useTranslations } from '../../translations'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import LanguageSelect from '../../LanguageSelect'
 
 const ParentRedirectView: React.FC = () => {
     const navigate = useNavigate()
     const t = useTranslations()
     return (
     <MainWrapper>
+        <LanguageSelect />
         <Logo><h2>Vantaa</h2></Logo>
         <MainContent>
             <MainHeader>
@@ -23,6 +25,7 @@ const ParentRedirectView: React.FC = () => {
             </MainDescription>
         </MainContent>
     </MainWrapper>
-)}
+    )
+}
 
 export default ParentRedirectView;

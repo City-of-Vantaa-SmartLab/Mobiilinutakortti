@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
@@ -10,12 +8,13 @@ import A2hs from './A2hs';
 import ParentRedirectView from './ParentRegistration/MainView';
 import RegistrationView from './ParentRegistration/RegistrationView';
 import LogoutView from './ParentRegistration/LogoutView';
-import { userTypes, userActions } from '../types/userTypes';
-import { authTypes, authActions } from '../types/authTypes';
-import { AppState } from '../reducers';
+import { userTypes } from '../types/userTypes'
+import { authTypes } from '../types/authTypes'
 import { theme } from '../customizations'
 
 import { isIos, isInStandaloneMode } from '../utils';
+import { useTranslationsLoaded } from './translations'
+import {useAppDispatch, useAppSelector} from "../store/getStore"
 
 const Wrapper = styled.section`
   height: 100%;
@@ -23,27 +22,39 @@ const Wrapper = styled.section`
 `;
 
 
-interface AppProps {
-  getUser: (token: string) => void,
-  authWithCache: () => void,
-  loggedIn: boolean,
-  token: string
-}
+export default function App() {
+  const loggedIn = useAppSelector(state => state.auth.loggedIn)
+  const token = useAppSelector(state => state.auth.token)
+  const dispatch = useAppDispatch()
 
-const App: React.FC<AppProps> = ({ getUser, authWithCache, loggedIn, token }) => {
+  const getUser = useCallback((token: string) => {
+    dispatch({
+      type: userTypes.GET_USER,
+      payload: token
+    })
+  }, [dispatch])
+
+  const authWithCache = useCallback(() => {
+    dispatch({
+      type: authTypes.AUTH_WITH_CACHE
+    })
+  }, [dispatch])
+
   const [showA2hs, setShowA2hs] = useState(false);
+  const translationsLoaded = useTranslationsLoaded()
 
   useEffect(() => {
     if (loggedIn) {
       getUser(token)
     }
-  }, [loggedIn, token]);
+  }, [getUser, loggedIn, token]);
 
   //if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
   useEffect(() => {
     if (!loggedIn) {
       authWithCache()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //check if ios and open in a browser
@@ -60,54 +71,27 @@ const App: React.FC<AppProps> = ({ getUser, authWithCache, loggedIn, token }) =>
   return (
     <ThemeProvider theme={theme}>
       <Wrapper>
-        <Routes>
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/' element={<LoginRequired loggedIn={loggedIn}><QRPage /></LoginRequired>} />
-          <Route path='/hae' element={<ParentRedirectView />} />
-          <Route path='/hakemus' element={<RegistrationView />} />
-          <Route path='/uloskirjaus' element={<LogoutView />} />
-         </Routes>
-        <A2hs isVisible={showA2hs} close={onClose} />
+        {translationsLoaded ? (
+          <>
+            <Routes>
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/' element={<LoginRequired><QRPage /></LoginRequired>} />
+              <Route path='/hae' element={<ParentRedirectView />} />
+              <Route path='/hakemus' element={<RegistrationView />} />
+              <Route path='/uloskirjaus' element={<LogoutView />} />
+            </Routes>
+            <A2hs isVisible={showA2hs} close={onClose} />
+          </>
+        ) : null}
       </Wrapper>
     </ThemeProvider>
   );
 }
 
-const LoginRequired = React.memo(function LoginRequired({
-  loggedIn,
-  children,
-}: {
-  loggedIn: boolean
-  children: JSX.Element
-}) {
+const LoginRequired = React.memo(function LoginRequired({ children, }: { children: JSX.Element }) {
+  const loggedIn = useAppSelector(state => state.auth.loggedIn)
   if (!loggedIn) {
     return <Navigate to="/login" />
   }
   return children
 })
-
-const mapStateToProps = (state: AppState) => ({
-  loggedIn: state.auth.loggedIn,
-  token: state.auth.token
-});
-
-
-
-const mapDispatchToProps = (dispatch: Dispatch<userActions | authActions>) => {
-  return {
-    getUser: (token: string) => {
-      dispatch({
-        type: userTypes.GET_USER,
-        payload: token
-      })
-    },
-    authWithCache: () => {
-      dispatch({
-        type: authTypes.AUTH_WITH_CACHE
-      })
-    },
-  }
-};
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);

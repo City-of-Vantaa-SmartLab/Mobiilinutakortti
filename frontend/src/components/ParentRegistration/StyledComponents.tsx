@@ -118,8 +118,7 @@ export const Button = styled.button`
 `;
 
 export const LogoutButton = styled(Button)`
-    float: right;
-    margin: 1em 1em 0 0;
+    margin: 1em;
 `;
 
 //Form components

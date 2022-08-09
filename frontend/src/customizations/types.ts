@@ -1,4 +1,6 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
+
+export type Language = 'fi' | 'sv' | 'en'
 
 export interface Theme {
   pages: {

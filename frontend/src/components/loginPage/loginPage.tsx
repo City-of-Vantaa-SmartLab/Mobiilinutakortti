@@ -9,6 +9,7 @@ import { AppState } from '../../reducers';
 import LoginBackground from '../loginBackground';
 import LoginForm from '../loginForm/loginForm';
 import { useTranslations } from '../translations';
+import LanguageSelect from '../LanguageSelect'
 
 export const Container = styled.div`
     width: 100%;
@@ -131,6 +132,7 @@ const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, aut
         <Container>
         <Wrapper>
             <LoginBackground />
+            <LanguageSelect />
             <LoginWrapper>
                 <Header>{t.login.title}</Header>
                 <Message active={message !== ''} error={error}>

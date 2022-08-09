@@ -4,7 +4,7 @@ import { authTypes, AuthAttempt, LinkRequest, AuthWithCache } from '../types/aut
 import { userTypes, getUser } from '../types/userTypes';
 import { saveTokenToStorage, cacheToken, messages } from '../utils';
 
-export function* rootSaga() {
+export function* authSaga() {
     yield takeLatest(authTypes.AUTH_ATTEMPT, auth);
     yield takeLatest(authTypes.AUTH_LINK_REQUEST, requestLink);
     yield takeLatest(userTypes.GET_USER, getUserInfo);
@@ -12,7 +12,6 @@ export function* rootSaga() {
 }
 
 //sagas
-
 
 function* getUserInfo(action: getUser): Generator<any, any, any> {
     try {
