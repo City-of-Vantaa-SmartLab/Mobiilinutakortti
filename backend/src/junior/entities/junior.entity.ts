@@ -47,6 +47,9 @@ export class Junior {
     @Column()
     homeYouthClub: string;
 
+    @Column({ default: 'fi' })
+    communicationsLanguage: string;
+
     @Column()
     status: string;
 

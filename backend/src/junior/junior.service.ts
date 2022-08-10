@@ -218,6 +218,7 @@ export class JuniorService {
         user.class = details.class;
         user.postCode = details.postCode;
         user.homeYouthClub = details.homeYouthClub;
+        user.communicationsLanguage = details.communicationsLanguage;
         user.gender = details.gender;
         user.nickName = details.nickName;
         user.status = details.status;

@@ -17,6 +17,7 @@ export class JuniorUserViewModel {
     birthday: string;
     creationDate: string;
     homeYouthClub: string;
+    communicationsLanguage: string;
     status: string;
     photoPermission: boolean;
 
@@ -33,6 +34,7 @@ export class JuniorUserViewModel {
         this.parentsPhoneNumber = entity.parentsPhoneNumber;
         this.gender = entity.gender;
         this.homeYouthClub = entity.homeYouthClub;
+        this.communicationsLanguage = entity.communicationsLanguage;
         this.birthday = entity.birthday;
         this.displayName = formatName(entity.firstName, entity.lastName, entity.nickName);
         this.creationDate = entity.creationDate;

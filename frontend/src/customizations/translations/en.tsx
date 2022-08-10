@@ -69,9 +69,12 @@ export const translations: Translations = {
       parentPhoneNumber: 'Puhelinnumero',
 
       youthClubHeading: 'Kotinuorisotila',
-      youthClub: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',
+
+      communicationsLanguage: 'Kommunikaatiokieli',
+      communicationsLanguageDefault: 'Valitse kieli',
+      communicationsLanguageDescription: 'Kieli, jota järjestelmä käytettää viestinnässä nuoren kanssa (esim. tekstiviestit)',
 
       termsOfUse: (
         <>
@@ -90,6 +93,7 @@ export const translations: Translations = {
       phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
       postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
       selectYouthClub: 'Valitse kotinuorisotila valikosta',
+      selectLanguage: 'Valitse kieli valikosta',
       acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
     },
     confirmation: {
@@ -110,5 +114,10 @@ export const translations: Translations = {
   qrPage: {
     login: 'Kirjaudu',
     instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
+  },
+  languages: {
+    fi: 'suomi',
+    sv: 'ruotsi',
+    en: 'englanti'
   }
 }

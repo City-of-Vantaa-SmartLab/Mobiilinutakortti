@@ -1,12 +1,13 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean, Schema } from 'yup';
+import { string, object, boolean, Schema, mixed } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
 import { useTranslations } from '../../translations'
-import { Translations } from "../../../customizations/types";
+import { Language, Translations } from "../../../customizations/types";
+import { languages } from '../../../customizations'
 
 export interface Club {
     id: number
@@ -24,6 +25,7 @@ export interface FormValues {
     photoPermission: string,
     school: string,
     class: string,
+    communicationsLanguage: string
     parentFirstName: string,
     parentLastName: string,
     parentPhoneNumber: string,
@@ -91,29 +93,41 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field
                             name='youthClub'
                             component={DropdownField}
-                            title={t.parentRegistration.form.youthClub}
+                            title={t.parentRegistration.form.youthClubHeading}
                             options={status.clubs}
                             defaultChoice={t.parentRegistration.form.youthClubDefault}
                             description={t.parentRegistration.form.youthClubDescription}
                         />
-                </Fieldset>
-            </Column>
-            <FormFooter>
-                <Field name='termsOfUse'>
-                    {({ field } : FieldProps) => (
-                        <div>
+                    </Fieldset>
+
+                    <Fieldset>
+                        <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
+                        <Field
+                            name='communicationsLanguage'
+                            component={DropdownField}
+                            title={t.parentRegistration.form.communicationsLanguage}
+                            options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
+                            defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
+                            description={t.parentRegistration.form.communicationsLanguageDescription}
+                        />
+                    </Fieldset>
+                </Column>
+                <FormFooter>
+                    <Field name='termsOfUse'>
+                        {({ field }: FieldProps) => (
+                          <div>
                             <Checkbox type='checkbox' checked={field.value} id={field.name} {...field} />
                             <label htmlFor={field.name}>{t.parentRegistration.form.termsOfUse}</label>
-                        </div>
-                    )}
-                </Field>
-                <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
-                <Button type="submit">{t.parentRegistration.form.submit}</Button>
-                <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
-                    {t.parentRegistration.form.privacyPolicy.title}
-                </a>
-            </FormFooter>
-        </Form>
+                          </div>
+                        )}
+                    </Field>
+                    <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
+                    <Button type="submit">{t.parentRegistration.form.submit}</Button>
+                    <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
+                        {t.parentRegistration.form.privacyPolicy.title}
+                    </a>
+                </FormFooter>
+            </Form>
     )
 }
 
@@ -133,6 +147,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             gender: values.juniorGender,
             school: values.school,
             class: values.class,
+            communicationsLanguage: values.communicationsLanguage,
             birthday: getParsedBirthday(values.juniorBirthday),
             homeYouthClub: values.youthClub,
             postCode: values.postCode,
@@ -143,8 +158,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
         },
         securityContext: securityContext
     };
-        const response = await post('/junior/parent-register', data);
-        return response;
+    return await post('/junior/parent-register', data);
 }
 
 interface Props {
@@ -167,6 +181,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
             photoPermission: '',
             school: '',
             class: '',
+            communicationsLanguage: '',
             parentFirstName: props.securityContext.firstName,
             parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
@@ -197,6 +212,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
         youthClub: string().required('selectYouthClub'),
+        communicationsLanguage: string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')
     }),
     handleSubmit: (values, formikBag) => {
