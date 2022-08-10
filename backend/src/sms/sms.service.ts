@@ -30,7 +30,7 @@ export class SmsService {
         }
 
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
+        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -53,7 +53,7 @@ export class SmsService {
 
         const batch: BatchItem[] = recipients.map(recipient => ({
             t: recipient.phoneNumber,
-            m: this.getExpiredMessage(recipient.name, expireDate),
+            m: this.getExpiredMessage(recipient.lang, recipient.name, expireDate),
         }));
 
         const messageRequest = {
@@ -123,12 +123,12 @@ export class SmsService {
         return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(recipientName: string, systemName: string, link: string, signature: string) {
-        return content.RegisteredSmsContent(recipientName, link, signature);
+    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string, signature: string) {
+        return content.RegisteredSmsContent[lang](recipientName, link, signature);
     }
 
-    private getExpiredMessage(recipientName: string, expiredDate: string): string {
-        return content.ExpiredSmsContent(
+    private getExpiredMessage(lang: content.Language, recipientName: string, expiredDate: string): string {
+        return content.ExpiredSmsContent[lang](
             recipientName,
             this.getSeasonPeriod(),
             moment(expiredDate).format('DD.MM.YYYY'),

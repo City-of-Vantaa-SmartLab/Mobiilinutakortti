@@ -1,3 +1,5 @@
+export type Language = 'fi' | 'sv' | 'en'
+
 export const AdminAlreadyExists = "Käyttäjätili on jo luotu tällä sähköpostilla."
 export const Created = (what: string) => `${what} luotu.`
 export const Renew = (what: string) => `${what} uudistettu.`
@@ -31,10 +33,28 @@ export const JuniorAccountNotConfirmedOrFound = "Käyttäjätiliä ei ole tai si
 export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${count} käyttäjää asetettu tilaan "tunnus vanhentunut"`
 export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
-export const RegisteredSmsContent = (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`;
-export const ExpiredSmsContent = (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
-  + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
-  + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
-  + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
-  + `${link}\n\n`
-  + "Terveisin,\nVantaan Nuorisopalvelut"
+export const RegisteredSmsContent = {
+  fi: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
+  sv: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
+  en: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
+}
+export const ExpiredSmsContent = {
+  fi: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
+    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
+    + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
+    + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
+    + `${link}\n\n`
+    + 'Terveisin,\nVantaan Nuorisopalvelut',
+  sv: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
+    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
+    + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
+    + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
+    + `${link}\n\n`
+    + 'Terveisin,\nVantaan Nuorisopalvelut',
+  en: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
+    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
+    + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
+    + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
+    + `${link}\n\n`
+    + 'Terveisin,\nVantaan Nuorisopalvelut',
+}
