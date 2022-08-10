@@ -80,7 +80,7 @@ interface LoginProps {
     authLinkRequest: (phone: string) => void,
 
     authError: boolean,
-    authMessage: string,
+    authMessage: 'authFail' | 'linkRequestSuccess' | 'linkRequestFail' | null,
     loggingIn: boolean,
     loggedIn: boolean
 }
@@ -103,11 +103,15 @@ const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, aut
     }, [location.search, auth]);
 
     useEffect(() => {
-        if ((authError || authMessage) && !error) {
+        if ((authError || authMessage !== null) && !error) {
             setError(authError);
-            setMessage(authMessage);
+            if (authMessage !== null) {
+              setMessage(t.login.authMessages[authMessage]);
+            } else {
+              setMessage('')
+            }
         }
-    }, [authError, authMessage, error]);
+    }, [authError, authMessage, error, t.login.authMessages]);
 
     useEffect(() => {
         if (loggedIn) {

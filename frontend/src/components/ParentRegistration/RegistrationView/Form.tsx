@@ -43,7 +43,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
             <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete={`off-random-${Math.random()}`}>
                 <Column>
                     <Fieldset>
-                        <FieldTitle>Nuoren tiedot</FieldTitle>
+                        <FieldTitle>{t.parentRegistration.form.juniorHeading}</FieldTitle>
                         <Field name='juniorFirstName' component={InputField} title={t.parentRegistration.form.juniorFirstName} />
                         <Field name='juniorLastName' component={InputField} title={t.parentRegistration.form.juniorLastName} />
                         <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />
@@ -82,7 +82,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                 </Column>
                 <Column>
                     <Fieldset>
-                        <FieldTitle>Huoltajan tiedot</FieldTitle>
+                        <FieldTitle>{t.parentRegistration.form.parentHeading}</FieldTitle>
                         <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />

@@ -2,7 +2,7 @@ import { takeLatest, call, put } from 'redux-saga/effects';
 import { post, get, getCachedToken } from '../apis';
 import { authTypes, AuthAttempt, LinkRequest, AuthWithCache } from '../types/authTypes';
 import { userTypes, getUser } from '../types/userTypes';
-import { saveTokenToStorage, cacheToken, messages } from '../utils';
+import { saveTokenToStorage, cacheToken } from '../utils';
 
 export function* authSaga() {
     yield takeLatest(authTypes.AUTH_ATTEMPT, auth);
@@ -43,15 +43,15 @@ function* auth(action: AuthAttempt): Generator<any, any, any> {
         yield put({ type: authTypes.AUTH_SUCCESS, payload: response.access_token });
         yield put({ type: userTypes.GET_USER, payload: response.access_token });
     } catch (error) {
-        yield put({ type: authTypes.AUTH_FAIL, payload: messages.authFail });
+        yield put({ type: authTypes.AUTH_FAIL });
     }
 }
 
 function* requestLink(action: LinkRequest) {
     try {
         yield call(post, '/junior/reset', action.payload);
-        yield put({ type: authTypes.LINK_REQUEST_SUCCESS, payload: messages.linkRequestSuccess });
+        yield put({ type: authTypes.LINK_REQUEST_SUCCESS });
     } catch (error) {
-        yield put({ type: authTypes.LINK_REQUEST_FAIL, payload: messages.linkRequestFail });
+        yield put({ type: authTypes.LINK_REQUEST_FAIL });
     }
 }

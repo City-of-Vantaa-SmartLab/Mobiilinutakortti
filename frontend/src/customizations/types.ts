@@ -36,6 +36,11 @@ export interface Translations {
     placeholder: string
     submit: ReactNode
     errorMessage: string
+    authMessages: {
+      authFail: string
+      linkRequestSuccess: string
+      linkRequestFail: string
+    }
   }
   logout: {
     title: ReactNode

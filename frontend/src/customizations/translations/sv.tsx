@@ -9,6 +9,11 @@ export const translations: Translations = {
     placeholder: 'Ex: 05051190912',
     submit: 'Lähetä uusi kirjautumislinkki',
     errorMessage: 'Tarkista, että antamasi puhelinnumero on oikein',
+    authMessages: {
+      authFail: "Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin",
+      linkRequestSuccess: "Uusi linkki lähetettiin syöttämääsi numeroon",
+      linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen",
+    }
   },
   logout: {
     title: 'Nutakortti-hakemus',
