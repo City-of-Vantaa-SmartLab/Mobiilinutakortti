@@ -20,7 +20,6 @@ export const UserNotFound = "Käyttäjää ei löydy."
 export const MessengerServiceNotAvailable = "Tekstiviestipalvelu on tilapäisesti pois käytöstä."
 export const SMSNotAvailableButUserCreated = "SMS palvelu ei ole väliaikaisesti saatavilla, mutta käyttäjä on luotu."
 export const SMSSender = "VantaaNuta"
-export const SMSSignature = "Vantaan nuorisopalvelut"
 export const Deleted = "Käyttäjä poistettu."
 export const Routes = {
     api: "/api",
@@ -34,9 +33,9 @@ export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${coun
 export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
-  fi: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
-  sv: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
-  en: (recipientName: string, link: string, signature: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla ${link}  - ${signature}`,
+  fi: (recipientName: string, link: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}  - Vantaan nuorisopalvelut`,
+  sv: (recipientName: string, link: string) => `Hej ${recipientName}! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link}  - Vanda ungdomstjänster`,
+  en: (recipientName: string, link: string) => `Hi ${recipientName}! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link}  - Vantaa youth services`,
 }
 export const ExpiredSmsContent = {
   fi: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
@@ -45,16 +44,16 @@ export const ExpiredSmsContent = {
     + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
     + `${link}\n\n`
     + 'Terveisin,\nVantaan Nuorisopalvelut',
-  sv: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
-    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
-    + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
-    + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
+  sv: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hej\n\n'
+     + `Nutakortet för barnet ${recipientName} väntar på förnyelse för säsongen ${period}. `
+     + 'Genom att klicka på länken nedan kan du förnya barnets ansökan och uppdatera kontaktinformationen. '
+     + `QR-koden för föregående säsong slutar fungera vid ${expiredDate}.\n\n`
+     + `${link}\n\n`
+     + 'Bästa hälsningar,\nVanda ungdomstjänster',
+  en: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hi\n\n'
+    + `The Nuta card of child ${recipientName} awaits renewal for season ${period}. `
+    + 'By clicking the link below you can renew the child\'s application and update the contact information. '
+    + `The QR code for the previous season stops working at ${expiredDate}.\n\n`
     + `${link}\n\n`
-    + 'Terveisin,\nVantaan Nuorisopalvelut',
-  en: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
-    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
-    + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
-    + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
-    + `${link}\n\n`
-    + 'Terveisin,\nVantaan Nuorisopalvelut',
+    + 'Best regards,\nVantaa youth services',
 }

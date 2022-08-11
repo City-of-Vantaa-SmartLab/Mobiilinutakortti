@@ -30,7 +30,7 @@ export class SmsService {
         }
 
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink, content.SMSSignature);
+        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -123,8 +123,8 @@ export class SmsService {
         return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string, signature: string) {
-        return content.RegisteredSmsContent[lang](recipientName, link, signature);
+    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string) {
+        return content.RegisteredSmsContent[lang](recipientName, link);
     }
 
     private getExpiredMessage(lang: content.Language, recipientName: string, expiredDate: string): string {

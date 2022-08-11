@@ -2,127 +2,128 @@ import React from 'react'
 import { Translations } from '../types'
 
 export const translations: Translations = {
-  addToHomescreen: <>Klikkaa <i/>-kuvaketta ja valitse ”Lisää Koti-valikkoon” lisätäksesi sovelluksen</>,
+  addToHomescreen: <>Click the <i/> icon and choose ”Add to home screen” to add the app</>,
   login: {
-    title: 'Nutakortti',
-    label: 'Puhelinnumerosi',
+    title: 'Nuta card',
+    label: 'Your phone number',
     placeholder: 'Ex: 05051190912',
-    submit: 'Lähetä uusi kirjautumislinkki',
-    errorMessage: 'Tarkista, että antamasi puhelinnumero on oikein',
+    submit: 'Send a new login link',
+    errorMessage: 'Check that the the phone number is valid',
     authMessages: {
-      authFail: "Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin",
-      linkRequestSuccess: "Uusi linkki lähetettiin syöttämääsi numeroon",
-      linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen",
+      authFail: 'Login failed. Enter your phone number to get a new login link',
+      linkRequestSuccess: 'A new link was sent to the number you entered',
+      linkRequestFail: 'Link sending failed, please try again',
     }
   },
   logout: {
-    title: 'Nutakortti-hakemus',
-    heading: 'Kiitos!',
-    message: 'Olet nyt kirjautunut ulos. Kiitos palvelun käytöstä!'
+    title: 'Nuta card application',
+    heading: 'Thank you!',
+    message: 'You have now logged out. Thanks for using the service!'
   },
   parentRedirect: {
-    title: 'Nutakortin hakeminen',
-    ingress: 'Nutakortti on maksuton mobiililaitteella toimiva Vantaan nuorisotilojen jäsenkortti, jonka avulla nuori kirjautuu sisään nuorisotilaan.',
+    title: 'Applying for a Nuta card',
+    ingress: 'The Nuta card is a free membership card for Vantaa youth clubs that works in mobile devices. Your child uses it to sign in to the youth club.',
     description: (
       <p>
-        Tällä lomakkeella voit huoltajana hakea lapsellesi tai nuorellesi Vantaan
-        kaupungin nuorisopalveluiden jäsenkorttia. Nutakortti uusitaan
-        toimintakausittain saman lomakkeen kautta. Kirjaudu sisään pankkitunnuksilla,
-        mobiilivarmenteella tai sirullisella henkilökortilla ja täytä pyydetyt tiedot.
+        With this form you can apply for a membeship card of the youth services of the city of Vantaa member for your
+        child or teenager.
+        The card is renewed using the same form for every activity term.
+        Log in with online banking codes, mobile certificate, or identity card and fill the requested information.
         <br/><br/>
-        Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle
-        tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.
+        When the application has been received, we'll call you and send the child a personal login link to the service
+        via SMS.
       </p>
     ),
-    submit: 'Täytä hakemus',
+    submit: 'Fill the application',
     privacyPolicy: {
-      title: 'Tietosuojaseloste',
+      title: 'Privacy policy',
       href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja'
     }
   },
   parentRegistration: {
-    logout: 'Kirjaudu ulos',
-    title: 'Nutakortti-hakemus',
+    logout: 'Log out',
+    title: 'Nuta card application',
     form: {
-      juniorHeading: 'Nuoren tiedot',
-      juniorFirstName: 'Etunimi',
-      juniorLastName: 'Sukunimi',
-      juniorNickName: 'Kutsumanimi',
-      juniorBirthday: 'Syntymäaika',
-      juniorBirthdayPlaceholder: 'pp.kk.vvvv',
-      juniorPhoneNumber: 'Puhelinnumero',
-      postCode: 'Postinumero',
-      school: 'Koulun nimi',
-      class: 'Luokka',
-      juniorGender: 'Sukupuoli',
+      juniorHeading: 'Child\'s information',
+      juniorFirstName: 'First name',
+      juniorLastName: 'Last name',
+      juniorNickName: 'Nickname',
+      juniorBirthday: 'Date of birth',
+      juniorBirthdayPlaceholder: 'dd.mm.yyyy',
+      juniorPhoneNumber: 'Phone number',
+      postCode: 'Postal code',
+      school: 'Name of school',
+      class: 'Class',
+      juniorGender: 'Gender',
       juniorGenderOptions: {
-        f: 'Tyttö',
-        m: 'Poika',
-        o: 'Muu',
-        '-': 'En halua määritellä',
+        f: 'Girl',
+        m: 'Boy',
+        o: 'Other',
+        '-': 'I don\'t want to specify',
       },
-      photoPermission: 'Kuvauslupa',
-      photoPermissionDescription: 'Valokuvaamme ja videoimme ajoittain toimintaamme ja nuoria viestintää varten. Kuvia voidaan käyttää Nuorisopalveluiden julkaisuissa (esim. sosiaalisessa mediassa, nettisivuilla ja esitteissä). \nLapseni kuvaa saa käyttää lapsen asuinkaupungin viestinnässä.',
+      photoPermission: 'Photographing permit',
+      photoPermissionDescription: 'We take photographs and videos of our activities from time to time for public communications. Pictures can be used in the publications of the youth service (e.g. in social media, web pages and brochures). \nThe picture of my child can be used in public communications of their home city.',
       photoPermissionOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
+        y: 'Yes',
+        n: 'No',
       },
 
-      parentHeading: 'Huoltajan tiedot',
-      parentFirstName: 'Etunimi',
-      parentLastName: 'Sukunimi',
-      parentPhoneNumber: 'Puhelinnumero',
+      parentHeading: 'Guardian\'s information',
+      parentFirstName: 'First name',
+      parentLastName: 'Last name',
+      parentPhoneNumber: 'Phone number',
 
-      youthClubHeading: 'Kotinuorisotila',
-      youthClubDefault: 'Valitse nuorisotila',
-      youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',
+      youthClubHeading: 'Home youth club',
+      youthClubDefault: 'Choose youth club',
+      youthClubDescription: 'Choose the youth club your child usually visits.',
 
-      communicationsLanguage: 'Kommunikaatiokieli',
-      communicationsLanguageDefault: 'Valitse kieli',
-      communicationsLanguageDescription: 'Kieli, jota järjestelmä käytettää viestinnässä nuoren kanssa (esim. tekstiviestit)',
+      communicationsLanguage: 'Communications language',
+      communicationsLanguageDefault: 'Choose language',
+      communicationsLanguageDescription: 'Language which the system uses for messages sent to the child (e.g. SMS messages)',
 
       termsOfUse: (
         <>
-          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a>
+          I agree to&nbsp;<a target='_blank' rel="noopener noreferrer"
+          href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>the
+          terms of use</a>
         </>
       ),
-      submit: 'Lähetä hakemus',
+      submit: 'Send application',
       privacyPolicy: {
-        title: 'Lue tarkemmin, kuinka käsittelemme tietojasi.',
+        title: 'Read how we handle your personal data.',
         href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
       }
     },
     errors: {
-      required: 'Täytä tiedot',
-      birthdayFormat: 'Anna syntymäaika muodossa pp.kk.vvvv',
-      phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
-      postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
-      selectYouthClub: 'Valitse kotinuorisotila valikosta',
-      selectLanguage: 'Valitse kieli valikosta',
-      acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
+      required: 'Fill the information',
+      birthdayFormat: 'Enter the date of birth in format dd.mm.yyyy',
+      phoneNumberFormat: 'Check that the phone number you entered is correct',
+      postCodeFormat: 'Check that the postal code you entered is correct',
+      selectYouthClub: 'Choose a youth club from the menu',
+      selectLanguage: 'Choose a language from the menu',
+      acceptTermsOfUse: 'Accept the terms to continue',
     },
     confirmation: {
-      heading: 'Kiitos hakemuksestasi!',
+      heading: 'Thank you for the application',
       message: (logoutLink, startOverLink) => (
-        <p>Kun nuoren jäsenkorttihakemus on käsitelty, hänelle lähetetään tekstiviestillä henkilökohtainen
-          kirjautumislinkki palveluun. Voit nyt
-          {logoutLink('kirjautua ulos')} tai {startOverLink('aloittaa alusta')} rekisteröidäksesi nutakortin toiselle
-          lapselle.
+        <p>When the child's membership card application has been processed, he or she will be sent a personal log in
+          link via SMS. You can now {logoutLink('log out')} or {startOverLink('start over')} to apply for a card for
+          another child.
         </p>
       )
     },
     error: {
-      message: 'Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (arkisin 8–16).',
-      back: 'Takaisin',
+      message: 'Something went wrong. If the error recurs often, contact your nearest youth club or the Nuta card contact person, tel. +358 400 662739 (Mon-Fri 8-16).',
+      back: 'Back',
     }
   },
   qrPage: {
-    login: 'Kirjaudu',
-    instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
+    login: 'Login',
+    instruction: 'Show QR code to a reader when entering the youth club.',
   },
   languages: {
-    fi: 'suomi',
-    sv: 'ruotsi',
-    en: 'englanti'
+    fi: 'Finnish',
+    sv: 'Swedish',
+    en: 'English'
   }
 }
