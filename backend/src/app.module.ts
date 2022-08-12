@@ -18,6 +18,7 @@ import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { SsoModule } from './sso/sso.module';
     SmsModule,
     SsoModule,
     ConfigModule.forRoot(),
+    LoggerModule.forRoot(),
   ],
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController, AuthenticationController],
