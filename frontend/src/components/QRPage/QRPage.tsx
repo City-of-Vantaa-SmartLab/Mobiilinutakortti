@@ -24,8 +24,8 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    height: 100%;
-    padding: 0 2.5rem;
+    height: calc(100% - 3rem);
+    padding: 3rem 2.5rem 0 2.5rem;
     text-align: center;
     background: linear-gradient(-15deg, ${p => p.theme.pages.qr.background}, ${p => p.theme.pages.qr.background} 55%, transparent 55%, transparent);
 `;
@@ -34,7 +34,6 @@ const Header = styled.section`
     text-align: center;
     width: 100%;
     color: #f9e51e;
-    margin: 5rem 0;
     & > p {
         font-size: 7vw;
         margin: 0;
@@ -42,8 +41,6 @@ const Header = styled.section`
 `;
 
 const Footer = styled.section`
-    padding-top: 2rem;
-    height: 100%
 `;
 
 interface QRPageProps {
@@ -55,8 +52,8 @@ const QRPage: React.FC<QRPageProps> = (props) => {
     const t = useTranslations()
     return (
         <Container>
+            <LanguageSelect />
             <Wrapper>
-                <LanguageSelect />
                 <Header>
                     <Title title={t.qrPage.login} subtitle={props.name} />
                 </Header>
