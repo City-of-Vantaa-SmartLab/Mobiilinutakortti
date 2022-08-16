@@ -11,7 +11,7 @@ const QRWrapper = styled.section`
 const QRContainer = styled.div<{ active: boolean }>`
     width: 100%;
     max-width: 70vh;
-    background: #f9e51e;
+    background: ${p => p.theme.pages.qr.qrBorder};
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     border-radius: 0.5rem;
     position: relative;

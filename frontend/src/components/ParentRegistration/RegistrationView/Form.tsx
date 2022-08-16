@@ -8,6 +8,7 @@ import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, Error
 import { useTranslations } from '../../translations'
 import { Translations } from "../../../customizations/types";
 import { languages } from '../../../customizations'
+import styled, { useTheme } from 'styled-components'
 
 export interface Club {
     id: number
@@ -35,9 +36,15 @@ export interface FormValues {
 
 export type ErrorKey = keyof Translations['parentRegistration']['errors']
 
+const SubmitButton = styled(Button)`
+    color: ${p => p.theme.pages.registration.submitButtonText};
+    background: ${p => p.theme.pages.registration.submitButtonBackground};
+`
+
 
 const InnerForm = (props: FormikProps<FormValues>) => {
     const t = useTranslations()
+    const theme = useTheme()
     const { handleSubmit, handleReset, touched, errors, status } = props;
     return (
             <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete={`off-random-${Math.random()}`}>
@@ -122,10 +129,11 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         )}
                     </Field>
                     <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
-                    <Button type="submit">{t.parentRegistration.form.submit}</Button>
+                    <SubmitButton type="submit">{t.parentRegistration.form.submit}</SubmitButton>
                     <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
                         {t.parentRegistration.form.privacyPolicy.title}
                     </a>
+                    {theme.pages.registration.bottomLogo}
                 </FormFooter>
             </Form>
     )

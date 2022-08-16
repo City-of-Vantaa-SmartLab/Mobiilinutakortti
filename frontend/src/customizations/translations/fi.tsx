@@ -113,7 +113,7 @@ export const translations: Translations = {
           Käsittelemme hakemuksia jatkuvasti, mutta ruuhka-aikana käsittelyssä saattaa olla viivettä.
           Nuorisotilalla voi kuitenkin käydä heti hakemuksen täyttämisen jälkeen.
           <br/><br/>
-          Voit nyt {logoutLink('kirjautua ulos')} tai {startOverLink('aloittaa alusta')} rekisteröidäksesi
+          Voit nyt{' '}{logoutLink('kirjautua ulos')} tai{' '}{startOverLink('aloittaa alusta')} rekisteröidäksesi
           nutakortin toiselle lapselle.
         </p>
       )
