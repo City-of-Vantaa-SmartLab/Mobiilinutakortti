@@ -109,7 +109,9 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                 </Field>
                 <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
                 <Button type="submit">{t.parentRegistration.form.submit}</Button>
-                {t.parentRegistration.form.termsOfUse}
+                <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
+                    {t.parentRegistration.form.privacyPolicy.title}
+                </a>
             </FormFooter>
         </Form>
     )
