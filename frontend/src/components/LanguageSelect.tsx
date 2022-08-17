@@ -26,8 +26,8 @@ export default function LanguageSelect({ color }: Props) {
 const LanguageSelectRoot = styled.div`
   z-index: 100;
   position: absolute;
-  top: 27px;
-  right: 30px;
+  top: 10px;
+  right: 40px;
 `
 
 const LangButton = styled.button<{ disabled: boolean, $color: string }>`

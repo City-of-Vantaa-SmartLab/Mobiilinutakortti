@@ -12,6 +12,7 @@ import { useTranslations } from '../translations';
 import LanguageSelect from '../LanguageSelect'
 
 export const Container = styled.div`
+    position: relative;
     width: 100%;
     height: 100%;
     background: ${p => p.theme.pages.login.background};
