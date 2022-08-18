@@ -6,6 +6,7 @@ import { ConfigHelper } from './configHandler';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
 import * as cookieParser from 'cookie-parser';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
   // This is for local development only.
@@ -28,8 +29,11 @@ async function bootstrap() {
     .build();
 
   const app = httpsOptions ?
-    await NestFactory.create(AppModule, { httpsOptions }) :
-    await NestFactory.create(AppModule);
+    await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true }) :
+    await NestFactory.create(AppModule, { bufferLogs: true });
+  if (process.env.JSON_LOGS) {
+    app.useLogger(app.get(Logger));
+  }
   app.enableCors();
   app.use('/', express.static(join(__dirname, '..', 'public')));
   app.use('/', express.static(join(__dirname, '..', 'public-admin')));
