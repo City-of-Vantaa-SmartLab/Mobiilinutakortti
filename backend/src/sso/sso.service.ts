@@ -151,6 +151,10 @@ export class SsoService {
     const idp_initiated = 'SAMLRequest' in query;
 
     // We have to respond to the request if IdP-initiated.
+    // NOTE: if going strictly along the specs, we should also logout the client at this point.
+    // However, since the login info is stored only on client side, we do nothing here except
+    // respond to the request. The security vulnerability attack vector this implies is
+    // negligible in this case, so it's not worth complicating the system with backend login info.
     if (idp_initiated) {
 
       const request_id = this.samlHelper.getSAMLRequestId(query.SAMLRequest.toString());

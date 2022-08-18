@@ -53,12 +53,15 @@ export const translations: Translations = {
         <br/><br/>
         Kun hakemus on vastaanotettu, soitamme sinulle ja lähetämme nuorelle
         tekstiviestillä henkilökohtaisen kirjautumislinkin palveluun.
+        <br/><br/>
+        Käsittelemme hakemuksia jatkuvasti, mutta ruuhka-aikana käsittelyssä saattaa olla viivettä.
+        Nuorisotilalla voi kuitenkin käydä heti hakemuksen täyttämisen jälkeen.
       </p>
     ),
     submit: 'Täytä hakemus',
     privacyPolicy: {
       title: 'Tietosuojaseloste',
-      href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja'
+      href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa'
     }
   },
   parentRegistration: {
@@ -101,7 +104,7 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>käyttöehdot</a>
+          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot%202022pdf.pdf'>käyttöehdot</a>
         </>
       ),
       submit: 'Lähetä hakemus',
@@ -122,9 +125,13 @@ export const translations: Translations = {
       heading: 'Kiitos hakemuksestasi!',
       message: (logoutLink, startOverLink) => (
         <p>Kun nuoren jäsenkorttihakemus on käsitelty, hänelle lähetetään tekstiviestillä henkilökohtainen
-          kirjautumislinkki palveluun. Voit nyt
-          {logoutLink('kirjautua ulos')} tai {startOverLink('aloittaa alusta')} rekisteröidäksesi nutakortin toiselle
-          lapselle.
+          kirjautumislinkki palveluun.
+          <br/><br/>
+          Käsittelemme hakemuksia jatkuvasti, mutta ruuhka-aikana käsittelyssä saattaa olla viivettä.
+          Nuorisotilalla voi kuitenkin käydä heti hakemuksen täyttämisen jälkeen.
+          <br/><br/>
+          Voit nyt {logoutLink('kirjautua ulos')} tai {startOverLink('aloittaa alusta')} rekisteröidäksesi
+          nutakortin toiselle lapselle.
         </p>
       )
     },
