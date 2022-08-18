@@ -3,19 +3,19 @@ import authReducer from './authReducer';
 import { authState } from '../types/authTypes';
 import userReducer from './userReducer';
 import { userState } from '../types/userTypes';
-import { History } from 'history';
+import langReducer from './langReducer';
+import { LangState } from '../types/langTypes';
 
-import { connectRouter } from 'connected-react-router';
-
-const defaultExp = (history: History) => combineReducers({
-    router: connectRouter(history),
+const rootReducer = () => combineReducers({
     auth: authReducer,
+    lang: langReducer,
     user: userReducer
 });
 
-export default defaultExp
+export default rootReducer
 
 export interface AppState {
-    auth: authState,
+    auth: authState
+    lang: LangState
     user: userState
 }

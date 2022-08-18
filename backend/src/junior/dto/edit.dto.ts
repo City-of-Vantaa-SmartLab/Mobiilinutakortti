@@ -32,6 +32,8 @@ export class EditJuniorDto {
 
     homeYouthClub: string;
 
+    communicationsLanguage: string;
+
     status: string;
 
     photoPermission: boolean;

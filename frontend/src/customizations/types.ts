@@ -1,4 +1,6 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
+
+export type Language = 'fi' | 'sv' | 'en'
 
 export interface Theme {
   pages: {
@@ -34,6 +36,11 @@ export interface Translations {
     placeholder: string
     submit: ReactNode
     errorMessage: string
+    authMessages: {
+      authFail: string
+      linkRequestSuccess: string
+      linkRequestFail: string
+    }
   }
   logout: {
     title: ReactNode
@@ -84,9 +91,12 @@ export interface Translations {
       parentPhoneNumber: string,
 
       youthClubHeading: string,
-      youthClub: string,
       youthClubDefault: string,
       youthClubDescription: string,
+
+      communicationsLanguage: string,
+      communicationsLanguageDefault: string,
+      communicationsLanguageDescription: string,
 
       termsOfUse: ReactNode,
       submit: ReactNode,
@@ -101,6 +111,7 @@ export interface Translations {
       phoneNumberFormat: string,
       postCodeFormat: string,
       selectYouthClub: string,
+      selectLanguage: string,
       acceptTermsOfUse: string,
     },
     confirmation: {
@@ -115,5 +126,10 @@ export interface Translations {
   qrPage: {
     login: string,
     instruction: ReactNode
+  },
+  languages: {
+    fi: string,
+    sv: string,
+    en: string
   }
 }

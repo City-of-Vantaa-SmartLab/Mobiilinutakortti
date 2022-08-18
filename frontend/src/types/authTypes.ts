@@ -61,5 +61,5 @@ export interface authState {
     loggedIn: boolean,
     token: string,
     error: boolean,
-    message: string,
+    message: 'authFail' | 'linkRequestSuccess' | 'linkRequestFail' | null,
 }

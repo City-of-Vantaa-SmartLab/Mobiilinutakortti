@@ -41,6 +41,9 @@ export class RegisterJuniorDto {
     readonly homeYouthClub: string;
 
     @IsNotEmpty()
+    readonly communicationsLanguage: string;
+
+    @IsNotEmpty()
     readonly status: string;
 
     @IsNotEmpty()

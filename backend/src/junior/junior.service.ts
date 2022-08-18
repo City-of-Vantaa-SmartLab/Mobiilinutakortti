@@ -181,7 +181,11 @@ export class JuniorService {
         if (junior.status === 'accepted' && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(junior.phoneNumber);
-            const messageSent = await this.smsService.sendVerificationSMS({ name: newJunior.firstName, phoneNumber: newJunior.phoneNumber }, challenge);
+            const messageSent = await this.smsService.sendVerificationSMS({
+                lang: newJunior.communicationsLanguage as content.Language,
+                name: newJunior.firstName,
+                phoneNumber: newJunior.phoneNumber,
+            }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
 
@@ -193,7 +197,11 @@ export class JuniorService {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
         if (junior && junior.status === 'accepted') {
             const challenge = await this.setChallenge(phoneNumber);
-            const messageSent = await this.smsService.sendVerificationSMS({ name: junior.firstName, phoneNumber: junior.phoneNumber }, challenge);
+            const messageSent = await this.smsService.sendVerificationSMS({
+                lang: junior.communicationsLanguage as content.Language,
+                name: junior.firstName,
+                phoneNumber: junior.phoneNumber,
+            }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
             return `${phoneNumber} ${content.Reset}`;
         }
@@ -218,6 +226,7 @@ export class JuniorService {
         user.class = details.class;
         user.postCode = details.postCode;
         user.homeYouthClub = details.homeYouthClub;
+        user.communicationsLanguage = details.communicationsLanguage;
         user.gender = details.gender;
         user.nickName = details.nickName;
         user.status = details.status;
@@ -239,7 +248,11 @@ export class JuniorService {
         if ((prevStatus === 'expired' || prevStatus === 'pending' || prevStatus === 'failedCall') && details.status === 'accepted') {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
-            const messageSent = await this.smsService.sendVerificationSMS({ name: updatedJunior.firstName, phoneNumber: updatedJunior.phoneNumber }, challenge);
+            const messageSent = await this.smsService.sendVerificationSMS({
+                lang: updatedJunior.communicationsLanguage as content.Language,
+                name: updatedJunior.firstName,
+                phoneNumber: updatedJunior.phoneNumber,
+            }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
         return `${details.phoneNumber} ${content.Updated}`;
@@ -282,9 +295,12 @@ export class JuniorService {
 
     async createNewSeason({ expireDate }: SeasonExpiredDto): Promise<string> {
         const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
-
         const juniors = await this.juniorRepo.find();
+
+        // This SMS is sent to the parents. We don't know the parent's preferred communications language,
+        // so we must use the junior's language.
         const recipients = juniors.map(junior => ({
+            lang: junior.communicationsLanguage as content.Language,
             name: `${junior.firstName} ${junior.lastName}`,
             phoneNumber: junior.parentsPhoneNumber,
         }));

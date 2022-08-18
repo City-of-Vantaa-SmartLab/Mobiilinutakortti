@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { authTypes, authActions } from '../../types/authTypes';
 import { AppState } from '../../reducers';
 import LoginBackground from '../loginBackground';
 import LoginForm from '../loginForm/loginForm';
 import { useTranslations } from '../translations';
+import LanguageSelect from '../LanguageSelect'
 
 export const Container = styled.div`
     width: 100%;
@@ -17,7 +18,7 @@ export const Container = styled.div`
     overflow: scroll;
     box-shadow: 12px 24px 100px rgba(0, 0, 0, 0.5);
     @media (min-width: 600px) {
-        max-height: 812px
+        max-height: 812px;
         max-width: 480px;
         margin: auto;
     }
@@ -74,43 +75,49 @@ const MessageText = styled.p`
 
 `;
 
-interface LoginProps extends RouteComponentProps {
+interface LoginProps {
     auth: (challenge: string, id: string) => void,
     authLinkRequest: (phone: string) => void,
 
     authError: boolean,
-    authMessage: string,
+    authMessage: 'authFail' | 'linkRequestSuccess' | 'linkRequestFail' | null,
     loggingIn: boolean,
     loggedIn: boolean
 }
 
-const LoginPage: React.FC<LoginProps> = (props) => {
+const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, authMessage , loggingIn, loggedIn }) => {
+    const location = useLocation()
+    const navigate = useNavigate()
     const t = useTranslations()
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
 
     useEffect(() => {
         //authenticate with login link
-        const query = new URLSearchParams(props.location.search);
+        const query = new URLSearchParams(location.search);
         const challenge = query.get('challenge');
         const id = query.get('id');
         if (challenge && id) {
-            props.auth(challenge, id);
+            auth(challenge, id);
         }
-    }, []);
+    }, [location.search, auth]);
 
     useEffect(() => {
-        if ((props.authError || props.authMessage) && !error) {
-            setError(props.authError);
-            setMessage(props.authMessage);
+        if ((authError || authMessage !== null) && !error) {
+            setError(authError);
+            if (authMessage !== null) {
+              setMessage(t.login.authMessages[authMessage]);
+            } else {
+              setMessage('')
+            }
         }
-    }, [props.authError, props.authMessage, error]);
+    }, [authError, authMessage, error, t.login.authMessages]);
 
     useEffect(() => {
-        if (props.loggedIn) {
-            props.history.push('/')
+        if (loggedIn) {
+            navigate('/')
         }
-    }, [props.loggedIn, props.history]);
+    }, [navigate, loggedIn]);
 
 
     const sendLink = (phoneNumber: string, error: boolean) => {
@@ -119,23 +126,24 @@ const LoginPage: React.FC<LoginProps> = (props) => {
             setMessage(t.login.errorMessage);
         } else {
             setError(false);
-            props.authLinkRequest(phoneNumber);
+            authLinkRequest(phoneNumber);
             setMessage('');
         }
-        props.history.push('/login');
+        navigate('/login');
     }
 
     return (
         <Container>
         <Wrapper>
             <LoginBackground />
+            <LanguageSelect />
             <LoginWrapper>
                 <Header>{t.login.title}</Header>
                 <Message active={message !== ''} error={error}>
                     <ErrorMessageIcon visible={error} />
                     <MessageText>{message}</MessageText>
                 </Message>
-                <LoginForm onSubmit={sendLink} disabled={props.loggingIn} />
+                <LoginForm onSubmit={sendLink} disabled={loggingIn} />
             </LoginWrapper>
         </Wrapper>
         </Container>

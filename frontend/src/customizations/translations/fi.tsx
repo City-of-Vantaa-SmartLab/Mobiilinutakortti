@@ -1,31 +1,5 @@
 import React from 'react'
-import { Theme, Translations } from './types'
-
-export const theme: Theme = {
-  pages: {
-    login: {
-      stripe1: '#0042a5',
-      stripe2: '#84ccf8',
-      background: '#3c8fde',
-    },
-    qr: {
-      stripe: '#3c8fde',
-      background: '#fff',
-    },
-    parentRedirect: {
-      stripe1: '#3c8fde',
-      stripe2: '#0042a5',
-      background: '#fff',
-      descriptionBackground: '#f9e51e',
-    },
-    registration: {
-      stripe: '#0042a5',
-      background: '#fff',
-      footerBackground: '#f9e51e',
-      confirmationBackground: '#fff',
-    }
-  },
-}
+import { Translations } from '../types'
 
 export const translations: Translations = {
   addToHomescreen: <>Klikkaa <i/>-kuvaketta ja valitse ”Lisää Koti-valikkoon” lisätäksesi sovelluksen</>,
@@ -35,6 +9,11 @@ export const translations: Translations = {
     placeholder: 'Ex: 05051190912',
     submit: 'Lähetä uusi kirjautumislinkki',
     errorMessage: 'Tarkista, että antamasi puhelinnumero on oikein',
+    authMessages: {
+      authFail: "Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin",
+      linkRequestSuccess: "Uusi linkki lähetettiin syöttämääsi numeroon",
+      linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen",
+    }
   },
   logout: {
     title: 'Nutakortti-hakemus',
@@ -98,9 +77,12 @@ export const translations: Translations = {
       parentPhoneNumber: 'Puhelinnumero',
 
       youthClubHeading: 'Kotinuorisotila',
-      youthClub: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',
+
+      communicationsLanguage: 'Kommunikaatiokieli',
+      communicationsLanguageDefault: 'Valitse kieli',
+      communicationsLanguageDescription: 'Kieli, jota järjestelmä käytettää viestinnässä nuoren kanssa (esim. tekstiviestit)',
 
       termsOfUse: (
         <>
@@ -119,6 +101,7 @@ export const translations: Translations = {
       phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
       postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
       selectYouthClub: 'Valitse kotinuorisotila valikosta',
+      selectLanguage: 'Valitse kieli valikosta',
       acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
     },
     confirmation: {
@@ -143,5 +126,10 @@ export const translations: Translations = {
   qrPage: {
     login: 'Kirjaudu',
     instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
+  },
+  languages: {
+    fi: 'suomi',
+    sv: 'ruotsi',
+    en: 'englanti'
   }
 }
