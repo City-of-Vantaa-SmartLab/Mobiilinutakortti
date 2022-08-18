@@ -1,12 +1,12 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean, Schema, mixed } from 'yup';
+import { string, object, boolean, Schema } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
 import { useTranslations } from '../../translations'
-import { Language, Translations } from "../../../customizations/types";
+import { Translations } from "../../../customizations/types";
 import { languages } from '../../../customizations'
 
 export interface Club {
