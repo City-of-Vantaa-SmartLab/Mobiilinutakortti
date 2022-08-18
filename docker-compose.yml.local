@@ -15,6 +15,7 @@ services:
       CERT_SELECTION:
       FRONTEND_BASE_URL:
       IDP_ENTITY_ID:
+      JSON_LOGS:
       RDS_DB_NAME:
       RDS_HOSTNAME:
       RDS_PASSWORD:

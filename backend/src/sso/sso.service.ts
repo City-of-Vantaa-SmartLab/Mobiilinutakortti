@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
 import * as fs from 'fs';
@@ -14,6 +14,7 @@ export class SsoService {
   private readonly idp: saml2.IdentityProvider;
   private readonly samlHelper;
   private readonly frontend_base_url: string;
+  private readonly logger = new Logger('SSO Service');
 
   constructor(
     private readonly authenticationService: AuthenticationService
@@ -55,7 +56,7 @@ export class SsoService {
 
   getLoginRequestUrl(res: Response) {
     this.sp.create_login_request_url(this.idp, {}, (err, login_url, request_id) => {
-      console.log('Created login request, ID: ' + request_id);
+      this.logger.log('Created login request, ID: ' + request_id);
       if (this._handleError(err, res))
         return;
 
@@ -70,7 +71,7 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
-      console.log('Got login response, session index: ' + saml_response.user.session_index);
+      this.logger.log('Got login response, session index: ' + saml_response.user.session_index);
 
       // For eIDAS logins the surname comes from a different attribute.
       const user_surname =
@@ -129,7 +130,7 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
-      console.log('Created logout request URL, session index: ' + options.session_index);
+      this.logger.log('Created logout request URL, session index: ' + options.session_index);
       let fixed_logout_url = '';
       try {
         fixed_logout_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
@@ -157,7 +158,7 @@ export class SsoService {
         in_response_to: request_id
       }
       this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
-        console.log('Created logout response URL for request ID: ' + options.in_response_to);
+        this.logger.log('Created logout response URL for request ID: ' + options.in_response_to);
         res.redirect(response_url);
       });
 
@@ -180,7 +181,7 @@ export class SsoService {
 
   private _handleError(err: string, res: Response): boolean {
     if (err != null) {
-      console.log('Error: ' + err);
+      this.logger.log('Error: ' + err);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
       res.end();
       return true;
