@@ -17,6 +17,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Header = styled.h1`
+    font-family: ${p => p.theme.fonts.heading};
     text-align: center;
     color: ${p => p.theme.pages.registration.headingText};
     font-size: 3em;
@@ -68,7 +69,7 @@ export const Error = styled.div`
 `;
 
 export const Button = styled.button`
-    font-family: 'GT-Walsheim';
+    font-family: ${p => p.theme.fonts.body};
     text-transform: uppercase;
     background: #3c8fde;
     border: none;
@@ -294,7 +295,7 @@ export const Dropdown = styled.div`
         border: 0 !important;
         background: #fff;
         background-image: none;
-        font-family: 'GT-Walsheim';
+        font-family: ${p => p.theme.fonts.body};
 
         flex: 1;
         padding: 1em;

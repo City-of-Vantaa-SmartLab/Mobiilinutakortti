@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'GT-Walsheim';
+  src: url('./assets/GT-Walsheim-Regular.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'GT-Walsheim';
+  src: url('./assets/GT-Walsheim-Bold.ttf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+  font-family: 'GT-Walsheim', sans-serif;
+}

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import './App.css';
 import { Admin, Resource, Login } from 'react-admin';
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';

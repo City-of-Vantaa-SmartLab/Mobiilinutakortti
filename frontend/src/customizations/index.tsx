@@ -85,4 +85,8 @@ export const theme: Theme = {
       bottomLogo: null,
     }
   },
+  fonts: {
+    heading: "GT-Walsheim, sans-serif",
+    body: "GT-Walsheim, sans-serif",
+  }
 }

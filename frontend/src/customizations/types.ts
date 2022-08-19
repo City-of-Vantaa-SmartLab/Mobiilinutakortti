@@ -59,6 +59,10 @@ export interface Theme {
       bottomLogo: ReactNode | null
     }
   }
+  fonts: {
+    heading: string
+    body: string
+  }
 }
 
 export interface Translations {

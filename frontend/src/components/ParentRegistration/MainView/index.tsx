@@ -28,7 +28,7 @@ const MainHeader = styled.header`
         margin: 0;
         font-size: 3em;
         line-height: 50px;
-        font-family: 'GT-Walsheim';
+        font-family: ${p => p.theme.fonts.heading};
         color: ${p => p.theme.pages.parentRedirect.headingText};
     }
     & > p {

@@ -36,6 +36,7 @@ const LoginWrapper = styled.section`
 `;
 
 const Header = styled.h1`
+    font-family: ${p => p.theme.fonts.heading};
     color: ${p => p.theme.pages.login.headingText};
     text-transform: uppercase;
     text-align: center;
