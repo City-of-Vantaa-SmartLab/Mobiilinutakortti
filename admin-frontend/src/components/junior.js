@@ -26,6 +26,7 @@ import Button from '@material-ui/core/Button';
 import { httpClientWithResponse } from '../httpClients';
 import api from '../api';
 import usePermissions from '../hooks/usePermissions';
+import { hiddenFormFields } from '../customizations';
 
 
 const JuniorEditTitle = ({ record }) => (
@@ -167,16 +168,16 @@ export const JuniorCreate = (props) => {
             <SimpleForm variant="standard" margin="normal" redirect="list">
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
-                <TextInput label="Kutsumanimi" source="nickName" />
+                {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
                     {() => <DummyPhoneNumberButton />}
                 </FormDataConsumer>
-                <TextInput label="Postinumero" source="postCode" validate={required()} />
-                <TextInput label="Koulu" source="school" validate={required()} />
-                <TextInput label="Luokka" source="class" validate={required()} />
+                {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
+                {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} />)}
+                {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
@@ -224,16 +225,16 @@ export const JuniorEdit = (props) => {
             <SimpleForm variant="standard" margin="normal">
                 <TextInput label="Etunimi" source="firstName" validate={required()}/>
                 <TextInput label="Sukunimi" source="lastName" validate={required()}/>
-                <TextInput label="Kutsumanimi" source="nickName" />
+                {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <FormDataConsumer>
                     {() => (<DummyPhoneNumberButton />)}
                 </FormDataConsumer>
-                <TextInput label="Postinumero" source="postCode" validate={required()}/>
-                <TextInput label="Koulu" source="school" validate={required()}/>
-                <TextInput label="Luokka" source="class" validate={required()}/>
+                {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()}/>)}
+                {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()}/>)}
+                {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()}/>)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()}/>
@@ -260,3 +261,7 @@ const languages = [
   { id: 'sv', name: 'ruotsi' },
   { id: 'en', name: 'englanti' },
 ]
+
+function valueOrNull(name, visibleValue) {
+  return hiddenFormFields.includes(name) ? null : visibleValue;
+}
