@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { connect } from 'react-redux';
 import { AppState } from '../../reducers';
 import Title from '../Title/Title';
@@ -33,7 +33,7 @@ const Wrapper = styled.div`
 const Header = styled.section`
     text-align: center;
     width: 100%;
-    color: #f9e51e;
+    color: ${p => p.theme.pages.qr.headingText};
     & > p {
         font-size: 7vw;
         margin: 0;
@@ -41,6 +41,7 @@ const Header = styled.section`
 `;
 
 const Footer = styled.section`
+    color: ${p => p.theme.pages.qr.footerText};
 `;
 
 interface QRPageProps {
@@ -50,9 +51,10 @@ interface QRPageProps {
 
 const QRPage: React.FC<QRPageProps> = (props) => {
     const t = useTranslations()
+    const theme = useTheme()
     return (
         <Container>
-            <LanguageSelect />
+            <LanguageSelect color={theme.pages.qr.languageSelectText} />
             <Wrapper>
                 <Header>
                     <Title title={t.qrPage.login} subtitle={props.name} />

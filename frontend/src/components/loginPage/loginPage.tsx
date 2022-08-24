@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { useTranslations } from '../translations';
 import LanguageSelect from '../LanguageSelect'
 
 export const Container = styled.div`
+    position: relative;
     width: 100%;
     height: 100%;
     background: ${p => p.theme.pages.login.background};
@@ -35,7 +36,8 @@ const LoginWrapper = styled.section`
 `;
 
 const Header = styled.h1`
-    color: rgb(249, 229, 30);
+    font-family: ${p => p.theme.fonts.heading};
+    color: ${p => p.theme.pages.login.headingText};
     text-transform: uppercase;
     text-align: center;
     font-size: 11vw;
@@ -46,24 +48,22 @@ const Header = styled.h1`
 `;
 
 
-const Message = styled.div<{ active: boolean, error: boolean }>`
-    display: ${(props) => props.active ? "flex" : "None"};
+const Message = styled.div<{ $active: boolean, $error: boolean }>`
+    display: ${(props) => props.$active ? 'flex' : 'none'};
     align-items: center;
     flex-direction: row;
     width: 100%;
-    border-bottom: 2px solid ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
+    border-bottom: 2px solid ${(p) => p.$error ? p.theme.pages.login.errorText : p.theme.pages.login.messageText};
     padding: 0;
     margin-bottom: 1.5rem;
     box-sizing: border-box;
-    color: ${(props) => props.error ? 'rgb(249, 229, 30)' : "#99e6ff"};
-
-
+    color: ${(p) => p.$error ? p.theme.pages.login.errorText : p.theme.pages.login.messageText};
 `;
 
-const ErrorMessageIcon = styled.div<{ visible: boolean }>`
+const ErrorMessageIcon = styled.div<{ $visible: boolean }>`
     font-size: 1.4rem;
     padding-right: 0.5rem;
-    display: ${(props) => props.visible ? "block" : "None"};
+    display: ${(props) => props.$visible ? 'block' : 'none'};
     &:before {
         content: '\f07d';
         font-family: 'fontello';
@@ -89,6 +89,7 @@ const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, aut
     const location = useLocation()
     const navigate = useNavigate()
     const t = useTranslations()
+    const theme = useTheme()
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
 
@@ -106,7 +107,7 @@ const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, aut
         if ((authError || authMessage !== null) && !error) {
             setError(authError);
             if (authMessage !== null) {
-              setMessage(t.login.authMessages[authMessage]);
+              setMessage(t.login.authMessages[authMessage] ?? '');
             } else {
               setMessage('')
             }
@@ -136,15 +137,17 @@ const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, aut
         <Container>
         <Wrapper>
             <LoginBackground />
-            <LanguageSelect />
+            {theme.pages.login.logo}
+            <LanguageSelect color={theme.pages.login.languageSelectText} />
             <LoginWrapper>
                 <Header>{t.login.title}</Header>
-                <Message active={message !== ''} error={error}>
-                    <ErrorMessageIcon visible={error} />
+                <Message $active={message !== ''} $error={error}>
+                    <ErrorMessageIcon $visible={error} />
                     <MessageText>{message}</MessageText>
                 </Message>
                 <LoginForm onSubmit={sendLink} disabled={loggingIn} />
             </LoginWrapper>
+            {theme.pages.login.bottomLogo}
         </Wrapper>
         </Container>
     )

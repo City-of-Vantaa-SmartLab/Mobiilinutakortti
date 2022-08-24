@@ -17,16 +17,11 @@ export const Wrapper = styled.div`
 `;
 
 export const Header = styled.h1`
+    font-family: ${p => p.theme.fonts.heading};
     text-align: center;
-    color: rgb(249, 229, 30);
+    color: ${p => p.theme.pages.registration.headingText};
     font-size: 3em;
     margin: 1.5em 0.5em 0;
-`;
-
-export const ActionLink = styled.span`
-    cursor: pointer;
-    color: #0042a5;
-    font-weight: bold;
 `;
 
 export const Confirmation = styled.div`
@@ -40,7 +35,7 @@ export const Confirmation = styled.div`
         padding: 2em;
         & > h2 {
             margin-top: 0;
-            color: #0042a5;
+            color: ${p => p.theme.pages.registration.confirmationTitle};
         }
     }
 `;
@@ -74,7 +69,7 @@ export const Error = styled.div`
 `;
 
 export const Button = styled.button`
-    font-family: 'GT-Walsheim';
+    font-family: ${p => p.theme.fonts.body};
     text-transform: uppercase;
     background: #3c8fde;
     border: none;
@@ -167,7 +162,7 @@ export const Fieldset = styled.div`
 `;
 
 export const FieldTitle = styled.h2`
-    color: #0042a5;
+    color: ${p => p.theme.pages.registration.formTitleText};
     margin: 0;
     font-weight: 600;
 `;
@@ -300,7 +295,7 @@ export const Dropdown = styled.div`
         border: 0 !important;
         background: #fff;
         background-image: none;
-        font-family: 'GT-Walsheim';
+        font-family: ${p => p.theme.fonts.body};
 
         flex: 1;
         padding: 1em;
@@ -372,87 +367,4 @@ export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 &:not(:checked) + label:after {
     opacity: 0;
 }
-`;
-
-// Main view components ('about' page)
-
-export const MainWrapper = styled.div`
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(-5deg, ${p => p.theme.pages.parentRedirect.background}, ${p => p.theme.pages.parentRedirect.background} 40%, ${p => p.theme.pages.parentRedirect.stripe2} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe2});
-    padding: 0;
-    display: flex;
-    position: fixed;
-    overflow: scroll;
-    flex-direction: column;
-    @media (max-width: 450px) {
-        font-size: 14px;
-    }
-    @media (min-width: 1150px) {
-        font-size: 18px;
-    }
-`;
-
-export const Logo = styled.div`
-    color: white;
-    height: calc(100px + 8vw);
-    min-height: calc(100px + 8vw);
-    width: 100%;
-    background: linear-gradient(5deg, transparent, transparent 40%, ${p => p.theme.pages.parentRedirect.stripe1} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe1});
-    position: relative;
-    box-sizing: border-box;
-    @media (min-width: 2015px) {
-        background: linear-gradient(3deg, transparent, transparent 40%, ${p => p.theme.pages.parentRedirect.stripe1} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe1});
-        height: calc(100px + 6vw);
-    }
-    & > h2 {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        font-size: 2em;
-        padding-top: 0.5em;
-        @media (max-width: 450px) {
-            margin-bottom: 3em;
-        }
-        @media (min-width: 1050px) {
-            font-size: 2.5em;
-            padding-top: 1.5vw;
-        }
-    }
-`;
-
-export const MainHeader = styled.header`
-    & > h1 {
-        text-transform: uppercase;
-        margin: 0;
-        font-size: 3em;
-        line-height: 50px;
-        font-family: 'GT-Walsheim';
-        color: white;
-    }
-    & > p {
-        color: white;
-        margin: 0.5rem 0 1.5rem;
-        font-weight: 600;
-        font-size: 1.1em;
-    }
-`;
-
-export const MainDescription = styled.div`
-    background: ${p => p.theme.pages.parentRedirect.descriptionBackground};
-    padding: 1.5em;
-    font-size: 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.25);
-    & > p {
-        margin: 0;
-    }
-`;
-
-export const MainContent = styled.div`
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 2rem 2rem;
 `;

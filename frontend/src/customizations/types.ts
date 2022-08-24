@@ -5,26 +5,63 @@ export type Language = 'fi' | 'sv' | 'en'
 export interface Theme {
   pages: {
     login: {
+      logo: ReactNode | null
       stripe1: string
       stripe2: string
       background: string
+      languageSelectText: string
+      headingText: string
+      messageText: string
+      errorText: string
+      labelText: string
+      buttonText: string
+      buttonBackground: string
+      bottomLogo: ReactNode | null
     }
     qr: {
       stripe: string
       background: string
+      languageSelectText: string
+      headingText: string
+      qrBorder: string
+      footerText: string
     }
     parentRedirect: {
+      logo: ReactNode
       stripe1: string
       stripe2: string
+      languageSelectText: string
       background: string
-      descriptionBackground: string
+      headingText: string,
+      ingressText: string,
+      description: {
+        background: string
+        text: string
+        buttonBackground: string
+        buttonText: string
+        bottomLogo: ReactNode | null
+      }
     }
     registration: {
       stripe: string
       background: string
+      languageSelectText: string
+      headingText: string
+      formTitleText: string
       footerBackground: string
+      submitButtonBackground: string
+      submitButtonText: string
+      errorButtonBackground: string
+      errorButtonText: string
       confirmationBackground: string
+      confirmationTitle: string
+      confirmationLink: string
+      bottomLogo: ReactNode | null
     }
+  }
+  fonts: {
+    heading: string
+    body: string
   }
 }
 

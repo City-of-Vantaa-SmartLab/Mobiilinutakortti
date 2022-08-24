@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import RegistrationForm from './Form';
-import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton, ActionLink } from '../StyledComponents';
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton } from '../StyledComponents';
 import { get, post } from '../../../apis';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslations } from '../../translations'
 import LanguageSelect from '../../LanguageSelect'
+import styled, { useTheme } from 'styled-components'
 
+const ErrorButton = styled(Button)`
+  color: ${p => p.theme.pages.registration.errorButtonText};
+  background: ${p => p.theme.pages.registration.errorButtonBackground};
+`
+
+export const ConfirmationLink = styled.a`
+    color: ${p => p.theme.pages.registration.confirmationLink};
+`;
 
 const RegistrationView: React.FC = () => {
     const location = useLocation()
     const navigate = useNavigate()
     const t = useTranslations()
+    const theme = useTheme()
     const [submitted, setSubmitted] = useState(false);
     const [clubs, setClubs] = useState([]);
     const [error, setError] = useState(false);
@@ -96,7 +106,7 @@ const RegistrationView: React.FC = () => {
             {!submitted && !error && auth &&
                 <LogoutButton onClick={logout}>{t.parentRegistration.logout}</LogoutButton>
             }
-            <LanguageSelect />
+            <LanguageSelect color={theme.pages.registration.languageSelectText}/>
             <Header>{t.parentRegistration.title}</Header>
             {!submitted && !error && auth &&
                 <RegistrationForm securityContext={getSecurityContext()} onSubmit={()=>setSubmitted(true)} onError={()=>setError(true)} clubs={clubs}/>
@@ -106,8 +116,8 @@ const RegistrationView: React.FC = () => {
                 <div>
                     <h2>{t.parentRegistration.confirmation.heading}</h2>
                     {t.parentRegistration.confirmation.message(
-                      (linkText) => <ActionLink onClick={logout}>{linkText}</ActionLink>,
-                      (linkText) => <ActionLink onClick={() => setSubmitted(false)}>{linkText}</ActionLink>
+                      (linkText) => <ConfirmationLink href="#" onClick={(e) => { e.preventDefault(); logout() }}>{linkText}</ConfirmationLink>,
+                      (linkText) => <ConfirmationLink href="#" onClick={(e) => { e.preventDefault(); setSubmitted(false) }}>{linkText}</ConfirmationLink>
                     )}
                     <SuccessIcon/>
                 </div>
@@ -117,12 +127,12 @@ const RegistrationView: React.FC = () => {
              <Error>
                  <div>
                  <p>{t.parentRegistration.error.message}</p>
-                    <Button onClick={() => {
+                    <ErrorButton onClick={() => {
                         //cleans query string if error happened during query string parsing
                         navigate('/hakemus', { replace: true })
                         window.location.reload()
                         }
-                    }>{t.parentRegistration.error.back}</Button>
+                    }>{t.parentRegistration.error.back}</ErrorButton>
                  </div>
             </Error>
             }

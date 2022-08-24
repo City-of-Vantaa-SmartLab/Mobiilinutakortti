@@ -24,8 +24,9 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-    font-family: 'GT-Walsheim';
-    background: rgb(249, 229, 30);
+    font-family: ${p => p.theme.fonts.body};
+    color: ${p => p.theme.pages.login.buttonText};
+    background: ${p => p.theme.pages.login.buttonBackground};
     border-radius: 0.3rem;
     border: none;
     padding: 1rem;
@@ -37,7 +38,7 @@ const Button = styled.button`
 `;
 
 const FormHeader = styled.label`
-    color: white;
+    color: ${p => p.theme.pages.login.labelText};
 `;
 
 interface LoginFormI {
