@@ -1,13 +1,23 @@
+// Attempt to cache the token to the service worker, see src/public/sw.js
+const cacheToken = async (token: string | null) => {
+    try {
+        await fetch('/token', { method: "POST", body: JSON.stringify({ token: token }) });
+    } catch (err) {
+        // Service worker not available
+    }
+}
 
-
-export const saveTokenToStorage = (token: string) => {
+export const saveToken = async (token: string, useCache = true) => {
     localStorage.setItem('token', token);
+    if (useCache) {
+        await cacheToken(token);
+    }
 }
 
-export const cacheToken = (token: string) => {
-    fetch('/token', { method: "POST", body: JSON.stringify({ token: token })});
+export const deleteToken = async () => {
+    localStorage.removeItem('token');
+    await cacheToken(null);
 }
-
 
 export const validatePhone = (number: string) => {
     if (number.match(/(^(\+358|0)\d{6,10})/)) {
@@ -15,14 +25,3 @@ export const validatePhone = (number: string) => {
     }
     return false;
 }
-
-export const isIos = () => {
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    return /iphone|ipad|ipod/.test( userAgent );
-  }
-
-export const isInStandaloneMode = () => {
-    let nav:any = window.navigator;
-    return ('standalone' in nav && nav.standalone);
-}
-
