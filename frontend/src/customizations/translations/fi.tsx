@@ -119,7 +119,7 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (arkisin 8–16).',
+      message: 'Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (virka-aikana).',
       back: 'Takaisin',
     }
   },
