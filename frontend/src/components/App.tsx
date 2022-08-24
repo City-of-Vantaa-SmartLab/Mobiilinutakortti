@@ -1,20 +1,17 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import LoginPage from './loginPage/loginPage';
 import QRPage from './QRPage/QRPage';
-import A2hs from './A2hs';
 import ParentRedirectView from './ParentRegistration/MainView';
 import RegistrationView from './ParentRegistration/RegistrationView';
 import LogoutView from './ParentRegistration/LogoutView';
 import { userTypes } from '../types/userTypes'
 import { authTypes } from '../types/authTypes'
 import { theme } from '../customizations'
-
-import { isIos, isInStandaloneMode } from '../utils';
 import { useTranslationsLoaded } from './translations'
-import {useAppDispatch, useAppSelector} from "../store/getStore"
+import { useAppDispatch, useAppSelector } from "../store/getStore"
 
 const Wrapper = styled.section`
   height: 100%;
@@ -40,7 +37,6 @@ export default function App() {
     })
   }, [dispatch])
 
-  const [showA2hs, setShowA2hs] = useState(false);
   const translationsLoaded = useTranslationsLoaded()
 
   useEffect(() => {
@@ -57,17 +53,6 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  //check if ios and open in a browser
-  useEffect(() => {
-    if (isIos() && !isInStandaloneMode()) {
-      setShowA2hs(true);
-    }
-  }, []);
-
-  const onClose = () => {
-    setShowA2hs(false);
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Wrapper>
@@ -80,7 +65,6 @@ export default function App() {
               <Route path='/hakemus' element={<RegistrationView />} />
               <Route path='/uloskirjaus' element={<LogoutView />} />
             </Routes>
-            <A2hs isVisible={showA2hs} close={onClose} />
           </>
         ) : null}
       </Wrapper>
