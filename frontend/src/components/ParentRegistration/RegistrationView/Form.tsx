@@ -6,8 +6,8 @@ import { post } from '../../../apis';
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage } from '../StyledComponents';
 import { useTranslations } from '../../translations'
-import { Translations } from "../../../customizations/types";
-import { languages } from '../../../customizations'
+import { CustomizableFormField, Translations } from "../../../customizations/types";
+import { hiddenFormFields, languages } from '../../../customizations'
 import styled, { useTheme } from 'styled-components'
 
 export interface Club {
@@ -41,7 +41,6 @@ const SubmitButton = styled(Button)`
     background: ${p => p.theme.pages.registration.submitButtonBackground};
 `
 
-
 const InnerForm = (props: FormikProps<FormValues>) => {
     const t = useTranslations()
     const theme = useTheme()
@@ -53,12 +52,12 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <FieldTitle>{t.parentRegistration.form.juniorHeading}</FieldTitle>
                         <Field name='juniorFirstName' component={InputField} title={t.parentRegistration.form.juniorFirstName} />
                         <Field name='juniorLastName' component={InputField} title={t.parentRegistration.form.juniorLastName} />
-                        <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />
+                        {valueOrNull('juniorNickName', <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />)}
                         <Field name='juniorBirthday' component={InputField} title={t.parentRegistration.form.juniorBirthday} placeholder={t.parentRegistration.form.juniorBirthdayPlaceholder} />
                         <Field name='juniorPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.juniorPhoneNumber} />
-                        <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} />
-                        <Field name='school' component={InputField} title={t.parentRegistration.form.school} />
-                        <Field name='class' component={InputField} title={t.parentRegistration.form.class} />
+                        {valueOrNull('postCode', <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} />)}
+                        {valueOrNull('school', <Field name='school' component={InputField} title={t.parentRegistration.form.school} />)}
+                        {valueOrNull('class', <Field name='class' component={InputField} title={t.parentRegistration.form.class} />)}
 
                         <SelectGroup
                             error={errors.juniorGender}
@@ -120,15 +119,19 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                     </Fieldset>
                 </Column>
                 <FormFooter>
-                    <Field name='termsOfUse'>
-                        {({ field }: FieldProps) => (
-                          <div>
-                            <Checkbox type='checkbox' checked={field.value} id={field.name} {...field} />
-                            <label htmlFor={field.name}>{t.parentRegistration.form.termsOfUse}</label>
-                          </div>
-                        )}
-                    </Field>
-                    <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
+                    {valueOrNull('termsOfUse', (
+                        <>
+                            <Field name='termsOfUse'>
+                                {({ field }: FieldProps) => (
+                                  <div>
+                                    <Checkbox type='checkbox' checked={field.value} id={field.name} {...field} />
+                                    <label htmlFor={field.name}>{t.parentRegistration.form.termsOfUse}</label>
+                                  </div>
+                                )}
+                            </Field>
+                            <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
+                        </>
+                    ))}
                     <SubmitButton type="submit">{t.parentRegistration.form.submit}</SubmitButton>
                     <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
                         {t.parentRegistration.form.privacyPolicy.title}
@@ -194,7 +197,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
             parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
             youthClub: '',
-            termsOfUse: false
+            termsOfUse: hiddenFormFields.includes('termsOfUse'),
         }
     },
     enableReinitialize: true,
@@ -211,9 +214,9 @@ const RegistrationForm = withFormik<Props, FormValues>({
         juniorNickName: string(),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
         juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
-        postCode: string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'),
-        school: string().required('required'),
-        class: string().required('required'),
+        postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
+        school: valueOr('school', string().required('required'), string()),
+        class: valueOr('class', string().required('required'), string()),
         juniorGender: string().required('required'),
         photoPermission: string().required('required'),
         parentFirstName: string().required('required'),
@@ -231,5 +234,13 @@ const RegistrationForm = withFormik<Props, FormValues>({
     validateOnBlur: false,
     validateOnChange: false
 })(InnerForm);
+
+function valueOr<T>(name: CustomizableFormField, visibleValue: T, hiddenValue: T): T {
+  return hiddenFormFields.includes(name) ? hiddenValue : visibleValue;
+}
+
+function valueOrNull<T>(name: CustomizableFormField, visibleValue: T): T | null {
+  return valueOr(name, visibleValue, null)
+}
 
 export default RegistrationForm;

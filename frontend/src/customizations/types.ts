@@ -1,6 +1,12 @@
 import { ReactNode } from 'react'
 
 export type Language = 'fi' | 'sv' | 'en'
+export type CustomizableFormField =
+  | 'juniorNickName'
+  | 'postCode'
+  | 'school'
+  | 'class'
+  | 'termsOfUse'
 
 export interface Theme {
   pages: {
