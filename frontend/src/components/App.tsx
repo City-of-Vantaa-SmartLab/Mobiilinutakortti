@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
@@ -7,11 +7,9 @@ import QRPage from './QRPage/QRPage';
 import ParentRedirectView from './ParentRegistration/MainView';
 import RegistrationView from './ParentRegistration/RegistrationView';
 import LogoutView from './ParentRegistration/LogoutView';
-import { userTypes } from '../types/userTypes'
-import { authTypes } from '../types/authTypes'
 import { theme } from '../customizations'
 import { useTranslationsLoaded } from './translations'
-import { useAppDispatch, useAppSelector } from "../store/getStore"
+import { useAppSelector } from "../store/getStore"
 
 const Wrapper = styled.section`
   height: 100%;
@@ -20,38 +18,7 @@ const Wrapper = styled.section`
 
 
 export default function App() {
-  const loggedIn = useAppSelector(state => state.auth.loggedIn)
-  const token = useAppSelector(state => state.auth.token)
-  const dispatch = useAppDispatch()
-
-  const getUser = useCallback((token: string) => {
-    dispatch({
-      type: userTypes.GET_USER,
-      payload: token
-    })
-  }, [dispatch])
-
-  const authWithCache = useCallback(() => {
-    dispatch({
-      type: authTypes.AUTH_WITH_CACHE
-    })
-  }, [dispatch])
-
   const translationsLoaded = useTranslationsLoaded()
-
-  useEffect(() => {
-    if (loggedIn) {
-      getUser(token)
-    }
-  }, [getUser, loggedIn, token]);
-
-  //if token not in state / localStorage, check cache for a token (for iOs issue with adding to homescreen)
-  useEffect(() => {
-    if (!loggedIn) {
-      authWithCache()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <ThemeProvider theme={theme}>
