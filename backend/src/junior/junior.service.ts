@@ -195,7 +195,7 @@ export class JuniorService {
 
     async resetLogin(phoneNumber: string): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
-        if (junior && junior.status === 'accepted') {
+        if (junior && (junior.status === 'accepted' || junior.status === 'expired')) {
             const challenge = await this.setChallenge(phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,

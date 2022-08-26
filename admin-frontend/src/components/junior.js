@@ -64,7 +64,7 @@ export const JuniorList = (props) => {
     );
 
     const ResendSMSButton = (data) => (
-        data.record.status === "accepted"
+        (data.record.status === "accepted" || data.record.status === "expired")
             ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä SMS uudestaan</Button>
             : <Button disabled>Kotisoitto tekemättä</Button>
     )
