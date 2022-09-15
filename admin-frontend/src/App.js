@@ -49,7 +49,7 @@ const App = () => {
     }, []);
 
     return (
-        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} >
+        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
             {permissions => [
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />
