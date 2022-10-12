@@ -57,3 +57,6 @@ export const ExpiredSmsContent = {
     + `${link}\n\n`
     + 'Best regards,\nVantaa youth services',
 }
+
+// Valid values: 'nickName', 'postCode', 'school', 'class'
+export const hiddenJuniorFields = []
