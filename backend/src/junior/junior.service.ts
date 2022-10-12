@@ -159,6 +159,9 @@ export class JuniorService {
         Object.keys(registrationData).map((key: string) => {
             junior[key] = registrationData[key]
         })
+        content.hiddenJuniorFields.forEach((key) => {
+          junior[key] = junior[key] ?? ''
+        })
         junior.creationDate = new Date(Date.now()).toISOString()
 
         const errors = await validate(junior);

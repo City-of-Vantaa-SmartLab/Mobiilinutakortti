@@ -181,6 +181,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
                 <SelectInput label="Tila" source="status" choices={statusChoices} validate={required()} />
                 <FormDataConsumer>
