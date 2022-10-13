@@ -1,14 +1,15 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CheckIn, Club } from './entities';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Junior } from '../junior/entities';
 import { ClubViewModel, LogBookViewModel } from './vm';
 import * as content from '../content';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
 import { Gender } from '../utils/constants';
-import { differenceInHours } from 'date-fns';
+import { Cron } from '@nestjs/schedule';
+import { differenceInHours, sub } from 'date-fns';
 
 @Injectable()
 export class ClubService {
@@ -113,4 +114,13 @@ export class ClubService {
     private isBetween(value: number, min: number, max: number): boolean {
         return value <= max && value >= min;
     }
+
+    // Delete checkins older than 14 days every night at 4 AM
+    @Cron('0 4 * * *')
+    async deleteOldCheckins(): Promise<void> {
+        const cutoff = sub(new Date(), { days: 14 });
+        const result = await this.checkInRepo.delete({ checkInTime: LessThan(cutoff) });
+        this.logger.log(`Deleted ${result.affected} checkins that happened before ${cutoff.toISOString()}`);
+    }
+
 }
