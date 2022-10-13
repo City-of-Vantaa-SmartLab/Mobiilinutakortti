@@ -7,8 +7,8 @@ import { ClubViewModel, LogBookViewModel } from './vm';
 import * as content from '../content';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
-import { datesDifferLessThan } from '../utils/helpers';
 import { Gender } from '../utils/constants';
+import { differenceInHours } from 'date-fns';
 
 @Injectable()
 export class ClubService {
@@ -33,14 +33,11 @@ export class ClubService {
     }
 
     async checkIfAlreadyCheckedIn(juniorId: string, clubId: string): Promise<boolean> {
+        const now = new Date();
         const checkIns = await this.getCheckinsForClub(clubId);
-        let duplicateCheckIn = false;
-        await checkIns.forEach((checkIn) => {
-            if (checkIn.junior.id === juniorId && datesDifferLessThan(new Date(), new Date(checkIn.checkInTime), 2)) {
-                duplicateCheckIn = true;
-            }
-        });
-        return duplicateCheckIn;
+        return checkIns.some((checkIn) =>
+            checkIn.junior.id === juniorId && differenceInHours(now, checkIn.checkInTime) < 2
+        );
     }
 
     async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
@@ -65,14 +62,7 @@ export class ClubService {
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        const d = new Date();
-        // checkInTime format: YYYY-MM-DD HH:MM:SS+TZ
-        const checkIn = { junior, club, checkInTime:
-          d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2)
-          + " " + ("0"+d.getHours()).slice(-2) + ":" + ("0"+d.getMinutes()).slice(-2) + ":" + ("0"+d.getSeconds()).slice(-2)
-          + "+" + ("0"+d.getTimezoneOffset()/-60).slice(-2)
-        } as CheckIn;
-        await this.checkInRepo.save(checkIn);
+        await this.checkInRepo.save({ junior, club, checkInTime: new Date() });
         return true;
     }
 
