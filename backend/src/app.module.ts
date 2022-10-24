@@ -19,6 +19,7 @@ import { RoutersMiddleware } from './middleware/routers.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { LoggerModule } from 'nestjs-pino';
     ClubModule,
     SmsModule,
     SsoModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot(),
   ],

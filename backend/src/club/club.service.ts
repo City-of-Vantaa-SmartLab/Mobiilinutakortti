@@ -1,14 +1,15 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CheckIn, Club } from './entities';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Junior } from '../junior/entities';
 import { ClubViewModel, LogBookViewModel } from './vm';
 import * as content from '../content';
 import { CheckInDto, LogBookDto } from './dto';
 import * as ageRanges from './logbookAgeRanges.json';
-import { datesDifferLessThan } from '../utils/helpers';
 import { Gender } from '../utils/constants';
+import { Cron } from '@nestjs/schedule';
+import { differenceInHours, sub } from 'date-fns';
 
 @Injectable()
 export class ClubService {
@@ -33,14 +34,11 @@ export class ClubService {
     }
 
     async checkIfAlreadyCheckedIn(juniorId: string, clubId: string): Promise<boolean> {
+        const now = new Date();
         const checkIns = await this.getCheckinsForClub(clubId);
-        let duplicateCheckIn = false;
-        await checkIns.forEach((checkIn) => {
-            if (checkIn.junior.id === juniorId && datesDifferLessThan(new Date(), new Date(checkIn.checkInTime), 2)) {
-                duplicateCheckIn = true;
-            }
-        });
-        return duplicateCheckIn;
+        return checkIns.some((checkIn) =>
+            checkIn.junior.id === juniorId && differenceInHours(now, checkIn.checkInTime) < 2
+        );
     }
 
     async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
@@ -65,14 +63,7 @@ export class ClubService {
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        const d = new Date();
-        // checkInTime format: YYYY-MM-DD HH:MM:SS+TZ
-        const checkIn = { junior, club, checkInTime:
-          d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0"+d.getDate()).slice(-2)
-          + " " + ("0"+d.getHours()).slice(-2) + ":" + ("0"+d.getMinutes()).slice(-2) + ":" + ("0"+d.getSeconds()).slice(-2)
-          + "+" + ("0"+d.getTimezoneOffset()/-60).slice(-2)
-        } as CheckIn;
-        await this.checkInRepo.save(checkIn);
+        await this.checkInRepo.save({ junior, club, checkInTime: new Date() });
         return true;
     }
 
@@ -123,4 +114,13 @@ export class ClubService {
     private isBetween(value: number, min: number, max: number): boolean {
         return value <= max && value >= min;
     }
+
+    // Delete checkins older than 14 days every night at 4 AM
+    @Cron('0 4 * * *')
+    async deleteOldCheckins(): Promise<void> {
+        const cutoff = sub(new Date(), { days: 14 });
+        const result = await this.checkInRepo.delete({ checkInTime: LessThan(cutoff) });
+        this.logger.log(`Deleted ${result.affected} checkins that happened before ${cutoff.toISOString()}`);
+    }
+
 }

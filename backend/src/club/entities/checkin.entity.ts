@@ -1,7 +1,6 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Club } from './club.entity';
 import { Junior } from '../../junior/entities';
-import { ConfigHelper } from '../../configHandler';
 
 @Entity()
 export class CheckIn {
@@ -9,20 +8,12 @@ export class CheckIn {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({
-        type: ConfigHelper.isTest() ? 'text' : 'timestamp with time zone',
-        default: getDefaultDate(),
-    })
-    checkInTime: string;
+    @Column({ type: 'timestamp with time zone' })
+    checkInTime: Date;
 
     @ManyToOne(type => Club)
     club: Club;
 
     @ManyToOne(type => Junior, junior => junior.checkIns, { onDelete: 'CASCADE' })
     junior: Junior;
-}
-
-function getDefaultDate() {
-    const currentTime = new Date();
-    return ConfigHelper.isTest() ? currentTime.getTime() : currentTime;
 }
