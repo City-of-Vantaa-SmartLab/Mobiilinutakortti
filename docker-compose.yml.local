@@ -16,8 +16,10 @@ services:
       FRONTEND_BASE_URL:
       IDP_ENTITY_ID:
       JSON_LOGS:
+      JWT:
+      NODE_ENV:
       RDS_DB_NAME:
-      RDS_HOSTNAME:
+      RDS_HOSTNAME: db
       RDS_PASSWORD:
       RDS_PORT:
       RDS_USERNAME:

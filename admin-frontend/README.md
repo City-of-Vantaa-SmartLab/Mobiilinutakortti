@@ -20,7 +20,7 @@ Admin-frontend is build using `react-admin` (running on port 3002).
 
 The application needs at least one admin user to work properly. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
 
-## Task definition / environment variables / secrets
+## Environment variables / secrets
 
 There are two environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"

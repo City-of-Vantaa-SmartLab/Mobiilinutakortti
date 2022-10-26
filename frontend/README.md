@@ -18,7 +18,7 @@ You need to have the backend running before starting the frontend; see `../backe
     * npm will anyway suggest another port automatically, so modifying package.json is not required in any case
     * if you chose port 3001, you can see frontend running at [http://localhost:3001](http://localhost:3001)
 
-## Task definition / environment variables / secrets
+## Environment variables / secrets
 
 There's one environment variable:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"

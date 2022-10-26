@@ -80,32 +80,29 @@ The application needs at least one admin user to work properly. See the generic 
 
 To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
 
-## Task definition / environment variables / secrets
+## Environment variables / secrets
 
-AWS sets up task definitions based on the `task-definition.json` file. This includes environment variables and secrets. Note that in the cloud environment, the secrets are read from environment variables eventually during runtime so these are all basically environment variables, just the inital source of them (AWS Secrets Manager or task definition) might vary.
-
-The secrets are:
 * `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
-* `RDS_PASSWORD`: Amazon RDS password.
-* `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
-* `TELIA_PASSWORD`: Telia SMS service password.
-* `TELIA_USERNAME`: Telia SMS service user name.
-
-The environment variables are:
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `FRONTEND_BASE_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
+* `JSON_LOGS`: If evaluates to true, use JSON log format.
+* `JWT`: Secret string used for JWTs. Arbitrary.
 * `RDS_DB_NAME`: Amazon RDS database name.
 * `RDS_HOSTNAME`: Amazon RDS URL host part.
+* `RDS_PASSWORD`: Amazon RDS password.
 * `RDS_PORT`: Amazon RDS port.
 * `RDS_USERNAME`: Amazon RDS user name.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
+* `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
 * `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new super admin via _registerSuperAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
+* `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
+* `TELIA_USERNAME`: Telia SMS service user name.
 
 Additionally, the frontend apps require these environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"

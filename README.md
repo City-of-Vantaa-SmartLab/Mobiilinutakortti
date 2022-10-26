@@ -88,8 +88,6 @@ Now you can login to admin-frontend with given credentials.
 
 When deploying application to production, endpoint should initially be open, and after creation of admin, it should be closed ASAP. The endpoint is toggled by environment variable `SUPER_ADMIN_FEATURES`. Set its value to "yes" to allow registering admins via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
 
-Note that in the task-definition.json the default value is "yes". Keep this in mind if you use the task definitions for production.
-
 ## Creating youth clubs
 
 Currently, there's no user interface for creating youth clubs. You can insert them directly to the database to the `clubs` table.
@@ -132,7 +130,7 @@ When running "docker-compose up" you might get an error like this:
 
 or your build may error randomly.
 
-There's a lot of files under node_modules and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On a Ubuntu Linux the limit can be increased for example like this:
+There's a lot of files under `node_modules` and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On a Ubuntu Linux the limit can be increased for example like this:
 
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
@@ -140,20 +138,9 @@ Increasing memory limits for Docker might also help if for example you are using
 
 ## Environments, AWS and CI
 
-### CI
-
-GitHub uses github-actions to push master branch to test-environment, when push or merge occurs to the master branch. For more information, see the "Actions" tab in GitHub.
-
 ### Test environment
 
-Application runs in Elastic Container Service (eu-west-1), with 3 different services:
-
-* [youth-club-server-service](https://api.mobiilinuta-admin-test.com/api)
-* [youth-club-mobile-front](http://youth-club-mobile-lb-74625212.eu-west-1.elb.amazonaws.com)
-* [youth-club-admin-front-2](https://mobiilinuta-admin-test.com)
-
-Application images are stored in Elastic Container Registry.
-You shouldn't need to update images or services manually, since Github does that for you.
+Application runs in Elastic Beanstalk in a single container (using Dockerfile) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
 
 ### Production environment
 
@@ -165,7 +152,7 @@ Application runs in Elastic Beanstalk in a single container (using Dockerfile) a
 
 Production logs are found in AWS CloudWatch under `/aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
 
-### Updating the production environment using EB CLI tools
+### Updating the environments using EB CLI tools
 
 Install the tools (for quick setup, follow the README in GitHub):
 * [AWS docs](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)

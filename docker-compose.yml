@@ -13,7 +13,9 @@ services:
       CERT_SELECTION:
       FRONTEND_BASE_URL:
       IDP_ENTITY_ID:
-      NODE_ENV: production
+      JSON_LOGS:
+      JWT:
+      NODE_ENV:
       RDS_DB_NAME:
       RDS_HOSTNAME:
       RDS_PASSWORD:
