@@ -35,7 +35,7 @@ export const translations: Translations = {
     submit: 'Fylla i ansökan',
     privacyPolicy: {
       title: 'Integritetspolicy',
-      href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja'
+      href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa'
     }
   },
   parentRegistration: {
@@ -82,14 +82,13 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer"
-          href='https://www.vantaa.fi/instancedata/prime_product_julkaisu/vantaa/embeds/vantaawwwstructure/150593_Mobiilinutakortin_kayttoehdot.pdf'>användarvillkoren</a>
+          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot%202022pdf.pdf'>användarvillkoren</a>
         </>
       ),
       submit: 'Skicka ansökan',
       privacyPolicy: {
         title: 'Läs hur vi hanterar dina personuppgifter.',
-        href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
+        href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa',
       }
     },
     errors: {

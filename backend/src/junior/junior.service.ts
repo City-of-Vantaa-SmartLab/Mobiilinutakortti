@@ -17,8 +17,6 @@ import * as content from '../content';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
-// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
-import { ConfigHelper } from '../configHandler';
 import { ListControlDto, SortDto, FilterDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
@@ -162,6 +160,10 @@ export class JuniorService {
         content.hiddenJuniorFields.forEach((key) => {
           junior[key] = junior[key] ?? ''
         })
+        // Junior communicationsLanguage might be a hidden field but it is still required.
+        if (!junior.communicationsLanguage) {
+          junior.communicationsLanguage = 'fi'
+        }
         junior.creationDate = new Date(Date.now()).toISOString()
 
         const errors = await validate(junior);
@@ -285,7 +287,7 @@ export class JuniorService {
 
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358999").map(j => j.phoneNumber);
+        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 6) === "358999").map(j => j.phoneNumber);
         let next = "";
         for (var i = 0; i < 1000000; i++) {
             next = "358999" + i.toString().padStart(6, '0');
@@ -352,6 +354,7 @@ export class JuniorService {
                 class: class_names[Math.floor(Math.random() * class_names.length)],
                 parentsName: first_names[Math.floor(Math.random() * first_names.length)] + " " + last_names[Math.floor(Math.random() * last_names.length)],
                 parentsPhoneNumber: "358400" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
+                communicationsLanguage: 'fi',
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,
                 homeYouthClub: (Math.floor(Math.random() * 14) + 1).toString(),
@@ -368,7 +371,7 @@ export class JuniorService {
      */
     async deleteTestDataJuniors(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const ids = juniors.data.filter(j => j.phoneNumber.substr(0, 6) === "358777").map(j => j.id);
+        const ids = juniors.data.filter(j => j.phoneNumber.substring(0, 6) === "358777").map(j => j.id);
         for (var i = 0; i < ids.length; i++) {
             await this.deleteJunior(ids[i]);
         }

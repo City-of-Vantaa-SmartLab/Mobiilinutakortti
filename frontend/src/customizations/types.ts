@@ -7,6 +7,7 @@ export type CustomizableFormField =
   | 'school'
   | 'class'
   | 'termsOfUse'
+  | 'communicationsLanguage'
 
 export interface Theme {
   pages: {

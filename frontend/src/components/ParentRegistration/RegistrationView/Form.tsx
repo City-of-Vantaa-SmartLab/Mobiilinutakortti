@@ -106,17 +106,19 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         />
                     </Fieldset>
 
-                    <Fieldset>
-                        <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
-                        <Field
-                            name='communicationsLanguage'
-                            component={DropdownField}
-                            title={t.parentRegistration.form.communicationsLanguage}
-                            options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
-                            defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
-                            description={t.parentRegistration.form.communicationsLanguageDescription}
-                        />
-                    </Fieldset>
+                    {valueOrNull('communicationsLanguage', (
+                        <Fieldset>
+                            <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
+                            <Field
+                                name='communicationsLanguage'
+                                component={DropdownField}
+                                title={t.parentRegistration.form.communicationsLanguage}
+                                options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
+                                defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
+                                description={t.parentRegistration.form.communicationsLanguageDescription}
+                            />
+                        </Fieldset>
+                    ))}
                 </Column>
                 <FormFooter>
                     {valueOrNull('termsOfUse', (
@@ -158,7 +160,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             gender: values.juniorGender,
             school: values.school,
             class: values.class,
-            communicationsLanguage: values.communicationsLanguage,
+            communicationsLanguage: values.communicationsLanguage || 'fi',
             birthday: getParsedBirthday(values.juniorBirthday),
             homeYouthClub: values.youthClub,
             postCode: values.postCode,
@@ -223,7 +225,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
         youthClub: string().required('selectYouthClub'),
-        communicationsLanguage: string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'),
+        communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')
     }),
     handleSubmit: (values, formikBag) => {
