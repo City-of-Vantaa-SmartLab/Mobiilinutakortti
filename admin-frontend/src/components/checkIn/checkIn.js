@@ -24,6 +24,7 @@ const Container = styled.div`
 const QrReaderContainer = styled.div`
   margin-top: 7.4em;
   width: 32em;
+  max-width: 100%;
   border: 55px solid #f9e51e;
   -webkit-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
