@@ -92,7 +92,7 @@ export const translations: Translations = {
       submit: 'Lähetä hakemus',
       privacyPolicy: {
         title: 'Lue tarkemmin, kuinka käsittelemme tietojasi.',
-        href: 'https://www.vantaa.fi/hallinto_ja_talous/hallinto/henkilotietojen_kasittely/informointiasiakirjat/nuorisopalveluiden_informointiasiakirja',
+        href: 'https://www.vantaa.fi/fi/kaupunki-ja-paatoksenteko/selosteet-oikeudet-ja-tietosuoja/henkilotietojen-kasittely/henkilotietojen-kasittely-nuorisotyossa-ja-toiminnassa',
       }
     },
     errors: {

@@ -181,14 +181,16 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
-                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>
+                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
+                    disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
+                />
                 <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
                 <SelectInput label="Tila" source="status" choices={statusChoices} validate={required()} />
                 <FormDataConsumer>
-                 {({ formData }) => formData.status === 'accepted' &&
-                    <SMSwarning/>
-                 }
-             </FormDataConsumer>
+                    {({ formData }) => formData.status === 'accepted' &&
+                        <SMSwarning/>
+                    }
+                </FormDataConsumer>
             </SimpleForm>
         </Create>
     );
@@ -239,7 +241,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()}/>
-                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>
+                {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
                 <FormDataConsumer>
                     {({ record }) => {
@@ -248,10 +250,10 @@ export const JuniorEdit = (props) => {
                     }}
                 </FormDataConsumer>
                 <FormDataConsumer>
-                 {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
-                    <SMSwarning/>
-                 }
-             </FormDataConsumer>
+                  {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
+                      <SMSwarning/>
+                  }
+                </FormDataConsumer>
             </SimpleForm>
         </Edit>
     );

@@ -1,6 +1,6 @@
 import {
     Controller, UsePipes, ValidationPipe, Post, Body, UseGuards, UseInterceptors,
-    Get, Param, BadRequestException, Delete, Query, Res,
+    Get, Param, BadRequestException, Delete, Query
 } from '@nestjs/common';
 import { JuniorService } from './junior.service';
 import { LoginJuniorDto, RegisterJuniorDto, EditJuniorDto, ResetJuniorDto, ParentFormDto, SeasonExpiredDto } from './dto';
@@ -16,11 +16,8 @@ import { Admin } from '../admin/admin.decorator';
 import { Junior } from './junior.decorator';
 import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';
-// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
-// The same note is made for the earlier imported BadRequestException
-import { ConfigHelper } from '../configHandler';
 import * as content from '../content';
-import { ListControlDto, FilterDto } from '../common/dto';
+import { ListControlDto } from '../common/dto';
 import { PhoneNumberValidationPipe } from './pipes/phoneNumberValidation.pipe';
 import { ResetPhoneNumberValidationPipe } from './pipes/resetPhoneNumberValidation.pipe';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -46,7 +43,6 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('parent-register')
     async registerJuniorByParent(@Body(PhoneNumberValidationPipe) parentFormData: ParentFormDto): Promise<Message> {
-        const { userData, securityContext } = parentFormData;
         return new Message(await this.juniorService.registerByParent(parentFormData));
     }
 
