@@ -20,6 +20,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
+import pino from 'pino';
 
 @Module({
   imports: [
@@ -34,7 +35,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     SsoModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
-    LoggerModule.forRoot(),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        useLevel: process.env.HTTP_LOG_LEVEL ? process.env.HTTP_LOG_LEVEL as pino.LevelWithSilent : 'info'
+      }
+    })
   ],
   providers: [AppService],
   controllers: [AppController, AdminController, JuniorController, AuthenticationController],
