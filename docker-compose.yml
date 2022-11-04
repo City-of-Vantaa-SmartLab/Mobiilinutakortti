@@ -12,6 +12,7 @@ services:
       AUTH_SIGNKEY:
       CERT_SELECTION:
       FRONTEND_BASE_URL:
+      HTTP_LOG_LEVEL:
       IDP_ENTITY_ID:
       JSON_LOGS:
       JWT:

@@ -85,6 +85,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `FRONTEND_BASE_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
+* `HTTP_LOG_LEVEL`: Optional. A pino logger level as string. Defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
 * `JSON_LOGS`: If evaluates to true, use JSON log format.
 * `JWT`: Secret string used for JWTs. Arbitrary.
