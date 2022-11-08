@@ -4,6 +4,7 @@ import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
+import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, superAdminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
@@ -51,6 +52,11 @@ const App = () => {
     return (
         <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
             {permissions => [
+                // This needs to have the list attribute defined, otherwise page won't show anything at all.
+                permissions === 'SUPERADMIN' || permissions === 'ADMIN'
+                    ? <Resource name="landingPage" list={LandingPage} />
+                    : null,
+
                 permissions === 'SUPERADMIN' || permissions === 'ADMIN'
                     ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />
                     : null,
