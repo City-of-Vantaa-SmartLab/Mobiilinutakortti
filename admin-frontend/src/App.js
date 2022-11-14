@@ -50,21 +50,10 @@ const App = () => {
     }, []);
 
     return (
-        <Admin layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
+        <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
             {permissions => [
-                // This needs to have the list attribute defined, otherwise page won't show anything at all.
-                permissions === 'SUPERADMIN' || permissions === 'ADMIN'
-                    ? <Resource name="landingPage" list={LandingPage} />
-                    : null,
-
-                permissions === 'SUPERADMIN' || permissions === 'ADMIN'
-                    ? <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />
-                    : null,
-
-                permissions === 'SUPERADMIN' || permissions === 'ADMIN'
-                    ? <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />
-                    : null,
-
+                <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
+                <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,
                 permissions === 'SUPERADMIN'
                     ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
                     : null

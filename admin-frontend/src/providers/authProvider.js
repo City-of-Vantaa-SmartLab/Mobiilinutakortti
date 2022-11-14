@@ -24,7 +24,7 @@ export const authProvider = (type, params) => {
             .then(() => httpClient(api.youthWorker.self, { method: 'GET' }))
             .then((response) => {
                 localStorage.setItem('lastLoggedInAdminName', response.firstName);
-                localStorage.setItem('lastLoggedInAdminMainYouthClub', response.mainYouthClub || '');
+                localStorage.setItem('lastLoggedInAdminMainYouthClubId', response.mainYouthClub || -1);
                 if (response.isSuperUser) {
                     localStorage.setItem('role', 'SUPERADMIN');
                 } else {
