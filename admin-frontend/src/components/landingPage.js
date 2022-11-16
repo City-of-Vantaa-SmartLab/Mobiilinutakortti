@@ -4,14 +4,17 @@ import { getYouthClubs } from '../utils'
 export const LandingPage = () => {
   const [youthClubs, setYouthClubs] = useState([]);
   const dropdownRef = useRef(null);
+  const adminInfo = useRef(null);
+
   useEffect(() => {
+    adminInfo.current = JSON.parse(localStorage.getItem('adminInfo'));
+
     const addYouthClubsToState = async () => {
       const parsedYouthClubs = await getYouthClubs();
       setYouthClubs(parsedYouthClubs.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
 
-      const mainYouthClubId = localStorage.getItem('lastLoggedInAdminMainYouthClubId');
-      dropdownRef.current.value = mainYouthClubId;
-      setSelectedYouthClub(mainYouthClubId);
+      dropdownRef.current.value = adminInfo.current?.mainYouthClubId || -1;
+      setSelectedYouthClub(adminInfo.current?.mainYouthClubId || -1);
     };
     addYouthClubsToState();
   }, []);
@@ -27,7 +30,7 @@ export const LandingPage = () => {
 
   return (
     <div style={{marginLeft: '20%', marginTop: '3em'}}>
-      <p>Tervetuloa {localStorage.getItem('lastLoggedInAdminName')}!</p>
+      <p>Tervetuloa {adminInfo.current?.firstName}!</p>
       <div>Jatka nuorten&nbsp;
         <button style={{
           background: 'none',
