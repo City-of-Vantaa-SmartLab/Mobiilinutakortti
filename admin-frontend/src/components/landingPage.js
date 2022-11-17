@@ -51,7 +51,7 @@ export const LandingPage = () => {
         </select>
       </div>
       <p>tai listaa <a href='#/junior'>kaikki nuoret</a>.</p>
-      {adminInfo.current?.hasChangedPassword ? null : (<div style={{marginTop: '3em'}}>
+      {adminInfo.current?.passwordLastChanged ? null : (<div style={{marginTop: '3em'}}>
         <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
       </div>)}
     </div>

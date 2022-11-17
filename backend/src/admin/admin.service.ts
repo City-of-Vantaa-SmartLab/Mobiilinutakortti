@@ -94,7 +94,7 @@ export class AdminService {
         if (!passwordsMatch) { throw new BadRequestException(content.IncorrectPassword); }
         const newPassword = await hash(changePasswordDto.newPassword, saltRounds);
         user.password = newPassword;
-        user.hasChangedPassword = true;
+        user.passwordLastChanged = new Date();
         await this.adminRepo.save(user);
         return content.PasswordUpdated;
     }

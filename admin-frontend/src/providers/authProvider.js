@@ -26,7 +26,7 @@ export const authProvider = (type, params) => {
                 localStorage.setItem('adminInfo', JSON.stringify({
                   firstName: response.firstName,
                   mainYouthClubId: response.mainYouthClub || -1,
-                  hasChangedPassword: response.hasChangedPassword
+                  passwordLastChanged: response.passwordLastChanged
                 }));
 
                 if (response.isSuperUser) {
