@@ -29,4 +29,7 @@ export class Admin {
 
     @Column({ default: '', nullable: true })
     mainYouthClub: string;
+
+    @Column({ default: false })
+    hasChangedPassword: boolean;
 }
