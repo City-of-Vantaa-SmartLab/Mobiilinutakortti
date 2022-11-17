@@ -23,6 +23,11 @@ export const authProvider = (type, params) => {
             })
             .then(() => httpClient(api.youthWorker.self, { method: 'GET' }))
             .then((response) => {
+                localStorage.setItem('adminInfo', JSON.stringify({
+                  firstName: response.firstName,
+                  mainYouthClubId: response.mainYouthClub || -1
+                }));
+
                 if (response.isSuperUser) {
                     localStorage.setItem('role', 'SUPERADMIN');
                 } else {
