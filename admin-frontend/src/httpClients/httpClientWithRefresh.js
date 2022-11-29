@@ -4,7 +4,7 @@ import { token } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
-export const httpClientWithResponse = (url, options = {}, disableAuth = false) => {
+export const httpClientWithRefresh = (url, options = {}, disableAuth = false) => {
     const refreshOptions = {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })

@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Injectable, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as saml2 from 'saml2-js';
 import * as fs from 'fs';
@@ -12,7 +12,7 @@ export class SsoService {
   private readonly entity_id: string;
   private readonly sp: saml2.ServiceProvider;
   private readonly idp: saml2.IdentityProvider;
-  private readonly samlHelper;
+  private readonly samlHelper: SAMLHelper;
   private readonly frontend_base_url: string;
   private readonly logger = new Logger('SSO Service');
 
@@ -66,7 +66,7 @@ export class SsoService {
 
   handleLoginResponse(req: Request, res: Response) {
     const options = { request_body: req.body };
-    const response = this.sp.post_assert(this.idp, options, (err, saml_response) => {
+    this.sp.post_assert(this.idp, options, (err, saml_response) => {
       // If the user cancels the authentication or SAML response status is not success, there will be an error.
       if (this._handleError(err, res))
         return;

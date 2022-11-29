@@ -14,9 +14,6 @@ import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
 import { JWTToken } from '../authentication/jwt.model';
 import { Message, Check } from '../common/vm';
-// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
-// The same note is made for the earlier imported BadRequestException
-import { ConfigHelper } from '../configHandler';
 import * as content from '../content';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';

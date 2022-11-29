@@ -7,7 +7,7 @@ import QrCheckResultScreen from "./qrCheckResultScreen.js";
 import LoadingMessage from "../loadingMessage";
 import { useNotify } from 'react-admin';
 import styled from 'styled-components';
-import { httpClientWithResponse } from '../../httpClients';
+import { httpClientWithRefresh } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
@@ -115,7 +115,7 @@ const CheckInView = (props) => {
         method: 'POST',
         body
       };
-      await httpClientWithResponse(url, options, true)
+      await httpClientWithRefresh(url, options, true)
         .then(response => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);

@@ -23,7 +23,7 @@ import {
 } from 'react-admin';
 import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
 import Button from '@material-ui/core/Button';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import usePermissions from '../hooks/usePermissions';
 import { hiddenFormFields } from '../customizations';
@@ -102,7 +102,7 @@ export const JuniorList = (props) => {
             method: 'POST',
             body
         };
-        await httpClientWithResponse(url, options)
+        await httpClientWithRefresh(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
                     notify(response.message, "warning");
@@ -135,7 +135,7 @@ export const JuniorList = (props) => {
 
 const getDummyPhoneNumber = async (cb) => {
     const url = api.junior.dummynumber;
-    await httpClientWithResponse(url)
+    await httpClientWithRefresh(url)
       .then(response => {
           if (response.message) {
               cb("phoneNumber", response.message)

@@ -20,7 +20,6 @@ import {jwt} from './authentication.consts';
 import { AcsDto, SecurityContextDto } from './dto';
 import {sign, unsign} from 'cookie-signature';
 import {secretString} from './secret';
-import * as moment from 'moment';
 
 @Injectable()
 export class AuthenticationService {
