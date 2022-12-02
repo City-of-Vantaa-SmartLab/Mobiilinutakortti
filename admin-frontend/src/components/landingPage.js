@@ -8,15 +8,16 @@ export const LandingPage = () => {
 
   useEffect(() => {
     adminInfo.current = JSON.parse(localStorage.getItem('adminInfo'));
+    if (!!adminInfo.current) {
+      const addYouthClubsToState = async () => {
+        const parsedYouthClubs = await getYouthClubs();
+        setYouthClubs(parsedYouthClubs.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
 
-    const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
-
-      dropdownRef.current.value = adminInfo.current?.mainYouthClubId || -1;
-      setSelectedYouthClub(adminInfo.current?.mainYouthClubId || -1);
-    };
-    addYouthClubsToState();
+        dropdownRef.current.value = adminInfo.current?.mainYouthClubId || -1;
+        setSelectedYouthClub(adminInfo.current?.mainYouthClubId || -1);
+      };
+      addYouthClubsToState();
+    }
   }, []);
 
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);

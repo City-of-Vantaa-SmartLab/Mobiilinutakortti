@@ -6,13 +6,16 @@ import { AdminModule } from '../admin/admin.module';
 import { jwt } from './authentication.consts';
 import { JwtStrategy } from './jwt.strategy';
 import { JuniorModule } from '../junior/junior.module';
+import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
   imports: [forwardRef(() => AdminModule), forwardRef(() => JuniorModule),
     PassportModule,
-  JwtModule.register({
-    secret: jwt.secret,
-  })],
+    SessionDBModule,
+    JwtModule.register({
+      secret: jwt.secret,
+    })
+  ],
   providers: [AuthenticationService, JwtStrategy],
   exports: [AuthenticationService],
 })

@@ -23,8 +23,7 @@ export class RolesGuard implements CanActivate {
             : context.switchToWs().getClient().handshake.query.token;
         if (!userId) { return false; }
         const userRoles = await this.getUserRoles(userId);
-        const hasRoles = () => userRoles.some((role) => roles.includes(role));
-        return hasRoles();
+        return userRoles.some((role) => roles.includes(role));
     }
 
     private async getUserRoles(id: string): Promise<Roles[]> {

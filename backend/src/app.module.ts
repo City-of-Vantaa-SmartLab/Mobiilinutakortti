@@ -11,6 +11,7 @@ import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
 import { RolesModule } from './roles/roles.module';
+import { SessionModule } from './session/session.module';
 import { Admin } from './admin/entities';
 import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
@@ -20,6 +21,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SessionDBModule } from './session/sessiondb.module';
 import pino from 'pino';
 
 @Module({
@@ -30,9 +32,11 @@ import pino from 'pino';
     JuniorModule,
     AuthenticationModule,
     RolesModule,
+    SessionModule,
     ClubModule,
     SmsModule,
     SsoModule,
+    SessionDBModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({
