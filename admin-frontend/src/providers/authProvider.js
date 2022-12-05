@@ -60,7 +60,7 @@ export const authProvider = (type, params) => {
         httpClient(url, options).then(() => {
           localStorage.removeItem(adminToken);
           localStorage.removeItem('role');
-          document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL || '/#/login';
+          return Promise.resolve();
         })
     }
     if (type === AUTH_GET_PERMISSIONS) {

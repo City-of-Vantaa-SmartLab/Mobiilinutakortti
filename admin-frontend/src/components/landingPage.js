@@ -17,6 +17,8 @@ export const LandingPage = () => {
         setSelectedYouthClub(adminInfo.current?.mainYouthClubId || -1);
       };
       addYouthClubsToState();
+    } else {
+      window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
     }
   }, []);
 

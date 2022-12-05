@@ -60,7 +60,7 @@ services:
     depends_on:
       - backend
     environment:
-      REACT_APP_ADMIN_FRONTEND_URL:
+      REACT_APP_ADMIN_FRONTEND_URL: /#/login
       REACT_APP_ENDPOINT:
 
   db:
