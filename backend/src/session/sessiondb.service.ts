@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
+// NB: as this "database" is now kept only in memory, in case of multiple running backend instances, a user session should always stay on one instance, otherwise session initialized in one instance is not found on the other. So if weird unauthorized errors occur in admin-frontend and multiple instances are needed, check the load balancer configuration or make this service use a real database.
+
 type Session = {
   ownerId: string
   authTokens: string[],
