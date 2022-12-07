@@ -99,11 +99,13 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
-    async getUniqueJunior(phoneNumber: string, birthday: string, firstName: string, lastName: string): Promise<Junior> {
-        return await this.juniorRepo.findOne({ where: { phoneNumber, birthday, firstName, lastName } })
+    async getUniqueJunior(phoneNumber: string, birthday?: string, firstName?: string, lastName?: string): Promise<Junior> {
+        if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber, firstName, lastName } });
+        if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber, birthday } });
+        return await this.juniorRepo.findOne({ where: { phoneNumber, birthday, firstName, lastName } });
     }
 
-    async createJunior(details: Junior) {
+    async createOrUpdateJunior(details: Junior) {
         return await this.juniorRepo.save(details);
     }
 
@@ -126,55 +128,68 @@ export class JuniorService {
         throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
+    // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by an admin, the status will be pending. In both cases a parent might re-register the junior.
+    // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club admins, and sometimes this results in a contact to maintenance, i.e. developers.
+    // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
     async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
-        this.logger.log(`Finding junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
-        const existingJunior = await this.getUniqueJunior(
+        this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
+
+        let existingJunior = await this.getUniqueJunior(
             registrationData.phoneNumber,
             registrationData.birthday,
             registrationData.firstName,
             registrationData.lastName
         );
-
-        let junior: Junior
-        let renew = false
         if (existingJunior) {
-            this.logger.log(`Found existing junior with ID ${existingJunior.id}, phone ${existingJunior.phoneNumber}, status ${existingJunior.status}`)
-
-            // Only allow account renewal if existing junior's status is expired or pending
-            if (["expired", "pending"].includes(existingJunior.status)) {
-                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber} with registration form data`)
-                junior = existingJunior
-                renew = true
+            this.logger.log(`Found existing junior (perfect match: phonenumber, birthday, name): ID ${existingJunior.id}, status ${existingJunior.status}`)
+        } else {
+            existingJunior = await this.getUniqueJunior(registrationData.phoneNumber, registrationData.birthday);
+            if (existingJunior) {
+                this.logger.log(`Found existing junior (partial match: phonenumber, birthday): ID ${existingJunior.id}, status ${existingJunior.status}`)
             } else {
-                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired or pending.`)
+                existingJunior = await this.getUniqueJunior(
+                    registrationData.phoneNumber, null,
+                    registrationData.firstName, registrationData.lastName
+                );
+                if (existingJunior) {
+                    this.logger.log(`Found existing junior (partial match: phonenumber, name): ID ${existingJunior.id}, status ${existingJunior.status}`)
+                }
+            }
+        }
+
+        let junior: Junior;
+        let renew = false;
+        if (existingJunior) {
+            // Only allow account renewal if existing junior's status is expired or pending.
+            if (["expired", "pending"].includes(existingJunior.status)) {
+                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber} with registration form data`);
+                junior = existingJunior;
+                renew = true;
+            } else {
+                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired or pending.`);
                 throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
-            this.logger.log('Existing junior not found, attempting to create a new junior with registration form data')
-            junior = new Junior()
+            this.logger.log('Existing junior not found, attempting to create a new junior with registration form data.');
+            junior = new Junior();
         }
 
-        Object.keys(registrationData).map((key: string) => {
-            junior[key] = registrationData[key]
-        })
-        content.hiddenJuniorFields.forEach((key) => {
-          junior[key] = junior[key] ?? ''
-        })
+        Object.keys(registrationData).map((key: string) => { junior[key] = registrationData[key] });
+        // Make sure hidden fields have some data in them.
+        content.hiddenJuniorFields.forEach((key) => { junior[key] = junior[key] ?? '' });
         // Junior communicationsLanguage might be a hidden field but it is still required.
-        if (!junior.communicationsLanguage) {
-          junior.communicationsLanguage = 'fi'
-        }
+        if (!junior.communicationsLanguage) junior.communicationsLanguage = 'fi';
         junior.creationDate = new Date(Date.now()).toISOString()
 
         const errors = await validate(junior);
         if (errors.length > 0) {
-            this.logger.error(`Validation error: ${errors}`)
+            this.logger.error(`Validation error: ${errors}`);
             throw new BadRequestException(errors);
         }
 
         try {
             this.logger.log(`Saving junior ${junior.phoneNumber}`);
-            await this.createJunior(junior);
+            await this.createOrUpdateJunior(junior);
         } catch (e) {
             this.logger.error(`Error saving junior ${junior.phoneNumber}: ${e.name}: ${e.message}`);
             if (e instanceof QueryFailedError) {
@@ -194,7 +209,7 @@ export class JuniorService {
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
 
-        this.logger.log('Junior saved, all OK')
+        this.logger.log('Junior saved, all OK');
         return renew ? content.Renew(registrationData.phoneNumber) : content.Created(registrationData.phoneNumber);
     }
 
