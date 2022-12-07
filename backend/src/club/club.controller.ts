@@ -45,9 +45,7 @@ export class ClubController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @AllowedRoles(Roles.ADMIN)
     @Post('check-in')
-    @ApiBearerAuth('admin')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
         const alreadyCheckedIn = await this.clubService.checkIfAlreadyCheckedIn(userData.juniorId, userData.clubId);
         let check = null;
