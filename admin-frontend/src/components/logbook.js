@@ -13,7 +13,7 @@ import {
     VerticalCardPadding,
     StyledDialogTitle
 } from './styledComponents/logbook';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
 // Alternative labels for mapping the genders 1-to-1 to LogBook 
@@ -48,7 +48,7 @@ let LogBookView = (props) => {
                 body
             };
             resetState();
-            await httpClientWithResponse(url, options)
+            await httpClientWithRefresh(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         notify(response.message, "warning");

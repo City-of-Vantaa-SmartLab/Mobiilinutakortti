@@ -1,2 +1,2 @@
 export { httpClient } from './httpClient';
-export { httpClientWithResponse } from './httpClientWithRefresh';
+export { httpClientWithRefresh } from './httpClientWithRefresh';

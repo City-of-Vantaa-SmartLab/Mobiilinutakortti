@@ -9,6 +9,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
+import { SessionGuard } from '../session/session.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
@@ -32,7 +33,7 @@ export class JuniorController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('register')
     @ApiBearerAuth('admin')
@@ -76,7 +77,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
@@ -86,7 +87,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
     @ApiBearerAuth('admin')
@@ -96,7 +97,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('nextAvailableDummyPhoneNumber')
     @ApiBearerAuth('admin')
@@ -105,7 +106,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get(':id')
     @ApiBearerAuth('admin')
@@ -132,7 +133,7 @@ export class JuniorController {
      * @param id - the id of the junior to delete
      */
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Delete(':id')
     @ApiBearerAuth('admin')
@@ -141,7 +142,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.SUPERUSER)
     @Post('newSeason')
     @ApiBearerAuth('super-admin')
@@ -150,7 +151,7 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.SUPERUSER)
     @Delete('newSeason/clearExpired')
     @ApiBearerAuth('super-admin')

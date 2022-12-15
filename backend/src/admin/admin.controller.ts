@@ -7,6 +7,7 @@ import { AdminService } from './admin.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
+import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
@@ -14,9 +15,6 @@ import { AdminUserViewModel } from './vm/admin.vm';
 import { Admin } from './admin.decorator';
 import { JWTToken } from '../authentication/jwt.model';
 import { Message, Check } from '../common/vm';
-// Note, do not delete these imports, they are not currently in use but are used in the commented out code to be used later in prod.
-// The same note is made for the earlier imported BadRequestException
-import { ConfigHelper } from '../configHandler';
 import * as content from '../content';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -56,7 +54,7 @@ export class AdminController {
    * @param adminData - the user data from the request
    */
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('getSelf')
   @ApiBearerAuth('super-admin')
@@ -65,14 +63,14 @@ export class AdminController {
     return new AdminUserViewModel(await this.adminService.getAdmin(adminData.userId));
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.ADMIN)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('refresh')
   @ApiBearerAuth('super-admin')
   @ApiBearerAuth('admin')
   async refreshJWT(@Admin() adminData: any): Promise<JWTToken> {
-    return this.authenticationService.signToken(adminData.userId, true);
+    return this.authenticationService.updateAuthToken(adminData);
   }
 
   /**
@@ -80,7 +78,7 @@ export class AdminController {
    *
    * @returns - true if successful, false otherwise.
    */
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.ADMIN)
   @Get('login')
   @ApiBearerAuth('super-admin')
@@ -88,6 +86,15 @@ export class AdminController {
   async autoLogin(@Admin() adminData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
     return new Check(!(await this.adminService.isLockedOut(adminData.userId)));
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+  @AllowedRoles(Roles.ADMIN)
+  @Get('logout')
+  @ApiBearerAuth('super-admin')
+  @ApiBearerAuth('admin')
+  async logout(@Admin() adminData: any): Promise<Check> {
+    return new Check(await this.authenticationService.logoutAdmin(adminData));
   }
 
   /**
@@ -108,7 +115,7 @@ export class AdminController {
    * @param userData - RegisterAdminDto
    * @returns string - success message
    */
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
@@ -123,7 +130,7 @@ export class AdminController {
    * @param userData - EditAdminDto
    * @return string - success message.
    */
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @UseInterceptors(AdminEditInterceptor)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -133,7 +140,7 @@ export class AdminController {
     return new Message(await this.adminService.editAdmin(userData));
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER, Roles.ADMIN)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('changePassword')
@@ -147,7 +154,7 @@ export class AdminController {
    *
    * @return AdminUserViewModel[] - a list of all admins
    */
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get('list')
   @ApiBearerAuth('super-admin')
@@ -160,7 +167,7 @@ export class AdminController {
    * @param id - the id of the admin to get the viewmodel of.
    */
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Get(':id')
   @ApiBearerAuth('super-admin')
@@ -173,7 +180,7 @@ export class AdminController {
    * @param id - the id of the admin to delete
    */
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.SUPERUSER)
   @Delete(':id')
   @ApiBearerAuth('super-admin')

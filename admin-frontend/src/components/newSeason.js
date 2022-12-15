@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
-import { httpClientWithResponse } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';
@@ -17,7 +17,7 @@ const NewSeason = () => {
 
   const createNewSeason = async (expireDate) => {
     setState(STATE.LOADING);
-    const response = await httpClientWithResponse(api.junior.newSeason, {
+    const response = await httpClientWithRefresh(api.junior.newSeason, {
       method: 'POST',
       body: JSON.stringify({
         expireDate,

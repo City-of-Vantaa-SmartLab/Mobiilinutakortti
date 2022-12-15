@@ -12,7 +12,8 @@ const apiEndpoints = {
     deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
   },
   auth: {
-    login: `${appUrl}/admin/login`
+    login: `${appUrl}/admin/login`,
+    logout: `${appUrl}/admin/logout`,
   },
   youthClub: {
     list: `${appUrl}/club/list`,

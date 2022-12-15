@@ -11,6 +11,7 @@ import {
 import { ClubService } from './club.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
+import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheckInsViewModel } from './vm';
@@ -29,16 +30,13 @@ export class ClubController {
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    // @UseGuards(AuthGuard('jwt'), RolesGuard)
-    // @AllowedRoles(Roles.ADMIN)
-    // @ApiBearerAuth('admin')
     @Get('list')
     async getAllClubs(): Promise<ClubViewModel[]> {
         return await this.clubService.getClubs();
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Get('check-in/:id')
     @ApiBearerAuth('admin')
@@ -47,9 +45,7 @@ export class ClubController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @AllowedRoles(Roles.ADMIN)
     @Post('check-in')
-    @ApiBearerAuth('admin')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
         const alreadyCheckedIn = await this.clubService.checkIfAlreadyCheckedIn(userData.juniorId, userData.clubId);
         let check = null;
@@ -63,7 +59,7 @@ export class ClubController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('check-ins')
     @ApiBearerAuth('admin')
@@ -74,7 +70,7 @@ export class ClubController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
     @Post('logbook')
     @ApiBearerAuth('admin')

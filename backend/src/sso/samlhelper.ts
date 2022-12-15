@@ -106,8 +106,7 @@ export class SAMLHelper {
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(saml_request_data + sigalg_data);
 
-    let samlQueryString;
-    samlQueryString = {};
+    let samlQueryString: any = {}
     samlQueryString.SAMLRequest = saml_request;
     samlQueryString.SigAlg =
       'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';

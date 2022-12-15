@@ -7,12 +7,16 @@ import { ClubController } from './club.controller';
 import { Admin } from '../admin/entities';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
+import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Junior, Club, CheckIn, Admin]),
-  JwtModule.register({
-    secret: jwt.secret,
-  })],
+  imports: [
+    TypeOrmModule.forFeature([Junior, Club, CheckIn, Admin]),
+    JwtModule.register({
+      secret: jwt.secret,
+    }),
+    SessionDBModule
+  ],
   providers: [ClubService],
   controllers: [ClubController],
 })
