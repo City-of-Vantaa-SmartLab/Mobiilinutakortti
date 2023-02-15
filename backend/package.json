@@ -38,7 +38,7 @@
     "@types/saml2-js": "^1.6.8",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "moment": "^2.24.0",
     "nestjs-pino": "^3.1.1",
@@ -49,7 +49,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
-    "saml2-js": "^3.0.1",
+    "saml2-js": "^4.0.1",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.3.6"
   },
