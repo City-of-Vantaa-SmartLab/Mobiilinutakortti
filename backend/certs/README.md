@@ -43,3 +43,26 @@ The CSR was created using this data:
 Note: as the certificate is not used for TLS web traffic, the Common Name need not be a real URL. We use the one used to identify the Mobiilinutakortti service in IdP SAML2 metadata.
 
 The CSR file is not needed anymore. The CER file is your public key, the certificate used in the IdP metadata; the file is public as the name implies. The PEM file is your private key *and should not be put into version control*. It is required by the backend to sign and possibly decrypt the SAML2 messages.
+
+## Updating Suomi.fi certificates
+
+You will need the new certificate, its private key, and the Suomi.fi metadata file for Nutakortti. Then follow these steps:
+
+1. Update the new certificate to the metadata file.
+2. Ensure the technical contact person in the metadata file is up-to-date.
+3. Upload the new certificate to DVV. See detailed steps below.
+4. Write the new certificate over the file `nutakortti-prod.cer`.
+5. Update the private key to environment variable.
+6. Restart the service with the new certificate file.
+
+The step 3 (Upload the new certificate to DVV) needs a person who has permission to use DVV's "Palveluhallinnan Tunnistus" service. Vantaa has normally had a couple of persons with the permission. They should do as follows:
+
+1. Go to [DVV palveluhallinta](https://palveluhallinta.suomi.fi/fi/).
+2. Go to "tunnistuksen hallintaliittymä".
+3. Click on the service you would like to update, or "Lisää asiointipalvelu" if it's a new service.
+4. Click on "Rekisteröi ympäristö".
+5. Choose "käyttölupa" or fill in "käyttöluvan tiedot" (if it's a production environment metadata). If the use permission has been given before 2020, a text "vanha käyttölupa" instead of journal number is sufficient.
+6. Upload the new metadata. Choose production as the environment (if it is the production environment you're updating).
+7. Click on "Tallenna ympäristö". You will get a confirmation message (to the top right corner) if it's a success.
+
+The metadata file will be processed during the next maintenance day, which is usually mid-week. After the processing date is known, a developer should continue the steps 4-6 to restart the service on that day.
