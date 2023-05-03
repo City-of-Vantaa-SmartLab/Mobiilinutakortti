@@ -135,8 +135,8 @@ export const translations: Translations = {
     },
   },
   qrPage: {
-    codeExpired: "Season expired",
-    codeValid: "Season valid",
+    codeExpired: "Previous season",
+    codeValid: "Current season",
     login: "Login",
     instruction: "Show QR code to a reader when entering the youth club.",
   },

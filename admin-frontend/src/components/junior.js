@@ -98,7 +98,7 @@ export const JuniorList = (props) => {
       <span
         style={status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle}
       >
-        {status === 'expired' ? 'Kausi vanhentunut' : 'Kausi voimassa'}
+        {status === 'expired' ? 'Edellinen kausi' : 'Kuluva kausi'}
       </span>
     </div>
   );

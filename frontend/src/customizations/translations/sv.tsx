@@ -138,8 +138,8 @@ export const translations: Translations = {
     },
   },
   qrPage: {
-    codeExpired: "Säsongen gått ut",
-    codeValid: "Säsong gäller",
+    codeExpired: "Föregående säsong",
+    codeValid: "Nuvarande säsong",
     login: "Logga in",
     instruction: "Visa QR-kod för en läsare vid inträde i ungdomsklubben.",
   },
