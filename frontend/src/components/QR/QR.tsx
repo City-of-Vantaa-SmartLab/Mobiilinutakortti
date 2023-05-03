@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import QRCode from "qrcode.react";
 import Measure from "react-measure";
+import { useTranslations } from "../translations";
 
 const QRWrapper = styled.section`
   display: flex;
@@ -51,9 +52,10 @@ interface QRProps {
 }
 
 const QR: React.FC<QRProps> = (props) => {
+  const t = useTranslations();
   const [size, setSize] = useState(0);
   const statusMessage =
-    props.status === "expired" ? "Kausi vanhentunut" : "Kausi voimassa";
+    props.status === "expired" ? t.qrPage.codeExpired : t.qrPage.codeValid;
 
   return (
     <QRWrapper>
