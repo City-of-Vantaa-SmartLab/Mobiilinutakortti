@@ -5,7 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
-    "qrcode": "^1.5.0",
+    "qrcode.react": "^3.1.0",
     "ra-i18n-polyglot": "^3.19.11",
     "ra-language-finnish": "^3.18.3",
     "react": "^16.14.0",
