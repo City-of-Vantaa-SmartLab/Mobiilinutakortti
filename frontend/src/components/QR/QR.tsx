@@ -43,7 +43,7 @@ const QRStatusMessage = styled.span<{ expired: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: ${(props) => (props.expired ? "red" : "green")};
+  color: ${(props) => (props.expired ? "#f7423a" : "#6bc24a")};
 `;
 
 interface QRProps {

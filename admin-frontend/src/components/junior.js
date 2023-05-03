@@ -440,13 +440,13 @@ export const JuniorEdit = (props) => {
 };
 
 const expiredQrCodeStyle = {
-  color: 'red',
+  color: '#f7423a',
   fontSize: '2em',
   fontFamily: 'GT-Walsheim',
 };
 
 const validQrCodeStyle = {
-  color: 'green',
+  color: '#6bc24a',
   fontSize: '2em',
   fontFamily: 'GT-Walsheim',
 };
