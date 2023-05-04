@@ -6,12 +6,12 @@ import { useTranslations } from "../translations";
 
 const QRWrapper = styled.section`
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    text-align: center;
 `
 
 const QRContainer = styled.div<{ active: boolean }>`
-    display: flex;
-    flex-direction: column;
     width: 100%;
     max-width: 70vh;
     background: ${p => p.theme.pages.qr.qrBorder};
@@ -40,11 +40,14 @@ const QRContainer = styled.div<{ active: boolean }>`
     }
 `;
 
-const QRStatusMessage = styled.span<{ expired: boolean }>`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: ${(props) => (props.expired ? "#f7423a" : "#6bc24a")};
+const QRStatusContainer = styled.span<{ expired: boolean}>`
+    margin-top: 10px;
+    width: 100%;
+    max-width: 70vh; 
+    font-family: sans-serif; 
+    font-size: 2em;  
+    color: '#000000';
+    background-color: ${(props) => (props.expired ? '#f7423a' : '#6bc24a')};
 `;
 
 interface QRProps {
@@ -55,10 +58,9 @@ interface QRProps {
 const QR: React.FC<QRProps> = (props) => {
   const t = useTranslations();
   const [size, setSize] = useState(0);
-  const statusMessage = props.status === "expired" ? t.qrPage.codeExpired : t.qrPage.codeValid;
+  const statusMessage = props.status === 'expired' ? t.qrPage.codeExpired : t.qrPage.codeValid;
 
     return (
-      <QRWrapper>
         <Measure
             bounds
             onResize={contentRect => {
@@ -68,15 +70,16 @@ const QR: React.FC<QRProps> = (props) => {
             }}
         >
             {({ measureRef }) => (
+            <QRWrapper>
                 <QRContainer ref={measureRef} active={props.id !== ''}>
                     <QRCode value={props.id} includeMargin={true} size={size}/>
-                    <QRStatusMessage expired={props.status === "expired"}>
-                        {statusMessage}
-                    </QRStatusMessage>
                 </QRContainer>
-            )}
+                <QRStatusContainer expired={props.status === 'expired'}>
+                    {statusMessage}
+                </QRStatusContainer>
+            </QRWrapper>
+            )}      
         </Measure>
-      </QRWrapper>
     );
 }
 

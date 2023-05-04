@@ -71,13 +71,11 @@ export const JuniorList = (props) => {
     )
 
     const QRCodeWithStatusMessage = ({ status, id }) => (
-        <div style={qrCodeContainerStyle}>
-        <QRCode value={id} includeMargin={true} size={400} />
-        <span
-            style={status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle}
-        >
-            {status === 'expired' ? 'Edellinen kausi' : 'Kuluva kausi'}
-        </span>
+        <div style={Object.assign(qrCodeContainerStyle, (status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle))}>
+            <QRCode value={id} includeMargin={true} size={400} />
+            <span style={qrCodeMessageStyle}>
+                {status === 'expired' ? 'EDELLINEN KAUSI' : 'KULUVA KAUSI'}
+            </span>
         </div>
     );
     
@@ -98,7 +96,7 @@ export const JuniorList = (props) => {
 
 
     const PrintQrCodeButton = (data) => (
-      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
+      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, data.record.status, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
     )
 
 
@@ -268,25 +266,26 @@ export const JuniorEdit = (props) => {
     );
 };
 
-const expiredQrCodeStyle = {
-  color: '#f7423a',
-  fontSize: '2em',
-  fontFamily: 'GT-Walsheim',
+const qrCodeMessageStyle = {
+    color: '#000000',
+    fontSize: '2em',
+    fontFamily: 'sans-serif',
+    margin: '5px'
 };
 
 const validQrCodeStyle = {
-  color: '#6bc24a',
-  fontSize: '2em',
-  fontFamily: 'GT-Walsheim',
+    backgroundColor: '#6bc24a',
+};
+
+const expiredQrCodeStyle = {
+    backgroundColor: '#f7423a',
 };
 
 const qrCodeContainerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  textAlign: 'center',
-  alignItems: 'center',
-  width: '400px',
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+    width: '400px',
 };
 
 const languages = [
