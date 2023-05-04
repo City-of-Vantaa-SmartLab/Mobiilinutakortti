@@ -36,6 +36,9 @@ export class Junior {
     @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
 
+    @Column({ nullable: true  })
+    additionalContactInformation: string;
+
     @Column({ transformer: lowercase })
     @Length(1, 1)
     gender: string;

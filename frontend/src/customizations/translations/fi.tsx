@@ -75,6 +75,7 @@ export const translations: Translations = {
       parentFirstName: 'Etunimi',
       parentLastName: 'Sukunimi',
       parentPhoneNumber: 'Puhelinnumero',
+      additionalContactInformation: 'Toisen yhteyshenkilön tiedot tai vaihtoehtoinen puhelinnumero (esim. työpuhelin)',
 
       youthClubHeading: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
@@ -124,8 +125,8 @@ export const translations: Translations = {
     }
   },
   qrPage: {
-    codeExpired: "EDELLINEN KAUSI",
-    codeValid: "KULUVA KAUSI",
+    codeExpired: "Edellinen kausi",
+    codeValid: "Kuluva kausi",
     login: 'Kirjaudu',
     instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
   },

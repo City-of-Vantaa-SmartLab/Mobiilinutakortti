@@ -30,6 +30,7 @@ export interface FormValues {
     parentFirstName: string,
     parentLastName: string,
     parentPhoneNumber: string,
+    additionalContactInformation: string,
     youthClub: string,
     termsOfUse: boolean
 }
@@ -92,6 +93,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
+                        <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
                     </Fieldset>
 
                     <Fieldset>
@@ -166,6 +168,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             postCode: values.postCode,
             parentsName: `${values.parentFirstName} ${values.parentLastName}`,
             parentsPhoneNumber: values.parentPhoneNumber,
+            additionalContactInformation: values.additionalContactInformation,
             status: 'pending',
             photoPermission: values.photoPermission === 'y'
         },
@@ -198,6 +201,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
             parentFirstName: props.securityContext.firstName,
             parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
+            additionalContactInformation: '',
             youthClub: '',
             termsOfUse: hiddenFormFields.includes('termsOfUse'),
         }
@@ -224,6 +228,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentFirstName: string().required('required'),
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
+        additionalContactInformation: string(),
         youthClub: string().required('selectYouthClub'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')

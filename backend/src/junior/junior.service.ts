@@ -242,6 +242,7 @@ export class JuniorService {
         user.birthday = details.birthday;
         user.parentsName = details.parentsName;
         user.parentsPhoneNumber = details.parentsPhoneNumber;
+        user.additionalContactInformation = details.additionalContactInformation;
         user.school = details.school;
         user.class = details.class;
         user.postCode = details.postCode;

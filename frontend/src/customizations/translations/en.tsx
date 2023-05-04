@@ -72,6 +72,7 @@ export const translations: Translations = {
       parentFirstName: 'First name',
       parentLastName: 'Last name',
       parentPhoneNumber: 'Phone number',
+      additionalContactInformation: 'Information of another contact person or an alternative phone number (e.g. work phone)',
 
       youthClubHeading: 'Home youth club',
       youthClubDefault: 'Choose youth club',
