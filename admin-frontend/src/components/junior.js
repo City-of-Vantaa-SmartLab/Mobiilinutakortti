@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useForm } from 'react-final-form';
-import QRCode from 'qrcode'
+import QRCode from 'qrcode.react'
 import {
     List,
     Datagrid,
@@ -69,19 +70,27 @@ export const JuniorList = (props) => {
             : <Button disabled>Kotisoitto tekemättä</Button>
     )
 
-
-    const generateQRAndOpen = async (id, owner) => {
+    const QRCodeWithStatusMessage = ({ status, id }) => (
+        <div style={qrCodeContainerStyle}>
+        <QRCode value={id} includeMargin={true} size={400} />
+        <span
+            style={status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle}
+        >
+            {status === 'expired' ? 'Edellinen kausi' : 'Kuluva kausi'}
+        </span>
+        </div>
+    );
+    
+    const generateQRAndOpen = async (id, status, owner) => {
         try {
-            const data = await QRCode.toDataURL(id);
-            const image = new Image();
-            image.src = data;
-            image.width = 400;
-
-            const w = window.open("");
-            setTimeout(() => w.document.title = `QR-koodi ${owner}`, 0);
-            w.document.write(image.outerHTML);
-            w.document.location = "#";
-            w.document.close();
+            const newWindow = window.open('');
+            const container = document.createElement('div');
+            ReactDOM.render(
+                <QRCodeWithStatusMessage status={status} id={id} />,
+                container,
+            );
+            setTimeout(() => (newWindow.document.title = `QR-koodi ${owner}`), 0);
+            newWindow.document.body.appendChild(container);
         } catch (err) {
             alert("Virhe QR-koodin luonnissa")
         }
@@ -257,6 +266,27 @@ export const JuniorEdit = (props) => {
             </SimpleForm>
         </Edit>
     );
+};
+
+const expiredQrCodeStyle = {
+  color: '#f7423a',
+  fontSize: '2em',
+  fontFamily: 'GT-Walsheim',
+};
+
+const validQrCodeStyle = {
+  color: '#6bc24a',
+  fontSize: '2em',
+  fontFamily: 'GT-Walsheim',
+};
+
+const qrCodeContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  textAlign: 'center',
+  alignItems: 'center',
+  width: '400px',
 };
 
 const languages = [

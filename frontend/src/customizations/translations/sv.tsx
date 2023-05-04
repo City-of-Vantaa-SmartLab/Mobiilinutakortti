@@ -115,6 +115,8 @@ export const translations: Translations = {
     }
   },
   qrPage: {
+    codeExpired: "Föregående säsong",
+    codeValid: "Nuvarande säsong",
     login: 'Logga in',
     instruction: 'Visa QR-kod för en läsare vid inträde i ungdomsklubben.',
   },

@@ -124,6 +124,8 @@ export const translations: Translations = {
     }
   },
   qrPage: {
+    codeExpired: "Edellinen kausi",
+    codeValid: "Kuluva kausi",
     login: 'Kirjaudu',
     instruction: 'Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.',
   },
