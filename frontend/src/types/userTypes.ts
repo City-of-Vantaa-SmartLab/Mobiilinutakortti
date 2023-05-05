@@ -6,12 +6,13 @@ export enum userTypes {
 
 export interface userState {
     id: string,
-    name: string
+    name: string,
+    status: string
 }
 
 export interface getSelfSuccess {
     type: userTypes.GET_SELF_SUCCESS,
-    payload: { id: string, name: string },
+    payload: { id: string, name: string; status: string },
 }
 
 export interface getSelfFail {

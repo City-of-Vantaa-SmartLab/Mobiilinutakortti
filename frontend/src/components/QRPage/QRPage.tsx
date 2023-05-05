@@ -47,6 +47,7 @@ const Footer = styled.section`
 interface QRPageProps {
     id: string,
     name: string,
+    status: string
 }
 
 const QRPage: React.FC<QRPageProps> = (props) => {
@@ -59,7 +60,7 @@ const QRPage: React.FC<QRPageProps> = (props) => {
                 <Header>
                     <Title title={t.qrPage.login} subtitle={props.name} />
                 </Header>
-                <QR id={props.id}/>
+                <QR id={props.id} status={props.status} />
                 <Footer>{t.qrPage.instruction}</Footer>
             </Wrapper>
         </Container>
@@ -69,7 +70,8 @@ const QRPage: React.FC<QRPageProps> = (props) => {
 
 const mapStateToProps = (state: AppState) => ({
     id: state.user.id,
-    name: state.user.name
+    name: state.user.name,
+    status: state.user.status
 });
 
 

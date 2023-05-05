@@ -168,6 +168,8 @@ export interface Translations {
     }
   },
   qrPage: {
+    codeExpired: string;
+    codeValid: string;
     login: string,
     instruction: ReactNode
   },

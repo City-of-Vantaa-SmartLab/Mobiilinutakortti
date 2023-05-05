@@ -2,10 +2,13 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 import Measure from 'react-measure'
+import { useTranslations } from "../translations";
 
 const QRWrapper = styled.section`
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    text-align: center;
 `
 
 const QRContainer = styled.div<{ active: boolean }>`
@@ -37,15 +40,27 @@ const QRContainer = styled.div<{ active: boolean }>`
     }
 `;
 
+const QRStatusContainer = styled.span<{ expired: boolean}>`
+    margin-top: 10px;
+    width: 100%;
+    max-width: 70vh; 
+    font-family: sans-serif; 
+    font-size: 2em;  
+    color: '#000000';
+    background-color: ${(props) => (props.expired ? '#f7423a' : '#6bc24a')};
+`;
+
 interface QRProps {
     id: string
+    status: string
 }
 
 const QR: React.FC<QRProps> = (props) => {
-    const [size, setSize] = useState(0);
+  const t = useTranslations();
+  const [size, setSize] = useState(0);
+  const statusMessage = props.status === 'expired' ? t.qrPage.codeExpired : t.qrPage.codeValid;
 
     return (
-      <QRWrapper>
         <Measure
             bounds
             onResize={contentRect => {
@@ -55,12 +70,16 @@ const QR: React.FC<QRProps> = (props) => {
             }}
         >
             {({ measureRef }) => (
+            <QRWrapper>
                 <QRContainer ref={measureRef} active={props.id !== ''}>
                     <QRCode value={props.id} includeMargin={true} size={size}/>
                 </QRContainer>
-            )}
+                <QRStatusContainer expired={props.status === 'expired'}>
+                    {statusMessage}
+                </QRStatusContainer>
+            </QRWrapper>
+            )}      
         </Measure>
-      </QRWrapper>
     );
 }
 

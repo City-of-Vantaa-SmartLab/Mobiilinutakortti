@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useForm } from 'react-final-form';
-import QRCode from 'qrcode'
+import QRCode from 'qrcode.react'
 import {
     List,
     Datagrid,
@@ -69,19 +70,25 @@ export const JuniorList = (props) => {
             : <Button disabled>Kotisoitto tekemättä</Button>
     )
 
-
-    const generateQRAndOpen = async (id, owner) => {
+    const QRCodeWithStatusMessage = ({ status, id }) => (
+        <div style={Object.assign(qrCodeContainerStyle, (status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle))}>
+            <QRCode value={id} includeMargin={true} size={400} />
+            <span style={qrCodeMessageStyle}>
+                {status === 'expired' ? 'EDELLINEN KAUSI' : 'KULUVA KAUSI'}
+            </span>
+        </div>
+    );
+    
+    const generateQRAndOpen = async (id, status, owner) => {
         try {
-            const data = await QRCode.toDataURL(id);
-            const image = new Image();
-            image.src = data;
-            image.width = 400;
-
-            const w = window.open("");
-            setTimeout(() => w.document.title = `QR-koodi ${owner}`, 0);
-            w.document.write(image.outerHTML);
-            w.document.location = "#";
-            w.document.close();
+            const newWindow = window.open('');
+            const container = document.createElement('div');
+            ReactDOM.render(
+                <QRCodeWithStatusMessage status={status} id={id} />,
+                container,
+            );
+            setTimeout(() => (newWindow.document.title = `QR-koodi ${owner}`), 0);
+            newWindow.document.body.appendChild(container);
         } catch (err) {
             alert("Virhe QR-koodin luonnissa")
         }
@@ -89,7 +96,7 @@ export const JuniorList = (props) => {
 
 
     const PrintQrCodeButton = (data) => (
-      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
+      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, data.record.status, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
     )
 
 
@@ -257,6 +264,28 @@ export const JuniorEdit = (props) => {
             </SimpleForm>
         </Edit>
     );
+};
+
+const qrCodeMessageStyle = {
+    color: '#000000',
+    fontSize: '2em',
+    fontFamily: 'sans-serif',
+    margin: '5px'
+};
+
+const validQrCodeStyle = {
+    backgroundColor: '#6bc24a',
+};
+
+const expiredQrCodeStyle = {
+    backgroundColor: '#f7423a',
+};
+
+const qrCodeContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'center',
+    width: '400px',
 };
 
 const languages = [
