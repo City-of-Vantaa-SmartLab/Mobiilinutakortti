@@ -116,3 +116,8 @@ Swagger documentation endpoint located at "api/swagger". The documentation is co
 There are 3 authentication level corespond to 3 level of user: super admin, admin (normal youth worker), and junior. Each level of user get access to different endpoint.
 
 Swagger documentation does not document api response. If desire api response can be documented manually in the future.
+
+## Tests
+
+Due to historical reasons, some/most of the tests fail. Feel free to fix and document them.
+Also, even though PostgreSQL is used, the tests use SQLite. As it doesn't have a date data type, in some places of the code there are special cases for the tests to work.

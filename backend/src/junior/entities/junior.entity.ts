@@ -40,7 +40,7 @@ export class Junior {
     @Length(1, 1)
     gender: string;
 
-    // Additional check introduced to allow the SQLite testDB to run
+    // Additional check introduced to allow testDB to run (for npm run test): SQLite doesn't have a date data type.
     @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
@@ -53,6 +53,7 @@ export class Junior {
     @Column()
     status: string;
 
+    // See testDB note above.
     @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     creationDate: string;
 

@@ -15,7 +15,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "rm ./test/testdb.sql || true && set NODE_ENV=test&& jest --runInBand && rm ./test/testdb.sql",
+    "test": "rm ./test/testdb.sql || true && set NODE_ENV=test && jest --runInBand && rm ./test/testdb.sql",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
