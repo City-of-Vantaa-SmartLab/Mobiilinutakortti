@@ -71,6 +71,7 @@ export const translations: Translations = {
       parentFirstName: 'Förnamn',
       parentLastName: 'Efternamn',
       parentPhoneNumber: 'Telefonnummer',
+      additionalContactInformation: 'Information om en annan kontaktperson eller ett alternativt telefonnummer (t.ex. jobbtelefon)',
 
       youthClubHeading: 'Hemungdomskulbb',
       youthClubDefault: 'Välj ungdomskulbb',

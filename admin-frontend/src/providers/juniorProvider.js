@@ -55,6 +55,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
             });
@@ -88,6 +89,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
             };

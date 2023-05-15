@@ -133,6 +133,7 @@ export interface Translations {
       parentFirstName: string,
       parentLastName: string,
       parentPhoneNumber: string,
+      additionalContactInformation: string,
 
       youthClubHeading: string,
       youthClubDefault: string,

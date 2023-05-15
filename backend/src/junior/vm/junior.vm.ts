@@ -13,6 +13,7 @@ export class JuniorUserViewModel {
     class: string;
     parentsName: string;
     parentsPhoneNumber: string;
+    additionalContactInformation: string;
     gender: string;
     birthday: string;
     creationDate: string;
@@ -32,6 +33,7 @@ export class JuniorUserViewModel {
         this.class = entity.class;
         this.postCode = entity.postCode;
         this.parentsPhoneNumber = entity.parentsPhoneNumber;
+        this.additionalContactInformation = entity.additionalContactInformation;
         this.gender = entity.gender;
         this.homeYouthClub = entity.homeYouthClub;
         this.communicationsLanguage = entity.communicationsLanguage;

@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length, IsDateString, IsDate } from 'class-validator';
+import { IsNotEmpty, Length, IsDateString } from 'class-validator';
 import * as content from '../../content';
 
 export class EditJuniorDto {
@@ -23,6 +23,8 @@ export class EditJuniorDto {
     parentsName: string;
 
     parentsPhoneNumber: string;
+
+    additionalContactInformation: string;
 
     @Length(1, 1)
     gender: string;

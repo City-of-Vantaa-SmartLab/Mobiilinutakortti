@@ -74,7 +74,7 @@ export const JuniorList = (props) => {
         <div style={Object.assign(qrCodeContainerStyle, (status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle))}>
             <QRCode value={id} includeMargin={true} size={400} />
             <span style={qrCodeMessageStyle}>
-                {status === 'expired' ? 'EDELLINEN KAUSI' : 'KULUVA KAUSI'}
+                {status === 'expired' ? 'Edellinen kausi' : 'Kuluva kausi'}
             </span>
         </div>
     );
@@ -187,6 +187,7 @@ export const JuniorCreate = (props) => {
                 {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
+                {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
@@ -247,6 +248,7 @@ export const JuniorEdit = (props) => {
                 {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()}/>)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
+                {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()}/>
                 {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
@@ -257,9 +259,9 @@ export const JuniorEdit = (props) => {
                     }}
                 </FormDataConsumer>
                 <FormDataConsumer>
-                  {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
-                      <SMSwarning/>
-                  }
+                    {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
+                        <SMSwarning/>
+                    }
                 </FormDataConsumer>
             </SimpleForm>
         </Edit>
@@ -270,6 +272,7 @@ const qrCodeMessageStyle = {
     color: '#000000',
     fontSize: '2em',
     fontFamily: 'sans-serif',
+    textTransform: 'uppercase',
     margin: '5px'
 };
 

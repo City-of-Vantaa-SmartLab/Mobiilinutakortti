@@ -46,6 +46,7 @@ const QRStatusContainer = styled.span<{ expired: boolean}>`
     max-width: 70vh; 
     font-family: sans-serif; 
     font-size: 2em;  
+    text-transform: uppercase;
     color: '#000000';
     background-color: ${(props) => (props.expired ? '#f7423a' : '#6bc24a')};
 `;

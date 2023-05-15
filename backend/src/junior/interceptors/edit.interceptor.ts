@@ -18,20 +18,20 @@ export class JuniorEditInterceptor implements NestInterceptor {
         const userToEdit = await this.juniorRepo.findOneBy({ id: body.id });
         if (!userToEdit) { throw new BadRequestException(content.UserNotFound); }
         let dataChanged = false;
-        body.phoneNumber ? dataChanged = dataChanged || body.phoneNumber !== userToEdit.phoneNumber : body.phoneNumber = userToEdit.phoneNumber;
-        body.firstName && body.firstName.trim() !== '' ? dataChanged = dataChanged || body.firstName !== userToEdit.firstName
-            : body.firstName = userToEdit.firstName;
-        body.lastName && body.lastName.trim() !== '' ? dataChanged = dataChanged || body.lastName !== userToEdit.lastName
-            : body.lastName = userToEdit.lastName;
-        body.postCode ? dataChanged = dataChanged || body.postCode !== userToEdit.postCode : body.lastName = userToEdit.lastName;
-        body.parentsName ? dataChanged = dataChanged || body.parentsName !== userToEdit.parentsName : body.parentsName = userToEdit.parentsName;
-        body.parentsPhoneNumber ? dataChanged = dataChanged || body.parentsPhoneNumber !== userToEdit.parentsPhoneNumber
-            : body.parentsPhoneNumber = userToEdit.parentsPhoneNumber;
-        body.birthday ? dataChanged = dataChanged || body.birthday !== userToEdit.birthday : body.birthday = userToEdit.birthday;
-        body.homeYouthClub ? dataChanged = dataChanged || body.homeYouthClub !== userToEdit.homeYouthClub
-            : body.homeYouthClub = userToEdit.homeYouthClub;
-        body.gender ? dataChanged = dataChanged || body.gender !== userToEdit.gender : body.gender = userToEdit.gender;
-        dataChanged = dataChanged || (body.nickName && body.nickName !== userToEdit.nickName);
+
+        // Interceptor for non-nullable fields
+        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'homeYouthClub', 'communicationsLanguage', 'status', 'photoPermission'];
+        dataChanged = nonNullableFields.some(field => {
+            body[field] = body[field] ?? '';
+            return body[field] !== userToEdit[field];
+        })
+
+        // Some dates include timestamp which makes it seem like birthday has changed even when it hasn't
+        // ISO date(time) format begins with YYYY-MM-DD
+        dataChanged ||= body.birthday?.substring(0, 10) !== userToEdit.birthday.substring(0, 10);
+
+        // Interceptor for nullable fields: at this time only additionalContactInformation
+        dataChanged = dataChanged || body.additionalContactInformation !== userToEdit.additionalContactInformation;
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); }
         return next.handle();

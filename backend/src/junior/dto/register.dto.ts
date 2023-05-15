@@ -32,6 +32,8 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly parentsPhoneNumber: string;
 
+    readonly additionalContactInformation: string;
+
     @Length(1, 1)
     @IsNotEmpty()
     readonly gender: string;
