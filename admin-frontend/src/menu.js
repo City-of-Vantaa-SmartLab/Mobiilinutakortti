@@ -29,6 +29,11 @@ const Menu = () => {
       {isSuperAdmin && (
         <React.Fragment>
           <MenuItemLink
+            to="/editYouthClubs"
+            primaryText="Nuorisotilojen muokkaus"
+            leftIcon={<ListIcon />}
+          />
+          <MenuItemLink
             to="/youthWorker"
             primaryText="Nuorisotyöntekijät"
             leftIcon={<ListIcon />}

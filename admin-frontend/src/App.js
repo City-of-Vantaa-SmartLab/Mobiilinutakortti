@@ -4,6 +4,7 @@ import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
+import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, superAdminRoutes } from './customRoutes';
@@ -54,6 +55,9 @@ const App = () => {
             {permissions => [
                 <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
                 <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,
+                permissions === 'SUPERADMIN'
+                    ? <Resource name="editYouthClubs" options={{ label: 'Nuorisotilojen muokkaus' }} list={EditYouthClubsList} edit={EditYouthClubs} />
+                    : null,
                 permissions === 'SUPERADMIN'
                     ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
                     : null

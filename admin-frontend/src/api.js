@@ -16,7 +16,9 @@ const apiEndpoints = {
     logout: `${appUrl}/admin/logout`,
   },
   youthClub: {
-    list: `${appUrl}/club/list`,
+    base: `${appUrl}/club/`,
+    list: `${appUrl}/club/list/`,
+    edit: `${appUrl}/club/edit`,
     checkIn: `${appUrl}/club/check-in`,
     logBook: `${appUrl}/club/logbook`,
     checkIns: `${appUrl}/club/check-ins`

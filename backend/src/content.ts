@@ -33,9 +33,9 @@ export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${coun
 export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
-  fi: (recipientName: string, link: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}  - Vantaan nuorisopalvelut`,
-  sv: (recipientName: string, link: string) => `Hej ${recipientName}! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link}  - Vanda ungdomstjänster`,
-  en: (recipientName: string, link: string) => `Hi ${recipientName}! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link}  - Vantaa youth services`,
+  fi: (recipientName: string, link: string, clubSpecificMessage: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link} \n\n ${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,
+  sv: (recipientName: string, link: string, clubSpecificMessage: string) => `Hej ${recipientName}! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link} \n\n ${clubSpecificMessage || 'Vänliga hälsningar, Vanda ungdomstjänster'}`,
+  en: (recipientName: string, link: string, clubSpecificMessage: string) => `Hi ${recipientName}! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link} \n\n ${clubSpecificMessage || 'Best regards, Vantaa youth services'}`,
 }
 export const ExpiredSmsContent = {
   fi: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
