@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslations } from '../../translations'
 import LanguageSelect from '../../LanguageSelect'
 import styled, { useTheme } from 'styled-components'
+import { Club } from '../../../customizations/types';
 
 const ErrorButton = styled(Button)`
   color: ${p => p.theme.pages.registration.errorButtonText};
@@ -98,7 +99,10 @@ const RegistrationView: React.FC = () => {
 
     useEffect(() => {
         get('/club/list')
-            .then(response => setClubs(response))
+            .then(response => setClubs(response.map((club: Club) => {
+                    return club.active ? club : null;
+                })
+            ))
             .catch((e) => setError(true))
     }, []);
 

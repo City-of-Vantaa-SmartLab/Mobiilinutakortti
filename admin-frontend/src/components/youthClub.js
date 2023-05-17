@@ -25,10 +25,14 @@ const prepareCheckIn = (id) => {
 const OpenCheckInButton = (props) => {
   return (
     <Link to={{
-      pathname: `/checkIn/${props.record.id}`,
-      state: {record: props.record}
-    }}>
-      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" >Kirjautuminen</Button>
+        pathname: `/checkIn/${props.record.id}`,
+        state: {record: props.record}
+      }} 
+      style={{
+        pointerEvents: !props.record.active ? "none": "auto"
+      }}
+    >      
+      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" disabled={!props.record.active}>Kirjautuminen</Button>
     </Link>
 )}
 

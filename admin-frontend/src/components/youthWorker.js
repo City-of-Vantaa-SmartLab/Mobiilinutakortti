@@ -15,7 +15,7 @@ import {
   Edit,
   SelectField
 } from 'react-admin';
-import { getYouthClubs } from '../utils';
+import { getYouthClubs, getActiveYouthClubs } from '../utils';
 
 export const YouthWorkerList = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
@@ -46,11 +46,12 @@ export const YouthWorkerList = (props) => {
 }
 
 export const YouthWorkerCreate = (props) => {
-  const [youthClubs, setYouthClubs] = useState([]);
+  const [youthClubChoices, setYouthClubChoices] = useState([]);
+
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs);
+      const parsedYouthClubs = await getActiveYouthClubs();
+      setYouthClubChoices(parsedYouthClubs);
     };
     addYouthClubsToState();
   }, []);
@@ -62,7 +63,7 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -70,11 +71,12 @@ export const YouthWorkerCreate = (props) => {
 };
 
 export const YouthWorkerEdit = (props) => {
-  const [youthClubs, setYouthClubs] = useState([]);
+  const [youthClubChoices, setYouthClubChoices] = useState([]);
+
   useEffect(() => {
     const addYouthClubsToState = async () => {
-        const parsedYouthClubs = await getYouthClubs();
-        setYouthClubs(parsedYouthClubs);
+      const youthClubs = await getYouthClubs();
+      setYouthClubChoices(youthClubs.map(yc => {return {...yc, disabled: !yc.active}}))
     };
     addYouthClubsToState();
   }, []);
@@ -103,7 +105,7 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Sähköposti" source="email" type="email" />
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
         <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
       </SimpleForm>
     </Edit >
