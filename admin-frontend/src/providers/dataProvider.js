@@ -11,6 +11,9 @@ export const dataProvider = (type, resource, params) => {
     case 'youthClub': {
       return youthClubProvider(type, params, httpClientWithRefresh);
     }
+    case 'editYouthClubs': {
+      return youthClubProvider(type, params, httpClientWithRefresh);
+    }
     case 'youthWorker': {
       return youthWorkerProvider(type, params, httpClientWithRefresh);
     }

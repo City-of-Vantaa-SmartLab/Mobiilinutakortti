@@ -7,6 +7,7 @@ import {
     Param,
     Post,
     Body,
+    UseInterceptors
 } from '@nestjs/common';
 import { ClubService } from './club.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,9 +15,11 @@ import { RolesGuard } from '../roles/roles.guard';
 import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
+import { ClubEditInterceptor } from './interceptors/edit.interceptor';
+import { EditClubDto } from './dto/edit.dto';
 import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheckInsViewModel } from './vm';
 import { CheckInDto, LogBookDto } from './dto';
-import { Check } from '../common/vm';
+import { Check, Message } from '../common/vm';
 import { CheckIn } from './entities';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -67,6 +70,25 @@ export class ClubController {
         return new LogBookCheckInsViewModel(
             (await this.clubService.getClubById(logBookData.clubId)).name,
             await this.clubService.getCheckinsForClubForDate(logBookData));
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.SUPERUSER)
+    @Get(':id')
+    @ApiBearerAuth('super-admin')
+    async getOneClub(@Param('id') id: string): Promise<ClubViewModel> {
+        return new ClubViewModel(await this.clubService.getClubById(id));
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.SUPERUSER)
+    @UseInterceptors(ClubEditInterceptor)
+    @Post('edit')
+    @ApiBearerAuth('super-admin')
+    async edit(@Body() clubData: EditClubDto): Promise<Message> {
+        return new Message(await this.clubService.editClub(clubData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

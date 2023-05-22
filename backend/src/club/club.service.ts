@@ -10,6 +10,7 @@ import * as ageRanges from './logbookAgeRanges.json';
 import { Gender } from '../utils/constants';
 import { Cron } from '@nestjs/schedule';
 import { differenceInHours, sub } from 'date-fns';
+import { EditClubDto } from './dto/edit.dto';
 
 @Injectable()
 export class ClubService {
@@ -65,6 +66,19 @@ export class ClubService {
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         await this.checkInRepo.save({ junior, club, checkInTime: new Date() });
         return true;
+    }
+
+    async editClub(details: EditClubDto): Promise<string> {
+        const club = await this.clubRepo.findOneBy({ id: details.id });
+        if (!club) { throw new BadRequestException(content.ClubNotFound); };
+        club.id = details.id;
+        club.name = details.name;
+        club.postCode = details.postCode;
+        club.active = details.active;
+        club.messages = details.messages;
+
+        await this.clubRepo.save(club);
+        return `${details.id} ${content.Updated}`;
     }
 
     async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {

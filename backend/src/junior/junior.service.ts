@@ -205,6 +205,7 @@ export class JuniorService {
                 lang: newJunior.communicationsLanguage as content.Language,
                 name: newJunior.firstName,
                 phoneNumber: newJunior.phoneNumber,
+                homeYouthClub: newJunior.homeYouthClub,
             }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }
@@ -221,6 +222,7 @@ export class JuniorService {
                 lang: junior.communicationsLanguage as content.Language,
                 name: junior.firstName,
                 phoneNumber: junior.phoneNumber,
+                homeYouthClub: junior.homeYouthClub,
             }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
             return `${phoneNumber} ${content.Reset}`;
@@ -273,6 +275,7 @@ export class JuniorService {
                 lang: updatedJunior.communicationsLanguage as content.Language,
                 name: updatedJunior.firstName,
                 phoneNumber: updatedJunior.phoneNumber,
+                homeYouthClub: updatedJunior.homeYouthClub,
             }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
         }

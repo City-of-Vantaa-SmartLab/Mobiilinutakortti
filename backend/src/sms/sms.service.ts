@@ -2,9 +2,11 @@ import { Injectable, InternalServerErrorException, HttpService, Logger } from '@
 import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
+import { ClubService } from '../club/club.service';
 import * as content from '../content';
 import { ConfigHelper } from '../configHandler';
 import moment = require('moment');
+
 
 @Injectable()
 export class SmsService {
@@ -12,7 +14,9 @@ export class SmsService {
     private readonly logger = new Logger('SMS Service');
 
     constructor(
-        private readonly httpService: HttpService) { }
+        private readonly clubService: ClubService,
+        private readonly httpService: HttpService,
+        ) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
         const settings = SMSConfig.getTeliaConfig();
@@ -30,7 +34,9 @@ export class SmsService {
         }
 
         const oneTimeLink = this.getOneTimeLink(challenge);
-        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink);
+        const clubSpecificMessage = (await this.clubService.getClubById(recipient.homeYouthClub))?.messages[recipient.lang];
+
+        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink, clubSpecificMessage);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -123,8 +129,8 @@ export class SmsService {
         return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string) {
-        return content.RegisteredSmsContent[lang](recipientName, link);
+    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string, clubSpecificMessage?: string) {
+        return content.RegisteredSmsContent[lang](recipientName, link, clubSpecificMessage);
     }
 
     private getExpiredMessage(lang: content.Language, recipientName: string, expiredDate: string): string {
