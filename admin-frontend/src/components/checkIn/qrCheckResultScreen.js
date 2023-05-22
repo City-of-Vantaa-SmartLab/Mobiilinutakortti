@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   width: 48em;
   height: 100%;
   display: flex;
-  
+
   .mark-container{
     margin: auto;
     text-align: center;
@@ -21,7 +21,6 @@ const Header = styled.span`
     margin-bot: 1.4em;
     font-size: 58px;
     font-family: 'GT-Walsheim-Bold';
-    
 `
 
 const StyledText = styled.span`

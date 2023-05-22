@@ -31,8 +31,6 @@ const QrReaderContainer = styled.div`
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
 
-let youthClubName = "";
-
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
@@ -41,7 +39,7 @@ const CheckInView = (props) => {
   const notify = useNotify();
 
   const logout = () => {
-    sessionStorage.removeItem("initialCheckin")
+    sessionStorage.removeItem("checkInClubId")
 
     if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
       document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
@@ -52,29 +50,21 @@ const CheckInView = (props) => {
 
   useEffect(() => {
     localStorage.removeItem("admin-token")
-    const initialCheckIn = sessionStorage.getItem("initialCheckIn");
+    const checkInClubId = sessionStorage.getItem("checkInClubId");
     const path = props.location.pathname;
     const m = path.match(/\d+/);
     const id = m !== null ? m.shift() : null;
-    if (id !== initialCheckIn) {
+    // checkInClubId is set by the youth worker when they click on the log in button for a club.
+    // This prevents the users from manually changing the club id in the browser address bar.
+    if (id !== checkInClubId) {
       logout();
     }
+  }, [props.location.pathname])
 
-  },[])
   // reload the page in 3 minutes to fix qr reader stopping scanning after a period of time
   useEffect(() => {
     const timer = setTimeout(() => window.location.reload(), 180000);
     return () => clearTimeout(timer);
-  }, [])
-
-  useEffect(() => {
-    if(props.location.state !== undefined) {
-      localStorage.setItem('youthClubName', JSON.stringify(props.location.state.record.name));
-      youthClubName = props.location.state.record.name;
-    }
-    if(props.location.state === undefined) {
-      youthClubName = JSON.parse(localStorage.getItem("youthClubName"));
-    }
   }, [])
 
   const tryToPlayAudio = (success) => {
@@ -160,7 +150,7 @@ const CheckInView = (props) => {
           </QrReaderContainer>
       )}
       {}
-      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} youthClubName={youthClubName} />}
+      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>
       )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import RegistrationForm from './Form';
 import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton } from '../StyledComponents';
 import { get, post } from '../../../apis';
@@ -26,26 +26,22 @@ const RegistrationView: React.FC = () => {
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
 
-    const queryToSecurityContext = () => {
-        const query = new URLSearchParams(location.search);
-        const sc_encoded = query.get('sc');
-        if (sc_encoded) {
-            let b64str = sc_encoded.replace(/-/g, '+').replace(/_/g, '/');
-            const pad = sc_encoded.length % 4;
-            if (pad) {
-                if (pad === 1) {
-                    setError(true);
-                }
-                b64str += new Array(5-pad).join('=');
+  const queryToSecurityContext = useCallback((encoded_sc: string) => {
+        let b64str = encoded_sc.replace(/-/g, '+').replace(/_/g, '/');
+        const pad = encoded_sc.length % 4;
+        if (pad) {
+            if (pad === 1) {
+                setError(true);
             }
-            // Note: atob doesn't work right away with UTF-8 characters beyond the first 8 bits. Hence we read every character as base-16 string and percent-decode them.
-            const sc = decodeURIComponent(atob(b64str).split('').map((c) => {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            sessionStorage.setItem('sc', sc);
-            navigate('/hakemus', { replace: true })
+            b64str += new Array(5-pad).join('=');
         }
-    }
+        // Note: atob doesn't work right away with UTF-8 characters beyond the first 8 bits. Hence we read every character as base-16 string and percent-decode them.
+        const sc = decodeURIComponent(atob(b64str).split('').map((c) => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        sessionStorage.setItem('sc', sc);
+        navigate('/hakemus', { replace: true })
+    }, [navigate]);
 
     const getSecurityContext = () => {
         const sc = sessionStorage.getItem('sc');
@@ -53,7 +49,12 @@ const RegistrationView: React.FC = () => {
     }
 
     useEffect(()=> {
-        queryToSecurityContext();
+        const query = new URLSearchParams(location.search);
+        const encoded_sc = query.get('sc');
+        if (encoded_sc) {
+          queryToSecurityContext(encoded_sc);
+        }
+
         const sc = getSecurityContext();
 
         post('/auth/validate-signature', sc)
@@ -68,7 +69,7 @@ const RegistrationView: React.FC = () => {
                 }
             })
             .catch(e => setError(true))
-    }, [])
+    }, [location.search, queryToSecurityContext])
 
 
     const logout = () => {

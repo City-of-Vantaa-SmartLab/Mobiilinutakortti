@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Title, useNotify, GET_LIST } from 'react-admin';
 import { Redirect } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
@@ -28,29 +28,29 @@ const InputContainer = styled.div`
 
 const DeleteExpiredUsers = () => {
   const notify = useNotify();
-  const notifyError = (msg) => notify(msg, 'error');
+  const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
 
   const [state, setState] = useState(STATE.INITIAL);
   const [expiredUserCount, setExpiredUserCount] = useState(0);
   const [password, setPassword] = useState('');
 
-  const getExpiredUserCount = async () => {
-    setState(STATE.LOADING);
-
-    try {
-      const { total } = await getExpiredUsers();
-      setExpiredUserCount(total);
-    } catch (error) {
-      notifyError('Käyttäjien haku epäonnistui');
-      setExpiredUserCount(0);
-    }
-
-    setState(STATE.INITIAL);
-  };
-
   useEffect(() => {
+    const getExpiredUserCount = async () => {
+      setState(STATE.LOADING);
+
+      try {
+        const { total } = await getExpiredUsers();
+        setExpiredUserCount(total);
+      } catch (error) {
+        notifyError('Käyttäjien haku epäonnistui');
+        setExpiredUserCount(0);
+      }
+
+      setState(STATE.INITIAL);
+    };
+
     getExpiredUserCount();
-  }, []);
+  }, [notifyError]);
 
   const authenticate = async () => {
     try {

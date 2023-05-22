@@ -17,7 +17,7 @@ const prepareCheckIn = (id) => {
   errorSound.play();
   errorSound.pause();
   errorSound.currentTime = 0;
-  sessionStorage.setItem("initialCheckIn", id);
+  sessionStorage.setItem("checkInClubId", id);
   successSound.volume = 1;
   errorSound.volume = 1;
 }
