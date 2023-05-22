@@ -16,7 +16,7 @@ export class ClubEditInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest();
         const body = request.body as EditClubDto;
         const clubToEdit = await this.clubRepo.findOneBy({ id: body.id });
-        if (!clubToEdit) { throw new BadRequestException(content.UserNotFound); };
+        if (!clubToEdit) { throw new BadRequestException(content.ClubNotFound); };
 
         let dataChanged = false;
         dataChanged = body.active !== clubToEdit.active;
