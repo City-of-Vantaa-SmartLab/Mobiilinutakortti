@@ -22,7 +22,7 @@ import {
     Pagination,
     FormDataConsumer
 } from 'react-admin';
-import { getYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils'
+import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils';
 import Button from '@material-ui/core/Button';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
@@ -160,12 +160,12 @@ const DummyPhoneNumberButton = () => {
 }
 
 export const JuniorCreate = (props) => {
-    const [youthClubs, setYouthClubs] = useState([]);
+    const [youthClubChoices, setYouthClubChoices] = useState([]);
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const parsedYouthClubs = await getYouthClubs();
-            setYouthClubs(parsedYouthClubs);
+            const parsedYouthClubs = await getActiveYouthClubs();
+            setYouthClubChoices(parsedYouthClubs);
         };
         addYouthClubsToState();
     }, []);
@@ -188,7 +188,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
-                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()} />
+                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
                 />
@@ -205,13 +205,13 @@ export const JuniorCreate = (props) => {
 }
 
 export const JuniorEdit = (props) => {
-    const [youthClubs, setYouthClubs] = useState([]);
+    const [youthClubChoices, setYouthClubChoices] = useState([]);
     const { isSuperAdmin } = usePermissions();
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const parsedYouthClubs = await getYouthClubs();
-            setYouthClubs(parsedYouthClubs);
+            const youthClubs = await getYouthClubs();
+            setYouthClubChoices(youthClubs.map(yc => {return {...yc, disabled: !yc.active}}))
         };
         addYouthClubsToState();
 
@@ -249,7 +249,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
                 {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
-                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} validate={required()}/>
+                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()}/>
                 {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
                 <FormDataConsumer>

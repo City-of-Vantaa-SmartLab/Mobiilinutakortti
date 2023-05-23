@@ -41,6 +41,12 @@ export const ageValidator = (value, allValues) => {
 }
 
 export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
-  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name })))
+  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name, active: youthClub.active})));
+
+export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
+  .then((res) => res.data.map((youthClub) => {
+        return youthClub.active ? { id: youthClub.id.toString(), name: youthClub.name } : null;
+  }
+));
 
 export const isSubstring = (mainString, subString) => mainString.includes(subString);

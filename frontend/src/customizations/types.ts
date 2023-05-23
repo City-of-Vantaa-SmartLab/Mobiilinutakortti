@@ -9,6 +9,20 @@ export type CustomizableFormField =
   | 'termsOfUse'
   | 'communicationsLanguage'
 
+interface Messages {
+  fi: string
+  en: string
+  sv: string
+}
+
+export interface Club {
+  active: boolean
+  id: number
+  messages: Messages
+  name: string
+  postCode: number
+}
+
 export interface Theme {
   pages: {
     login: {

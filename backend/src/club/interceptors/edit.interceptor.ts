@@ -23,9 +23,9 @@ export class ClubEditInterceptor implements NestInterceptor {
 
         // Interceptor for messages with languages
         const messageLanguages = ['fi', 'en', 'sv'];
-        dataChanged = messageLanguages.some(language => {
+        dataChanged = dataChanged || messageLanguages.some(language => {
             return body.messages[language] !== clubToEdit.messages[language];
-        })
+        });
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); };
         return next.handle();
