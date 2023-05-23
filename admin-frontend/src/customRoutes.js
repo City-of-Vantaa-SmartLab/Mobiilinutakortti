@@ -14,7 +14,7 @@ export const routes = [
     <Route path="/password" component={ChangePasswordView} />
 ];
 
-export const superAdminRoutes = [
+export const adminRoutes = [
     <Route path="/newSeason" component={NewSeason} />,
     <Route path="/deleteExpiredUsers" component={DeleteExpiredUsers} />
 ];

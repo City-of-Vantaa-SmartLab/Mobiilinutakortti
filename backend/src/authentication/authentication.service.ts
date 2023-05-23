@@ -10,8 +10,8 @@ import {
 import { JwtService} from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { compare } from 'bcrypt';
-import { AdminService } from '../admin/admin.service';
-import { LoginAdminDto } from '../admin/dto';
+import { YouthWorkerService } from '../admin/admin.service';
+import { LoginYouthWorkerDto } from '../admin/dto';
 import * as content from '../content';
 import { LoginJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
@@ -27,24 +27,24 @@ export class AuthenticationService {
     private readonly logger = new Logger('Authentication Service');
 
     constructor(
-        @Inject(forwardRef(() => AdminService))
-        private readonly adminService: AdminService,
+        @Inject(forwardRef(() => YouthWorkerService))
+        private readonly youthWorkerService: YouthWorkerService,
         @Inject(forwardRef(() => JuniorService))
         private readonly juniorService: JuniorService,
         private readonly jwtService: JwtService,
         private readonly sessionDBService: SessionDBService
     ) { }
 
-    async loginAdmin(loginData: LoginAdminDto): Promise<JWTToken> {
-        const user = await this.adminService.getAdminByEmail(loginData.email);
+    async loginYouthWorker(loginData: LoginYouthWorkerDto): Promise<JWTToken> {
+        const user = await this.youthWorkerService.getYouthWorkerByEmail(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
-        const lockedOut = await this.adminService.isLockedOut(user.id);
+        const lockedOut = await this.youthWorkerService.isLockedOut(user.id);
         if (lockedOut) {
-            const timeRemaining = new Date((new Date((await this.adminService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
+            const timeRemaining = new Date((new Date((await this.youthWorkerService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
             const hoursRemaining = timeRemaining.getUTCHours();
             throw new ForbiddenException(`${content.LockedOut} Kokeile uudestaan ${hoursRemaining} tunnin päästä.`);
         }
-        const token = await this.validateAdmin({
+        const token = await this.validateYouthWorker({
             provided: loginData.password, expected: user.password,
         }, user.id);
 
@@ -52,8 +52,8 @@ export class AuthenticationService {
         return token;
     }
 
-    async logoutAdmin(adminData: { userId: string, authToken: string }): Promise<boolean> {
-        return this.sessionDBService.logoutUser(adminData.userId);
+    async logoutYouthWorker(youthWorkerData: { userId: string, authToken: string }): Promise<boolean> {
+        return this.sessionDBService.logoutUser(youthWorkerData.userId);
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
@@ -62,24 +62,24 @@ export class AuthenticationService {
         return this.signToken(challengeResponse);
     }
 
-    private async validateAdmin(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+    private async validateYouthWorker(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
         const passwordMatch = await compare(attempt.provided, attempt.expected);
         if (!passwordMatch) {
-            await this.adminService.addFailedAttempt(userId);
+            await this.youthWorkerService.addFailedAttempt(userId);
             throw new UnauthorizedException(content.FailedLogin);
         }
-        await this.adminService.deleteLockoutRecord(userId);
+        await this.youthWorkerService.deleteLockoutRecord(userId);
         return this.signToken(userId, true);
     }
 
-    signToken(userId: string, isAdmin = false): JWTToken {
-        const expiry = isAdmin ? jwt.adminExpiry : jwt.juniorExpiry;
+    signToken(userId: string, isYouthWorker = false): JWTToken {
+        const expiry = isYouthWorker ? jwt.youthWorkerExpiry : jwt.juniorExpiry;
         return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: expiry }) };
     }
 
-    updateAuthToken(adminData: { userId: string, authToken: string }): JWTToken {
-        const newToken = this.signToken(adminData.userId, true);
-        this.sessionDBService.addSession(adminData.userId, newToken.access_token);
+    updateAuthToken(youthWorkerData: { userId: string, authToken: string }): JWTToken {
+        const newToken = this.signToken(youthWorkerData.userId, true);
+        this.sessionDBService.addSession(youthWorkerData.userId, newToken.access_token);
         return newToken;
     }
 

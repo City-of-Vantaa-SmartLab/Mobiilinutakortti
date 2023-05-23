@@ -4,14 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Club, CheckIn } from './entities';
 import { ClubController } from './club.controller';
-import { Admin } from '../admin/entities';
+import { YouthWorker } from '../admin/entities';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Junior, Club, CheckIn, Admin]),
+    TypeOrmModule.forFeature([Junior, Club, CheckIn, YouthWorker]),
     JwtModule.register({
       secret: jwt.secret,
     }),

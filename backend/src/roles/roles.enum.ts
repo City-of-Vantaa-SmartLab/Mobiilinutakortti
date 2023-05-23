@@ -1,3 +1,3 @@
 export enum Roles {
-    JUNIOR, ADMIN, SUPERUSER,
+    JUNIOR, YOUTHWORKER, ADMIN,
 }

@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 /**
- * The dto to be used when editing an admin.
+ * The dto to be used when editing a youth worker.
  */
-export class EditAdminDto {
+export class EditYouthWorkerDto {
 
     @IsNotEmpty()
     readonly id: string;
@@ -15,7 +15,7 @@ export class EditAdminDto {
 
     lastName: string;
 
-    isSuperUser: boolean;
+    isAdmin: boolean;
 
     mainYouthClub: string;
 }

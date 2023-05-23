@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 /**
- * The dto to be used when logging in an admin.
+ * The dto to be used when logging in a youth worker.
  */
-export class LoginAdminDto {
+export class LoginYouthWorkerDto {
 
     @IsNotEmpty()
     @IsEmail()

@@ -3,10 +3,10 @@ import { IsEmail } from 'class-validator';
 import { lowercase, jsonDataToBoolean } from '../../common/transformers';
 
 /**
- * Entity model for Admin.
+ * Entity model for youth worker.
  */
-@Entity()
-export class Admin {
+@Entity({name: 'admin'})
+export class YouthWorker {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -24,8 +24,8 @@ export class Admin {
     @Column({ unique: true, transformer: lowercase })
     email: string;
 
-    @Column({ default: false, transformer: jsonDataToBoolean })
-    isSuperUser: boolean;
+    @Column({ name: 'isSuperUser', default: false, transformer: jsonDataToBoolean })
+    isAdmin: boolean;
 
     @Column({ default: '', nullable: true })
     mainYouthClub: string;

@@ -1,15 +1,15 @@
 import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
-import { Admin } from './admin.entity';
+import { YouthWorker } from './admin.entity';
 import { ConfigHelper } from '../../configHandler';
 
 @Entity()
 export class Lockout {
     @PrimaryColumn()
-    adminId: string
+    youthWorkerId: string
 
-    @OneToOne(type => Admin, { onDelete: 'CASCADE' })
+    @OneToOne(type => YouthWorker, { onDelete: 'CASCADE' })
     @JoinColumn()
-    admin: Admin;
+    youthWorker: YouthWorker;
 
     @Column({ default: 0 })
     attempts: number;

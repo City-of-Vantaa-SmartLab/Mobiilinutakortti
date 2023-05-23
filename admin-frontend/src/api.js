@@ -12,8 +12,8 @@ const apiEndpoints = {
     deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
   },
   auth: {
-    login: `${appUrl}/admin/login`,
-    logout: `${appUrl}/admin/logout`,
+    login: `${appUrl}/youthworker/login`,
+    logout: `${appUrl}/youthworker/logout`,
   },
   youthClub: {
     base: `${appUrl}/club/`,
@@ -24,13 +24,13 @@ const apiEndpoints = {
     checkIns: `${appUrl}/club/check-ins`
   },
   youthWorker: {
-    create: `${appUrl}/admin/register`,
-    edit: `${appUrl}/admin/edit`,
-    list: `${appUrl}/admin/list`,
-    self: `${appUrl}/admin/getSelf`,
-    refresh: `${appUrl}/admin/refresh`,
-    password: `${appUrl}/admin/changePassword`,
-    base: `${appUrl}/admin/`
+    create: `${appUrl}/youthworker/register`,
+    edit: `${appUrl}/youthworker/edit`,
+    list: `${appUrl}/youthworker/list`,
+    self: `${appUrl}/youthworker/getSelf`,
+    refresh: `${appUrl}/youthworker/refresh`,
+    password: `${appUrl}/youthworker/changePassword`,
+    base: `${appUrl}/youthworker/`
   }
 }
 

@@ -1,26 +1,26 @@
-import { Admin } from '../entities';
+import { YouthWorker } from '../entities';
 
 /**
- * The model returned to the frontend for Admins.
+ * The model returned to the frontend for youth workers.
  */
-export class AdminUserViewModel {
+export class YouthWorkerUserViewModel {
     id: string;
     email: string;
     firstName: string;
     lastName: string;
-    isSuperUser: boolean;
+    isAdmin: boolean;
     mainYouthClub: string;
     passwordLastChanged: Date;
 
     /**
-     * @param entity - the Admin to convert to a VM.
+     * @param entity - the youth worker to convert to a VM.
      */
-    constructor(entity: Admin) {
+    constructor(entity: YouthWorker) {
         this.id = entity.id;
         this.email = entity.email;
         this.firstName = entity.firstName;
         this.lastName = entity.lastName;
-        this.isSuperUser = entity.isSuperUser;
+        this.isAdmin = entity.isAdmin;
         this.mainYouthClub = entity.mainYouthClub;
         this.passwordLastChanged = entity.passwordLastChanged;
     }

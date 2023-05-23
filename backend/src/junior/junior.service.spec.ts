@@ -7,8 +7,8 @@ import { AppModule } from '../app.module';
 import { Connection } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
-import { AdminModule } from '../admin/admin.module';
-import { Admin } from '../admin/entities';
+import { YouthWorkerModule } from '../admin/admin.module';
+import { YouthWorker } from '../admin/entities';
 import { ConflictException, HttpModule } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';
@@ -42,9 +42,9 @@ describe('JuniorService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, AdminModule, AuthenticationModule, SmsModule, HttpModule],
+      imports: [AppModule, JuniorModule, YouthWorkerModule, AuthenticationModule, SmsModule, HttpModule],
       providers: [JuniorService, {
-        provide: getRepositoryToken(Admin),
+        provide: getRepositoryToken(YouthWorker),
         useFactory: repositoryMockFactory,
       }, {
           provide: getRepositoryToken(Junior),

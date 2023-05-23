@@ -26,7 +26,7 @@ import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, status
 import Button from '@material-ui/core/Button';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
-import usePermissions from '../hooks/usePermissions';
+import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
 
 
@@ -206,7 +206,7 @@ export const JuniorCreate = (props) => {
 
 export const JuniorEdit = (props) => {
     const [youthClubChoices, setYouthClubChoices] = useState([]);
-    const { isSuperAdmin } = usePermissions();
+    const { isAdmin } = useAdminPermission();
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
@@ -254,12 +254,12 @@ export const JuniorEdit = (props) => {
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
                 <FormDataConsumer>
                     {({ record }) => {
-                        const disabled = record.status === "expired" && !isSuperAdmin;
+                        const disabled = record.status === "expired" && !isAdmin;
                         return <SelectInput disabled={disabled} label="Tila" source="status" choices={statusChoices} validate={required()} />
                     }}
                 </FormDataConsumer>
                 <FormDataConsumer>
-                    {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall')) &&
+                    {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall' || record.status === 'expired')) &&
                         <SMSwarning/>
                     }
                 </FormDataConsumer>

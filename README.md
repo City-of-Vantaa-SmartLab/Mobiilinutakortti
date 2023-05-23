@@ -45,13 +45,13 @@ NOTE:
 
     This is because Docker has some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
 
-## Creating an admin user
+## Creating a youth worker user
 
-The application needs at least one admin user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend.
+The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend.
 
 ### Use curl
 
-Run the following `curl` command to create an admin user
+Run the following `curl` command to create a youth worker user
 
 ```bash
 curl --location --request POST 'http://localhost:3000/api/admin/registerSuperAdmin' \
@@ -61,14 +61,14 @@ curl --location --request POST 'http://localhost:3000/api/admin/registerSuperAdm
     "password": "test",
     "firstName": "admin",
     "lastName": "admin",
-    "isSuperUser": "true"
+    "isAdmin": "true"
 }'
 ```
 
 ### Use other tools
 ---
 
-Alternatively, you can use GUI tools such as Postman or Insomnia to create an admin user.
+Alternatively, you can use GUI tools such as Postman or Insomnia to create a youth worker user.
 
 POST to [http://localhost:3000/api/admin/registerSuperAdmin](http://localhost:3000/api/admin/registerSuperAdmin) with following body:
 
@@ -78,7 +78,7 @@ POST to [http://localhost:3000/api/admin/registerSuperAdmin](http://localhost:3
     "password": "test",
     "firstName": "admin",
     "lastName": "admin",
-    "isSuperUser": "true"
+    "isAdmin": "true"
 }
 ```
 
@@ -86,7 +86,7 @@ Now you can login to admin-frontend with given credentials.
 
 ### Note about production
 
-When deploying application to production, endpoint should initially be open, and after creation of admin, it should be closed ASAP. The endpoint is toggled by environment variable `SUPER_ADMIN_FEATURES`. Set its value to "yes" to allow registering admins via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
+When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `SUPER_ADMIN_FEATURES`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
 
 ## Creating youth clubs
 

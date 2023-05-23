@@ -40,9 +40,9 @@ export class ClubController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('check-in/:id')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getGetClubCheckins(@Param('id') clubId: string): Promise<CheckIn[]> {
         return await this.clubService.getCheckinsForClub(clubId);
     }
@@ -63,9 +63,9 @@ export class ClubController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Post('check-ins')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getYouthClubCheckIns(@Body() logBookData: LogBookDto): Promise<LogBookCheckInsViewModel> {
         return new LogBookCheckInsViewModel(
             (await this.clubService.getClubById(logBookData.clubId)).name,
@@ -74,28 +74,28 @@ export class ClubController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.SUPERUSER)
+    @AllowedRoles(Roles.ADMIN)
     @Get(':id')
-    @ApiBearerAuth('super-admin')
+    @ApiBearerAuth('admin')
     async getOneClub(@Param('id') id: string): Promise<ClubViewModel> {
         return new ClubViewModel(await this.clubService.getClubById(id));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.SUPERUSER)
+    @AllowedRoles(Roles.ADMIN)
     @UseInterceptors(ClubEditInterceptor)
     @Post('edit')
-    @ApiBearerAuth('super-admin')
+    @ApiBearerAuth('admin')
     async edit(@Body() clubData: EditClubDto): Promise<Message> {
         return new Message(await this.clubService.editClub(clubData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Post('logbook')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getLogBookData(@Body() logBookData: LogBookDto): Promise<LogBookViewModel> {
         return await this.clubService.generateLogBook(logBookData);
     }

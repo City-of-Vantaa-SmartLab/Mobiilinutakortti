@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class GetAdminDto {
+export class GetYouthWorkerDto {
 
     @IsNotEmpty()
     readonly id: string;

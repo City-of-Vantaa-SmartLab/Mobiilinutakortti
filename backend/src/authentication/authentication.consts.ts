@@ -16,6 +16,6 @@ export const saltRounds = 10;
 export const jwt = {
     secret: ConfigHelper.getJWTSecret(),
     juniorExpiry: `${getDaysUntilNextExpiry()}d`,
-    adminExpiry: `15m`,
+    youthWorkerExpiry: `15m`,
 };
 export const maximumAttempts = 5;

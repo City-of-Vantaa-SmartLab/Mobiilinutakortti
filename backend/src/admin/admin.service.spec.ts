@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminService } from './admin.service';
 import { Connection } from 'typeorm';
-import { Admin, Lockout } from './entities';
+import { YouthWorker, Lockout } from './entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
@@ -10,36 +9,37 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { AdminModule } from './admin.module';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
-import { RegisterAdminDto, EditAdminDto } from './dto';
+import { RegisterYouthWorkerDto, EditYouthWorkerDto } from './dto';
 import { ConflictException } from '@nestjs/common';
+import { YouthWorkerModule } from './admin.module';
+import { YouthWorkerService } from './admin.service';
 
-describe('AdminService', () => {
+describe('YouthWorkerService', () => {
   let module: TestingModule;
   const testUser = {
-    email: 'AdmiN@servIce.teSt', firstName: 'Admin',
-    lastName: 'Istrator', password: 'Secret',
-  } as Admin;
+    email: 'YouthWOrker@servIce.teSt', firstName: 'Youth',
+    lastName: 'Worker', password: 'Secret',
+  } as YouthWorker;
   let connection: Connection;
-  let service: AdminService;
+  let service: YouthWorkerService;
 
-  const testRegisterAdmin = {
-    email: 'Admin2@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush', isSuperUser: true,
-  } as RegisterAdminDto;
+  const testRegisterYouthWorker = {
+    email: 'Worker2@service.test', firstName: 'Auth',
+    lastName: 'Tication', password: 'Hush', isAdmin: true,
+  } as RegisterYouthWorkerDto;
 
-  let adminToEdit: EditAdminDto;
+  let youthWorkerToEdit: EditYouthWorkerDto;
 
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, JwtModule.register({
         secret: jwt.secret,
       })],
-      providers: [AdminService, AuthenticationService, {
-        provide: getRepositoryToken(Admin),
+      providers: [YouthWorkerService, AuthenticationService, {
+        provide: getRepositoryToken(YouthWorker),
         useFactory: repositoryMockFactory,
       }, {
           provide: getRepositoryToken(Lockout),
@@ -49,8 +49,8 @@ describe('AdminService', () => {
       .useValue(connection)
       .compile();
 
-    service = module.get<AdminService>(AdminService);
-    await service.createAdmin(testUser);
+    service = module.get<YouthWorkerService>(YouthWorkerService);
+    await service.createYouthWorker(testUser);
   });
 
   afterAll(async () => {
@@ -64,50 +64,50 @@ describe('AdminService', () => {
 
   describe('Get user', () => {
     it('Should return the user if they exist', async () => {
-      const response = await service.getAdminByEmail(testUser.email);
+      const response = await service.getYouthWorkerByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName).toBeTruthy();
     }),
       it('Should return undefined if the user does not exist', async () => {
-        expect(await service.getAdminByEmail('Bob')).toBe(undefined);
+        expect(await service.getYouthWorkerByEmail('Bob')).toBe(undefined);
       });
   });
 
   describe('Create user', () => {
     it('Should add a user to the database if valid credentials are provided', async () => {
-      const response = await service.getAdminByEmail(testUser.email);
+      const response = await service.getYouthWorkerByEmail(testUser.email);
       expect(response.email === testUser.email.toLowerCase() &&
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName &&
-        response.isSuperUser === testUser.isSuperUser).toBeTruthy();
+        response.isAdmin === testUser.isAdmin).toBeTruthy();
     }),
       it('Should add emails as lowercase.', async () => {
-        const response = await service.getAdminByEmail(testUser.email);
+        const response = await service.getYouthWorkerByEmail(testUser.email);
         expect(response.email === testUser.email.toLowerCase()).toBeTruthy();
       }),
       it('Should return undefined if the user already exists', async () => {
-        expect(await service.createAdmin(testUser)).toBe(undefined);
+        expect(await service.createYouthWorker(testUser)).toBe(undefined);
       });
   });
 
-  describe('Register admin', () => {
+  describe('Register youth worker', () => {
     it('should state that the registration is succesful', async () => {
-      expect(await service.registerAdmin(testRegisterAdmin)).toBe(`${testRegisterAdmin.email} luotu.`);
+      expect(await service.registerYouthWorker(testRegisterYouthWorker)).toBe(`${testRegisterYouthWorker.email} luotu.`);
     }),
       it('should add the user to the database following a succesful registration', async () => {
-        const response = await service.getAdminByEmail(testRegisterAdmin.email);
-        expect(response.email === testRegisterAdmin.email.toLowerCase() &&
-          response.firstName === testRegisterAdmin.firstName &&
-          response.lastName === testRegisterAdmin.lastName).toBeTruthy();
+        const response = await service.getYouthWorkerByEmail(testRegisterYouthWorker.email);
+        expect(response.email === testRegisterYouthWorker.email.toLowerCase() &&
+          response.firstName === testRegisterYouthWorker.firstName &&
+          response.lastName === testRegisterYouthWorker.lastName).toBeTruthy();
       }),
       it('should store passwords in a non-plaintext manner', async () => {
-        expect((await service.getAdminByEmail(testRegisterAdmin.email)).password).not.toEqual(testRegisterAdmin.password);
+        expect((await service.getYouthWorkerByEmail(testRegisterYouthWorker.email)).password).not.toEqual(testRegisterYouthWorker.password);
       }),
       it('should thrown a Conflict if the username already exists', async () => {
         const error = new ConflictException();
         try {
-          await service.registerAdmin(testRegisterAdmin);
+          await service.registerYouthWorker(testRegisterYouthWorker);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());
@@ -115,41 +115,41 @@ describe('AdminService', () => {
       });
   });
 
-  describe('Get All Admins', () => {
-    it('Should return an array containing all admins', async () => {
-      const response = await service.listAllAdmins();
+  describe('Get All Youth workers', () => {
+    it('Should return an array containing all youth workers', async () => {
+      const response = await service.listAllYouthWorkers();
       const isAnArray = Array.isArray(response);
-      const containsAdmins = response.some(e => e.email === testUser.email.toLowerCase());
-      expect(isAnArray && containsAdmins).toBeTruthy();
+      const containsYouthWorkers = response.some(e => e.email === testUser.email.toLowerCase());
+      expect(isAnArray && containsYouthWorkers).toBeTruthy();
     });
   });
 
-  describe('Edit Admin', () => {
+  describe('Edit Youth worker', () => {
     beforeAll(async () => {
-      adminToEdit = (await service.listAllAdmins())[0];
+      youthWorkerToEdit = (await service.listAllYouthWorkers())[0];
     }),
       it(' should change values if valid data is provided', async () => {
         const dto = {
-          id: adminToEdit.id, firstName: adminToEdit.firstName, lastName: adminToEdit.lastName,
-          email: 'NewEmail@groovy.com', isSuperUser: false,
-        } as EditAdminDto;
-        await service.editAdmin(dto);
-        const updatedAdmin = await service.getAdminByEmail(dto.email);
-        const updatedList = await service.listAllAdmins();
-        expect(updatedAdmin.email === dto.email.toLowerCase() && updatedAdmin.isSuperUser === dto.isSuperUser
-          && (!updatedList.some(e => e.email === adminToEdit.email.toLowerCase()))).toBeTruthy();
+          id: youthWorkerToEdit.id, firstName: youthWorkerToEdit.firstName, lastName: youthWorkerToEdit.lastName,
+          email: 'NewEmail@groovy.com', isAdmin: false,
+        } as EditYouthWorkerDto;
+        await service.editYouthWorker(dto);
+        const updatedYouthWorker = await service.getYouthWorkerByEmail(dto.email);
+        const updatedList = await service.listAllYouthWorkers();
+        expect(updatedYouthWorker.email === dto.email.toLowerCase() && updatedYouthWorker.isAdmin === dto.isAdmin
+          && (!updatedList.some(e => e.email === youthWorkerToEdit.email.toLowerCase()))).toBeTruthy();
       });
   });
 
-  describe('Delete Admin', () => {
-    let adminToDelete: string;
+  describe('Delete Youth worker', () => {
+    let youthWorkerToDelete: string;
     beforeAll(async () => {
-      adminToDelete = (await service.listAllAdmins())[0].id;
+      youthWorkerToDelete = (await service.listAllYouthWorkers())[0].id;
     }),
       it('Should delete the user provided', async () => {
-        await service.deleteAdmin(adminToDelete);
-        const adminList = await service.listAllAdmins();
-        expect(adminList.findIndex(a => a.id === adminToDelete) < 0);
+        await service.deleteYouthWorker(youthWorkerToDelete);
+        const YouthWorkerList = await service.listAllYouthWorkers();
+        expect(YouthWorkerList.findIndex(a => a.id === youthWorkerToDelete) < 0);
       });
   });
 });

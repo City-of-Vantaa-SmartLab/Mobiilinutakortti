@@ -1,20 +1,20 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminController } from './admin.controller';
-import { AdminService } from './admin.service';
-import { Admin, Lockout } from './entities';
+import { YouthWorkerController } from './admin.controller';
+import { YouthWorkerService } from './admin.service';
+import { YouthWorker, Lockout } from './entities';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { Junior } from '../junior/entities';
 import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Admin, Junior, Lockout]),
+    TypeOrmModule.forFeature([YouthWorker, Junior, Lockout]),
     forwardRef(() => AuthenticationModule),
     SessionDBModule
   ],
-  controllers: [AdminController],
-  providers: [AdminService],
-  exports: [AdminService],
+  controllers: [YouthWorkerController],
+  providers: [YouthWorkerService],
+  exports: [YouthWorkerService],
 })
-export class AdminModule { }
+export class YouthWorkerModule { }

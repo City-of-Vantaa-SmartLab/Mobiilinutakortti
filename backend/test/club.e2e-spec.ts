@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
-import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
@@ -19,10 +19,10 @@ describe('JuniorController (e2e)', () => {
     let juniorList: JuniorUserViewModel[];
     let clubList: ClubViewModel[];
 
-    const testAdminRegister = {
+    const testYouthWorkerRegister = {
         email: 'SuperTester@gofore.com', password: 'Password',
-        firstName: 'Testy', lastName: 'McTestFace', isSuperUser: true,
-    } as RegisterAdminDto;
+        firstName: 'Testy', lastName: 'McTestFace', isAdmin: true,
+    } as RegisterYouthWorkerDto;
 
     const testJuniorRegister = {
         phoneNumber: '04122348888',
@@ -35,9 +35,9 @@ describe('JuniorController (e2e)', () => {
         homeYouthClub: 'Tikkurila',
     } as RegisterJuniorDto;
 
-    const testAdminLogin = {
-        email: testAdminRegister.email, password: testAdminRegister.password,
-    } as LoginAdminDto;
+    const testYouthWorkerLogin = {
+        email: testYouthWorkerRegister.email, password: testYouthWorkerRegister.password,
+    } as LoginYouthWorkerDto;
 
     let testJuniorLogin: LoginJuniorDto;
 
@@ -55,11 +55,11 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/api/admin/registerSuperAdmin')
-            .send(testAdminRegister);
+            .post('/api/admin/registerAdmin')
+            .send(testYouthWorkerRegister);
         token = (await request(app.getHttpServer())
             .post('/api/admin/login')
-            .send(testAdminLogin)).body.access_token;
+            .send(testYouthWorkerLogin)).body.access_token;
         await request(app.getHttpServer())
             .post('/api/junior/register')
             .set('Authorization', `Bearer ${token}`)
@@ -98,7 +98,7 @@ describe('JuniorController (e2e)', () => {
             const returnedList = response.body as ClubViewModel[];
             return response.status === 200 && returnedList.find(e => e.name === exampleClub.name);
         }),
-            it('Should reject non admins', async () => {
+            it('Should reject non youth workers', async () => {
                 return request(app.getHttpServer())
                     .get('/api/club/list')
                     .set('Authorization', `Bearer ${juniorToken}`)
@@ -118,7 +118,7 @@ describe('JuniorController (e2e)', () => {
             const checkResult = response.body as Check;
             expect(response.status === 201 && checkResult.result);
         }),
-            it('should reject non-admins', async () => {
+            it('should reject non-youth workers', async () => {
                 const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
                 const response = (await request(app.getHttpServer())
                     .post('/api/club/check-in')
@@ -164,7 +164,7 @@ describe('JuniorController (e2e)', () => {
                 const checkIns = response.body as CheckIn[];
                 expect(response.status === 200 && checkIns.length > 0);
             }),
-            it('Should reject the user if they are not an admin.', async () => {
+            it('Should reject the user if they are not a youth worker.', async () => {
                 await request(app.getHttpServer())
                     .get(`/api/club/check-in/${clubList[0].id}`)
                     .set('Authorization', `Bearer ${juniorToken}`)
