@@ -2,9 +2,6 @@ version: "3.8"
 services:
   backend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
-    # NB: the mount point of the volume /backend (that is mounted further down this file)
-    # is created in the dockerfile, but the volume is not mounted yet at build time,
-    # so dockerfile needs to copy the files initially anyway.
     build: ./backend
     depends_on:
       - db
@@ -20,10 +17,10 @@ services:
       JWT:
       NODE_ENV:
       RDS_DB_NAME:
-      RDS_HOSTNAME: db # In case a local postgres exists and env variable is already set.
-      RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
+      RDS_HOSTNAME: db
+      RDS_PASSWORD: password
       RDS_PORT:
-      RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
+      RDS_USERNAME: postgres
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:
@@ -46,8 +43,6 @@ services:
       - 3001:3000
     environment:
       REACT_APP_ENDPOINT: http://localhost:3000/api
-    volumes:
-      - ./frontend/src:/frontend/src
 
   admin-frontend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
@@ -57,7 +52,7 @@ services:
     depends_on:
       - backend
     environment:
-      REACT_APP_ADMIN_FRONTEND_URL: /nuorisotyontekijat
+      REACT_APP_ADMIN_FRONTEND_URL: /#/login
       REACT_APP_ENDPOINT: http://localhost:3000/api
 
   db:
