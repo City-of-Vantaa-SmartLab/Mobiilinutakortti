@@ -12,8 +12,10 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 
 ## Running with Docker
 
-1. Provided docker is running locally on your machine, run `./build_docker_backend.sh` (make the file executable first)
-2. Once the backend and database containers are up and running, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*
+In case you only wish to run the backend + database in docker, a helper script is provided.
+
+1. Run `./build_docker_backend.sh` (make the file executable first)
+2. Once the backend and database containers are up and running navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*
 
 ### Accessing the NestJS/PostgreSQL Docker container
 

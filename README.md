@@ -25,7 +25,7 @@ More detailed documentation is found in a README in respective directories of ea
 ## Running the app
 
 Each subproject may be run individually, with or without docker - see README.md files of the projects.
-To start up everything using Docker compose, **run `docker-compose -f docker-compose.yml.local up` in this directory**.
+To start up everything using Docker compose, **run `docker compose -f docker-compose.yml.local up` in this directory** (or use the `run-locally.sh` helper script).
 
 To make sure everything is working, navigate to:
 - [http://localhost:3001](http://localhost:3001) - frontend
@@ -36,14 +36,13 @@ If you see the webpage for frontend and admin-frontend, and "API is running" mes
 
 NOTE:
 * If you have PostgreSQL running locally, it is probably using port 5432 and will conflict with the Docker setup. Bring the local instance down or reconfigure it to solve the issue.
-* Docker might not start all the services especially if you encounter some problems somewhere at any point. In this case, just **try to compose up again**.
 * At some point during npm install you might get a weird error like this:
 
     npm ERR! code EAI_AGAIN
     npm ERR! errno EAI_AGAIN
     npm ERR! request to https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org registry.npmjs.org:443
 
-    This is because Docker has some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
+    This is because Docker might have some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
 
 ## Creating an admin user
 
@@ -114,13 +113,13 @@ Docker volumes sometimes get messed up and database won't work, often indicated 
 
 `Failed Password Authentication for user 'postgres'`
 
-Bring down the Docker containers with: `docker-compose down`
+Bring down the Docker containers with: `docker compose down`
 
 To nuke the database, remove Docker volume from the PostgreSQL container, and bring the application up again.
 
 ### admin-frontend (or some other) build errors out
 
-When running "docker-compose up" you might get an error like this:
+When running "docker compose up" you might get an error like this:
 
     admin-frontend_1  | events.js:174
     admin-frontend_1  |       throw er; // Unhandled 'error' event
@@ -140,11 +139,11 @@ Increasing memory limits for Docker might also help if for example you are using
 
 ### Test environment
 
-Application runs in Elastic Beanstalk in a single container (using Dockerfile) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
+Application runs in Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
 
 ### Production environment
 
-Application runs in Elastic Beanstalk in a single container (using Dockerfile) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
+Application runs in Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)

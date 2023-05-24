@@ -17,10 +17,10 @@ services:
       JWT:
       NODE_ENV:
       RDS_DB_NAME:
-      RDS_HOSTNAME: db
-      RDS_PASSWORD: password
+      RDS_HOSTNAME: db # In case a local postgres exists and env variable is already set.
+      RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
-      RDS_USERNAME: postgres
+      RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:
