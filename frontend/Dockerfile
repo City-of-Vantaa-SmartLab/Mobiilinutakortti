@@ -1,11 +1,6 @@
 FROM node:16.15.1
-
-RUN mkdir -p /frontend
 WORKDIR /frontend
-
-COPY package.json /frontend
-
-COPY . /frontend
+COPY package*.json ./
 RUN npm ci
-
+COPY . .
 CMD ["npm", "start"]

@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-docker-compose -f docker-compose.yml.local build && docker-compose -f docker-compose.yml.local up
+# Use Compose V2
+docker compose -f docker-compose.yml.local build
+docker compose -f docker-compose.yml.local up
