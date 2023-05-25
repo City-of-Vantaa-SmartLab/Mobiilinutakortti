@@ -9,9 +9,9 @@ More detailed documentation is found in a README in respective directories of ea
 
 ## Prerequisites
 
-- Docker
 - NodeJS - v16
 - PostgreSQL - v11 (seems to work with v10 also; some problems with v12)
+- Docker (optional)
 
 **Only Docker is needed to run the app.** If you want to run backend locally, you'll need NodeJS and PostgreSQL installed. More info in ./backend/README.md.
 

@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@types/jest": "^24.9.1",
@@ -32,10 +32,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "cross-env REACT_APP_ENDPOINT=http://localhost:3000/api react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "aws s3 sync build/ s3://vantaa-youth-pwa-frontend-dev"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "@types/socket.io-client": "^1.4.36"
+    "@types/socket.io-client": "^1.4.36",
+    "cross-env": "^7.0.3"
   }
 }

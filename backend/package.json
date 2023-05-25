@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "license": "MIT",
@@ -15,11 +15,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "rm ./test/testdb.sql || true && set NODE_ENV=test && jest --runInBand && rm ./test/testdb.sql",
+    "test": "rm ./test/testdb.sql || true && cross-env NODE_ENV=test jest --runInBand && rm ./test/testdb.sql",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "set NODE_ENV=test&& jest --config ./test/jest-e2e.json --runInBand && rm ./test/testdb.sql"
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --runInBand && rm ./test/testdb.sql"
   },
   "dependencies": {
     "@nestjs/common": "^8.4.6",
@@ -66,6 +66,7 @@
     "@types/node": "^16.11.38",
     "@types/passport-jwt": "^3.0.6",
     "@types/supertest": "^2.0.12",
+    "cross-env": "^7.0.3",
     "jest": "^26.6.3",
     "prettier": "^2.6.2",
     "sqlite3": "^5.0.2",

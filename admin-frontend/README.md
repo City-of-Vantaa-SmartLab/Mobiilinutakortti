@@ -14,7 +14,9 @@ Admin-frontend is build using `react-admin` (running on port 3002).
 2. Before running the admin-frontend:
     *  ../backend should running *(see ../backend/README.md on how to get backend running)*
     * since the default port react app runs locally *(3000)* is taken by backend, you can set a new port for admin-frontend to run in package.json. `"start": " PORT=3002 react-scripts start"`
-3. Run `npm run start` - and you'll see admin-frontend running at [http://localhost:3002](http://localhost:3002)
+3. Run `npm run start` or `npm run dev` - and you'll see admin-frontend running at [http://localhost:3002](http://localhost:3002)
+
+The start script is the same as dev script, but you must set the required environment variables yourself with start.
 
 ## Creating a youth worker user
 

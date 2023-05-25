@@ -34,7 +34,10 @@ export const authProvider = (type, params) => {
                 } else {
                     localStorage.setItem('role', 'YOUTHWORKER');
                 }
-                // Dirty hack; forces recalculation of custom routes based on user role inside App.js
+                // Forces recalculation of custom routes based on user role inside App.js.
+                // This is made so that if a youth worker was logged in on the same browser that an admin now uses to log in,
+                // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
+                // This also works vice versa.
                 window.location.reload();
             })
     }
