@@ -8,7 +8,7 @@ import {
     forwardRef,
     Logger
 } from '@nestjs/common';
-import { YouthWorker } from '../admin/entities';
+import { YouthWorker } from '../youthWorker/entities';
 import { Junior, Challenge } from './entities';
 import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';

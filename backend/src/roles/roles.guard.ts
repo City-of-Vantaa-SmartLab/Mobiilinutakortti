@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Repository } from 'typeorm';
-import { YouthWorker } from '../admin/entities';
+import { YouthWorker } from '../youthWorker/entities';
 import { Roles } from './roles.enum';
 
 @Injectable()
