@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Connection } from 'typeorm';
-import { YouthWorker, Lockout } from '../admin/entities';
+import { YouthWorker, Lockout } from '../youthWorker/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { YouthWorkerModule } from '../admin/youthWorker.module';
+import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 import { AppModule } from '../app.module';
 import { HttpModule } from '@nestjs/common';
 import { JuniorModule } from '../junior/junior.module';

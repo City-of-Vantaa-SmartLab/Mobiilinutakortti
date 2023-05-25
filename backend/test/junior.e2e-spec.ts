@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
-import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/admin/dto';
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/youthWorker/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
