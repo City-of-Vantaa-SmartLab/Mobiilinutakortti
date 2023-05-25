@@ -7,7 +7,7 @@ import { AppModule } from '../app.module';
 import { Connection } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
-import { AdminModule } from '../admin/admin.module';
+import { AdminModule } from '../admin/youthWorker.module';
 import { Admin } from '../admin/entities';
 import { ConflictException, HttpModule } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';

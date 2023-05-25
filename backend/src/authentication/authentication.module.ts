@@ -2,7 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticationService } from './authentication.service';
-import { AdminModule } from '../admin/admin.module';
+import { AdminModule } from '../admin/youthWorker.module';
 import { jwt } from './authentication.consts';
 import { JwtStrategy } from './jwt.strategy';
 import { JuniorModule } from '../junior/junior.module';

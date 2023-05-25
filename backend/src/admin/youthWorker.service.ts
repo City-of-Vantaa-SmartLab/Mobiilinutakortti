@@ -6,7 +6,7 @@ import * as content from '../content';
 import { EditAdminDto, RegisterAdminDto } from './dto';
 import { hash, compare } from 'bcrypt';
 import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
-import { AdminUserViewModel } from './vm/admin.vm';
+import { AdminUserViewModel } from './vm/youthWorker.vm';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 
 /**

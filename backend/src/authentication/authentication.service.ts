@@ -10,7 +10,7 @@ import {
 import { JwtService} from '@nestjs/jwt';
 import { Logger } from '@nestjs/common';
 import { compare } from 'bcrypt';
-import { AdminService } from '../admin/admin.service';
+import { AdminService } from '../admin/youthWorker.service';
 import { LoginAdminDto } from '../admin/dto';
 import * as content from '../content';
 import { LoginJuniorDto } from '../junior/dto';

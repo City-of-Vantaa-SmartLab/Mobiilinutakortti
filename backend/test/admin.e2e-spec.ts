@@ -4,7 +4,7 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { AdminUserViewModel } from '../src/admin/vm/admin.vm';
+import { AdminUserViewModel } from '../src/admin/vm/youthWorker.vm';
 import { maximumAttempts } from '../src/authentication/authentication.consts';
 
 describe('AdminController (e2e)', () => {

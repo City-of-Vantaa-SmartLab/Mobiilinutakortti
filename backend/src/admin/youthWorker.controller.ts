@@ -3,7 +3,7 @@ import {
   Get, Param, BadRequestException, Delete
 } from '@nestjs/common';
 import { RegisterAdminDto, LoginAdminDto, EditAdminDto } from './dto';
-import { AdminService } from './admin.service';
+import { AdminService } from './youthWorker.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
@@ -11,8 +11,8 @@ import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { AdminEditInterceptor } from './interceptors/edit.interceptor';
-import { AdminUserViewModel } from './vm/admin.vm';
-import { Admin } from './admin.decorator';
+import { AdminUserViewModel } from './vm/youthWorker.vm';
+import { Admin } from './youthWorker.decorator';
 import { JWTToken } from '../authentication/jwt.model';
 import { Message, Check } from '../common/vm';
 import * as content from '../content';

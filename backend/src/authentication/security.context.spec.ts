@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminService } from '../admin/admin.service';
 import { Connection } from 'typeorm';
 import { Admin, Lockout } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -10,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { AdminModule } from '../admin/admin.module';
+import { AdminModule } from '../admin/youthWorker.module';
 import { AppModule } from '../app.module';
 import { HttpModule } from '@nestjs/common';
 import { JuniorModule } from '../junior/junior.module';
