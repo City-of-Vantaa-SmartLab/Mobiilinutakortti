@@ -1,6 +1,6 @@
 import { httpClient } from './';
 import api from '../api';
-import { adminToken } from '../utils';
+import { userToken } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
@@ -9,7 +9,7 @@ export const httpClientWithRefresh = (url, options = {}, disableAuth = false) =>
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
     };
-    const authToken = localStorage.getItem(adminToken);
+    const authToken = localStorage.getItem(userToken);
     if (authToken) {
         refreshOptions.headers.set('Authorization', `Bearer ${authToken}`);
     }
@@ -29,7 +29,7 @@ export const httpClientWithRefresh = (url, options = {}, disableAuth = false) =>
         }
     }).then(({ access_token }) => {
         if (!disableAuth) {
-            localStorage.setItem(adminToken, access_token);
+            localStorage.setItem(userToken, access_token);
         }
         return httpClient(url, options);
     });

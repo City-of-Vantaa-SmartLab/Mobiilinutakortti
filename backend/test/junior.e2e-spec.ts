@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
-import { RegisterAdminDto, LoginAdminDto } from '../src/admin/dto';
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
@@ -14,10 +14,10 @@ describe('JuniorController (e2e)', () => {
     let juniorToken: string;
     let juniorList: JuniorUserViewModel[];
 
-    const testAdminRegister = {
+    const testYouthWorkerRegister = {
         email: 'Testy.McTempFace@gofore.com', password: 'Password',
-        firstName: 'Testy', lastName: 'McTestFace', isSuperUser: true,
-    } as RegisterAdminDto;
+        firstName: 'Testy', lastName: 'McTestFace', isAdmin: true,
+    } as RegisterYouthWorkerDto;
 
     const testJuniorRegister = {
         phoneNumber: '04122345671',
@@ -30,9 +30,9 @@ describe('JuniorController (e2e)', () => {
         homeYouthClub: 'Tikkurila',
     } as RegisterJuniorDto;
 
-    const testAdminLogin = {
-        email: testAdminRegister.email, password: testAdminRegister.password,
-    } as LoginAdminDto;
+    const testYouthWorkerLogin = {
+        email: testYouthWorkerRegister.email, password: testYouthWorkerRegister.password,
+    } as LoginYouthWorkerDto;
 
     let testJuniorLogin: LoginJuniorDto;
 
@@ -50,11 +50,11 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/api/admin/registerSuperAdmin')
-            .send(testAdminRegister);
+            .post('/api/admin/registerAdmin')
+            .send(testYouthWorkerRegister);
         token = (await request(app.getHttpServer())
             .post('/api/admin/login')
-            .send(testAdminLogin)).body.access_token;
+            .send(testYouthWorkerLogin)).body.access_token;
         const a = await request(app.getHttpServer())
             .post('/api/junior/register')
             .set('Authorization', `Bearer ${token}`)
@@ -264,14 +264,14 @@ describe('JuniorController (e2e)', () => {
                 .set('Accept', 'application/json');
             juniorToDelete = response.body[0].id;
         }),
-            it('Should return a 200 user when carried out by an Admin', async () => {
+            it('Should return a 200 user when carried out by a youth worker', async () => {
                 return request(app.getHttpServer())
                     .delete(`/api/junior/${juniorToDelete}`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(200);
             }),
-            it('Should reject the request for non-admins', () => {
+            it('Should reject the request for non-youth workers', () => {
                 return request(app.getHttpServer())
                     .delete(`/api/junior/${juniorToDelete}`)
                     .set('Authorization', `Bearer ${juniorToken}`)

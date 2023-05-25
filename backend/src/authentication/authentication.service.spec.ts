@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AdminService } from '../admin/admin.service';
+import { YouthWorkerService } from '../admin/youthWorker.service';
 import { Connection } from 'typeorm';
-import { Admin, Lockout } from '../admin/entities';
+import { YouthWorker, Lockout } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AuthenticationModule } from '../authentication/authentication.module';
@@ -10,9 +10,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { AdminModule } from '../admin/admin.module';
+import { YouthWorkerModule } from '../admin/youthWorker.module';
 import { AppModule } from '../app.module';
-import { RegisterAdminDto, LoginAdminDto } from '../admin/dto';
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../admin/dto';
 import { BadRequestException, UnauthorizedException, HttpModule } from '@nestjs/common';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
@@ -24,16 +24,16 @@ describe('AuthenticationService', () => {
   let module: TestingModule;
   let connection: Connection;
   let service: AuthenticationService;
-  let adminService: AdminService;
+  let youthWorkerService: YouthWorkerService;
   let juniorService: JuniorService;
 
-  const testRegisterAdmin = {
+  const testRegisterYouthWorker = {
     email: 'Authentication@service.test', firstName: 'Auth',
-    lastName: 'Tication', password: 'Hush', isSuperUser: true,
-  } as RegisterAdminDto;
-  const testLoginAdmin = {
-    email: testRegisterAdmin.email, password: testRegisterAdmin.password,
-  } as LoginAdminDto;
+    lastName: 'Tication', password: 'Hush', isAdmin: true,
+  } as RegisterYouthWorkerDto;
+  const testLoginYouthWorker = {
+    email: testRegisterYouthWorker.email, password: testRegisterYouthWorker.password,
+  } as LoginYouthWorkerDto;
   const testRegisterJunior = {
     phoneNumber: '04122345618',
     firstName: 'Auth jr',
@@ -50,11 +50,11 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     connection = await getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, AdminModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
         secret: jwt.secret,
       })],
-      providers: [AdminService, AuthenticationService, JuniorService, {
-        provide: getRepositoryToken(Admin),
+      providers: [YouthWorkerService, AuthenticationService, JuniorService, {
+        provide: getRepositoryToken(YouthWorker),
         useFactory: repositoryMockFactory,
       }, {
           provide: getRepositoryToken(Junior),
@@ -73,10 +73,10 @@ describe('AuthenticationService', () => {
       .compile();
 
     service = module.get<AuthenticationService>(AuthenticationService);
-    adminService = module.get<AdminService>(AdminService);
+    youthWorkerService = module.get<YouthWorkerService>(YouthWorkerService);
     juniorService = module.get<JuniorService>(JuniorService);
 
-    await adminService.registerAdmin(testRegisterAdmin);
+    await youthWorkerService.registerYouthWorker(testRegisterYouthWorker);
     await juniorService.registerJunior(testRegisterJunior);
     const juniorChallenge = await juniorService.getChallengeByPhoneNumber(testRegisterJunior.phoneNumber);
     testLoginJunior = { id: juniorChallenge.id, challenge: juniorChallenge.challenge };
@@ -91,15 +91,15 @@ describe('AuthenticationService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('Login admin', () => {
+  describe('Login youth worker', () => {
     it('should return a access token token if login is succseful', async () => {
-      expect((await service.loginAdmin(testLoginAdmin)).access_token).toBeDefined();
+      expect((await service.loginYouthWorker(testLoginYouthWorker)).access_token).toBeDefined();
     }),
       it('should throw a Bad Request if the user does not exist', async () => {
         const error = new BadRequestException();
         try {
-          const testData = { email: 'email@e.mail', password: testLoginAdmin.password } as LoginAdminDto;
-          await service.loginAdmin(testData);
+          const testData = { email: 'email@e.mail', password: testLoginYouthWorker.password } as LoginYouthWorkerDto;
+          await service.loginYouthWorker(testData);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());
@@ -108,50 +108,50 @@ describe('AuthenticationService', () => {
       it('should throw a Unauthorized if the password is incorrect', async () => {
         const error = new UnauthorizedException();
         try {
-          const testData = { email: testLoginAdmin.email, password: 'doubleHush' } as LoginAdminDto;
-          await service.loginAdmin(testData);
+          const testData = { email: testLoginYouthWorker.email, password: 'doubleHush' } as LoginYouthWorkerDto;
+          await service.loginYouthWorker(testData);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());
         }
       }),
       it('An incorrect login should create a lockout entry; however, loging in succesfully should clear it.', async () => {
-        const newTestAdmin = {
+        const newTestYouthWorker = {
           email: 'Authentication2@service.test', firstName: 'Forgets',
-          lastName: 'Alot', password: 'Password', isSuperUser: false,
-        } as RegisterAdminDto;
-        const loginTestAdmin = { email: newTestAdmin.email, password: newTestAdmin.password } as LoginAdminDto;
-        await adminService.registerAdmin(newTestAdmin);
-        const id = (await adminService.getAdminByEmail(loginTestAdmin.email)).id;
+          lastName: 'Alot', password: 'Password', isAdmin: false,
+        } as RegisterYouthWorkerDto;
+        const loginTestYouthWorker = { email: newTestYouthWorker.email, password: newTestYouthWorker.password } as LoginYouthWorkerDto;
+        await youthWorkerService.registerYouthWorker(newTestYouthWorker);
+        const id = (await youthWorkerService.getYouthWorkerByEmail(loginTestYouthWorker.email)).id;
         try {
-          await service.loginAdmin({ email: newTestAdmin.email, password: 'DogZ' });
+          await service.loginYouthWorker({ email: newTestYouthWorker.email, password: 'DogZ' });
         } catch (e) { }
-        const failedAttemptExists = (await adminService.getLockoutRecord(id));
-        await service.loginAdmin(loginTestAdmin);
-        const failedAttemptExists2 = (await adminService.getLockoutRecord(id));
+        const failedAttemptExists = (await youthWorkerService.getLockoutRecord(id));
+        await service.loginYouthWorker(loginTestYouthWorker);
+        const failedAttemptExists2 = (await youthWorkerService.getLockoutRecord(id));
         expect(failedAttemptExists && !failedAttemptExists2).toBeTruthy();
       }),
       it('Should lock an account after 5 attempts', async () => {
-        const newTestAdmin = {
+        const newTestYouthWorker = {
           email: 'Authentication3@service.test', firstName: 'Forgets',
-          lastName: 'Alot', password: 'Password', isSuperUser: false,
-        } as RegisterAdminDto;
-        const loginTestAdmin = { email: newTestAdmin.email, password: newTestAdmin.password } as LoginAdminDto;
-        await adminService.registerAdmin(newTestAdmin);
-        const id = (await adminService.getAdminByEmail(loginTestAdmin.email)).id;
+          lastName: 'Alot', password: 'Password', isAdmin: false,
+        } as RegisterYouthWorkerDto;
+        const loginTestYouthWorker = { email: newTestYouthWorker.email, password: newTestYouthWorker.password } as LoginYouthWorkerDto;
+        await youthWorkerService.registerYouthWorker(newTestYouthWorker);
+        const id = (await youthWorkerService.getYouthWorkerByEmail(loginTestYouthWorker.email)).id;
         let attemptsMatch = true;
         let lockedOut = false;
         for (let i = 1; i < 6; i++) {
           try {
-            await service.loginAdmin({ email: newTestAdmin.email, password: 'Safe' });
-          } catch (e) { attemptsMatch = attemptsMatch && ((await adminService.getLockoutRecord(id)).attempts === i); }
+            await service.loginYouthWorker({ email: newTestYouthWorker.email, password: 'Safe' });
+          } catch (e) { attemptsMatch = attemptsMatch && ((await youthWorkerService.getLockoutRecord(id)).attempts === i); }
         }
         try {
-          await service.loginAdmin(loginTestAdmin);
+          await service.loginYouthWorker(loginTestYouthWorker);
         } catch (e) {
           lockedOut = true;
         }
-        expect((await adminService.isLockedOut(id)) && attemptsMatch && lockedOut);
+        expect((await youthWorkerService.isLockedOut(id)) && attemptsMatch && lockedOut);
       });
   });
 

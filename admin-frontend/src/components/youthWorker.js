@@ -38,7 +38,7 @@ export const YouthWorkerList = (props) => {
         <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
         <TextField label="Sähköposti" source="email" />
         <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
-        <BooleanField label="Ylläpitäjä" source="isSuperUser" />
+        <BooleanField label="Ylläpitäjä" source="isAdmin" />
         <EditButton />
       </Datagrid>
     </List>
@@ -64,7 +64,7 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
         <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" defaultValue={false} />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
       </SimpleForm>
     </Create>
   );
@@ -106,7 +106,7 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Etunimi" source="firstName" />
         <TextInput label="Sukunimi" source="lastName" />
         <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
-        <BooleanInput label="Ylläpitäjä" source="isSuperUser" />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" />
       </SimpleForm>
     </Edit >
   );

@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
 /**
- * The dto to be used when registering an admin.
+ * The dto to be used when registering a youth worker.
  */
-export class RegisterAdminDto {
+export class RegisterYouthWorkerDto {
 
     @IsEmail()
     @IsNotEmpty()
@@ -19,7 +19,7 @@ export class RegisterAdminDto {
     readonly lastName: string;
 
     @IsNotEmpty()
-    readonly isSuperUser: boolean;
+    readonly isAdmin: boolean;
 
     readonly mainYouthClub: string;
 }

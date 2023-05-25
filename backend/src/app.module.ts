@@ -2,8 +2,8 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
-import { AdminController } from './admin/admin.controller';
-import { AdminModule } from './admin/admin.module';
+import { YouthWorkerController } from './admin/youthWorker.controller';
+import { YouthWorkerModule } from './admin/youthWorker.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { ConfigHelper } from './configHandler';
@@ -12,7 +12,7 @@ import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
 import { RolesModule } from './roles/roles.module';
 import { SessionModule } from './session/session.module';
-import { Admin } from './admin/entities';
+import { YouthWorker } from './admin/entities';
 import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
@@ -27,8 +27,8 @@ import pino from 'pino';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ConfigHelper.getDatabaseConnection()),
-    TypeOrmModule.forFeature([Admin, Junior]),
-    AdminModule,
+    TypeOrmModule.forFeature([YouthWorker, Junior]),
+    YouthWorkerModule,
     JuniorModule,
     AuthenticationModule,
     RolesModule,
@@ -46,7 +46,7 @@ import pino from 'pino';
     })
   ],
   providers: [AppService],
-  controllers: [AppController, AdminController, JuniorController, AuthenticationController],
+  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

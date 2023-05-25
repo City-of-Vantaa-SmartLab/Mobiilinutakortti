@@ -1,7 +1,7 @@
 /**
- * A collection of all Admin dtos.
+ * A collection of all youth worker dtos.
  */
-export { RegisterAdminDto } from './register.dto';
-export { LoginAdminDto } from './login.dto';
-export { EditAdminDto } from './edit.dto';
-export { GetAdminDto } from './get.dto';
+export { RegisterYouthWorkerDto } from './register.dto';
+export { LoginYouthWorkerDto } from './login.dto';
+export { EditYouthWorkerDto } from './edit.dto';
+export { GetYouthWorkerDto } from './get.dto';

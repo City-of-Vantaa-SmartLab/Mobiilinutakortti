@@ -25,7 +25,7 @@ export const youthWorkerProvider = (type, params, httpClient) => {
                 password: params.data.password,
                 firstName: params.data.firstName,
                 lastName: params.data.lastName,
-                isSuperUser: params.data.isSuperUser,
+                isAdmin: params.data.isAdmin,
                 mainYouthClub: params.data.mainYouthClub,
             });
             url = api.youthWorker.create;
@@ -49,7 +49,7 @@ export const youthWorkerProvider = (type, params, httpClient) => {
                 //   password: params.data.password,
                 firstName: params.data.firstName,
                 lastName: params.data.lastName,
-                isSuperUser: params.data.isSuperUser,
+                isAdmin: params.data.isAdmin,
                 mainYouthClub: params.data.mainYouthClub
             };
             const jsonData = JSON.stringify(data);

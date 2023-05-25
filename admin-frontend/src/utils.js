@@ -15,7 +15,7 @@ export const statusChoices = [
   { id: 'failedCall', name: 'Kotisoittoa yritetty' }
 ];
 
-export const adminToken = 'admin-token';
+export const userToken = 'user-token';
 
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {

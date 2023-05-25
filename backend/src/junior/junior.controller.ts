@@ -13,7 +13,7 @@ import { SessionGuard } from '../session/session.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
-import { Admin } from '../admin/admin.decorator';
+import { YouthWorker } from '../admin/youthWorker.decorator';
 import { Junior } from './junior.decorator';
 import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';
@@ -34,9 +34,9 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Post('register')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
         return new Message(await this.juniorService.registerJunior(userData));
     }
@@ -78,19 +78,19 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @UseInterceptors(JuniorEditInterceptor)
     @Post('edit')
-    @ApiBearerAuth('admin')
-    async edit(@Admin() admin: { userId: string }, @Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
-        return new Message(await this.juniorService.editJunior(userData, admin.userId));
+    @ApiBearerAuth('youthWorker')
+    async edit(@YouthWorker() youthWorker: { userId: string }, @Body(PhoneNumberValidationPipe) userData: EditJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.editJunior(userData, youthWorker.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('list')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getAllJuniors(@Query('controls') query): Promise<JuniorListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
         return await this.juniorService.listAllJuniors(controls);
@@ -98,18 +98,18 @@ export class JuniorController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('nextAvailableDummyPhoneNumber')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getNextAvailableDummyPhoneNumber(): Promise<Message> {
         return new Message(await this.juniorService.getNextAvailableDummyPhoneNumber());
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get(':id')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
         return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
@@ -134,27 +134,27 @@ export class JuniorController {
      */
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Delete(':id')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async deleteJunior(@Param('id') id: string) {
         return new Message(await this.juniorService.deleteJunior(id));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.SUPERUSER)
+    @AllowedRoles(Roles.ADMIN)
     @Post('newSeason')
-    @ApiBearerAuth('super-admin')
+    @ApiBearerAuth('admin')
     async createNewSeason(@Body() expireDate: SeasonExpiredDto) {
         return new Message(await this.juniorService.createNewSeason(expireDate));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.SUPERUSER)
+    @AllowedRoles(Roles.ADMIN)
     @Delete('newSeason/clearExpired')
-    @ApiBearerAuth('super-admin')
+    @ApiBearerAuth('admin')
     async deleteExpiredJuniors() {
         return new Message(await this.juniorService.deleteExpired());
     }

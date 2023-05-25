@@ -1,6 +1,6 @@
 # Mobiilinutakortti admin-frontend
 
-The admin-frontend directory includes the admin side code for Mobiilinutakortti app.
+The admin-frontend directory includes the admin side code for Mobiilinutakortti app. The users are youth workers.
 
 Admin-frontend is build using `react-admin` (running on port 3002).
 
@@ -16,9 +16,9 @@ Admin-frontend is build using `react-admin` (running on port 3002).
     * since the default port react app runs locally *(3000)* is taken by backend, you can set a new port for admin-frontend to run in package.json. `"start": " PORT=3002 react-scripts start"`
 3. Run `npm run start` - and you'll see admin-frontend running at [http://localhost:3002](http://localhost:3002)
 
-## Creating an admin user
+## Creating a youth worker user
 
-The application needs at least one admin user to work properly. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
+The application needs at least one youth worker user to work properly. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
 
 ## Environment variables / secrets
 

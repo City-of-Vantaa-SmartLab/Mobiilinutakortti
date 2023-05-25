@@ -4,17 +4,17 @@ import { getYouthClubs } from '../utils'
 export const LandingPage = () => {
   const [youthClubs, setYouthClubs] = useState([]);
   const dropdownRef = useRef(null);
-  const adminInfo = useRef(null);
+  const userInfo = useRef(null);
 
   useEffect(() => {
-    adminInfo.current = JSON.parse(localStorage.getItem('adminInfo'));
-    if (!!adminInfo.current) {
+    userInfo.current = JSON.parse(localStorage.getItem('userInfo'));
+    if (!!userInfo.current) {
       const addYouthClubsToState = async () => {
         const parsedYouthClubs = await getYouthClubs();
         setYouthClubs(parsedYouthClubs.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
 
-        dropdownRef.current.value = adminInfo.current?.mainYouthClubId || -1;
-        setSelectedYouthClub(adminInfo.current?.mainYouthClubId || -1);
+        dropdownRef.current.value = userInfo.current?.mainYouthClubId || -1;
+        setSelectedYouthClub(userInfo.current?.mainYouthClubId || -1);
       };
       addYouthClubsToState();
     } else {
@@ -33,7 +33,7 @@ export const LandingPage = () => {
 
   return (
     <div style={{marginLeft: '20%', marginTop: '3em'}}>
-      <p>Tervetuloa {adminInfo.current?.firstName}!</p>
+      <p>Tervetuloa {userInfo.current?.firstName}!</p>
       <div>Jatka nuorten&nbsp;
         <button style={{
           background: 'none',
@@ -54,7 +54,7 @@ export const LandingPage = () => {
         </select>
       </div>
       <p>tai listaa <a href='#/junior'>kaikki nuoret</a>.</p>
-      {adminInfo.current?.passwordLastChanged ? null : (<div style={{marginTop: '3em'}}>
+      {userInfo.current?.passwordLastChanged ? null : (<div style={{marginTop: '3em'}}>
         <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
       </div>)}
     </div>

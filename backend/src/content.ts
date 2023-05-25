@@ -1,6 +1,6 @@
 export type Language = 'fi' | 'sv' | 'en'
 
-export const AdminAlreadyExists = "Käyttäjätili on jo luotu tällä sähköpostilla."
+export const YouthWorkerAlreadyExists = "Käyttäjätili on jo luotu tällä sähköpostilla."
 export const Created = (what: string) => `${what} luotu.`
 export const Renew = (what: string) => `${what} uudistettu.`
 export const ClubNotFound = "Kyseistä nuorisotilaa ei löydy."

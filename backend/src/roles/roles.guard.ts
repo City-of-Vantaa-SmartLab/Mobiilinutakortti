@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Repository } from 'typeorm';
-import { Admin } from '../admin/entities';
+import { YouthWorker } from '../admin/entities';
 import { Roles } from './roles.enum';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class RolesGuard implements CanActivate {
         private readonly reflector: Reflector,
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
-        @InjectRepository(Admin)
-        private readonly adminRepo: Repository<Admin>,
+        @InjectRepository(YouthWorker)
+        private readonly youthWorkerRepo: Repository<YouthWorker>,
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -32,11 +32,11 @@ export class RolesGuard implements CanActivate {
         if (isJunior) {
             roles.push(Roles.JUNIOR);
         } else {
-            const admin = await this.adminRepo.findOneBy({ id });
-            if (admin) {
-                roles.push(Roles.ADMIN);
-                if (admin.isSuperUser) {
-                    roles.push(Roles.SUPERUSER);
+            const youthWorker = await this.youthWorkerRepo.findOneBy({ id });
+            if (youthWorker) {
+                roles.push(Roles.YOUTHWORKER);
+                if (youthWorker.isAdmin) {
+                    roles.push(Roles.ADMIN);
                 }
             }
         }

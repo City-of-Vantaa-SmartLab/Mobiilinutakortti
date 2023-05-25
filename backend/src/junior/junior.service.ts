@@ -8,7 +8,7 @@ import {
     forwardRef,
     Logger
 } from '@nestjs/common';
-import { Admin } from '../admin/entities';
+import { YouthWorker } from '../admin/entities';
 import { Junior, Challenge } from './entities';
 import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,8 +28,8 @@ export class JuniorService {
     private readonly logger = new Logger('Junior Service');
 
     constructor(
-        @InjectRepository(Admin)
-        private readonly adminRepo: Repository<Admin>,
+        @InjectRepository(YouthWorker)
+        private readonly youthWorkerRepo: Repository<YouthWorker>,
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Challenge)
@@ -128,8 +128,8 @@ export class JuniorService {
         throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
-    // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by an admin, the status will be pending. In both cases a parent might re-register the junior.
-    // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club admins, and sometimes this results in a contact to maintenance, i.e. developers.
+    // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by a youth worker, the status will be pending. In both cases a parent might re-register the junior.
+    // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club youth workers, and sometimes this results in a contact to maintenance, i.e. developers.
     // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
     async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
         this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
@@ -230,7 +230,7 @@ export class JuniorService {
         else throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
-    async editJunior(details: EditJuniorDto, adminUserId: string): Promise<string> {
+    async editJunior(details: EditJuniorDto, youthWorkerUserId: string): Promise<string> {
         const user = await this.juniorRepo.findOneBy({ id: details.id });
         const prevStatus = user.status;
         if (!user) { throw new BadRequestException(content.UserNotFound); }
@@ -259,8 +259,8 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         if (prevStatus === 'expired' && details.status !== prevStatus) {
-            const admin = await this.adminRepo.findOneBy({ id: adminUserId });
-            if (!admin?.isSuperUser) {
+            const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
+            if (!youthWorker?.isAdmin) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
                 // automatic logout in the frontend.
                 throw new BadRequestException(content.ForbiddenToChangeExpiredStatus)

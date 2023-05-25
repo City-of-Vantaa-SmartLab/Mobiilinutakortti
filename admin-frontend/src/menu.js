@@ -5,14 +5,14 @@ import ChildCareIcon from '@material-ui/icons/ChildCare';
 import ListIcon from '@material-ui/icons/ViewList';
 import NewSeasonIcon from '@material-ui/icons/Autorenew';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
-import usePermissions from './hooks/usePermissions';
+import useAdminPermission from './hooks/useAdminPermission';
 
 const MenuContainer = styled.div`
   margin-top: 1.5em;
 `;
 
 const Menu = () => {
-  const { isSuperAdmin } = usePermissions();
+  const { isAdmin } = useAdminPermission();
 
   return (
     <MenuContainer>
@@ -26,7 +26,7 @@ const Menu = () => {
         primaryText="Nuorisotilat"
         leftIcon={<ListIcon />}
       />
-      {isSuperAdmin && (
+      {isAdmin && (
         <React.Fragment>
           <MenuItemLink
             to="/editYouthClubs"

@@ -49,7 +49,7 @@ const CheckInView = (props) => {
   }
 
   useEffect(() => {
-    localStorage.removeItem("admin-token")
+    localStorage.removeItem("user-token")
     const checkInClubId = sessionStorage.getItem("checkInClubId");
     const path = props.location.pathname;
     const m = path.match(/\d+/);

@@ -74,9 +74,9 @@ Or, in Mac OSX (might not work exactly like this, check out if you have lo0):
 
   echo "rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 127.0.0.1 port 3000" | sudo pfctl -ef -
 
-## Creating an admin user
+## Creating a youth worker user
 
-The application needs at least one admin user to work properly. See the generic README.md at the root of the repository (../README.md) on instructions how to create one.
+The application needs at least one youth worker user to work properly. See the generic README.md at the root of the repository (../README.md) on instructions how to create one.
 
 ## Testing SMS functionality
 
@@ -101,7 +101,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
-* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new super admin via _registerSuperAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
+* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new admin via _registerSuperAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
@@ -115,7 +115,7 @@ Additionally, the frontend apps require these environment variables:
 
 Swagger documentation endpoint located at "api/swagger". The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoint only need to mark which tag it belong to and which authentication level it have. Optional comments can be added for context.
 
-There are 3 authentication level corespond to 3 level of user: super admin, admin (normal youth worker), and junior. Each level of user get access to different endpoint.
+There are 3 authentication level corespond to 3 level of user: admin, youth worker, and junior. Each level of user get access to different endpoint.
 
 Swagger documentation does not document api response. If desire api response can be documented manually in the future.
 

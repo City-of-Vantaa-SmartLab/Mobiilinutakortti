@@ -7,14 +7,14 @@ import { YouthClubList } from './components/youthClub';
 import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
-import { routes, superAdminRoutes } from './customRoutes';
+import { routes, adminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
 import { httpClient } from './httpClients'
 import api from './api';
 import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
-import usePermissions from './hooks/usePermissions';
+import useAdminPermission from './hooks/useAdminPermission';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -25,8 +25,8 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
 const App = () => {
-    const { isSuperAdmin } = usePermissions();
-    const customRoutes = routes.concat(...isSuperAdmin ? superAdminRoutes : []);
+    const { isAdmin } = useAdminPermission();
+    const customRoutes = routes.concat(...isAdmin ? adminRoutes : []);
 
     useEffect(() => {
         let validCheck = setInterval(async () => {
@@ -55,10 +55,10 @@ const App = () => {
             {permissions => [
                 <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
                 <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,
-                permissions === 'SUPERADMIN'
+                permissions === 'ADMIN'
                     ? <Resource name="editYouthClubs" options={{ label: 'Nuorisotilojen muokkaus' }} list={EditYouthClubsList} edit={EditYouthClubs} />
                     : null,
-                permissions === 'SUPERADMIN'
+                permissions === 'ADMIN'
                     ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
                     : null
             ]}
