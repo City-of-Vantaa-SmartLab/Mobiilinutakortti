@@ -13,7 +13,7 @@ import { SessionGuard } from '../session/session.guard';
 import { JuniorEditInterceptor } from './interceptors/edit.interceptor';
 import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './vm';
 import { JWTToken } from '../authentication/jwt.model';
-import { YouthWorker } from '../admin/admin.decorator';
+import { YouthWorker } from '../admin/youthWorker.decorator';
 import { Junior } from './junior.decorator';
 import { Message, Check } from '../common/vm';
 import { Challenge } from './entities';

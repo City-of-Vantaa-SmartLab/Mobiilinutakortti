@@ -6,7 +6,7 @@ import * as content from '../content';
 import { EditYouthWorkerDto, RegisterYouthWorkerDto } from './dto';
 import { hash, compare } from 'bcrypt';
 import { saltRounds, maximumAttempts } from '../authentication/authentication.consts';
-import { YouthWorkerUserViewModel } from './vm/admin.vm';
+import { YouthWorkerUserViewModel } from './vm/youthWorker.vm';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 
 /**

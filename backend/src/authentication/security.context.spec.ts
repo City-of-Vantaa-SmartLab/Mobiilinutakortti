@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { YouthWorkerModule } from '../admin/admin.module';
+import { YouthWorkerModule } from '../admin/youthWorker.module';
 import { AppModule } from '../app.module';
 import { HttpModule } from '@nestjs/common';
 import { JuniorModule } from '../junior/junior.module';

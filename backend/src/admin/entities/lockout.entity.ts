@@ -1,5 +1,5 @@
 import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
-import { YouthWorker } from './admin.entity';
+import { YouthWorker } from './youthWorker.entity';
 import { ConfigHelper } from '../../configHandler';
 
 @Entity()

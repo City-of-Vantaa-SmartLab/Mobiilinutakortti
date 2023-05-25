@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { YouthWorkerService } from '../admin/admin.service';
+import { YouthWorkerService } from '../admin/youthWorker.service';
 import { Connection } from 'typeorm';
 import { YouthWorker, Lockout } from '../admin/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
-import { YouthWorkerModule } from '../admin/admin.module';
+import { YouthWorkerModule } from '../admin/youthWorker.module';
 import { AppModule } from '../app.module';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../admin/dto';
 import { BadRequestException, UnauthorizedException, HttpModule } from '@nestjs/common';

@@ -4,7 +4,7 @@ import { AppModule } from './../src/app.module';
 import { Connection } from 'typeorm';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto, EditYouthWorkerDto } from '../src/admin/dto';
 import { getTestDB } from './testdb';
-import { YouthWorkerUserViewModel } from '../src/admin/vm/admin.vm';
+import { YouthWorkerUserViewModel } from '../src/admin/vm/youthWorker.vm';
 import { maximumAttempts } from '../src/authentication/authentication.consts';
 
 describe('YouthWorkerController (e2e)', () => {

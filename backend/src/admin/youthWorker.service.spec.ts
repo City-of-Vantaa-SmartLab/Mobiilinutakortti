@@ -13,8 +13,8 @@ import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterYouthWorkerDto, EditYouthWorkerDto } from './dto';
 import { ConflictException } from '@nestjs/common';
-import { YouthWorkerModule } from './admin.module';
-import { YouthWorkerService } from './admin.service';
+import { YouthWorkerModule } from './youthWorker.module';
+import { YouthWorkerService } from './youthWorker.service';
 
 describe('YouthWorkerService', () => {
   let module: TestingModule;

@@ -3,7 +3,7 @@ import {
   Get, Param, BadRequestException, Delete
 } from '@nestjs/common';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto, EditYouthWorkerDto } from './dto';
-import { YouthWorkerService } from './admin.service';
+import { YouthWorkerService } from './youthWorker.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
@@ -11,8 +11,8 @@ import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { YouthWorkerEditInterceptor } from './interceptors/edit.interceptor';
-import { YouthWorkerUserViewModel } from './vm/admin.vm';
-import { YouthWorker } from './admin.decorator';
+import { YouthWorkerUserViewModel } from './vm/youthWorker.vm';
+import { YouthWorker } from './youthWorker.decorator';
 import { JWTToken } from '../authentication/jwt.model';
 import { Message, Check } from '../common/vm';
 import * as content from '../content';

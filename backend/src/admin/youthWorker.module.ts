@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { YouthWorkerController } from './admin.controller';
-import { YouthWorkerService } from './admin.service';
+import { YouthWorkerController } from './youthWorker.controller';
+import { YouthWorkerService } from './youthWorker.service';
 import { YouthWorker, Lockout } from './entities';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { Junior } from '../junior/entities';
