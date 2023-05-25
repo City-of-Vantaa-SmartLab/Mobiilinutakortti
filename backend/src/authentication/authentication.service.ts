@@ -49,6 +49,7 @@ export class AuthenticationService {
         }, user.id);
 
         this.sessionDBService.addSession(user.id, token.access_token);
+        this.logger.log("Logged in user " + user.id);
         return token;
     }
 

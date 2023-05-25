@@ -18,11 +18,7 @@ export const httpClientWithRefresh = (url, options = {}, disableAuth = false) =>
         refreshResponse = refreshResponse.json();
         if (refreshResponse.statusCode < 200 || refreshResponse.statusCode >= 300) {
             authProvider(AUTH_LOGOUT, {});
-            if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
-              document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
-            } else {
-              window.location.reload();
-            }
+            document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
             return Promise.resolve();
         } else {
             return refreshResponse;

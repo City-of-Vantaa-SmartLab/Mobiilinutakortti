@@ -18,7 +18,10 @@ export const LandingPage = () => {
       };
       addYouthClubsToState();
     } else {
-      window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
+      // Since the landing page is at REACT_APP_ADMIN_FRONTEND_URL,
+      // without the '#/login' the app would be in infinite loop between
+      // REACT_APP_ADMIN_FRONTEND_URL and REACT_APP_ADMIN_FRONTEND_URL#
+      window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
     }
   }, []);
 
