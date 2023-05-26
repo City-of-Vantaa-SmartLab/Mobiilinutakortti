@@ -167,6 +167,11 @@ export const FieldTitle = styled.h2`
     font-weight: 600;
 `;
 
+export const FieldInfoText = styled.p`
+    font-family: inherit;
+    font-size: 1em;
+`;
+
 export const FormFooter = styled.div`
     width: 100%;
     padding: 2rem;

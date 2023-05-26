@@ -8,6 +8,8 @@ export class EditJuniorDto {
 
     phoneNumber: string;
 
+    smsPermissionJunior: boolean;
+
     firstName: string;
 
     lastName: string;
@@ -23,6 +25,8 @@ export class EditJuniorDto {
     parentsName: string;
 
     parentsPhoneNumber: string;
+
+    smsPermissionParent: boolean;
 
     additionalContactInformation: string;
 

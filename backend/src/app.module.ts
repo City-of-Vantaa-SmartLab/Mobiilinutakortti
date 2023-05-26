@@ -22,7 +22,9 @@ import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SessionDBModule } from './session/sessiondb.module';
+import { InfoModule } from './info/info.module';
 import pino from 'pino';
+import { InfoController } from './info/info.controller';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import pino from 'pino';
     SmsModule,
     SsoModule,
     SessionDBModule,
+    InfoModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({
@@ -46,7 +49,7 @@ import pino from 'pino';
     })
   ],
   providers: [AppService],
-  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController],
+  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, InfoController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

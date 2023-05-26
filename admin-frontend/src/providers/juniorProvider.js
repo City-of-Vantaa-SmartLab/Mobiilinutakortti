@@ -43,6 +43,7 @@ export const juniorProvider = (type, params, httpClient) => {
         case CREATE: {
             const data = JSON.stringify({
                 phoneNumber: params.data.phoneNumber,
+                smsPermissionJunior: params.data.smsPermissionJunior,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 nickName: params.data.nickName,
@@ -55,6 +56,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                smsPermissionParent: params.data.smsPermissionParent,
                 additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
@@ -77,6 +79,7 @@ export const juniorProvider = (type, params, httpClient) => {
             const data = {
                 id: params.data.id,
                 phoneNumber: params.data.phoneNumber,
+                smsPermissionJunior: params.data.smsPermissionJunior,
                 lastName: params.data.lastName,
                 firstName: params.data.firstName,
                 nickName: params.data.nickName,
@@ -89,6 +92,7 @@ export const juniorProvider = (type, params, httpClient) => {
                 postCode: params.data.postCode,
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
+                smsPermissionParent: params.data.smsPermissionParent,
                 additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission

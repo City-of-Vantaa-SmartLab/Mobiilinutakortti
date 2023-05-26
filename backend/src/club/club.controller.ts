@@ -29,7 +29,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class ClubController {
 
     constructor(
-        private readonly clubService: ClubService,
+        private readonly clubService: ClubService
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))

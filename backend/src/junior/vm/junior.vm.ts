@@ -4,6 +4,7 @@ import { formatName } from '../junior.helper';
 export class JuniorUserViewModel {
     id: string;
     phoneNumber: string;
+    smsPermissionJunior: boolean;
     displayName: string;
     firstName: string;
     lastName: string;
@@ -13,6 +14,7 @@ export class JuniorUserViewModel {
     class: string;
     parentsName: string;
     parentsPhoneNumber: string;
+    smsPermissionParent: boolean;
     additionalContactInformation: string;
     gender: string;
     birthday: string;
@@ -28,11 +30,13 @@ export class JuniorUserViewModel {
         this.lastName = entity.lastName;
         this.nickName = entity.nickName;
         this.phoneNumber = entity.phoneNumber;
+        this.smsPermissionJunior = entity.smsPermissionJunior;
         this.parentsName = entity.parentsName;
         this.school = entity.school;
         this.class = entity.class;
         this.postCode = entity.postCode;
         this.parentsPhoneNumber = entity.parentsPhoneNumber;
+        this.smsPermissionParent = entity.smsPermissionParent;
         this.additionalContactInformation = entity.additionalContactInformation;
         this.gender = entity.gender;
         this.homeYouthClub = entity.homeYouthClub;

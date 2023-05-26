@@ -21,11 +21,13 @@ describe('JuniorService', () => {
 
   const testRegisterYouth = {
     phoneNumber: '04122345000',
+    smsPermissionJunior: false,
     firstName: 'Auth jr',
     lastName: 'Senior',
     postCode: '02130',
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
+    smsPermissionParent: true,
     school: 'random school',
     class: '5A',
     gender: 'M',

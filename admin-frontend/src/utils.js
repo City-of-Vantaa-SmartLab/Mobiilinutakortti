@@ -15,6 +15,11 @@ export const statusChoices = [
   { id: 'failedCall', name: 'Kotisoittoa yritetty' }
 ];
 
+export const recipientChoices = [
+  { id: 'parents', name: 'Vanhemmat' },
+  { id: 'juniors', name: 'Juniorit' },
+];
+
 export const userToken = 'user-token';
 
 export const parseErrorMessages = (messageList) => {

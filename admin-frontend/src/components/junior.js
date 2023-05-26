@@ -20,7 +20,7 @@ import {
     Filter,
     useNotify,
     Pagination,
-    FormDataConsumer
+    FormDataConsumer,
 } from 'react-admin';
 import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils';
 import Button from '@material-ui/core/Button';
@@ -179,6 +179,7 @@ export const JuniorCreate = (props) => {
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
                 <FormDataConsumer>
                     {() => <DummyPhoneNumberButton />}
                 </FormDataConsumer>
@@ -187,6 +188,7 @@ export const JuniorCreate = (props) => {
                 {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
+                <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
                 {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
@@ -240,6 +242,7 @@ export const JuniorEdit = (props) => {
                 <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+                <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
                 <FormDataConsumer>
                     {() => (<DummyPhoneNumberButton />)}
                 </FormDataConsumer>
@@ -248,6 +251,7 @@ export const JuniorEdit = (props) => {
                 {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()}/>)}
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
+                <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
                 {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()}/>
                 {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}

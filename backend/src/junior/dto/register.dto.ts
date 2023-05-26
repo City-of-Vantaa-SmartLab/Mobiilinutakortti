@@ -6,6 +6,8 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly phoneNumber: string;
 
+    readonly smsPermissionJunior: boolean;
+
     @IsNotEmpty()
     readonly firstName: string;
 
@@ -31,6 +33,8 @@ export class RegisterJuniorDto {
 
     @IsNotEmpty()
     readonly parentsPhoneNumber: string;
+
+    readonly smsPermissionParent: boolean;
 
     readonly additionalContactInformation: string;
 

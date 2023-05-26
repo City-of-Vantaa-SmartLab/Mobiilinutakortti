@@ -107,7 +107,7 @@ export class SmsService {
      * Use the batchSendMessagesToUsers method to send a message to more than 1000 recipients, or
      * to send individual messages to multiple users.
      */
-    private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
+    async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
         this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
             response => {

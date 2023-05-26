@@ -34,13 +34,13 @@ export const EditYouthClubsList = (props) => (
 
 export const EditYouthClubs = (props) => (
   <Edit title="Muokkaa nuorisotilan tietoja" {...props} undoable={false}>
-      <SimpleForm variant="standard" margin="normal" redirect="list">
-        <BooleanInput label="Tila aktiivinen" source="active" />
-        <StatusHelperText />
-        <TextInput label="Tilakohtainen viesti FI" source="messages.fi"/>      
-        <TextInput label="Tilakohtainen viesti EN" source="messages.en" />
-        <TextInput label="Tilakohtainen viesti SV" source="messages.sv" />
-        <MessageHelperText/>
-      </SimpleForm>
-    </Edit >
+    <SimpleForm variant="standard" margin="normal" redirect="list">
+      <BooleanInput label="Tila aktiivinen" source="active" />
+      <StatusHelperText />
+      <TextInput label="Tilakohtainen viesti FI" source="messages.fi"/>      
+      <TextInput label="Tilakohtainen viesti EN" source="messages.en" />
+      <TextInput label="Tilakohtainen viesti SV" source="messages.sv" />
+      <MessageHelperText/>
+    </SimpleForm>
+  </Edit >
 );

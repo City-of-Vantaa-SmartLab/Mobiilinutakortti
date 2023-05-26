@@ -5,6 +5,7 @@ import ChildCareIcon from '@material-ui/icons/ChildCare';
 import ListIcon from '@material-ui/icons/ViewList';
 import NewSeasonIcon from '@material-ui/icons/Autorenew';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import useAdminPermission from './hooks/useAdminPermission';
 
 const MenuContainer = styled.div`
@@ -37,6 +38,11 @@ const Menu = () => {
             to="/youthWorker"
             primaryText="Nuorisotyöntekijät"
             leftIcon={<ListIcon />}
+          />
+          <MenuItemLink
+            to="/messages/create"
+            primaryText="Tiedotus"
+            leftIcon={<MailOutlineIcon />}
           />
           <MenuItemLink
             to="/newSeason"

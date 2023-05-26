@@ -21,6 +21,9 @@ export class Junior {
     @Column({ unique: true, transformer: makePhoneNumberInternational })
     phoneNumber: string;
 
+    @Column({ default: false })
+    smsPermissionJunior: boolean;
+
     @Column()
     postCode: string;
 
@@ -35,6 +38,9 @@ export class Junior {
 
     @Column({ transformer: makePhoneNumberInternational })
     parentsPhoneNumber: string;
+
+    @Column({ default: false })
+    smsPermissionParent: boolean;
 
     @Column({ nullable: true  })
     additionalContactInformation: string;
