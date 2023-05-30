@@ -1,7 +1,10 @@
-version: "3"
+version: "3.8"
 services:
   backend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
+    # NB: the mount point of the volume /backend (that is mounted further down this file)
+    # is created in the dockerfile, but the volume is not mounted yet at build time,
+    # so dockerfile needs to copy the files initially anyway.
     build: ./backend
     depends_on:
       - db
@@ -31,6 +34,8 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
+    volumes:
+      - ./backend:/backend
 
   frontend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
@@ -41,6 +46,8 @@ services:
       - 3001:3000
     environment:
       REACT_APP_ENDPOINT: http://localhost:3000/api
+    volumes:
+      - ./frontend:/frontend
 
   admin-frontend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
@@ -52,6 +59,8 @@ services:
     environment:
       REACT_APP_ADMIN_FRONTEND_URL: /nuorisotyontekijat
       REACT_APP_ENDPOINT: http://localhost:3000/api
+    volumes:
+      - ./admin-frontend:/admin-frontend
 
   db:
     image: postgres:11
