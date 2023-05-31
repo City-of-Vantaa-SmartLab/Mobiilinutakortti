@@ -25,7 +25,7 @@ More detailed documentation is found in a README in respective directories of ea
 ## Running the app
 
 Each subproject may be run individually, with or without docker - see README.md files of the projects.
-To start up everything using Docker compose, **run `docker compose -f docker-compose.yml.local up` in this directory** (or use the `run-locally.sh` helper script).
+To start up everything using Docker compose, **run `docker compose -f docker-compose.yml.local up` in this directory**. Since there might be problems with Docker caching, the `run-locally.sh` helper script is a good alternative.
 
 To make sure everything is working, navigate to:
 - [http://localhost:3001](http://localhost:3001) - frontend

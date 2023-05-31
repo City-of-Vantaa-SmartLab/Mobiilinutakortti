@@ -16,5 +16,8 @@
     "node_modules",
     "dist",
     "test"
-  ]
+  ],
+  "watchOptions": {
+    "excludeFiles": ["node_modules"]
+  }
 }

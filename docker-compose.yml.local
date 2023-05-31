@@ -35,7 +35,7 @@ services:
       TELIA_USER:
       TELIA_USERNAME:
     volumes:
-      - ./backend:/backend
+      - ./backend/src:/backend/src
 
   frontend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
@@ -47,7 +47,7 @@ services:
     environment:
       REACT_APP_ENDPOINT: http://localhost:3000/api
     volumes:
-      - ./frontend:/frontend
+      - ./frontend/src:/frontend/src
 
   admin-frontend:
     # Use canonical Dockerfile for Docker Compose V2 to run container.
@@ -60,7 +60,7 @@ services:
       REACT_APP_ADMIN_FRONTEND_URL: /nuorisotyontekijat
       REACT_APP_ENDPOINT: http://localhost:3000/api
     volumes:
-      - ./admin-frontend:/admin-frontend
+      - ./admin-frontend/src:/admin-frontend/src
 
   db:
     image: postgres:11
