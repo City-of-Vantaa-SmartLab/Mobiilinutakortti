@@ -101,7 +101,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
-* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new admin via _registerSuperAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
+* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.

@@ -44,16 +44,14 @@ NOTE:
 
     This is because Docker might have some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
 
-## Creating a youth worker user
+## Create an initial admin
 
-The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend.
+The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
 
-### Use curl
-
-Run the following `curl` command to create a youth worker user
+Run the following `curl` command to create a youth worker with admin rights:
 
 ```bash
-curl --location --request POST 'http://localhost:3000/api/admin/registerSuperAdmin' \
+curl --location --request POST 'http://localhost:3000/api/youthworker/registerAdmin' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "email": "test@test.com",
@@ -64,24 +62,7 @@ curl --location --request POST 'http://localhost:3000/api/admin/registerSuperAdm
 }'
 ```
 
-### Use other tools
----
-
-Alternatively, you can use GUI tools such as Postman or Insomnia to create a youth worker user.
-
-POST to [http://localhost:3000/api/admin/registerSuperAdmin](http://localhost:3000/api/admin/registerSuperAdmin) with following body:
-
-```json
-{
-    "email":"test@test.com",
-    "password": "test",
-    "firstName": "admin",
-    "lastName": "admin",
-    "isAdmin": "true"
-}
-```
-
-Now you can login to admin-frontend with given credentials.
+Alternatively, you can use GUI tools such as Postman or Insomnia to create the user.
 
 ### Note about production
 
@@ -89,7 +70,25 @@ When deploying application to production, endpoint should initially be open, and
 
 ## Creating youth clubs
 
-Currently, there's no user interface for creating youth clubs. You can insert them directly to the database to the `clubs` table.
+Currently, there's no user interface for creating youth clubs. You can insert them directly to the database to the `clubs` table. For example, the list of youth clubs for Vantaa would be something like:
+
+```sql
+insert into public.club (name) values
+('Hakunilan nuorisotila'),
+('Havukosken nuorisotila'),
+('Hiekkaharjun nuorisotila'),
+('Kivistön nuorisotila'),
+('Kolohongan nuorisotila'),
+('Korson nuorisotila'),
+('Länsimäen nuorisotila'),
+('Martinlaakson nuorisotila'),
+('Mikkolan nuorisotila'),
+('Myyrmäen nuorisotila'),
+('Pakkalan nuorisotila'),
+('Pähkinärinteen nuorisotila'),
+('Tikkurilan nuorisotila');
+commit;
+```
 
 ## Testing SMS functionality
 
