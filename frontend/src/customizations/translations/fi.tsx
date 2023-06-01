@@ -81,15 +81,11 @@ export const translations: Translations = {
       smsPermissionDescription: 'Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infotekstiviestejä enää, ole yhteydessä nuorisotyöntekijään.',
       smsPermissionJunior: 'Infoviestit nuorelle',
       smsPermissionJuniorDescription: 'Viestejä saa lähettää nuorelle',
-      smsPermissionJuniorOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
-      },
       smsPermissionParent: 'Infoviestit huoltajalle',
       smsPermissionParentDescription: 'Viestejä saa lähettää huoltajalle',
-      smsPermissionParentOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
+      smsPermissionOptions: {
+        y: 'Yes',
+        n: 'no',
       },
 
       youthClubHeading: 'Kotinuorisotila',

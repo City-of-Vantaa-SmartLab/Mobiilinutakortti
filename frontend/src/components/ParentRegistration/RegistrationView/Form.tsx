@@ -58,19 +58,6 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         {valueOrNull('juniorNickName', <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />)}
                         <Field name='juniorBirthday' component={InputField} title={t.parentRegistration.form.juniorBirthday} placeholder={t.parentRegistration.form.juniorBirthdayPlaceholder} />
                         <Field name='juniorPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.juniorPhoneNumber} />
-                        
-                        <SelectGroup
-                            error={errors.smsPermissionJunior}
-                            touched={touched.smsPermissionJunior}
-                            title={t.parentRegistration.form.smsPermissionJunior}
-                            name="smsPermissionJunior"
-                            description={t.parentRegistration.form.smsPermissionJuniorDescription}
-                            options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionJuniorOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionJuniorOptions.n }
-                            ]}
-                        />
-
                         {valueOrNull('postCode', <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} />)}
                         {valueOrNull('school', <Field name='school' component={InputField} title={t.parentRegistration.form.school} />)}
                         {valueOrNull('class', <Field name='class' component={InputField} title={t.parentRegistration.form.class} />)}
@@ -108,19 +95,6 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
-                        
-                        <SelectGroup
-                            error={errors.smsPermissionParent}
-                            touched={touched.smsPermissionParent}
-                            title={t.parentRegistration.form.smsPermissionParent}
-                            name="smsPermissionParent"
-                            description={t.parentRegistration.form.smsPermissionParentDescription}
-                            options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionParentOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionParentOptions.n }
-                            ]}
-                        />
-                        
                         <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
                     </Fieldset>
 
@@ -128,17 +102,16 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <FieldTitle>{t.parentRegistration.form.smsPermissionTitle}</FieldTitle>
                         <FieldInfoText>{t.parentRegistration.form.smsPermissionDescription}</FieldInfoText>
                         <SelectGroup
-                            error={errors.smsPermissionParent}
-                            touched={touched.smsPermissionParent}
-                            title={t.parentRegistration.form.smsPermissionParent}
-                            name="smsPermissionParent"
-                            description={t.parentRegistration.form.smsPermissionParentDescription}
+                            error={errors.smsPermissionJunior}
+                            touched={touched.smsPermissionJunior}
+                            title={t.parentRegistration.form.smsPermissionJunior}
+                            name="smsPermissionJunior"
+                            description={t.parentRegistration.form.smsPermissionJuniorDescription}
                             options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionParentOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionParentOptions.n }
+                              { value: 'y', label: t.parentRegistration.form.smsPermissionOptions.y },
+                              { value: 'n', label: t.parentRegistration.form.smsPermissionOptions.n }
                             ]}
                         />
-
                         <SelectGroup
                             error={errors.smsPermissionParent}
                             touched={touched.smsPermissionParent}
@@ -146,12 +119,10 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             name="smsPermissionParent"
                             description={t.parentRegistration.form.smsPermissionParentDescription}
                             options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionParentOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionParentOptions.n }
+                              { value: 'y', label: t.parentRegistration.form.smsPermissionOptions.y },
+                              { value: 'n', label: t.parentRegistration.form.smsPermissionOptions.n }
                             ]}
                         />
-                        
-                        <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
                     </Fieldset>
 
                     <Fieldset>
@@ -282,7 +253,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         juniorNickName: string(),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
         juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
-        smsPermissionJunior: string().required('required'),
+        smsPermissionJunior: string().oneOf(['y', 'n']).required('required'),
         postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
         school: valueOr('school', string().required('required'), string()),
         class: valueOr('class', string().required('required'), string()),
@@ -291,7 +262,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentFirstName: string().required('required'),
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
-        smsPermissionParent: string().required('required'),
+        smsPermissionParent: string().oneOf(['y', 'n']).required('required'),
         additionalContactInformation: string(),
         youthClub: string().required('selectYouthClub'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),

@@ -153,13 +153,9 @@ export interface Translations {
       smsPermissionDescription: string,
       smsPermissionJunior: string,
       smsPermissionJuniorDescription: string,
-      smsPermissionJuniorOptions: {
-        y: string,
-        n: string,
-      },
       smsPermissionParent: string,
       smsPermissionParentDescription: string,
-      smsPermissionParentOptions: {
+      smsPermissionOptions: {
         y: string,
         n: string,
       },

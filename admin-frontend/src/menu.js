@@ -40,7 +40,7 @@ const Menu = () => {
             leftIcon={<ListIcon />}
           />
           <MenuItemLink
-            to="/messages/create"
+            to="/announcement/create"
             primaryText="Tiedotus"
             leftIcon={<MailOutlineIcon />}
           />

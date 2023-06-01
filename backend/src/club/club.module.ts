@@ -7,6 +7,8 @@ import { ClubController } from './club.controller';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { RolesModule } from '../roles/roles.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { SessionDBModule } from '../session/sessiondb.module';
     JwtModule.register({
       secret: jwt.secret,
     }),
-    SessionDBModule
+    SessionDBModule,
+    RolesModule,
+    SessionModule
   ],
   providers: [ClubService],
   controllers: [ClubController],

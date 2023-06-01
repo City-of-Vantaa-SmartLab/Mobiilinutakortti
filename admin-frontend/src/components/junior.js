@@ -20,7 +20,7 @@ import {
     Filter,
     useNotify,
     Pagination,
-    FormDataConsumer,
+    FormDataConsumer
 } from 'react-admin';
 import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices } from '../utils';
 import Button from '@material-ui/core/Button';

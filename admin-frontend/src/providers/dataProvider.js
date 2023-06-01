@@ -2,7 +2,7 @@ import { httpClientWithRefresh } from '../httpClients';
 import { juniorProvider } from './juniorProvider';
 import { youthClubProvider } from './youthClubProvider';
 import { youthWorkerProvider } from './youthWorkerProvider';
-import { messageProvider } from './messageProvider';
+import { announcementProvider } from './announcementProvider';
 
 export const dataProvider = (type, resource, params) => {
   switch (resource) {
@@ -18,8 +18,8 @@ export const dataProvider = (type, resource, params) => {
     case 'youthWorker': {
       return youthWorkerProvider(type, params, httpClientWithRefresh);
     }
-    case 'messages': {
-      return messageProvider(type, params, httpClientWithRefresh);
+    case 'announcement': {
+      return announcementProvider(type, params, httpClientWithRefresh);
     }
     default:
       throw new Error(`Unsupported Resource ${resource}`);

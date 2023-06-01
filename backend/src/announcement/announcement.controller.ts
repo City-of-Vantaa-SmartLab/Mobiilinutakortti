@@ -13,23 +13,23 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { InfoMessageData } from './classes/infoMessageData';
-import { InfoService } from './info.service';
+import { AnnouncementData } from './classes/announcementData';
+import { AnnouncementService } from './announcement.service';
 
-@Controller(`${content.Routes.api}/info`)
-@ApiTags('Info')
-export class InfoController {
+@Controller(`${content.Routes.api}/announcement`)
+@ApiTags('Announcement')
+export class AnnouncementController {
 
     constructor(
-        private readonly infoService: InfoService,
+        private readonly announcementService: AnnouncementService
     ) { }
-    
+
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Post('sendmessage')
+    @Post('create')
     @ApiBearerAuth('youthWorker')
-    async sendMessageToClub(@Body() messageData: InfoMessageData) {
-        return await this.infoService.sendMessageToClub(messageData);
+    async clubAnnouncement(@Body() announcementData: AnnouncementData) {
+        return await this.announcementService.clubAnnouncement(announcementData);
     }
 }

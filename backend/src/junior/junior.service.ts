@@ -99,6 +99,10 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
+    async getJuniorsByHomeYouthClub(homeYouthClub: string): Promise<Junior[]> {
+        return await this.juniorRepo.findBy({ homeYouthClub });
+    }
+
     async getUniqueJunior(phoneNumber: string, birthday?: string, firstName?: string, lastName?: string): Promise<Junior> {
         if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber, firstName, lastName } });
         if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber, birthday } });

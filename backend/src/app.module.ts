@@ -22,14 +22,13 @@ import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SessionDBModule } from './session/sessiondb.module';
-import { InfoModule } from './info/info.module';
+import { InfoModule } from './announcement/announcement.module';
 import pino from 'pino';
-import { InfoController } from './info/info.controller';
+import { AnnouncementController } from './announcement/announcement.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ConfigHelper.getDatabaseConnection()),
-    TypeOrmModule.forFeature([YouthWorker, Junior]),
     YouthWorkerModule,
     JuniorModule,
     AuthenticationModule,
@@ -49,7 +48,7 @@ import { InfoController } from './info/info.controller';
     })
   ],
   providers: [AppService],
-  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, InfoController],
+  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, AnnouncementController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

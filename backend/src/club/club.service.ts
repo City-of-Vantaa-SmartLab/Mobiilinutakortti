@@ -48,11 +48,12 @@ export class ClubService {
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
-    async getCheckins(logbookDetails: LogBookDto): Promise<CheckIn[]> {
-        const startOfDay = new Date(logbookDetails.date).setHours(0, 0, 0, 0);
-        const endOfDay = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
+    // Get checkins for a time period by providing the time period in unix timestamp, otherwise checkins are returned for the selected day
+    async getCheckins(logbookDetails: LogBookDto, timePeriod?: number): Promise<CheckIn[]> {
+        const startOfTimePeriod = timePeriod ? new Date(logbookDetails.date).setHours(0, 0, 0, 0) - timePeriod : new Date(logbookDetails.date).setHours(0, 0, 0, 0);
+        const endOfTimePeriod = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
-            .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfDay, endOfDay)) && checkIn.junior);
+            .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfTimePeriod, endOfTimePeriod)) && checkIn.junior);
         return clubCheckIns;
     }
 

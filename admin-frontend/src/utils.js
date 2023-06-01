@@ -17,7 +17,7 @@ export const statusChoices = [
 
 export const recipientChoices = [
   { id: 'parents', name: 'Vanhemmat' },
-  { id: 'juniors', name: 'Juniorit' },
+  { id: 'juniors', name: 'Nuoret' },
 ];
 
 export const userToken = 'user-token';

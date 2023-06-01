@@ -4,13 +4,16 @@ import { YouthWorkerController } from './youthWorker.controller';
 import { YouthWorkerService } from './youthWorker.service';
 import { YouthWorker, Lockout } from './entities';
 import { AuthenticationModule } from '../authentication/authentication.module';
-import { Junior } from '../junior/entities';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { RolesModule } from '../roles/roles.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([YouthWorker, Junior, Lockout]),
+    TypeOrmModule.forFeature([YouthWorker, Lockout]),
     forwardRef(() => AuthenticationModule),
+    RolesModule,
+    SessionModule,
     SessionDBModule
   ],
   controllers: [YouthWorkerController],

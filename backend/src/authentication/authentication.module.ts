@@ -9,7 +9,9 @@ import { JuniorModule } from '../junior/junior.module';
 import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
-  imports: [forwardRef(() => YouthWorkerModule), forwardRef(() => JuniorModule),
+  imports: [
+    forwardRef(() => YouthWorkerModule),
+    forwardRef(() => JuniorModule),
     PassportModule,
     SessionDBModule,
     JwtModule.register({

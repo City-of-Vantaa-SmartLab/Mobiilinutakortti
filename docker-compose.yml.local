@@ -29,7 +29,7 @@ services:
       SP_PKEY:
       SSO_LOGIN_URL:
       SSO_LOGOUT_URL:
-      SUPER_ADMIN_FEATURES: yes
+      SUPER_ADMIN_FEATURES:
       TELIA_ENDPOINT:
       TELIA_PASSWORD:
       TELIA_USER:

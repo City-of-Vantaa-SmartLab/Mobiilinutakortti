@@ -80,7 +80,7 @@ export class SmsService {
      * Sends multiple messages in a single batch. The service withstands payloads in excess of
      * 100 000 individual messages per batch.
      */
-    private async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
+    async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
         return this.httpService.post(endpoint, messageRequest).toPromise().then(
             response => {
@@ -107,7 +107,7 @@ export class SmsService {
      * Use the batchSendMessagesToUsers method to send a message to more than 1000 recipients, or
      * to send individual messages to multiple users.
      */
-    async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
+    private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
         this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
             response => {

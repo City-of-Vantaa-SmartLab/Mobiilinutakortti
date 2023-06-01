@@ -77,15 +77,11 @@ export const translations: Translations = {
       smsPermissionDescription:'Du kommer att få meddelanden om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-sms längre, hör av dig till en ungdomsarbetare.',
       smsPermissionJunior: 'Lov för infomeddelande till junior',
       smsPermissionJuniorDescription: 'Meddelande till junior',
-      smsPermissionJuniorOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
-      },
       smsPermissionParent: 'Lov för infomeddelande till förälder',
       smsPermissionParentDescription: 'Meddelande till förälder',
-      smsPermissionParentOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
+      smsPermissionOptions: {
+        y: 'Ja',
+        n: 'Nej',
       },
 
       youthClubHeading: 'Hemungdomskulbb',

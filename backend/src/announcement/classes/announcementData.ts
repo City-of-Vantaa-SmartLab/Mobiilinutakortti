@@ -1,8 +1,9 @@
 import { Column } from 'typeorm';
+import { AnnouncementContent } from './announcementContent';
 
-export class InfoMessageData {
+export class AnnouncementData {
     @Column()
-    msgContent: string;
+    content: AnnouncementContent;
 
     @Column()
     recipient: string;
