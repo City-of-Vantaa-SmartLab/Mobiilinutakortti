@@ -69,7 +69,7 @@ export class ClubController {
     async getYouthClubCheckIns(@Body() logBookData: LogBookDto): Promise<LogBookCheckInsViewModel> {
         return new LogBookCheckInsViewModel(
             (await this.clubService.getClubById(logBookData.clubId)).name,
-            await this.clubService.getCheckinsForClubForDate(logBookData));
+            await this.clubService.getCheckins(logBookData));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

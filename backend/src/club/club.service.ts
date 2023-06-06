@@ -48,12 +48,11 @@ export class ClubService {
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
-    async getCheckinsForClubForDate(logbookDetails: LogBookDto): Promise<CheckIn[]> {
+    async getCheckins(logbookDetails: LogBookDto): Promise<CheckIn[]> {
         const startOfDay = new Date(logbookDetails.date).setHours(0, 0, 0, 0);
         const endOfDay = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
         const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
             .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfDay, endOfDay)) && checkIn.junior);
-        if (clubCheckIns.length <= 0) { throw new BadRequestException(content.NoCheckins); }
         return clubCheckIns;
     }
 
@@ -82,7 +81,7 @@ export class ClubService {
     }
 
     async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {
-        const checkIns = await this.getCheckinsForClubForDate(logbookDetails);
+        const checkIns = await this.getCheckins(logbookDetails);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
@@ -106,7 +105,8 @@ export class ClubService {
             [gender]: this.getAgesForLogBook(juniors.map(junior => new Date(junior.birthday))),
         }), {});
 
-        return new LogBookViewModel(checkIns[0].club.name, byGenderAndAge);
+        const clubName = (await this.getClubById(logbookDetails.clubId)).name;
+        return new LogBookViewModel(clubName, byGenderAndAge);
     }
 
     private getAgesForLogBook(allJuniorAges: Date[]): Map<string, number> {
