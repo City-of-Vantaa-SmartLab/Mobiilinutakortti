@@ -29,14 +29,14 @@ const CustomToolbar = (props) => (
 
 export const EditYouthClubsList = (props) => (
   <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-    <Datagrid>
-      <TextField label="Nimi" source="name" />
-      <BooleanField label="Aktiivinen" source="active" defaultValue={false} />
-      <TextField label="Tilakohtainen viesti FI" source="messages.fi" />
-      <TextField label="Tilakohtainen viesti EN" source="messages.en" />
-      <TextField label="Tilakohtainen viesti SV" source="messages.sv" />
-      <EditButton />
-    </Datagrid>
+      <Datagrid>
+          <TextField label="Nimi" source="name" />
+          <BooleanField label="Aktiivinen" source="active" defaultValue={false}/>
+          <TextField label="Tilakohtainen viesti FI" source="messages.fi"/>
+          <TextField label="Tilakohtainen viesti EN" source="messages.en"/>
+          <TextField label="Tilakohtainen viesti SV" source="messages.sv"/>
+          <EditButton />
+      </Datagrid>
   </List>
 );
 
