@@ -15,6 +15,9 @@ const apiEndpoints = {
     login: `${appUrl}/youthworker/login`,
     logout: `${appUrl}/youthworker/logout`,
   },
+  announcement: {
+    create: `${appUrl}/announcement/create`
+  },
   youthClub: {
     base: `${appUrl}/club/`,
     list: `${appUrl}/club/list/`,

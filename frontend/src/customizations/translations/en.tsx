@@ -74,6 +74,17 @@ export const translations: Translations = {
       parentPhoneNumber: 'Phone number',
       additionalContactInformation: 'Information of another contact person or an alternative phone number (e.g. work phone)',
 
+      smsPermissionTitle: 'Info messages',
+      smsPermissionDescription: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info text messages anymore, get in touch with a youth worker.',
+      smsPermissionJunior: 'Allow info messages for junior',
+      smsPermissionJuniorDescription: "Messages for junior",
+      smsPermissionParent: 'Allow info messages for parent',
+      smsPermissionParentDescription: 'Messages for parent',
+      smsPermissionOptions: {
+        y: 'Yes',
+        n: 'No',
+      },
+
       youthClubHeading: 'Home youth club',
       youthClubDefault: 'Choose youth club',
       youthClubDescription: 'Choose the youth club your child usually visits.',

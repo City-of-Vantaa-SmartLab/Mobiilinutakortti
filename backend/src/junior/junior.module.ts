@@ -7,13 +7,17 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { YouthWorker } from '../youthWorker/entities';
 import { SmsModule } from '../sms/sms.module';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { RolesModule } from '../roles/roles.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Junior, YouthWorker, Challenge]),
     forwardRef(() => AuthenticationModule),
     SmsModule,
-    SessionDBModule
+    SessionDBModule,
+    RolesModule,
+    SessionModule
   ],
   controllers: [JuniorController],
   providers: [JuniorService],

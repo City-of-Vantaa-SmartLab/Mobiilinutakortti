@@ -62,7 +62,24 @@ curl --location --request POST 'http://localhost:3000/api/youthworker/registerAd
 }'
 ```
 
-Alternatively, you can use GUI tools such as Postman or Insomnia to create the user.
+### Use other tools
+---
+
+Alternatively, you can use GUI tools such as Postman or Insomnia to create a youth worker user.
+
+POST to [http://localhost:3000/api/youthworker/registerAdmin](http://localhost:3000/api/youthworker/registerAdmin) with following body:
+
+```json
+{
+    "email":"test@test.com",
+    "password": "test",
+    "firstName": "admin",
+    "lastName": "admin",
+    "isAdmin": "true"
+}
+```
+
+Now you can login to admin-frontend with given credentials.
 
 ### Note about production
 

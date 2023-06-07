@@ -99,6 +99,10 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
+    async getJuniorsByHomeYouthClub(homeYouthClub: string): Promise<Junior[]> {
+        return await this.juniorRepo.findBy({ homeYouthClub });
+    }
+
     async getUniqueJunior(phoneNumber: string, birthday?: string, firstName?: string, lastName?: string): Promise<Junior> {
         if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber, firstName, lastName } });
         if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber, birthday } });
@@ -239,11 +243,13 @@ export class JuniorService {
             if (phoneNumberInUse) { throw new ConflictException(content.JuniorAlreadyExists); }
         }
         user.phoneNumber = details.phoneNumber;
+        user.smsPermissionJunior = details.smsPermissionJunior;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
         user.birthday = details.birthday;
         user.parentsName = details.parentsName;
         user.parentsPhoneNumber = details.parentsPhoneNumber;
+        user.smsPermissionParent = details.smsPermissionParent;
         user.additionalContactInformation = details.additionalContactInformation;
         user.school = details.school;
         user.class = details.class;

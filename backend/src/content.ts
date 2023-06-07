@@ -4,6 +4,7 @@ export const YouthWorkerAlreadyExists = "Käyttäjätili on jo luotu tällä sä
 export const Created = (what: string) => `${what} luotu.`
 export const Renew = (what: string) => `${what} uudistettu.`
 export const ClubNotFound = "Kyseistä nuorisotilaa ei löydy."
+export const RecipientsNotFound = "Hakuehdoilla ei löydetty yhtään vastaanottajaa."
 export const DataNotChanged = "Tietoja ei muutettu."
 export const IncorrectPassword = "Nykyinen salasana on väärä."
 export const PasswordUpdated = "Salasana päivitetty."

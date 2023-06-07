@@ -15,6 +15,7 @@ import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
+import { AnnouncementCreate } from './components/announcement';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -60,6 +61,9 @@ const App = () => {
                     : null,
                 permissions === 'ADMIN'
                     ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
+                    : null,
+                permissions === 'ADMIN'
+                    ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />
                     : null
             ]}
         </Admin>

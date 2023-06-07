@@ -77,6 +77,17 @@ export const translations: Translations = {
       parentPhoneNumber: 'Puhelinnumero',
       additionalContactInformation: 'Toisen yhteyshenkilön tiedot tai vaihtoehtoinen puhelinnumero (esim. työpuhelin)',
 
+      smsPermissionTitle: 'Infoviestit',
+      smsPermissionDescription: 'Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infotekstiviestejä enää, ole yhteydessä nuorisotyöntekijään.',
+      smsPermissionJunior: 'Infoviestit nuorelle',
+      smsPermissionJuniorDescription: 'Viestejä saa lähettää nuorelle',
+      smsPermissionParent: 'Infoviestit huoltajalle',
+      smsPermissionParentDescription: 'Viestejä saa lähettää huoltajalle',
+      smsPermissionOptions: {
+        y: 'Yes',
+        n: 'no',
+      },
+
       youthClubHeading: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',

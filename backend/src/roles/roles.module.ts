@@ -9,6 +9,6 @@ import { YouthWorker } from '../youthWorker/entities';
         TypeOrmModule.forFeature([YouthWorker, Junior]),
     ],
     providers: [RolesGuard],
-    exports: [RolesGuard],
+    exports: [RolesGuard, TypeOrmModule.forFeature([YouthWorker, Junior])],
 })
 export class RolesModule { }

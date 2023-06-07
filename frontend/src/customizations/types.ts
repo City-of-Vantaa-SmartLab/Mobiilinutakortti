@@ -149,6 +149,17 @@ export interface Translations {
       parentPhoneNumber: string,
       additionalContactInformation: string,
 
+      smsPermissionTitle: string,
+      smsPermissionDescription: string,
+      smsPermissionJunior: string,
+      smsPermissionJuniorDescription: string,
+      smsPermissionParent: string,
+      smsPermissionParentDescription: string,
+      smsPermissionOptions: {
+        y: string,
+        n: string,
+      },
+      
       youthClubHeading: string,
       youthClubDefault: string,
       youthClubDescription: string,
