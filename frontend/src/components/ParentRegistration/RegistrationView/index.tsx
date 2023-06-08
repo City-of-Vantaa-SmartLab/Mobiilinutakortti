@@ -96,12 +96,9 @@ const RegistrationView: React.FC = () => {
                 setError(true);
             })
     }
-
     useEffect(() => {
         get('/club/list')
-            .then(response => setClubs(response.map((club: Club) => {
-                    return club.active ? club : null;
-                })
+            .then(response => setClubs(response.filter((club: Club) => club.active)
             ))
             .catch((e) => setError(true))
     }, []);
