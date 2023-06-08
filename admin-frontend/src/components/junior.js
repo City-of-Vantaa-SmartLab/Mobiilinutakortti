@@ -78,7 +78,7 @@ export const JuniorList = (props) => {
             </span>
         </div>
     );
-    
+
     const generateQRAndOpen = async (id, status, owner) => {
         try {
             const newWindow = window.open('');
@@ -189,7 +189,7 @@ export const JuniorCreate = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
                 <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
-                {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
+                {valueOrNull('additionalContactInformation', <TextInput label="Toinen yhteystieto" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
@@ -252,7 +252,7 @@ export const JuniorEdit = (props) => {
                 <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
                 <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
                 <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
-                {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
+                {valueOrNull('additionalContactInformation', <TextInput label="Toinen yhteystieto" source="additionalContactInformation" />)}
                 <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()}/>
                 {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}
                 <BooleanInput label="Kuvauslupa" source="photoPermission" />
