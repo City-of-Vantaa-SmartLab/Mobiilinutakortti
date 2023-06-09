@@ -9,7 +9,7 @@ let ChangePasswordView = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    
+
     const dataProvided = () => (oldPassword && newPassword && confirmPassword);
     const passwordsMatch = () => (newPassword === confirmPassword);
     const buttonDisabled = () => !(dataProvided() && passwordsMatch());
