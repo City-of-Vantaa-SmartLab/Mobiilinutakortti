@@ -32,6 +32,8 @@ export interface FormValues {
     parentLastName: string,
     parentPhoneNumber: string,
     smsPermissionParent: string,
+    parentsEmail: string,
+    emailPermissionParent: string,
     additionalContactInformation: string,
     youthClub: string,
     termsOfUse: boolean
@@ -126,6 +128,22 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                     </Fieldset>
 
                     <Fieldset>
+                        <FieldTitle>{t.parentRegistration.form.emailPermissionTitle}</FieldTitle>
+                        <FieldInfoText>{t.parentRegistration.form.emailPermissionDescription}</FieldInfoText>
+                        <SelectGroup
+                            error={errors.emailPermissionParent}
+                            touched={touched.emailPermissionParent}
+                            title={t.parentRegistration.form.emailPermissionParent}
+                            name="emailPermissionParent"
+                            description={t.parentRegistration.form.emailPermissionParentDescription}
+                            options={[
+                              { value: 'y', label: t.parentRegistration.form.emailPermissionOptions.y },
+                              { value: 'n', label: t.parentRegistration.form.emailPermissionOptions.n }
+                            ]}
+                        />
+                    </Fieldset>
+
+                    <Fieldset>
                         <FieldTitle>{t.parentRegistration.form.youthClubHeading}</FieldTitle>
                         <Field
                             name='youthClub'
@@ -199,6 +217,8 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             parentsName: `${values.parentFirstName} ${values.parentLastName}`,
             parentsPhoneNumber: values.parentPhoneNumber,
             smsPermissionParent: values.smsPermissionParent === 'y',
+            parentsEmail: values.parentsEmail,
+            emailPermissionParent: values.emailPermissionParent === 'y',
             additionalContactInformation: values.additionalContactInformation,
             status: 'pending',
             photoPermission: values.photoPermission === 'y'
@@ -234,6 +254,8 @@ const RegistrationForm = withFormik<Props, FormValues>({
             parentLastName: props.securityContext.lastName,
             parentPhoneNumber: '',
             smsPermissionParent: '',
+            parentsEmail: '',
+            emailPermissionParent: '',
             additionalContactInformation: '',
             youthClub: '',
             termsOfUse: hiddenFormFields.includes('termsOfUse'),
@@ -263,6 +285,8 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
         smsPermissionParent: string().oneOf(['y', 'n']).required('required'),
+        parentsEmail: string(),
+        emailPermissionParent: string().oneOf(['y', 'n']),
         additionalContactInformation: string(),
         youthClub: string().required('selectYouthClub'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),

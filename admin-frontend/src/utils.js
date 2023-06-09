@@ -15,9 +15,14 @@ export const statusChoices = [
   { id: 'failedCall', name: 'Kotisoittoa yritetty' }
 ];
 
-export const recipientChoices = [
+export const recipientChoicesForSms = [
   { id: 'parents', name: 'Vanhemmat' },
-  { id: 'juniors', name: 'Nuoret' },
+  { id: 'juniors', name: 'Nuoret'  },
+];
+
+export const messageTypeChoices = [
+  { id: 'sms', name: 'Tekstiviesti' },
+  { id: 'email', name: 'Sähköposti' },
 ];
 
 export const userToken = 'user-token';

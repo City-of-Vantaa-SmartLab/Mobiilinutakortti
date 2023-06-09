@@ -43,6 +43,12 @@ export class Junior {
     smsPermissionParent: boolean;
 
     @Column({ nullable: true  })
+    parentsEmail: string;
+
+    @Column({ default: false })
+    emailPermissionParent: boolean;
+
+    @Column({ nullable: true  })
     additionalContactInformation: string;
 
     @Column({ transformer: lowercase })

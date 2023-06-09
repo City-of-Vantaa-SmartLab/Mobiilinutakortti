@@ -159,6 +159,17 @@ export interface Translations {
         y: string,
         n: string,
       },
+
+      emailPermissionTitle: string,
+      emailPermissionDescription: string,
+      emailPermissionJunior: string,
+      emailPermissionJuniorDescription: string,
+      emailPermissionParent: string,
+      emailPermissionParentDescription: string,
+      emailPermissionOptions: {
+        y: string,
+        n: string,
+      },
       
       youthClubHeading: string,
       youthClubDefault: string,

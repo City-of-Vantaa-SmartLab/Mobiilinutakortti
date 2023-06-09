@@ -250,6 +250,8 @@ export class JuniorService {
         user.parentsName = details.parentsName;
         user.parentsPhoneNumber = details.parentsPhoneNumber;
         user.smsPermissionParent = details.smsPermissionParent;
+        user.parentsEmail = details.parentsEmail;
+        user.emailPermissionParent = details.emailPermissionParent;
         user.additionalContactInformation = details.additionalContactInformation;
         user.school = details.school;
         user.class = details.class;

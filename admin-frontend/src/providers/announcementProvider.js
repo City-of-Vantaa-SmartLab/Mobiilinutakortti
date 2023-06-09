@@ -13,14 +13,20 @@ export const announcementProvider = (type, params, httpClient) => {
                     en: '',
                     sv: ''
                 },
+                title: {
+                    fi: '',
+                    en: '',
+                    sv: ''
+                },
                 recipient: undefined,
+                msgType: undefined,
                 youthClub: undefined
             }
         }
         case CREATE: {
-            // If all announcement contents are deleted or otherwise empty, params.data returns the whole announcement content object as null:
-            // this does not erase old announcement contents, so we must set null to all fields
-            const announcements = params.data.content ? {
+            // If all language versions of content and title are deleted or otherwise empty, params.data returns the whole title and content objects as null:
+            // this does not erase old contents, so we must set null to all fields
+            const contents = params.data.content ? {
                     fi: params.data.content.fi,
                     en: params.data.content.en,
                     sv: params.data.content.sv,
@@ -29,9 +35,20 @@ export const announcementProvider = (type, params, httpClient) => {
                     en: null,
                     sv: null,
             };
+            const titles = params.data.title ? {
+                    fi: params.data.title.fi,
+                    en: params.data.title.en,
+                    sv: params.data.title.sv,
+                } : {
+                    fi: null,
+                    en: null,
+                    sv: null,
+            };
             const data = JSON.stringify({
-                content: announcements,
+                content: contents,
+                title: titles,
                 recipient: params.data.recipient,
+                msgType: params.data.msgType,
                 youthClub: params.data.youthClub
             });
             url = api.announcement.create;

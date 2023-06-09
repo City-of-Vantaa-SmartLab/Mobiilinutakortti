@@ -7,6 +7,7 @@ import { JuniorModule } from 'src/junior/junior.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -15,10 +16,11 @@ import { SessionDBModule } from '../session/sessiondb.module';
     SmsModule,
     RolesModule,
     SessionModule,
-    SessionDBModule
+    SessionDBModule, 
+    EmailService
   ],
-  providers: [AnnouncementService],
+  providers: [AnnouncementService, EmailService],
   controllers: [AnnouncementController],
   exports: [AnnouncementService]
 })
-export class InfoModule {}
+export class AnnouncementModule {}

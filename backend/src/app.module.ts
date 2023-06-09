@@ -22,7 +22,7 @@ import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SessionDBModule } from './session/sessiondb.module';
-import { InfoModule } from './announcement/announcement.module';
+import { AnnouncementModule } from './announcement/announcement.module';
 import pino from 'pino';
 import { AnnouncementController } from './announcement/announcement.controller';
 
@@ -38,7 +38,7 @@ import { AnnouncementController } from './announcement/announcement.controller';
     SmsModule,
     SsoModule,
     SessionDBModule,
-    InfoModule,
+    AnnouncementModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({

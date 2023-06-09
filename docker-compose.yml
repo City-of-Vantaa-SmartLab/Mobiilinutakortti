@@ -34,3 +34,8 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
+      AWS_SES_KEY_ID:
+      AWS_SES_KEY_VALUE:
+      EMAIL_SOURCE:
+      RETURN_PATH:
+      AWS_SES_REGION:
