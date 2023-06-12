@@ -6,6 +6,7 @@ import { SmsModule } from 'src/sms/sms.module';
 import { JuniorModule } from 'src/junior/junior.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
+import { SessionDBModule } from '../session/sessiondb.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { SessionModule } from '../session/session.module';
     JuniorModule,
     SmsModule,
     RolesModule,
-    SessionModule
+    SessionModule,
+    SessionDBModule
   ],
   providers: [AnnouncementService],
   controllers: [AnnouncementController],
