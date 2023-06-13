@@ -160,63 +160,16 @@ const DummyPhoneNumberButton = () => {
 }
 
 export const JuniorCreate = (props) => {
-    const [youthClubChoices, setYouthClubChoices] = useState([]);
-
-    useEffect(() => {
-        const addYouthClubsToState = async () => {
-            const parsedYouthClubs = await getActiveYouthClubs();
-            setYouthClubChoices(parsedYouthClubs);
-        };
-        addYouthClubsToState();
-    }, []);
-
     return (
         <Create title="Rekisteröi nuori" {...props}>
-            <SimpleForm variant="standard" margin="normal" redirect="list">
-                <TextInput label="Etunimi" source="firstName" validate={required()} />
-                <TextInput label="Sukunimi" source="lastName" validate={required()} />
-                {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
-                <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
-                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
-                <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
-                <FormDataConsumer>
-                    {() => <DummyPhoneNumberButton />}
-                </FormDataConsumer>
-                {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
-                {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} />)}
-                {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
-                <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
-                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
-                <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
-                {valueOrNull('additionalContactInformation', <TextInput label="Toinen yhteystieto" source="additionalContactInformation" />)}
-                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
-                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
-                    disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
-                />
-                <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
-                <SelectInput label="Tila" source="status" choices={statusChoices} validate={required()} />
-                <FormDataConsumer>
-                    {({ formData }) => formData.status === 'accepted' &&
-                        <SMSwarning/>
-                    }
-                </FormDataConsumer>
-            </SimpleForm>
+            {JuniorForm('create')}
         </Create>
     );
 }
 
 export const JuniorEdit = (props) => {
-    const [youthClubChoices, setYouthClubChoices] = useState([]);
-    const { isAdmin } = useAdminPermission();
 
     useEffect(() => {
-        const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
-            setYouthClubChoices(youthClubs.map(yc => {return {...yc, disabled: !yc.active}}))
-        };
-        addYouthClubsToState();
-
         const targetNode = document;
         const config = { attributes: true, childList: false, subtree: true };
 
@@ -235,42 +188,65 @@ export const JuniorEdit = (props) => {
     }, []);
     return (
         <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
-            <SimpleForm variant="standard" margin="normal">
-                <TextInput label="Etunimi" source="firstName" validate={required()}/>
-                <TextInput label="Sukunimi" source="lastName" validate={required()}/>
-                {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
-                <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()}/>
-                <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]}/>
-                <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
-                <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
-                <FormDataConsumer>
-                    {() => (<DummyPhoneNumberButton />)}
-                </FormDataConsumer>
-                {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()}/>)}
-                {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()}/>)}
-                {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()}/>)}
-                <TextInput label="Huoltajan nimi" source="parentsName" validate={required()}/>
-                <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()}/>
-                <BooleanInput label="Infoviestit sallittu" source="smsPermissionParent" />
-                {valueOrNull('additionalContactInformation', <TextInput label="Toinen yhteystieto" source="additionalContactInformation" />)}
-                <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()}/>
-                {valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)}
-                <BooleanInput label="Kuvauslupa" source="photoPermission" />
-                <FormDataConsumer>
-                    {({ record }) => {
-                        const disabled = record.status === "expired" && !isAdmin;
-                        return <SelectInput disabled={disabled} label="Tila" source="status" choices={statusChoices} validate={required()} />
-                    }}
-                </FormDataConsumer>
-                <FormDataConsumer>
-                    {({ formData, record }) => (formData.status === 'accepted' && (record.status==='pending' || record.status === 'failedCall' || record.status === 'expired')) &&
-                        <SMSwarning/>
-                    }
-                </FormDataConsumer>
-            </SimpleForm>
+            {JuniorForm('edit')}
         </Edit>
     );
 };
+
+
+export const JuniorForm = (formType) => {
+    const [youthClubChoices, setYouthClubChoices] = useState([]);
+    const { isAdmin } = useAdminPermission();
+
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const parsedYouthClubs = await getActiveYouthClubs();
+            setYouthClubChoices(parsedYouthClubs);
+        };
+        addYouthClubsToState();
+    }, []);
+
+    return (
+        <SimpleForm variant="standard" margin="normal" redirect={formType === 'create' && 'list'}>
+            <TextInput label="Etunimi" source="firstName" validate={required()} />
+            <TextInput label="Sukunimi" source="lastName" validate={required()} />
+            {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
+            <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
+            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
+            <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
+            <FormDataConsumer>
+                {() => <DummyPhoneNumberButton />}
+            </FormDataConsumer>
+            {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
+            {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} />)}
+            {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
+            <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" />
+            {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
+            {formType === 'create' ? 
+                <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
+                    disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
+                />
+                :
+                valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)
+            }
+            <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
+            <FormDataConsumer>
+                {({ record }) => {
+                    return <SelectInput disabled={(formType === 'edit' && record.status === "expired" && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} />
+                }}
+            </FormDataConsumer>
+            <FormDataConsumer>
+                {({ formData, record }) => {
+                    return formData.status === 'accepted' && (formType === 'create' || record.status !== 'accepted') && <SMSwarning/>
+                }}
+            </FormDataConsumer>
+        </SimpleForm>
+    );
+}
 
 const qrCodeMessageStyle = {
     color: '#000000',
