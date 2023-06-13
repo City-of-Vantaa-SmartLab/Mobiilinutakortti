@@ -71,7 +71,7 @@ export const JuniorList = (props) => {
     )
 
     const QRCodeWithStatusMessage = ({ status, id }) => (
-        <div style={Object.assign(qrCodeContainerStyle, (status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle))}>
+        <div style={status === 'expired' ? expiredQrCodeStyle : validQrCodeStyle}>
             <QRCode value={id} includeMargin={true} size={400} />
             <span style={qrCodeMessageStyle}>
                 {status === 'expired' ? 'Edellinen kausi' : 'Kuluva kausi'}
@@ -280,19 +280,21 @@ const qrCodeMessageStyle = {
     margin: '5px'
 };
 
-const validQrCodeStyle = {
-    backgroundColor: '#6bc24a',
-};
-
-const expiredQrCodeStyle = {
-    backgroundColor: '#f7423a',
-};
-
 const qrCodeContainerStyle = {
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
     width: '400px',
+};
+
+const validQrCodeStyle = {
+    ...qrCodeContainerStyle,
+    backgroundColor: '#6bc24a'
+};
+
+const expiredQrCodeStyle = {
+    ...qrCodeContainerStyle,
+    backgroundColor: '#f7423a'
 };
 
 const languages = [
