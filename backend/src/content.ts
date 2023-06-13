@@ -59,5 +59,5 @@ export const ExpiredSmsContent = {
     + 'Best regards,\nVantaa youth services',
 }
 
-// Valid values: 'nickName', 'postCode', 'school', 'class', 'communicationsLanguage'
-export const hiddenJuniorFields = ['communicationsLanguage']
+// Valid values: 'nickName', 'postCode', 'school', 'class', 'communicationsLanguage', 'additionalContactInformation'
+export const hiddenJuniorFields = []
