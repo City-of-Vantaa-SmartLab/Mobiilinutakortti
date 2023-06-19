@@ -207,7 +207,7 @@ export const JuniorForm = (formType) => {
     }, []);
 
     return (
-        <SimpleForm variant="standard" margin="normal" redirect={formType === 'create' && 'list'}>
+        <SimpleForm variant="standard" margin="normal">
             <TextInput label="Etunimi" source="firstName" validate={required()} />
             <TextInput label="Sukunimi" source="lastName" validate={required()} />
             {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
