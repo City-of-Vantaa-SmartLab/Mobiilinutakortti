@@ -88,6 +88,17 @@ export const translations: Translations = {
         n: 'no',
       },
 
+      emailPermissionTitle: 'Infosähköpostit',
+      emailPermissionDescription: 'Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infosähköposteja enää, ole yhteydessä nuorisotyöntekijään.',
+      emailPermissionJunior: 'Sähköpostit nuorelle',
+      emailPermissionJuniorDescription: "Sähköposteja saa lähettää nuorelle",
+      emailPermissionParent: 'Sähköpostit huoltajalle',
+      emailPermissionParentDescription: 'Sähköposteja saa lähettää huoltajalle',
+      emailPermissionOptions: {
+        y: 'Kyllä',
+        n: 'Ei',
+      },
+
       youthClubHeading: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',

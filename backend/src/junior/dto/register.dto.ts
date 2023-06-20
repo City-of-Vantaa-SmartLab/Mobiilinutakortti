@@ -36,6 +36,10 @@ export class RegisterJuniorDto {
 
     readonly smsPermissionParent: boolean;
 
+    readonly parentsEmail: string;
+
+    readonly emailPermissionParent: boolean;
+
     readonly additionalContactInformation: string;
 
     @Length(1, 1)

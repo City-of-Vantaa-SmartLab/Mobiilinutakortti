@@ -57,6 +57,8 @@ export const juniorProvider = (type, params, httpClient) => {
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
                 smsPermissionParent: params.data.smsPermissionParent,
+                parentsEmail: params.data.parentsEmail,
+                emailPermissionParent: params.data.emailPermissionParent,
                 additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission
@@ -93,6 +95,8 @@ export const juniorProvider = (type, params, httpClient) => {
                 parentsName: params.data.parentsName,
                 parentsPhoneNumber: params.data.parentsPhoneNumber,
                 smsPermissionParent: params.data.smsPermissionParent,
+                parentsEmail: params.data.parentsEmail,
+                emailPermissionParent: params.data.emailPermissionParent,
                 additionalContactInformation: params.data.additionalContactInformation,
                 status: params.data.status,
                 photoPermission: params.data.photoPermission

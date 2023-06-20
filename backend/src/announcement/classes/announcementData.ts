@@ -1,11 +1,17 @@
 import { Column } from 'typeorm';
-import { AnnouncementContent } from './announcementContent';
+import { AnnouncementLanguageVersions } from './announcementLanguageVersions';
 
 export class AnnouncementData {
     @Column()
-    content: AnnouncementContent;
+    content: AnnouncementLanguageVersions;
 
     @Column()
+    title: AnnouncementLanguageVersions;
+
+    @Column()
+    msgType: string;
+
+    @Column({nullable: true})
     recipient: string;
 
     @Column()

@@ -28,6 +28,10 @@ export class EditJuniorDto {
 
     smsPermissionParent: boolean;
 
+    parentsEmail: string;
+
+    emailPermissionParent: boolean;
+
     additionalContactInformation: string;
 
     @Length(1, 1)

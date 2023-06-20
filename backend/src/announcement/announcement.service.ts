@@ -6,9 +6,11 @@ import { AnnouncementData } from './classes/announcementData';
 import { SmsService } from 'src/sms/sms.service';
 import { BatchItem, TeliaBatchMessageRequest } from 'src/sms/models';
 import { SMSConfig } from 'src/sms/smsConfigHandler';
-import { AnnouncementContent } from './classes/announcementContent';
+import { EmailConfig } from 'src/email/emailConfigHandler';
+import { AnnouncementLanguageVersions } from './classes/announcementLanguageVersions';
 import { Junior } from 'src/junior/entities';
-
+import { EmailService } from 'src/email/email.service';
+import { EmailBatchItem } from 'src/email/models/emailModels.model';
 
 @Injectable()
 export class AnnouncementService {
@@ -16,47 +18,77 @@ export class AnnouncementService {
     constructor(
         private readonly clubService: ClubService,
         private readonly smsService: SmsService,
+        private readonly emailService: EmailService,
         private readonly juniorService: JuniorService
         ) { }
 
-    getAnnouncementWithLanguage(content: AnnouncementContent, langCode: string): string  {
+    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string  {
         const contentWithLangOrDefault = content[langCode] || content.fi;
         return contentWithLangOrDefault;
     };
 
-    async clubAnnouncement(announcementData: AnnouncementData) {
-        const settings = SMSConfig.getTeliaConfig();
-        if (!settings) {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
-        };
-
+    private async getSelectedRecipients(youthClub: string): Promise<Junior[]> {
         const twoWeeksInSeconds = 1209600;
-        const checkIns = await this.clubService.getCheckins({clubId: announcementData.youthClub, date: new Date().toString()}, twoWeeksInSeconds);
-        const checkedInJuniors: Junior[] = checkIns.map((checkIn) => {
+        const checkIns = await this.clubService.getCheckins({clubId: youthClub, date: new Date().toString()}, twoWeeksInSeconds);
+        const checkedInJuniors = checkIns.map((checkIn) => {
             return checkIn.junior;
         });
 
-        const juniorsByHomeClub: Junior[] = await this.juniorService.getJuniorsByHomeYouthClub(announcementData.youthClub);
+        const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClub);
         const allRecipients = checkedInJuniors.concat(juniorsByHomeClub);
-        // Create a typescript Set from recipients to eliminate double values
         const uniqueRecipients = new Set<Junior>(allRecipients);
-        const selectedRecipients = Array.from(uniqueRecipients);
+        return Array.from(uniqueRecipients);
+    }
 
-        const batch: BatchItem[] = announcementData.recipient === "parents" ? 
+    private getEmailRecipientsByLanguage(recipients: Junior[], langCode: string): string[] {
+        return recipients.filter((recipient) => recipient.communicationsLanguage === langCode)
+                .filter((recipientWithLang) => recipientWithLang.emailPermissionParent)
+                .map((allowedRecipient) => allowedRecipient.parentsEmail)
+                .filter(email => /^\S+@\S+\.\S+$/.test(email));
+    };
+
+    private splitToBatches(recipientEmails: string[], batchSize: number): Array<string[]> {
+        const batchArrays = []; 
+        for (let i = 0; i < recipientEmails.length; i += batchSize)
+            batchArrays.push(recipientEmails.slice(i, i + batchSize));
+        return batchArrays;
+    };
+
+    private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: Array<string[]>, lang: string): EmailBatchItem[] {
+        return recipients.map(r => {
+            return {
+                to: r,
+                title: announcementData.title[lang] || announcementData.title["fi"],
+                message: announcementData.content[lang] || announcementData.content["fi"]
+            };
+        });
+    };
+    
+    async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
+        const settings = SMSConfig.getTeliaConfig();
+
+        const selectedRecipients = await this.getSelectedRecipients(announcementData.youthClub);
+
+        const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ? 
             selectedRecipients.filter((recipient) => recipient.smsPermissionParent)
             .filter((recipient) => recipient.parentsPhoneNumber.substring(0, 6) !== "358999")
             .map((recipient) => ({
                 t: recipient.parentsPhoneNumber,
                 m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
             })
-        ) : selectedRecipients.filter((recipient) => recipient.smsPermissionJunior)
-            .filter((recipient) => recipient.phoneNumber.substring(0, 6) !== "358999")
-            .map((recipient) => ({
-                t: recipient.phoneNumber,
-                m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
-            })
-        );
+        ) : [];
         
+        const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ? 
+            selectedRecipients.filter((recipient) => recipient.smsPermissionJunior)
+                .filter((recipient) => recipient.phoneNumber.substring(0, 6) !== "358999")
+                .map((recipient) => ({
+                    t: recipient.phoneNumber,
+                    m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
+                })
+        ) : [];
+
+        const batch: BatchItem[] = parentBatch.concat(juniorBatch);
+
         if (batch.length < 1) {
             throw new BadRequestException(content.RecipientsNotFound); 
         };
@@ -70,9 +102,37 @@ export class AnnouncementService {
         
         const attemptMessage = await this.smsService.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint);
         if (attemptMessage) {
-            return true;
+            return content.SmsBatchSent;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
-        }
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
+        };
+    };
+
+    async clubAnnouncementEmail(announcementData: AnnouncementData): Promise<string> {
+        const settings = EmailConfig.getEmailConfig();
+
+        const recipients = await this.getSelectedRecipients(announcementData.youthClub);
+        const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "en"), 50);
+        const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "sv"), 50);
+        const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "fi"), 50);
+
+        if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
+            throw new BadRequestException(content.RecipientsNotFound);
+        };
+
+        const emails =
+        this.createEmailDataForLanguage(announcementData, recipientBatchesEn, "en").concat(
+        this.createEmailDataForLanguage(announcementData, recipientBatchesSv, "sv")).concat(
+        this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
+        
+        const responses = Promise.all(emails.map(async (e) => {
+            return await this.emailService.batchSendEmailsToUsers(e, settings)
+        }));
+
+        if ((await responses).reduce((x,y) => {return x && y}, true)) {
+            return content.EmailBatchSent;
+        } else {
+            throw new InternalServerErrorException(content.EmailBatchFailed);
+        };
     };
 };

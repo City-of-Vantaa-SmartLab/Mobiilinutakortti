@@ -15,6 +15,8 @@ export class JuniorUserViewModel {
     parentsName: string;
     parentsPhoneNumber: string;
     smsPermissionParent: boolean;
+    parentsEmail: string;
+    emailPermissionParent: boolean;
     additionalContactInformation: string;
     gender: string;
     birthday: string;
@@ -37,6 +39,8 @@ export class JuniorUserViewModel {
         this.postCode = entity.postCode;
         this.parentsPhoneNumber = entity.parentsPhoneNumber;
         this.smsPermissionParent = entity.smsPermissionParent;
+        this.parentsEmail = entity.parentsEmail;
+        this.emailPermissionParent = entity.emailPermissionParent;
         this.additionalContactInformation = entity.additionalContactInformation;
         this.gender = entity.gender;
         this.homeYouthClub = entity.homeYouthClub;

@@ -85,6 +85,17 @@ export const translations: Translations = {
         n: 'No',
       },
 
+      emailPermissionTitle: 'Info emails',
+      emailPermissionDescription: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info emails anymore, get in touch with a youth worker.',
+      emailPermissionJunior: 'Allow info emails for junior',
+      emailPermissionJuniorDescription: "Emails for junior",
+      emailPermissionParent: 'Allow info emails for parent',
+      emailPermissionParentDescription: 'Emails for parent',
+      emailPermissionOptions: {
+        y: 'Yes',
+        n: 'No',
+      },
+
       youthClubHeading: 'Home youth club',
       youthClubDefault: 'Choose youth club',
       youthClubDescription: 'Choose the youth club your child usually visits.',

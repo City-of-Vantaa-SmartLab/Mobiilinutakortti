@@ -28,6 +28,8 @@ describe('JuniorService', () => {
     parentsName: 'Auth Senior',
     parentsPhoneNumber: '0411234567',
     smsPermissionParent: true,
+    parentsEmail: undefined,
+    emailPermissionParent: false,
     school: 'random school',
     class: '5A',
     gender: 'M',

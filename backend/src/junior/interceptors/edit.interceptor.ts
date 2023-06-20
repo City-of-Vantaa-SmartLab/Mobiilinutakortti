@@ -20,18 +20,21 @@ export class JuniorEditInterceptor implements NestInterceptor {
         let dataChanged = false;
 
         // Interceptor for non-nullable fields
-        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'homeYouthClub', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent'];
+        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'homeYouthClub', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent', 'emailPermissionParent'];
         dataChanged = nonNullableFields.some(field => {
             body[field] = body[field] ?? '';
             return body[field] !== userToEdit[field];
-        })
+        });
 
+        // Interceptor for nullable fields
+        const nullableFields = ['additionalContactInformation', 'parentsEmail'];
+        dataChanged = dataChanged || nullableFields.some(field => {
+            return body[field] !== userToEdit[field];
+        });
+        
         // Some dates include timestamp which makes it seem like birthday has changed even when it hasn't
         // ISO date(time) format begins with YYYY-MM-DD
         dataChanged ||= body.birthday?.substring(0, 10) !== userToEdit.birthday.substring(0, 10);
-
-        // Interceptor for nullable fields: at this time only additionalContactInformation
-        dataChanged = dataChanged || body.additionalContactInformation !== userToEdit.additionalContactInformation;
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); }
         return next.handle();

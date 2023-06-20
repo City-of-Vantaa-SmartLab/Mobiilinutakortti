@@ -224,6 +224,8 @@ export const JuniorForm = (formType) => {
             <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
             <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
             <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" />
+            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" />
+            <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" />
             {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
             <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
             {formType === 'create' ? 

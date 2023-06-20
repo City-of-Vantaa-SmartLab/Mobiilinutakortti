@@ -29,7 +29,7 @@ export class SmsService {
                 throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
             }
             else {
-                throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+                throw new InternalServerErrorException(content.SmsServiceNotAvailable);
             }
         }
 
@@ -45,7 +45,7 @@ export class SmsService {
         if (attemptMessage) {
             return true;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
         }
     }
 
@@ -72,7 +72,7 @@ export class SmsService {
         if (attemptMessage) {
             return true;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
         }
     }
 

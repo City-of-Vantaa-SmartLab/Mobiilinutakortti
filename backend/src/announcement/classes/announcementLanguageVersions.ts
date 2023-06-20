@@ -1,6 +1,6 @@
 import { Column } from 'typeorm';
 
-export class AnnouncementContent {
+export class AnnouncementLanguageVersions {
     @Column()
     fi: string;
 

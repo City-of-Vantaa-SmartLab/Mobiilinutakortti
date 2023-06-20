@@ -23,7 +23,7 @@ const MessageHelperText = () => (
 
 const CustomToolbar = (props) => (
   <Toolbar {...props}>
-    <SaveButton />
+    <SaveButton disabled={props.pristine && !props.validating} />
   </Toolbar>
 );
 

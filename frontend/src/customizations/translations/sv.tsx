@@ -84,6 +84,17 @@ export const translations: Translations = {
         n: 'Nej',
       },
 
+      emailPermissionTitle: 'Info emails',
+      emailPermissionDescription: 'Du kommer att få emails om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-emails längre, hör av dig till en ungdomsarbetare.',
+      emailPermissionJunior: 'Lov för emails till junior',
+      emailPermissionJuniorDescription: 'Emails till junior',
+      emailPermissionParent: 'Lov för emails till förälder',
+      emailPermissionParentDescription: 'Emails till förälder',
+      emailPermissionOptions: {
+        y: 'Ja',
+        n: 'Nej',
+      },
+
       youthClubHeading: 'Hemungdomskulbb',
       youthClubDefault: 'Välj ungdomskulbb',
       youthClubDescription: 'Välj den ungdomsklubb din ungdom brukar besöka.',
