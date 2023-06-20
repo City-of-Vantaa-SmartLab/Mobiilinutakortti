@@ -43,7 +43,7 @@ export class RegisterJuniorDto {
     readonly gender: string;
 
     @IsNotEmpty()
-    @IsDateString({ message: content.NotADate })
+    @IsDateString()
     readonly birthday: string;
 
     @IsNotEmpty()
