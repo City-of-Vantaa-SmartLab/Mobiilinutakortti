@@ -106,6 +106,11 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 * `TELIA_USERNAME`: Telia SMS service user name.
+* `AWS_SES_KEY_ID`: Key ID for Amazon SES.
+* `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
+* `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
+* `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
+* `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
 
 Additionally, the frontend apps require these environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"

@@ -12,7 +12,7 @@ export class EmailService {
     constructor(
         ) { }
 
-        async getMessageInput(batchItem: EmailBatchItem, settings: EmailSettings): Promise<EmailContentConfig> {
+        private getMessageInput(batchItem: EmailBatchItem, settings: EmailSettings): EmailContentConfig {
             const messageInput = {
                 Source: settings.source,
                 Destination: {
@@ -39,11 +39,9 @@ export class EmailService {
                 this.logger.log(`Batch sending ${batch.to.length} emails.`);
             };
 
-            const AWS = require("aws-sdk");
             const sesSettings = EmailConfig.getSesConfig();
-            AWS.config.update(sesSettings);
             const client = new SESClient(sesSettings);
-            const messageInput = await this.getMessageInput(batch, settings); 
+            const messageInput = this.getMessageInput(batch, settings);
             const command = new SendEmailCommand(messageInput);
 
             return await client.send(command).then(

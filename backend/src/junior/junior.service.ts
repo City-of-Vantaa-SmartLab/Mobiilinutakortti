@@ -211,7 +211,7 @@ export class JuniorService {
                 phoneNumber: newJunior.phoneNumber,
                 homeYouthClub: newJunior.homeYouthClub,
             }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         }
 
         this.logger.log('Junior saved, all OK');
@@ -228,7 +228,7 @@ export class JuniorService {
                 phoneNumber: junior.phoneNumber,
                 homeYouthClub: junior.homeYouthClub,
             }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
             return `${phoneNumber} ${content.Reset}`;
         }
         else throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
@@ -285,7 +285,7 @@ export class JuniorService {
                 phoneNumber: updatedJunior.phoneNumber,
                 homeYouthClub: updatedJunior.homeYouthClub,
             }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.MessengerServiceNotAvailable); }
+            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         }
         return `${details.phoneNumber} ${content.Updated}`;
     }

@@ -1,4 +1,6 @@
+import { BadRequestException, Logger } from '@nestjs/common';
 import { SesSettings, EmailSettings } from "./models/emailSettings.model";
+import * as content from '../content';
 
 export class EmailConfig {
     /**
@@ -8,13 +10,22 @@ export class EmailConfig {
      */
 
     public static getEmailConfig(): EmailSettings {
-        const src = process.env.EMAIL_SOURCE;
-        const returnPath = process.env.RETURN_PATH;
+        const logger = new Logger('Email confighandler');
+
+        const source = process.env.EMAIL_SOURCE;
+        const returnPath = process.env.EMAIL_RETURN_PATH;
+        
+        if (!source || !returnPath ) {
+            logger.error("Unable to find email config");
+            throw new BadRequestException(content.EmailServiceNotAvailable);
+        };
+
         const config = {
-            source: src,
-            returnPath: returnPath
+            source,
+            returnPath
         } as EmailSettings;
-        return src && returnPath ? config : undefined;
+
+        return config;
     }
 
     /**
@@ -22,26 +33,27 @@ export class EmailConfig {
      *
      * @returns SesSettings
      */
+
     public static getSesConfig(): SesSettings {
+        const logger = new Logger('SES confighandler');
+
+        const accessKeyId = process.env.AWS_SES_KEY_ID;
+        const secretAccessKey = process.env.AWS_SES_KEY_VALUE;
+        const region = process.env.AWS_SES_REGION;
+
+        if (!accessKeyId || !secretAccessKey || !region ) {
+            logger.error("Unable to find SES config");
+            throw new BadRequestException(content.EmailServiceNotAvailable);
+        };
+
         const config = {
             credentials: {
-                accessKeyId: process.env.AWS_SES_KEY_ID,
-                secretAccessKey: process.env.AWS_SES_KEY_VALUE,  
+                accessKeyId,
+                secretAccessKey,
             },
-            region: process.env.AWS_SES_REGION,
+            region,
         } as SesSettings;
-        return this.checkSettings(config);
-    }
 
-    /**
-     * A method that checks the aws email settings returning null if there is data missing.
-     *
-     * @returns SesSettings
-     */
-    private static checkSettings(config: SesSettings): SesSettings {
-        if (Object.values(config).every(Boolean)) {
-            return config;
-        }
-        return undefined;
-    }
-}
+        return config;
+    };
+};

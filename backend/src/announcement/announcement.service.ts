@@ -36,7 +36,6 @@ export class AnnouncementService {
 
         const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClub);
         const allRecipients = checkedInJuniors.concat(juniorsByHomeClub);
-        // Create a typescript Set from recipients to eliminate double values and return as array
         const uniqueRecipients = new Set<Junior>(allRecipients);
         return Array.from(uniqueRecipients);
     }
@@ -67,9 +66,6 @@ export class AnnouncementService {
     
     async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
         const settings = SMSConfig.getTeliaConfig();
-        if (!settings) {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
-        };
 
         const selectedRecipients = await this.getSelectedRecipients(announcementData.youthClub);
 
@@ -108,15 +104,12 @@ export class AnnouncementService {
         if (attemptMessage) {
             return content.SmsBatchSent;
         } else {
-            throw new InternalServerErrorException(content.MessengerServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
         };
     };
 
     async clubAnnouncementEmail(announcementData: AnnouncementData): Promise<string> {
         const settings = EmailConfig.getEmailConfig();
-        if (!settings) {
-            throw new InternalServerErrorException(content.EmailServiceNotAvailable);
-        };
 
         const recipients = await this.getSelectedRecipients(announcementData.youthClub);
         const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "en"), 50);

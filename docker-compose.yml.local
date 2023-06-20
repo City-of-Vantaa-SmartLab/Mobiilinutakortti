@@ -36,9 +36,9 @@ services:
       TELIA_USERNAME:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
-      EMAIL_SOURCE:
-      RETURN_PATH:
       AWS_SES_REGION:
+      EMAIL_SOURCE:
+      EMAIL_RETURN_PATH:
     volumes:
       - ./backend/src:/backend/src
 

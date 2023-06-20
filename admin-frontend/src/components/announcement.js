@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     SimpleForm,
     SelectInput,
-    CheckboxGroupInput ,
+    CheckboxGroupInput,
     TextInput,
     required,
     Create,
@@ -13,6 +13,7 @@ import {
     useRedirect,
     FormDataConsumer
 } from 'react-admin';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import styled from 'styled-components';
 import { getYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
 
@@ -48,11 +49,11 @@ const MessageSectionForLanguage = (props) => {
 
     return <MsgSection>
         <SectionTitle title={title} />
-        {<FormDataConsumer>
+        <FormDataConsumer>
             {({ formData }) => {
                 return <>{formData.msgType === "email" && <TextInput label="Otsikko" source={`title.${props.langCode}`} validate={(formData.msgType === "email" && props.langCode === "fi") && required()}/>}</>
             }}
-        </FormDataConsumer>}
+        </FormDataConsumer>
         <TextInput label="Viesti" source={`content.${props.langCode}`}  validate={props.langCode === "fi" && required()} multiline/>
     </MsgSection>
 };
@@ -67,7 +68,7 @@ const AnnouncementCreateHelperText = ({msgType}) => (
 
 const CustomToolbar = (props) => (
     <Toolbar {...props}>
-        <SaveButton label="Lähetä" disabled={props.pristine && !props.validating} />
+        <SaveButton label="Lähetä" icon={<MailOutlineIcon />} disabled={props.pristine && !props.validating} />
     </Toolbar>
 );
 
