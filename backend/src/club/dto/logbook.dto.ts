@@ -7,6 +7,6 @@ export class LogBookDto {
     clubId: string;
 
     @IsNotEmpty()
-    @IsDateString({ message: content.NotADate })
+    @IsDateString()
     date: string;
 }

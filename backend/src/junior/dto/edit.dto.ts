@@ -33,7 +33,7 @@ export class EditJuniorDto {
     @Length(1, 1)
     gender: string;
 
-    @IsDateString({ message: content.NotADate })
+    @IsDateString()
     birthday: string;
 
     homeYouthClub: string;
