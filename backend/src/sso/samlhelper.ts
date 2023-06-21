@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import * as url from 'url';
 import * as zlib from 'zlib';
-import * as xmlbuilder from 'xmlbuilder';
+import * as xmlbuilder from 'xmlbuilder2';
 import * as XML from 'pixl-xml';
 import { assignIn } from 'lodash';
 
