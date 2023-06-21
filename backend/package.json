@@ -58,7 +58,7 @@
     "@babel/parser": "^7.9.4",
     "@babel/types": "^7.9.5",
     "@compodoc/compodoc": "^1.1.11",
-    "@nestjs/cli": "^8.2.6",
+    "@nestjs/cli": "^10.0.3",
     "@nestjs/schematics": "^8.0.11",
     "@nestjs/testing": "^8.4.7",
     "@types/bcrypt": "^3.0.1",
