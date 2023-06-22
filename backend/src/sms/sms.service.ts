@@ -1,4 +1,5 @@
-import { Injectable, InternalServerErrorException, HttpService, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';

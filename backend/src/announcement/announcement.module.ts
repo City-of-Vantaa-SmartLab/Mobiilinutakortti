@@ -7,6 +7,7 @@ import { JuniorModule } from 'src/junior/junior.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { EmailModule } from 'src/email/email.module';
 import { EmailService } from 'src/email/email.service';
 
 @Module({
@@ -16,8 +17,8 @@ import { EmailService } from 'src/email/email.service';
     SmsModule,
     RolesModule,
     SessionModule,
-    SessionDBModule, 
-    EmailService
+    SessionDBModule,
+    EmailModule
   ],
   providers: [AnnouncementService, EmailService],
   controllers: [AnnouncementController],

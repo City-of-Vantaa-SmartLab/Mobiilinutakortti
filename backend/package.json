@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.352.0",
+    "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^10.0.3",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.3",
@@ -42,7 +43,7 @@
     "class-validator": "^0.13.2",
     "cookie-parser": "^1.4.6",
     "moment": "^2.24.0",
-    "nestjs-pino": "^3.1.1",
+    "nestjs-pino": "^3.3.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
