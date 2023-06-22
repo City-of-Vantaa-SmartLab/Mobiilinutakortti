@@ -73,26 +73,18 @@ export const translations: Translations = {
       parentPhoneNumber: 'Telefonnummer',
       additionalContactInformation: 'Information om en annan kontaktperson eller ett alternativt telefonnummer (t.ex. jobbtelefon)',
 
-      smsPermissionTitle: 'Info meddelande',
-      smsPermissionDescription:'Du kommer att få meddelanden om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-sms längre, hör av dig till en ungdomsarbetare.',
-      smsPermissionJunior: 'Lov för infomeddelande till junior',
-      smsPermissionJuniorDescription: 'Meddelande till junior',
-      smsPermissionParent: 'Lov för infomeddelande till förälder',
-      smsPermissionParentDescription: 'Meddelande till förälder',
-      smsPermissionOptions: {
-        y: 'Ja',
-        n: 'Nej',
-      },
-
-      emailPermissionTitle: 'Info emails',
-      emailPermissionDescription: 'Du kommer att få emails om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-emails längre, hör av dig till en ungdomsarbetare.',
-      emailPermissionJunior: 'Lov för emails till junior',
-      emailPermissionJuniorDescription: 'Emails till junior',
-      emailPermissionParent: 'Lov för emails till förälder',
-      emailPermissionParentDescription: 'Emails till förälder',
-      emailPermissionOptions: {
-        y: 'Ja',
-        n: 'Nej',
+      announcements: {
+        title: 'Info meddelande',
+        description: 'Du kommer att få meddelanden om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-sms längre, hör av dig till en ungdomsarbetare.',
+        emailPermission: 'Info emails',
+        emailPermissionParent: 'Lov för emails till förälder',
+        smsPermissionJunior: 'Lov för sms meddelande till junior',
+        smsPermission: 'Info sms',
+        smsPermissionParent: 'Lov för sms meddelande till förälder',
+        permissionOptions: {
+          ok: 'Ja',
+          notOk: 'Nej',
+        },
       },
 
       youthClubHeading: 'Hemungdomskulbb',

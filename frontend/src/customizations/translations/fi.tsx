@@ -77,28 +77,20 @@ export const translations: Translations = {
       parentPhoneNumber: 'Puhelinnumero',
       additionalContactInformation: 'Toisen yhteyshenkilön tiedot tai vaihtoehtoinen puhelinnumero (esim. työpuhelin)',
 
-      smsPermissionTitle: 'Infoviestit',
-      smsPermissionDescription: 'Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infotekstiviestejä enää, ole yhteydessä nuorisotyöntekijään.',
-      smsPermissionJunior: 'Infoviestit nuorelle',
-      smsPermissionJuniorDescription: 'Viestejä saa lähettää nuorelle',
-      smsPermissionParent: 'Infoviestit huoltajalle',
-      smsPermissionParentDescription: 'Viestejä saa lähettää huoltajalle',
-      smsPermissionOptions: {
-        y: 'Yes',
-        n: 'no',
+      announcements: {
+        title: "Tiedotus",
+        description: "Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infoviestejä enää, ole yhteydessä nuorisotyöntekijään.",
+        emailPermission: 'Infosähköpostit',
+        emailPermissionParent: 'Sähköpostiviestejä saa lähettää huoltajalle',
+        smsPermissionJunior: 'Tekstiviestejä saa lähettää nuorelle',
+        smsPermission: 'Infotekstiviestit',
+        smsPermissionParent: 'Tekstiviestejä saa lähettää huoltajalle',
+        permissionOptions: {
+          ok: 'Kyllä',
+          notOk: 'Ei',
+        },
       },
-
-      emailPermissionTitle: 'Infosähköpostit',
-      emailPermissionDescription: 'Saat ilmoituksia liittyen kotinuorisotilaasi tai niihin nuorisotiloihin, joilla olet vieraillut. Jos et halua saada valinnaisia infosähköposteja enää, ole yhteydessä nuorisotyöntekijään.',
-      emailPermissionJunior: 'Sähköpostit nuorelle',
-      emailPermissionJuniorDescription: "Sähköposteja saa lähettää nuorelle",
-      emailPermissionParent: 'Sähköpostit huoltajalle',
-      emailPermissionParentDescription: 'Sähköposteja saa lähettää huoltajalle',
-      emailPermissionOptions: {
-        y: 'Kyllä',
-        n: 'Ei',
-      },
-
+      
       youthClubHeading: 'Kotinuorisotila',
       youthClubDefault: 'Valitse nuorisotila',
       youthClubDescription: 'Valitse nuorisotila, jossa lapsesi tai nuoresi yleensä käy.',

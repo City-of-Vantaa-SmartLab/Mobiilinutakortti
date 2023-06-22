@@ -74,26 +74,18 @@ export const translations: Translations = {
       parentPhoneNumber: 'Phone number',
       additionalContactInformation: 'Information of another contact person or an alternative phone number (e.g. work phone)',
 
-      smsPermissionTitle: 'Info messages',
-      smsPermissionDescription: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info text messages anymore, get in touch with a youth worker.',
-      smsPermissionJunior: 'Allow info messages for junior',
-      smsPermissionJuniorDescription: "Messages for junior",
-      smsPermissionParent: 'Allow info messages for parent',
-      smsPermissionParentDescription: 'Messages for parent',
-      smsPermissionOptions: {
-        y: 'Yes',
-        n: 'No',
-      },
-
-      emailPermissionTitle: 'Info emails',
-      emailPermissionDescription: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info emails anymore, get in touch with a youth worker.',
-      emailPermissionJunior: 'Allow info emails for junior',
-      emailPermissionJuniorDescription: "Emails for junior",
-      emailPermissionParent: 'Allow info emails for parent',
-      emailPermissionParentDescription: 'Emails for parent',
-      emailPermissionOptions: {
-        y: 'Yes',
-        n: 'No',
+      announcements: {
+        title: 'Info messages',
+        description: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info text messages anymore, get in touch with a youth worker.',
+        emailPermission: 'Info emails',
+        emailPermissionParent: 'Allow emails for parent',
+        smsPermissionJunior: 'Allow text messages for junior',
+        smsPermission: 'Info text messages',
+        smsPermissionParent: 'Allow text messages for parent',
+        permissionOptions: {
+          ok: 'Yes',
+          notOk: 'No',
+        },
       },
 
       youthClubHeading: 'Home youth club',
