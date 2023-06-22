@@ -17,7 +17,7 @@ const getFieldError = (t: Translations, errors: FormikErrors<FormValues>, fieldN
 
 
 interface InputProps {
-    title: string,
+    title?: string,
     placeholder?: string,
     description?: string,
     type?: string
@@ -102,7 +102,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
     ));
     return(
         <div>
-            <Label>{title}</Label>
+            {title && <Label>{title}</Label>}
             <Description>{description && description.split('\\n').map((line, i) => <p key={i}>{line}</p>)}</Description>
             <Select>
                 {inputs}

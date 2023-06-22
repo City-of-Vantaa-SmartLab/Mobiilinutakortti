@@ -90,7 +90,22 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         />
 
                     </Fieldset>
+
+                    {valueOrNull('communicationsLanguage', (
+                        <Fieldset>
+                            <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
+                            <Field
+                                name='communicationsLanguage'
+                                component={DropdownField}
+                                title={t.parentRegistration.form.communicationsLanguage}
+                                options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
+                                defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
+                                description={t.parentRegistration.form.communicationsLanguageDescription}
+                            />
+                        </Fieldset>
+                    ))}
                 </Column>
+
                 <Column>
                     <Fieldset>
                         <FieldTitle>{t.parentRegistration.form.parentHeading}</FieldTitle>
@@ -101,44 +116,38 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                     </Fieldset>
 
                     <Fieldset>
-                        <FieldTitle>{t.parentRegistration.form.smsPermissionTitle}</FieldTitle>
-                        <FieldInfoText>{t.parentRegistration.form.smsPermissionDescription}</FieldInfoText>
+                        <FieldTitle>{t.parentRegistration.form.announcements.title}</FieldTitle>
+                        <FieldInfoText>{t.parentRegistration.form.announcements.description}</FieldInfoText>
                         <SelectGroup
                             error={errors.smsPermissionJunior}
                             touched={touched.smsPermissionJunior}
-                            title={t.parentRegistration.form.smsPermissionJunior}
+                            title={t.parentRegistration.form.announcements.smsPermission}
                             name="smsPermissionJunior"
-                            description={t.parentRegistration.form.smsPermissionJuniorDescription}
+                            description={t.parentRegistration.form.announcements.smsPermissionJunior}
                             options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionOptions.n }
+                              { value: 'smsJuniorOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'smsJuniorNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
                             ]}
                         />
                         <SelectGroup
                             error={errors.smsPermissionParent}
                             touched={touched.smsPermissionParent}
-                            title={t.parentRegistration.form.smsPermissionParent}
                             name="smsPermissionParent"
-                            description={t.parentRegistration.form.smsPermissionParentDescription}
+                            description={t.parentRegistration.form.announcements.smsPermissionParent}
                             options={[
-                              { value: 'y', label: t.parentRegistration.form.smsPermissionOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.smsPermissionOptions.n }
+                              { value: 'smsParentOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'smsParentNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
                             ]}
                         />
-                    </Fieldset>
-
-                    <Fieldset>
-                        <FieldTitle>{t.parentRegistration.form.emailPermissionTitle}</FieldTitle>
-                        <FieldInfoText>{t.parentRegistration.form.emailPermissionDescription}</FieldInfoText>
                         <SelectGroup
                             error={errors.emailPermissionParent}
                             touched={touched.emailPermissionParent}
-                            title={t.parentRegistration.form.emailPermissionParent}
+                            title={t.parentRegistration.form.announcements.emailPermission}
                             name="emailPermissionParent"
-                            description={t.parentRegistration.form.emailPermissionParentDescription}
+                            description={t.parentRegistration.form.announcements.emailPermissionParent}
                             options={[
-                              { value: 'y', label: t.parentRegistration.form.emailPermissionOptions.y },
-                              { value: 'n', label: t.parentRegistration.form.emailPermissionOptions.n }
+                              { value: 'emailParentOk', label: t.parentRegistration.form.announcements.permissionOptions.ok },
+                              { value: 'emailParentNotOk', label: t.parentRegistration.form.announcements.permissionOptions.notOk }
                             ]}
                         />
                     </Fieldset>
@@ -155,19 +164,6 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         />
                     </Fieldset>
 
-                    {valueOrNull('communicationsLanguage', (
-                        <Fieldset>
-                            <FieldTitle>{t.parentRegistration.form.communicationsLanguage}</FieldTitle>
-                            <Field
-                                name='communicationsLanguage'
-                                component={DropdownField}
-                                title={t.parentRegistration.form.communicationsLanguage}
-                                options={languages.map((lang) => ({ value: lang, label: t.languages[lang] }))}
-                                defaultChoice={t.parentRegistration.form.communicationsLanguageDefault}
-                                description={t.parentRegistration.form.communicationsLanguageDescription}
-                            />
-                        </Fieldset>
-                    ))}
                 </Column>
                 <FormFooter>
                     {valueOrNull('termsOfUse', (
@@ -203,7 +199,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
     const data = {
         userData: {
             phoneNumber: values.juniorPhoneNumber,
-            smsPermissionJunior: values.smsPermissionJunior === 'y',
+            smsPermissionJunior: values.smsPermissionJunior === 'smsJuniorOk',
             lastName: values.juniorLastName,
             firstName: values.juniorFirstName,
             nickName: values.juniorNickName,
@@ -216,9 +212,9 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             postCode: values.postCode,
             parentsName: `${values.parentFirstName} ${values.parentLastName}`,
             parentsPhoneNumber: values.parentPhoneNumber,
-            smsPermissionParent: values.smsPermissionParent === 'y',
+            smsPermissionParent: values.smsPermissionParent === 'smsParentOk',
             parentsEmail: values.parentsEmail,
-            emailPermissionParent: values.emailPermissionParent === 'y',
+            emailPermissionParent: values.emailPermissionParent === 'emailParentOk',
             additionalContactInformation: values.additionalContactInformation,
             status: 'pending',
             photoPermission: values.photoPermission === 'y'
@@ -275,7 +271,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         juniorNickName: string(),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
         juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
-        smsPermissionJunior: string().oneOf(['y', 'n']).required('required'),
+        smsPermissionJunior: string().oneOf(['smsJuniorOk', 'smsJuniorNotOk']).required('required'),
         postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
         school: valueOr('school', string().required('required'), string()),
         class: valueOr('class', string().required('required'), string()),
@@ -284,9 +280,9 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentFirstName: string().required('required'),
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
-        smsPermissionParent: string().oneOf(['y', 'n']).required('required'),
+        smsPermissionParent: string().oneOf(['smsParentOk', 'smsParentNotOk']).required('required'),
         parentsEmail: string(),
-        emailPermissionParent: string().oneOf(['y', 'n']),
+        emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),
         additionalContactInformation: string(),
         youthClub: string().required('selectYouthClub'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),

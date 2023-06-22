@@ -149,26 +149,18 @@ export interface Translations {
       parentPhoneNumber: string,
       additionalContactInformation: string,
 
-      smsPermissionTitle: string,
-      smsPermissionDescription: string,
-      smsPermissionJunior: string,
-      smsPermissionJuniorDescription: string,
-      smsPermissionParent: string,
-      smsPermissionParentDescription: string,
-      smsPermissionOptions: {
-        y: string,
-        n: string,
-      },
-
-      emailPermissionTitle: string,
-      emailPermissionDescription: string,
-      emailPermissionJunior: string,
-      emailPermissionJuniorDescription: string,
-      emailPermissionParent: string,
-      emailPermissionParentDescription: string,
-      emailPermissionOptions: {
-        y: string,
-        n: string,
+      announcements: {
+        title: string,
+        description: string,
+        emailPermission: string,
+        emailPermissionParent: string,
+        smsPermissionJunior: string,
+        smsPermission: string,
+        smsPermissionParent: string,
+        permissionOptions: {
+          ok: string,
+          notOk: string,
+        },
       },
       
       youthClubHeading: string,
