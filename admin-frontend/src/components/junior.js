@@ -228,7 +228,7 @@ export const JuniorForm = (formType) => {
             <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" />
             {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
             <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
-            {formType === 'create' ? 
+            {formType === 'create' ?
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
                 />

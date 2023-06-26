@@ -22,6 +22,7 @@ import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
 import { obfuscate } from 'src/utils/helpers';
+import { ConfigHelper } from '../configHandler';
 
 @Injectable()
 export class JuniorService {
@@ -39,7 +40,7 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
+    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
         let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
         if (controls) {
             order = controls.sort ? this.applySort(controls.sort) : {};
@@ -58,6 +59,10 @@ export class JuniorService {
             .skip(skip)
             .getMany())
             .map(e => new JuniorUserViewModel(e));
+
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched juniors.`);
+        }
         return new JuniorListViewModel(response, total);
     }
 
@@ -109,10 +114,6 @@ export class JuniorService {
         return await this.juniorRepo.findOne({ where: { phoneNumber, birthday, firstName, lastName } });
     }
 
-    async createOrUpdateJunior(details: Junior) {
-        return await this.juniorRepo.save(details);
-    }
-
     async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
         const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
@@ -135,7 +136,7 @@ export class JuniorService {
     // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by a youth worker, the status will be pending. In both cases a parent might re-register the junior.
     // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club youth workers, and sometimes this results in a contact to maintenance, i.e. developers.
     // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
-    async registerJunior(registrationData: RegisterJuniorDto, noSMS: boolean = false): Promise<string> {
+    async registerJunior(registrationData: RegisterJuniorDto, userId?: string, noSMS: boolean = false): Promise<string> {
         this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
 
         let existingJunior = await this.getUniqueJunior(
@@ -164,9 +165,12 @@ export class JuniorService {
         let junior: Junior;
         let renew = false;
         if (existingJunior) {
+            if (userId && ConfigHelper.detailedLogs()) {
+                this.logger.log({ userId: userId, juniorId: existingJunior.id }, `User modifies junior.`);
+            }
             // Only allow account renewal if existing junior's status is expired or pending.
             if (["expired", "pending"].includes(existingJunior.status)) {
-                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber} with registration form data`);
+                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber}`);
                 junior = existingJunior;
                 renew = true;
             } else {
@@ -174,7 +178,10 @@ export class JuniorService {
                 throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
-            this.logger.log('Existing junior not found, attempting to create a new junior with registration form data.');
+            if (userId && ConfigHelper.detailedLogs()) {
+                this.logger.log({ userId: userId }, `User creates new junior.`);
+            }
+            this.logger.log('Existing junior not found, creating new.');
             junior = new Junior();
         }
 
@@ -193,7 +200,8 @@ export class JuniorService {
 
         try {
             this.logger.log(`Saving junior ${junior.phoneNumber}`);
-            await this.createOrUpdateJunior(junior);
+            // Creates new or updates an existing junior.
+            await this.juniorRepo.save(junior);
         } catch (e) {
             this.logger.error(`Error saving junior ${junior.phoneNumber}: ${e.name}: ${e.message}`);
             if (e instanceof QueryFailedError) {
@@ -214,7 +222,7 @@ export class JuniorService {
             if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         }
 
-        this.logger.log('Junior saved, all OK');
+        this.logger.log(`Saved junior ${junior.id}`);
         return renew ? content.Renew(registrationData.phoneNumber) : content.Created(registrationData.phoneNumber);
     }
 
@@ -266,6 +274,7 @@ export class JuniorService {
         if (errors.length > 0) {
             throw new BadRequestException(errors);
         }
+        // Only admins (not regular youth workers) can manually update status from expired state.
         if (prevStatus === 'expired' && details.status !== prevStatus) {
             const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
             if (!youthWorker?.isAdmin) {
@@ -275,6 +284,10 @@ export class JuniorService {
             }
         }
         await this.juniorRepo.save(user);
+
+        if (ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
+        }
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
         if ((prevStatus === 'expired' || prevStatus === 'pending' || prevStatus === 'failedCall') && details.status === 'accepted') {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
@@ -294,10 +307,13 @@ export class JuniorService {
      * This method deletes the provided junior.
      * @param id the id of the user to delete.
      */
-    async deleteJunior(id: string) {
+    async deleteJunior(id: string, userId?: string) {
         const junior = await this.getJunior(id);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         this.juniorRepo.remove(junior);
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId, juniorId: id }, `User deleted junior.`);
+        }
         return `${id} ${content.Deleted}`;
     }
 
@@ -388,7 +404,7 @@ export class JuniorService {
                 status: Math.random() < 0.5 ? "accepted" : "pending",
                 photoPermission: Math.random() < 0.5 ? true : false
             } as RegisterJuniorDto;
-            await this.registerJunior(data, true);
+            await this.registerJunior(data, undefined, true);
         }
         return `Created ${num.toString()} juniors.`;
     }

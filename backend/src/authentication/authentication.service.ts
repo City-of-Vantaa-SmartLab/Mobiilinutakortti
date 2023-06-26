@@ -49,7 +49,7 @@ export class AuthenticationService {
         }, user.id);
 
         this.sessionDBService.addSession(user.id, token.access_token);
-        this.logger.log("Logged in user " + user.id);
+        this.logger.log(`User login: ${user.id} (${user.email})`);
         return token;
     }
 

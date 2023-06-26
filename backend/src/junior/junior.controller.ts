@@ -37,8 +37,8 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('register')
     @ApiBearerAuth('youthWorker')
-    async registerJunior(@Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
-        return new Message(await this.juniorService.registerJunior(userData));
+    async registerJunior(@YouthWorker() youthWorker: { userId: string }, @Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.registerJunior(userData, youthWorker.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -91,9 +91,9 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('list')
     @ApiBearerAuth('youthWorker')
-    async getAllJuniors(@Query('controls') query): Promise<JuniorListViewModel> {
+    async getAllJuniors(@YouthWorker() youthWorker: { userId: string }, @Query('controls') query): Promise<JuniorListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
-        return await this.juniorService.listAllJuniors(controls);
+        return await this.juniorService.listAllJuniors(controls, youthWorker.userId);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -137,8 +137,8 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Delete(':id')
     @ApiBearerAuth('youthWorker')
-    async deleteJunior(@Param('id') id: string) {
-        return new Message(await this.juniorService.deleteJunior(id));
+    async deleteJunior(@YouthWorker() youthWorker: { userId: string }, @Param('id') id: string) {
+        return new Message(await this.juniorService.deleteJunior(id, youthWorker.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
