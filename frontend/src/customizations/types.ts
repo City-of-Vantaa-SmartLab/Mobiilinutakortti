@@ -147,6 +147,7 @@ export interface Translations {
       parentFirstName: string,
       parentLastName: string,
       parentPhoneNumber: string,
+      parentsEmail: string,
       additionalContactInformation: string,
 
       announcements: {
@@ -183,6 +184,7 @@ export interface Translations {
       birthdayFormat: string,
       phoneNumberFormat: string,
       postCodeFormat: string,
+      emailFormat: string,
       selectYouthClub: string,
       selectLanguage: string,
       acceptTermsOfUse: string,

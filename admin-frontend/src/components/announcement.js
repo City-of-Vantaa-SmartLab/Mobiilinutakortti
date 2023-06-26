@@ -16,6 +16,7 @@ import {
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import styled from 'styled-components';
 import { getYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 
 const MsgSection = styled.section`
     display: flex;
@@ -73,7 +74,8 @@ const CustomToolbar = (props) => (
 );
 
 export const AnnouncementCreate = (props) => {
-    const [youthClubChoices, setYouthClubChoices] = useState([]);
+    const [ youthClubChoices, setYouthClubChoices ] = useState([]);
+    const [ allSelected, setAllSelected ] = useState(false);
     const notify = useNotify();
     const redirect = useRedirect();
 
@@ -86,8 +88,17 @@ export const AnnouncementCreate = (props) => {
     }, []);
 
     const onSuccess = () => {
-        notify('Viesti lähetetty');
-        redirect('/');
+        notify("Viesti lähetetty");
+        redirect("/");
+    };
+
+    const onCheckboxChange = (event, formData) => {
+        if (event.target.checked) {
+            formData.youthClub = null;
+            setAllSelected(true);
+        } else {
+            setAllSelected(false);
+        }
     };
 
     const selectHelperText = "Viestien vastaanottajat katsotaan nuoren kotinuorisotilan tai kuluneen kahden viikon aikana vierailemansa nuorisotilan perusteella";
@@ -106,7 +117,12 @@ export const AnnouncementCreate = (props) => {
                         return <>{formData.msgType === "sms" && <CheckboxGroupInput source="recipient" choices={recipientChoicesForSms} label="Viestin vastaanottajat" validate={(formData.msgType === "sms") && required()} />}</>
                     }}
                 </FormDataConsumer>
-                <SelectInput sx={{ minWidth: '350px' }} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubChoices} validate={required()} helperText={selectHelperText}/>
+                <FormDataConsumer>
+                    {({ formData }) => {
+                        return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
+                    }}
+                </FormDataConsumer>
+                <SelectInput sx={{ minWidth: "350px" }} disabled={allSelected} label="Koskien nuorisotilaa" source="youthClub" choices={allSelected ? [] : youthClubChoices} validate={!allSelected && required()} helperText={selectHelperText} />
                 <MessageSectionForLanguage langCode="fi" />
                 <MessageSectionForLanguage langCode="en" />
                 <MessageSectionForLanguage langCode="sv" />

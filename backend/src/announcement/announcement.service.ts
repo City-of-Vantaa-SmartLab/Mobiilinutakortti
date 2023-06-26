@@ -40,6 +40,13 @@ export class AnnouncementService {
         return Array.from(uniqueRecipients);
     }
 
+    private async getAllForRecipients(): Promise<Junior[]> {
+        const activeClubs = (await this.clubService.getClubs()).filter(club => club.active);
+        const recipientsByClub = await Promise.all(activeClubs.map(async(club) =>  await this.getSelectedRecipients(club.id)));
+        const recipients = recipientsByClub.reduce((a, b) => a.concat(b), []);
+        return recipients;
+    }
+
     private getEmailRecipientsByLanguage(recipients: Junior[], langCode: string): string[] {
         return recipients.filter((recipient) => recipient.communicationsLanguage === langCode)
                 .filter((recipientWithLang) => recipientWithLang.emailPermissionParent)
@@ -67,21 +74,22 @@ export class AnnouncementService {
     async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
         const settings = SMSConfig.getTeliaConfig();
 
-        const selectedRecipients = await this.getSelectedRecipients(announcementData.youthClub);
+        const youthClubId = announcementData.youthClub;
+        const selectedRecipients = !youthClubId ? await this.getAllForRecipients() : await this.getSelectedRecipients(youthClubId);
 
-        const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ? 
-            selectedRecipients.filter((recipient) => recipient.smsPermissionParent)
-            .filter((recipient) => recipient.parentsPhoneNumber.substring(0, 6) !== "358999")
-            .map((recipient) => ({
+        const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ?
+            selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionParent)
+            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 6) !== "358999")
+            .map((recipient: Junior) => ({
                 t: recipient.parentsPhoneNumber,
                 m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
             })
         ) : [];
         
-        const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ? 
-            selectedRecipients.filter((recipient) => recipient.smsPermissionJunior)
-                .filter((recipient) => recipient.phoneNumber.substring(0, 6) !== "358999")
-                .map((recipient) => ({
+        const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ?
+            selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionJunior)
+                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 6) !== "358999")
+                .map((recipient: Junior) => ({
                     t: recipient.phoneNumber,
                     m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
                 })
@@ -111,10 +119,12 @@ export class AnnouncementService {
     async clubAnnouncementEmail(announcementData: AnnouncementData): Promise<string> {
         const settings = EmailConfig.getEmailConfig();
 
-        const recipients = await this.getSelectedRecipients(announcementData.youthClub);
-        const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "en"), 50);
-        const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "sv"), 50);
-        const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(recipients, "fi"), 50);
+        const youthClubId = announcementData.youthClub;
+        const selectedRecipients = !youthClubId ? await this.getAllForRecipients() : await this.getSelectedRecipients(youthClubId);
+        
+        const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "en"), 50);
+        const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "sv"), 50);
+        const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
 
         if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
             throw new BadRequestException(content.RecipientsNotFound);
