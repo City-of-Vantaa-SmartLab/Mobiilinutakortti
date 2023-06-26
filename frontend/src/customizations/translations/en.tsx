@@ -72,6 +72,7 @@ export const translations: Translations = {
       parentFirstName: 'First name',
       parentLastName: 'Last name',
       parentPhoneNumber: 'Phone number',
+      parentsEmail: 'Email address',
       additionalContactInformation: 'Information of another contact person or an alternative phone number (e.g. work phone)',
 
       announcements: {
@@ -112,6 +113,7 @@ export const translations: Translations = {
       birthdayFormat: 'Enter the date of birth in format dd.mm.yyyy',
       phoneNumberFormat: 'Check that the phone number you entered is correct',
       postCodeFormat: 'Check that the postal code you entered is correct',
+      emailFormat: 'Check that the email you entered is correct',
       selectYouthClub: 'Choose a youth club from the menu',
       selectLanguage: 'Choose a language from the menu',
       acceptTermsOfUse: 'Accept the terms to continue',

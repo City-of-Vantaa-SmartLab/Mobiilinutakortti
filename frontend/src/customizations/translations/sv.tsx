@@ -71,6 +71,7 @@ export const translations: Translations = {
       parentFirstName: 'Förnamn',
       parentLastName: 'Efternamn',
       parentPhoneNumber: 'Telefonnummer',
+      parentsEmail: 'E-postadress',
       additionalContactInformation: 'Information om en annan kontaktperson eller ett alternativt telefonnummer (t.ex. jobbtelefon)',
 
       announcements: {
@@ -111,6 +112,7 @@ export const translations: Translations = {
       birthdayFormat: 'Ange födelsedatum i formatet dd.mm.åååå',
       phoneNumberFormat: 'Kontrollera att telefonnumret du angav är korrekt',
       postCodeFormat: 'Kontrollera att postnumret du angav är korrekt',
+      emailFormat: 'Kontrollera att e-postadress du angav är korrekt',
       selectYouthClub: 'Välj en ungdomsklubb från menyn',
       selectLanguage: 'Välj ett språk från menyn',
       acceptTermsOfUse: 'Acceptera villkoren för att fortsätta',

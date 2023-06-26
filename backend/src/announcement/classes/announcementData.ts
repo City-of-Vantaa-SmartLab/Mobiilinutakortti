@@ -14,6 +14,6 @@ export class AnnouncementData {
     @Column({nullable: true})
     recipient: string;
 
-    @Column()
+    @Column({nullable: true})
     youthClub: string;
 }

@@ -112,6 +112,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field disabled name='parentFirstName' component={InputField} title={t.parentRegistration.form.parentFirstName} />
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
+                        <Field name='parentsEmail' component={InputField} type='email' title={t.parentRegistration.form.parentsEmail} />
                         <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
                     </Fieldset>
 
@@ -281,7 +282,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentLastName: string().required('required'),
         parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
         smsPermissionParent: string().oneOf(['smsParentOk', 'smsParentNotOk']).required('required'),
-        parentsEmail: string(),
+        parentsEmail: string().matches(/^\S+@\S+\.\S+$/, 'emailFormat'),
         emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),
         additionalContactInformation: string(),
         youthClub: string().required('selectYouthClub'),

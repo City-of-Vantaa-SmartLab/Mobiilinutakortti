@@ -75,6 +75,7 @@ export const translations: Translations = {
       parentFirstName: 'Etunimi',
       parentLastName: 'Sukunimi',
       parentPhoneNumber: 'Puhelinnumero',
+      parentsEmail: 'Sähköpostiosoite',
       additionalContactInformation: 'Toisen yhteyshenkilön tiedot tai vaihtoehtoinen puhelinnumero (esim. työpuhelin)',
 
       announcements: {
@@ -115,6 +116,7 @@ export const translations: Translations = {
       birthdayFormat: 'Anna syntymäaika muodossa pp.kk.vvvv',
       phoneNumberFormat: 'Tarkista, että antamasi puhelinnumero on oikein',
       postCodeFormat: 'Tarkista, että antamasi postinumero on oikein',
+      emailFormat: 'Tarkista, että antamasi sähköpostiosoite on oikein',
       selectYouthClub: 'Valitse kotinuorisotila valikosta',
       selectLanguage: 'Valitse kieli valikosta',
       acceptTermsOfUse: 'Hyväksy käyttöehdot jatkaaksesi',
