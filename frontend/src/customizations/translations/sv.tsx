@@ -98,7 +98,7 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/nutakortin%20k%C3%A4ytt%C3%B6ehdot%202023.pdf'>användarvillkoren</a>
+          Jag godkänner&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>användarvillkoren</a>
         </>
       ),
       submit: 'Skicka ansökan',
