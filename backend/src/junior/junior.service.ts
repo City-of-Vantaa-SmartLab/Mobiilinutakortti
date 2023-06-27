@@ -165,9 +165,12 @@ export class JuniorService {
         let junior: Junior;
         let renew = false;
         if (existingJunior) {
-            if (userId && ConfigHelper.detailedLogs()) {
-                this.logger.log({ userId: userId, juniorId: existingJunior.id }, `User modifies junior.`);
+            // Youth workers should edit existing juniors via the edit endpoint. Ending up here means they are accidentally trying to create a new junior with matching information of an existing junior. The existing junior would be overwritten, which is probably not what is wanted.
+            if (userId) {
+                this.logger.log(`Youth worker ${userId} tried to overwrite existing junior ${existingJunior.id}.`);
+                throw new ConflictException(content.JuniorAlreadyExists);
             }
+
             // Only allow account renewal if existing junior's status is expired or pending.
             if (["expired", "pending"].includes(existingJunior.status)) {
                 this.logger.log(`Overwriting junior ${existingJunior.phoneNumber}`);
