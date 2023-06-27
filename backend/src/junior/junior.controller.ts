@@ -110,8 +110,8 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get(':id')
     @ApiBearerAuth('youthWorker')
-    async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
-        return new JuniorUserViewModel(await this.juniorService.getJunior(id));
+    async getOneJunior(@YouthWorker() youthWorker: { userId: string }, @Param('id') id: string): Promise<JuniorUserViewModel> {
+        return new JuniorUserViewModel(await this.juniorService.getJunior(id, youthWorker.userId));
     }
 
     /**

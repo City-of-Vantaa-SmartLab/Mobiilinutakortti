@@ -96,7 +96,11 @@ export class JuniorService {
         return order;
     }
 
-    async getJunior(id: string): Promise<Junior> {
+    async getJunior(id: string, userId?: string): Promise<Junior> {
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId, juniorId: id }, `User fetched junior.`);
+        }
+
         return await this.juniorRepo.findOneBy({ id });
     }
 
