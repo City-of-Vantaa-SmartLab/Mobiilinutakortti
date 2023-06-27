@@ -146,8 +146,8 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @Post('newSeason')
     @ApiBearerAuth('admin')
-    async createNewSeason(@Body() expireDate: SeasonExpiredDto) {
-        return new Message(await this.juniorService.createNewSeason(expireDate));
+    async createNewSeason(@YouthWorker() admin: { userId: string }, @Body() expireDate: SeasonExpiredDto) {
+        return new Message(await this.juniorService.createNewSeason(expireDate, admin.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -155,8 +155,8 @@ export class JuniorController {
     @AllowedRoles(Roles.ADMIN)
     @Delete('newSeason/clearExpired')
     @ApiBearerAuth('admin')
-    async deleteExpiredJuniors() {
-        return new Message(await this.juniorService.deleteExpired());
+    async deleteExpiredJuniors(@YouthWorker() admin: { userId: string }) {
+        return new Message(await this.juniorService.deleteExpired(admin.userId));
     }
 
     @Post('createTestDataJuniors')

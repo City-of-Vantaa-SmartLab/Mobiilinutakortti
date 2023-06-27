@@ -348,12 +348,16 @@ export class JuniorService {
         return next;
     }
 
-    async createNewSeason({ expireDate }: SeasonExpiredDto): Promise<string> {
+    async createNewSeason({ expireDate }: SeasonExpiredDto, userId?: string): Promise<string> {
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId }, `User created new season.`);
+        }
+
         const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
         const juniors = await this.juniorRepo.find();
 
-        // This SMS is sent to the parents. We don't know the parent's preferred communications language,
-        // so we must use the junior's language.
+        // This SMS is sent to the parents. We don't know the parent's preferred communications language, so we must use the junior's language.
+        // NB: the SMS is sent to each parent regardless if they have agreed on receiving announcement SMSs or not. This case is mentioned in the end user agreement.
         const recipients = juniors.map(junior => ({
             lang: junior.communicationsLanguage as content.Language,
             name: `${junior.firstName} ${junior.lastName}`,
@@ -365,8 +369,11 @@ export class JuniorService {
         return content.NewSeasonCreated(result.affected);
     }
 
-    async deleteExpired(): Promise<string> {
+    async deleteExpired(userId?: string): Promise<string> {
         const result: DeleteResult = await this.juniorRepo.delete({ status: 'expired' })
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId }, `User deleted expired users.`);
+        }
         return content.ExpiredUsersDeleted(result.affected);
     }
 
