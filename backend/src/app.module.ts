@@ -12,8 +12,6 @@ import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
 import { RolesModule } from './roles/roles.module';
 import { SessionModule } from './session/session.module';
-import { YouthWorker } from './youthWorker/entities';
-import { Junior } from './junior/entities';
 import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
@@ -25,6 +23,8 @@ import { SessionDBModule } from './session/sessiondb.module';
 import { AnnouncementModule } from './announcement/announcement.module';
 import pino from 'pino';
 import { AnnouncementController } from './announcement/announcement.controller';
+import { ExtraEntryModule } from './extraEntry/extraEntry.module';
+import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 
 @Module({
   imports: [
@@ -39,6 +39,7 @@ import { AnnouncementController } from './announcement/announcement.controller';
     SsoModule,
     SessionDBModule,
     AnnouncementModule,
+    ExtraEntryModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({
@@ -48,7 +49,7 @@ import { AnnouncementController } from './announcement/announcement.controller';
     })
   ],
   providers: [AppService],
-  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, AnnouncementController],
+  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, AnnouncementController, ExtraEntryController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

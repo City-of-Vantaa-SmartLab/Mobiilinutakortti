@@ -3,6 +3,7 @@ import { juniorProvider } from './juniorProvider';
 import { youthClubProvider } from './youthClubProvider';
 import { youthWorkerProvider } from './youthWorkerProvider';
 import { announcementProvider } from './announcementProvider';
+import { extraEntryTypeProvider } from './extraEntryTypeProvider';
 
 export const dataProvider = (type, resource, params) => {
   switch (resource) {
@@ -20,6 +21,9 @@ export const dataProvider = (type, resource, params) => {
     }
     case 'announcement': {
       return announcementProvider(type, params, httpClientWithRefresh);
+    }
+    case 'extraEntryType': {
+      return extraEntryTypeProvider(type, params, httpClientWithRefresh);
     }
     default:
       throw new Error(`Unsupported Resource ${resource}`);
