@@ -85,7 +85,13 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 ## Environment variables / secrets
 
 * `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
+* `AWS_SES_KEY_ID`: Key ID for Amazon SES.
+* `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
+* `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
+* `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
+* `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
+* `DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints the ids of the juniors a youth worker sees or operates on, for every operation. This results in a lot of logs because even just listing juniors results in the ids being logged.
 * `FRONTEND_BASE_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
 * `HTTP_LOG_LEVEL`: Optional. A pino logger level as string. Defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
@@ -106,11 +112,6 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 * `TELIA_USERNAME`: Telia SMS service user name.
-* `AWS_SES_KEY_ID`: Key ID for Amazon SES.
-* `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
-* `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
-* `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
-* `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
 
 Additionally, the frontend apps require these environment variables:
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"

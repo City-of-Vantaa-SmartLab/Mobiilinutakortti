@@ -47,7 +47,7 @@ export class SessionDBService {
     const userIndex = this.sessions.findIndex(s => s.ownerId === userId);
     if (userIndex > -1) {
       this.sessions.splice(userIndex, 1);
-      this.logger.log(`Logged out user ${userId}`);
+      this.logger.log(`User logout: ${userId}`);
       return true;
     } else {
       this.logger.warn(`Tried to logout nonexistent session for user ${userId}`);
