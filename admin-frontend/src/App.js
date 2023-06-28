@@ -5,6 +5,7 @@ import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
+import { ExtraEntryList, ExtraEntryCreate} from './components/extraEntryType';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, adminRoutes } from './customRoutes';
@@ -64,6 +65,9 @@ const App = () => {
                     : null,
                 permissions === 'ADMIN'
                     ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />
+                    : null,
+                permissions === 'ADMIN'
+                    ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryList} create={ExtraEntryCreate} />
                     : null
             ]}
         </Admin>

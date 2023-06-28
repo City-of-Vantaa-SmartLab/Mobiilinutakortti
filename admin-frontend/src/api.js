@@ -18,6 +18,11 @@ const apiEndpoints = {
   announcement: {
     create: `${appUrl}/announcement/create`
   },
+  extraEntry: {
+    base: `${appUrl}/extraEntry/`,
+    typeList: `${appUrl}/extraEntry/type/list/`,
+    typeCreate: `${appUrl}/extraEntry/type/create`
+  },
   youthClub: {
     base: `${appUrl}/club/`,
     list: `${appUrl}/club/list/`,

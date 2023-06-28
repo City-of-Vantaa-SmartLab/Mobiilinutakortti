@@ -10,7 +10,7 @@ export class ConfigHelper {
         return process.env.JWT || 'Remember to make me more secure before prod!';
     }
 
-    static getDatabaseConnection(): TypeOrmModuleOptions {
+    static getTypeOrmModuleConfig(): TypeOrmModuleOptions {
         return {
             type: 'postgres',
             host: process.env.RDS_HOSTNAME || 'db',

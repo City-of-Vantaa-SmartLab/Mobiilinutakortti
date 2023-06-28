@@ -2,6 +2,7 @@ import React from 'react';
 import { MenuItemLink } from 'react-admin';
 import styled from 'styled-components';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
+import CreateIcon from '@material-ui/icons/Create';
 import ListIcon from '@material-ui/icons/ViewList';
 import NewSeasonIcon from '@material-ui/icons/Autorenew';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
@@ -43,6 +44,11 @@ const Menu = () => {
             to="/announcement/create"
             primaryText="Tiedotus"
             leftIcon={<MailOutlineIcon />}
+          />
+          <MenuItemLink
+            to="/extraEntryType"
+            primaryText="Merkintätyypit"
+            leftIcon={<CreateIcon />}
           />
           <MenuItemLink
             to="/newSeason"
