@@ -52,6 +52,11 @@ const Menu = () => {
             leftIcon={<CreateIcon />}
           />}
           <MenuItemLink
+            to="/extraEntryType"
+            primaryText="Merkintätyypit"
+            leftIcon={<CreateIcon />}
+          />
+          <MenuItemLink
             to="/newSeason"
             primaryText="Aloita uusi kausi"
             leftIcon={<NewSeasonIcon />}
