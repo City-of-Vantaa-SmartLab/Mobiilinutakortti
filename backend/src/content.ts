@@ -30,6 +30,8 @@ export const Routes = {
     api: "/api",
     admin: "/nuorisotyontekijat",
 }
+export const ExtraEntryTypeSaveFailed = "Merkintätyypin tallennus epäonnistui."
+export const ExtraEntryTypeSaved = "Merkintätyyppi tallennettu"
 export const PhoneNumberNotValid = "Puhelinnumero on virheellinen"
 export const ParentsPhoneNumberNotValid = "Huoltajan puhelinnumero on virheellinen"
 export const SecurityContextNotValid = "Käyttäjätunnistuksessa tapahtui virhe, tunnistaudu Suomi.fi:n kautta uudelleen"
