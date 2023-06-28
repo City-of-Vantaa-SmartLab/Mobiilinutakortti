@@ -1,4 +1,4 @@
-import { ExtraEntryType } from '../entities/extraEntryType';
+import { ExtraEntryType } from '../entities';
 
 export class ExtraEntryTypeViewModel {
     id: number;

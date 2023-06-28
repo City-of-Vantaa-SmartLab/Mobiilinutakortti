@@ -1,1 +1,1 @@
-export { ExtraEntryType } from './extraEntryType';
+export { ExtraEntryType } from './extraEntryType.entity';

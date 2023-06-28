@@ -4,7 +4,7 @@ import { RolesModule } from '../roles/roles.module';
 import { SessionDBModule } from '../session/sessiondb.module';
 import { ExtraEntryService } from './extraEntry.service';
 import { ExtraEntryController } from './extraEntry.controller';
-import { ExtraEntryType } from './entities/extraEntryType';
+import { ExtraEntryType } from './entities';
 
 @Module({
   imports: [

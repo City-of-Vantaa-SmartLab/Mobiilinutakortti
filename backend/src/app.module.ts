@@ -28,7 +28,7 @@ import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ConfigHelper.getDatabaseConnection()),
+    TypeOrmModule.forRoot(ConfigHelper.getTypeOrmModuleConfig()),
     YouthWorkerModule,
     JuniorModule,
     AuthenticationModule,

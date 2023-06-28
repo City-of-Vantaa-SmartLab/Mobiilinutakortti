@@ -7,7 +7,6 @@ import {
   SimpleForm,
   TextInput,
   required,
-  EditButton,
   Toolbar,
   SaveButton
 } from 'react-admin';
@@ -22,9 +21,8 @@ export const ExtraEntryList = (props) => {
   return (
     <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
-        <TextField label="Merkintätyyppi" source="extraEntryType" />
+        <TextField label="Merkintätyyppi" source="title" />
         <TextField label="Yläikäraja" source="expiryAge" />
-        <EditButton />
       </Datagrid>
     </List>
   );
@@ -34,7 +32,7 @@ export const ExtraEntryCreate = (props) => {
   return (
     <Create title="Lisää merkintätyyppi" {...props}>
       <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
-        <TextInput label="Merkintätyyppi" source="extraEntryType" validate={required()} />
+        <TextInput label="Merkintätyyppi" source="title" validate={required()} />
         <TextInput label="Yläikäraja" source="expiryAge" validate={required()} />
       </SimpleForm>
     </Create>

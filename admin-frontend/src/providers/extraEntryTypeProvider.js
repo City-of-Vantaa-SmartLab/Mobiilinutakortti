@@ -22,7 +22,7 @@ export const extraEntryTypeProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return response;
+                    return { data: response, total: response.length };
                 });
         }
         case CREATE: {
