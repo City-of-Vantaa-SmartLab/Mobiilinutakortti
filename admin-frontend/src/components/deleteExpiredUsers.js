@@ -10,12 +10,13 @@ import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import styled from 'styled-components';
+import { STATUS } from '../utils';
 
 const getExpiredUsers = () =>
   juniorProvider(
     GET_LIST,
     {
-      filter: { status: 'expired' },
+      filter: { status: STATUS.EXPIRED },
       pagination: { page: 1, perPage: 1 },
       sort: { field: 'id', order: 'ASC' },
     },

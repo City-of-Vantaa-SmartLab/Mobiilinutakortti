@@ -3,6 +3,7 @@ import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 import { ConfigHelper } from '../../configHandler';
+import { STATUS } from '../enum/status.enum';
 
 @Entity()
 export class Junior {
@@ -65,8 +66,8 @@ export class Junior {
     @Column({ default: 'fi' })
     communicationsLanguage: string;
 
-    @Column()
-    status: string;
+    @Column({ type: 'enum', enum: STATUS, default: STATUS.PENDING })
+    status: STATUS;
 
     // See testDB note above.
     @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })

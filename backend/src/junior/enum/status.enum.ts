@@ -1,0 +1,7 @@
+export enum STATUS {
+    ACCEPTED,
+    PENDING,
+    EXPIRED,
+    FAILEDCALL,
+    EXTRAENTRIESONLY
+}

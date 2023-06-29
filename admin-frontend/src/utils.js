@@ -8,11 +8,20 @@ export const genderChoices = [
   { id: '-', name: 'Ei halua määritellä'}
 ];
 
+export const STATUS = {
+  ACCEPTED: 'ACCEPTED',
+  PENDING: 'PENDING',
+  EXPIRED: 'EXPIRED',
+  FAILEDCALL: 'FAILEDCALL',
+  EXTRAENTRIESONLY: 'EXTRAENTRIESONLY'
+};
+
 export const statusChoices = [
-  { id: 'accepted', name: 'Kotisoitto tehty' },
-  { id: 'pending', name: 'Kotisoitto tekemättä' },
-  { id: 'expired', name:  'Tunnus vanhentunut' },
-  { id: 'failedCall', name: 'Kotisoittoa yritetty' }
+  { id: STATUS.ACCEPTED, name: 'Kotisoitto tehty' },
+  { id: STATUS.PENDING, name: 'Kotisoitto tekemättä' },
+  { id: STATUS.EXPIRED, name: 'Tunnus vanhentunut' },
+  { id: STATUS.FAILEDCALL, name: 'Kotisoittoa yritetty' },
+  { id: STATUS.EXTRAENTRIESONLY, name: 'Vain merkintärekisteri' }
 ];
 
 export const recipientChoicesForSms = [
