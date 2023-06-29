@@ -15,7 +15,7 @@ import {
 } from 'react-admin';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import styled from 'styled-components';
-import { getYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
+import { getActiveYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
 import { Checkbox, FormControlLabel } from '@material-ui/core';
 
 const MsgSection = styled.section`
@@ -81,7 +81,7 @@ export const AnnouncementCreate = (props) => {
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getYouthClubs();
+            const youthClubs = await getActiveYouthClubs();
             setYouthClubChoices(youthClubs);
         };
         addYouthClubsToState();
