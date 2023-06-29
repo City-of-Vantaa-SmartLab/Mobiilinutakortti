@@ -79,10 +79,10 @@ export const translations: Translations = {
         title: 'Info messages',
         description: 'You will receive notifications about your home youth facility or the youth facilities you have visited. If you don\'t want to receive optional info text messages anymore, get in touch with a youth worker.',
         emailPermission: 'Info emails',
-        emailPermissionParent: 'Allow emails for parent',
+        emailPermissionParent: 'Allow emails for guardian',
         smsPermissionJunior: 'Allow text messages for junior',
         smsPermission: 'Info text messages',
-        smsPermissionParent: 'Allow text messages for parent',
+        smsPermissionParent: 'Allow text messages for guardian',
         permissionOptions: {
           ok: 'Yes',
           notOk: 'No',

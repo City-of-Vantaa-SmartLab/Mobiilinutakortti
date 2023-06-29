@@ -78,10 +78,10 @@ export const translations: Translations = {
         title: 'Info meddelande',
         description: 'Du kommer att få meddelanden om din hemungdomsanläggning eller de ungdomsanläggningar du har besökt. Om du inte inte vill ta emot valfria info-sms längre, hör av dig till en ungdomsarbetare.',
         emailPermission: 'Info emails',
-        emailPermissionParent: 'Lov för emails till förälder',
+        emailPermissionParent: 'Lov för emails till vårdnadshavare',
         smsPermissionJunior: 'Lov för sms meddelande till junior',
         smsPermission: 'Info sms',
-        smsPermissionParent: 'Lov för sms meddelande till förälder',
+        smsPermissionParent: 'Lov för sms meddelande till vårdnadshavare',
         permissionOptions: {
           ok: 'Ja',
           notOk: 'Nej',
