@@ -5,6 +5,7 @@ ADD ./backend /backend
 ADD ./frontend /frontend
 ENV REACT_APP_ENDPOINT=/api
 ENV REACT_APP_ADMIN_FRONTEND_URL=/nuorisotyontekijat
+ENV REACT_APP_ENABLE_EXTRA_ENTRIES=true
 WORKDIR /frontend
 RUN npm ci && npm run build && cp -r ./build ../backend/public
 ADD ./admin-frontend /admin-frontend
