@@ -64,8 +64,8 @@ services:
       - backend
     environment:
       REACT_APP_ADMIN_FRONTEND_URL: /nuorisotyontekijat
-      REACT_APP_ENDPOINT: http://localhost:3000/api
       REACT_APP_ENABLE_EXTRA_ENTRIES: true
+      REACT_APP_ENDPOINT: http://localhost:3000/api
     volumes:
       - ./admin-frontend/src:/admin-frontend/src
 
