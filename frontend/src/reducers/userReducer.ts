@@ -1,9 +1,9 @@
-import { userTypes, userActions, userState, STATUS } from '../types/userTypes';
+import { userTypes, userActions, userState, Status } from '../types/userTypes';
 
 const initialState: userState = {
     id: '',
     name: '',
-    status: STATUS.PENDING
+    status: Status.pending
 }
 
 const defaultExp = (state = initialState, action: userActions): userState => {

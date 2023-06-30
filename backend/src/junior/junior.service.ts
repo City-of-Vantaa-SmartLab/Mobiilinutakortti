@@ -23,7 +23,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { validateParentData } from './junior.helper';
 import { obfuscate } from 'src/utils/helpers';
 import { ConfigHelper } from '../configHandler';
-import { STATUS } from './enum/status.enum';
+import { Status } from './enum/status.enum';
 
 @Injectable()
 export class JuniorService {
@@ -177,7 +177,7 @@ export class JuniorService {
             }
 
             // Only allow account renewal if existing junior's status is expired or pending.
-            if ([STATUS.EXPIRED, STATUS.PENDING].includes(existingJunior.status)) {
+            if ([Status.expired, Status.pending].includes(existingJunior.status as Status)) {
                 this.logger.log(`Overwriting junior ${existingJunior.phoneNumber}`);
                 junior = existingJunior;
                 renew = true;
@@ -218,7 +218,7 @@ export class JuniorService {
             throw e;
         }
 
-        if (junior.status === STATUS.ACCEPTED && !noSMS) {
+        if (junior.status === Status.accepted && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
@@ -236,7 +236,7 @@ export class JuniorService {
 
     async resetLogin(phoneNumber: string): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
-        if (junior && (junior.status === STATUS.ACCEPTED || junior.status === STATUS.EXPIRED)) {
+        if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
             const challenge = await this.setChallenge(phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,
@@ -283,7 +283,7 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         // Only admins (not regular youth workers) can manually update status from expired state.
-        if (prevStatus === STATUS.EXPIRED && details.status !== prevStatus) {
+        if (prevStatus === Status.expired && details.status !== prevStatus) {
             const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
             if (!youthWorker?.isAdmin) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
@@ -297,7 +297,7 @@ export class JuniorService {
             this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
         }
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
-        if ((prevStatus === STATUS.EXPIRED || prevStatus === STATUS.PENDING || prevStatus === STATUS.FAILEDCALL) && details.status === STATUS.ACCEPTED) {
+        if ((prevStatus === Status.expired || prevStatus === Status.pending || prevStatus === Status.failedCall) && details.status === Status.accepted) {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
@@ -354,7 +354,7 @@ export class JuniorService {
             this.logger.log({ userId: userId }, `User created new season.`);
         }
 
-        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: STATUS.EXPIRED }).execute()
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: Status.accepted }).execute()
         const juniors = await this.juniorRepo.find();
 
         // This SMS is sent to the parents. We don't know the parent's preferred communications language, so we must use the junior's language.
@@ -371,7 +371,7 @@ export class JuniorService {
     }
 
     async deleteExpired(userId?: string): Promise<string> {
-        const result: DeleteResult = await this.juniorRepo.delete({ status: STATUS.EXPIRED })
+        const result: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
@@ -416,7 +416,7 @@ export class JuniorService {
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,
                 homeYouthClub: (Math.floor(Math.random() * 14) + 1).toString(),
-                status: Math.random() < 0.5 ? STATUS.ACCEPTED : STATUS.PENDING,
+                status: Math.random() < 0.5 ? Status.accepted : Status.pending,
                 photoPermission: Math.random() < 0.5 ? true : false
             } as RegisterJuniorDto;
             await this.registerJunior(data, undefined, true);

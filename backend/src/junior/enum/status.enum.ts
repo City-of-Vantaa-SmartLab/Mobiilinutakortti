@@ -1,7 +1,7 @@
-export enum STATUS {
-    ACCEPTED,
-    PENDING,
-    EXPIRED,
-    FAILEDCALL,
-    EXTRAENTRIESONLY
+export enum Status {
+    accepted = 'accepted',
+    pending = 'pending',
+    expired = 'expired',
+    failedCall = 'failedCall',
+    extraEntriesOnly = 'extraEntriesOnly'
 }

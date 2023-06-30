@@ -1,6 +1,5 @@
 import { IsNotEmpty, Length, IsDateString, ValidateIf } from 'class-validator';
 import * as content from '../../content';
-import { STATUS } from '../enum/status.enum';
 
 export class RegisterJuniorDto {
 
@@ -58,7 +57,7 @@ export class RegisterJuniorDto {
     readonly communicationsLanguage: string;
 
     @IsNotEmpty()
-    readonly status: STATUS;
+    readonly status: string;
 
     @IsNotEmpty()
     readonly photoPermission: boolean;

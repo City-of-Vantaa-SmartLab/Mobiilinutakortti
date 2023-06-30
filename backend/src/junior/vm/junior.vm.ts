@@ -1,5 +1,5 @@
 import { Junior } from '../entities';
-import { STATUS } from '../enum/status.enum';
+import { Status } from '../enum/status.enum';
 import { formatName } from '../junior.helper';
 
 export class JuniorUserViewModel {
@@ -24,7 +24,7 @@ export class JuniorUserViewModel {
     creationDate: string;
     homeYouthClub: string;
     communicationsLanguage: string;
-    status: STATUS;
+    status: string;
     photoPermission: boolean;
 
     constructor(entity: Junior) {

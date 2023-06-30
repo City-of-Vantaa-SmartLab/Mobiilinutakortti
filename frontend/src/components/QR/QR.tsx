@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import QRCode from 'qrcode.react';
 import Measure from 'react-measure'
 import { useTranslations } from "../translations";
-import { STATUS } from '../../types/userTypes';
+import { Status } from '../../types/userTypes';
 
 const QRWrapper = styled.section`
     display: flex;
@@ -54,13 +54,13 @@ const QRStatusContainer = styled.span<{ expired: boolean}>`
 
 interface QRProps {
     id: string
-    status: STATUS
+    status: Status
 }
 
 const QR: React.FC<QRProps> = (props) => {
   const t = useTranslations();
   const [size, setSize] = useState(0);
-  const statusMessage = props.status === STATUS.EXPIRED ? t.qrPage.codeExpired : t.qrPage.codeValid;
+  const statusMessage = props.status === Status.expired ? t.qrPage.codeExpired : t.qrPage.codeValid;
 
     return (
         <Measure
@@ -76,7 +76,7 @@ const QR: React.FC<QRProps> = (props) => {
                 <QRContainer ref={measureRef} active={props.id !== ''}>
                     <QRCode value={props.id} includeMargin={true} size={size}/>
                 </QRContainer>
-                <QRStatusContainer expired={props.status === STATUS.EXPIRED}>
+                <QRStatusContainer expired={props.status === Status.expired}>
                     {statusMessage}
                 </QRStatusContainer>
             </QRWrapper>

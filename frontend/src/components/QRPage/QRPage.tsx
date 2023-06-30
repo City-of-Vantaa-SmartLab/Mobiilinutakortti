@@ -6,7 +6,7 @@ import Title from '../Title/Title';
 import QR from '../QR/QR';
 import { useTranslations } from '../translations'
 import LanguageSelect from '../LanguageSelect'
-import { STATUS } from '../../types/userTypes';
+import { Status } from '../../types/userTypes';
 
 export const Container = styled.div`
     width: 100%;
@@ -48,7 +48,7 @@ const Footer = styled.section`
 interface QRPageProps {
     id: string,
     name: string,
-    status: STATUS
+    status: Status
 }
 
 const QRPage: React.FC<QRPageProps> = (props) => {

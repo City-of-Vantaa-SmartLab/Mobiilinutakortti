@@ -22,7 +22,7 @@ import {
     Pagination,
     FormDataConsumer
 } from 'react-admin';
-import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices, STATUS } from '../utils';
+import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices, Status } from '../utils';
 import Button from '@material-ui/core/Button';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
@@ -65,16 +65,16 @@ export const JuniorList = (props) => {
     );
 
     const ResendSMSButton = (data) => (
-        (data.record.status === STATUS.ACCEPTED || data.record.status === STATUS.EXPIRED)
+        (data.record.status === Status.accepted || data.record.status === Status.expired)
             ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä SMS uudestaan</Button>
             : <Button disabled>Kotisoitto tekemättä</Button>
     )
 
     const QRCodeWithStatusMessage = ({ status, id }) => (
-        <div style={status === STATUS.EXPIRED ? expiredQrCodeStyle : validQrCodeStyle}>
+        <div style={status === Status.expired ? expiredQrCodeStyle : validQrCodeStyle}>
             <QRCode value={id} includeMargin={true} size={400} />
             <span style={qrCodeMessageStyle}>
-                {status === STATUS.EXPIRED ? 'Edellinen kausi' : 'Kuluva kausi'}
+                {status === Status.expired ? 'Edellinen kausi' : 'Kuluva kausi'}
             </span>
         </div>
     );
@@ -238,12 +238,12 @@ export const JuniorForm = (formType) => {
             <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
             <FormDataConsumer>
                 {({ record }) => {
-                    return <SelectInput disabled={(formType === 'edit' && record.status === STATUS.EXPIRED && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} />
+                    return <SelectInput disabled={(formType === 'edit' && record.status === Status.expired && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} />
                 }}
             </FormDataConsumer>
             <FormDataConsumer>
                 {({ formData, record }) => {
-                    return formData.status === STATUS.ACCEPTED && (formType === 'create' || record.status !== STATUS.ACCEPTED) && <SMSwarning/>
+                    return formData.status === Status.accepted && (formType === 'create' || record.status !== Status.accepted) && <SMSwarning/>
                 }}
             </FormDataConsumer>
         </SimpleForm>

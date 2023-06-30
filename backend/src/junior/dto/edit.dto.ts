@@ -1,5 +1,4 @@
 import { IsNotEmpty, Length, IsDateString } from 'class-validator';
-import { STATUS } from '../enum/status.enum';
 
 export class EditJuniorDto {
 
@@ -44,7 +43,7 @@ export class EditJuniorDto {
 
     communicationsLanguage: string;
 
-    status: STATUS;
+    status: string;
 
     photoPermission: boolean;
 }
