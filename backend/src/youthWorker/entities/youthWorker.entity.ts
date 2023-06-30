@@ -27,7 +27,8 @@ export class YouthWorker {
     @Column({ name: 'isSuperUser', default: false, transformer: jsonDataToBoolean })
     isAdmin: boolean;
 
-    @Column({ nullable: true })
+    // For historical reasons, type is character varying and not integer.
+    @Column({ type: 'character varying', nullable: true  })
     mainYouthClub: number;
 
     @Column({ default: null, nullable: true })

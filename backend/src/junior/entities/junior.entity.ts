@@ -59,7 +59,8 @@ export class Junior {
     @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
-    @Column({ nullable: true  })
+    // For historical reasons, type is character varying and not integer.
+    @Column({ type: 'character varying', nullable: true  })
     homeYouthClub: number;
 
     @Column({ default: 'fi' })
