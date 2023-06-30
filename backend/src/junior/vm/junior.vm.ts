@@ -1,5 +1,4 @@
 import { Junior } from '../entities';
-import { Status } from '../enum/status.enum';
 import { formatName } from '../junior.helper';
 
 export class JuniorUserViewModel {
