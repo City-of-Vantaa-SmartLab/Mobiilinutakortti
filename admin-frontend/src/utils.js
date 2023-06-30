@@ -8,11 +8,20 @@ export const genderChoices = [
   { id: '-', name: 'Ei halua määritellä'}
 ];
 
+export const Status = Object.freeze({
+  accepted: 'accepted',
+  pending: 'pending',
+  expired: 'expired',
+  failedCall: 'failedCall',
+  extraEntriesOnly: 'extraEntriesOnly'
+});
+
 export const statusChoices = [
-  { id: 'accepted', name: 'Kotisoitto tehty' },
-  { id: 'pending', name: 'Kotisoitto tekemättä' },
-  { id: 'expired', name:  'Tunnus vanhentunut' },
-  { id: 'failedCall', name: 'Kotisoittoa yritetty' }
+  { id: Status.accepted, name: 'Kotisoitto tehty' },
+  { id: Status.pending, name: 'Kotisoitto tekemättä' },
+  { id: Status.expired, name: 'Tunnus vanhentunut' },
+  { id: Status.failedCall, name: 'Kotisoittoa yritetty' },
+  { id: Status.extraEntriesOnly, name: 'Vain merkintärekisteri' }
 ];
 
 export const recipientChoicesForSms = [

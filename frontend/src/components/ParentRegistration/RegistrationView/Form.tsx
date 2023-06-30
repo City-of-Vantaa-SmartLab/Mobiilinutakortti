@@ -9,6 +9,7 @@ import { useTranslations } from '../../translations'
 import { CustomizableFormField, Translations } from "../../../customizations/types";
 import { hiddenFormFields, languages } from '../../../customizations'
 import styled, { useTheme } from 'styled-components'
+import { Status } from '../../../types/userTypes';
 
 export interface Club {
     id: number
@@ -217,7 +218,7 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             parentsEmail: values.parentsEmail,
             emailPermissionParent: values.emailPermissionParent === 'emailParentOk',
             additionalContactInformation: values.additionalContactInformation,
-            status: 'pending',
+            status: Status.pending,
             photoPermission: values.photoPermission === 'y'
         },
         securityContext: securityContext
