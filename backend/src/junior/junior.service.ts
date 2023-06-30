@@ -109,7 +109,7 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
-    async getJuniorsByHomeYouthClub(homeYouthClub: string): Promise<Junior[]> {
+    async getJuniorsByHomeYouthClub(homeYouthClub: number): Promise<Junior[]> {
         return await this.juniorRepo.findBy({ homeYouthClub });
     }
 

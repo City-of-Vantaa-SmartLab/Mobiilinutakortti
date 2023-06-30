@@ -27,8 +27,8 @@ export class YouthWorker {
     @Column({ name: 'isSuperUser', default: false, transformer: jsonDataToBoolean })
     isAdmin: boolean;
 
-    @Column({ default: '', nullable: true })
-    mainYouthClub: string;
+    @Column({ nullable: true })
+    mainYouthClub: number;
 
     @Column({ default: null, nullable: true })
     passwordLastChanged: Date;

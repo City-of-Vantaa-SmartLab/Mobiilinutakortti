@@ -39,7 +39,7 @@ export class EditJuniorDto {
     @IsDateString()
     birthday: string;
 
-    homeYouthClub: string;
+    homeYouthClub: number;
 
     communicationsLanguage: string;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean, Schema } from 'yup';
+import { string, object, boolean, Schema, number } from 'yup';
 import { post } from '../../../apis';
 
 import { InputField, DropdownField, SelectGroup } from './FormFields';
@@ -36,7 +36,7 @@ export interface FormValues {
     parentsEmail: string,
     emailPermissionParent: string,
     additionalContactInformation: string,
-    youthClub: string,
+    youthClub: number,
     termsOfUse: boolean
 }
 
@@ -159,6 +159,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field
                             name='youthClub'
                             component={DropdownField}
+                            optionType='number'
                             title={t.parentRegistration.form.youthClubHeading}
                             options={status.clubs}
                             defaultChoice={t.parentRegistration.form.youthClubDefault}
@@ -255,7 +256,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
             parentsEmail: '',
             emailPermissionParent: '',
             additionalContactInformation: '',
-            youthClub: '',
+            youthClub: 0,
             termsOfUse: hiddenFormFields.includes('termsOfUse'),
         }
     },
@@ -263,7 +264,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
     mapPropsToStatus: props => {
         return {
             clubs: props.clubs
-                .map((youthClub) => ({ value: youthClub.id.toString(), label: youthClub.name }))
+                .map((youthClub) => ({ value: youthClub.id, label: youthClub.name }))
                 .sort((a,b) => a.label.localeCompare(b.label, 'fi', { sensitivity: 'base' }))
         }
     },
@@ -286,7 +287,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         parentsEmail: string().matches(/^\S+@\S+\.\S+$/, 'emailFormat'),
         emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),
         additionalContactInformation: string(),
-        youthClub: string().required('selectYouthClub'),
+        youthClub: number().integer().required('selectYouthClub').notOneOf([0], 'required'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')
     }),

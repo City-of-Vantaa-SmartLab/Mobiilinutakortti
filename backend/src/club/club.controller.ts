@@ -43,7 +43,7 @@ export class ClubController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('check-in/:id')
     @ApiBearerAuth('youthWorker')
-    async getGetClubCheckins(@Param('id') clubId: string): Promise<CheckIn[]> {
+    async getGetClubCheckins(@Param('id') clubId: number): Promise<CheckIn[]> {
         return await this.clubService.getCheckinsForClub(clubId);
     }
 
@@ -77,7 +77,7 @@ export class ClubController {
     @AllowedRoles(Roles.ADMIN)
     @Get(':id')
     @ApiBearerAuth('admin')
-    async getOneClub(@Param('id') id: string): Promise<ClubViewModel> {
+    async getOneClub(@Param('id') id: number): Promise<ClubViewModel> {
         return new ClubViewModel(await this.clubService.getClubById(id));
     }
 

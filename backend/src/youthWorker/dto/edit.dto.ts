@@ -17,5 +17,5 @@ export class EditYouthWorkerDto {
 
     isAdmin: boolean;
 
-    mainYouthClub: string;
+    mainYouthClub: number;
 }

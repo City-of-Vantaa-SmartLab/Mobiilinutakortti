@@ -9,7 +9,7 @@ export class YouthWorkerUserViewModel {
     firstName: string;
     lastName: string;
     isAdmin: boolean;
-    mainYouthClub: string;
+    mainYouthClub: number;
     passwordLastChanged: Date;
 
     /**

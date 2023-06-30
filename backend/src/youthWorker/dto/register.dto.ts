@@ -21,5 +21,5 @@ export class RegisterYouthWorkerDto {
     @IsNotEmpty()
     readonly isAdmin: boolean;
 
-    readonly mainYouthClub: string;
+    readonly mainYouthClub: number;
 }
