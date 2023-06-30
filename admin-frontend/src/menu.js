@@ -15,6 +15,7 @@ const MenuContainer = styled.div`
 
 const Menu = () => {
   const { isAdmin } = useAdminPermission();
+  const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
 
   return (
     <MenuContainer>
@@ -45,11 +46,11 @@ const Menu = () => {
             primaryText="Tiedotus"
             leftIcon={<MailOutlineIcon />}
           />
-          <MenuItemLink
+          {showExtraEntries && <MenuItemLink
             to="/extraEntryType"
             primaryText="Merkintätyypit"
             leftIcon={<CreateIcon />}
-          />
+          />}
           <MenuItemLink
             to="/newSeason"
             primaryText="Aloita uusi kausi"

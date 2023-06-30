@@ -29,6 +29,7 @@ const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 const App = () => {
     const { isAdmin } = useAdminPermission();
     const customRoutes = routes.concat(...isAdmin ? adminRoutes : []);
+    const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
 
     useEffect(() => {
         let validCheck = setInterval(async () => {
@@ -66,7 +67,7 @@ const App = () => {
                 permissions === 'ADMIN'
                     ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />
                     : null,
-                permissions === 'ADMIN'
+                permissions === 'ADMIN' && showExtraEntries
                     ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryList} create={ExtraEntryCreate} />
                     : null
             ]}
