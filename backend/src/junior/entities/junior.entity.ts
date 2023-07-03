@@ -3,6 +3,7 @@ import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 import { ConfigHelper } from '../../configHandler';
+import { NumberTransformer } from 'src/utils/helpers';
 
 @Entity()
 export class Junior {
@@ -59,8 +60,8 @@ export class Junior {
     @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
-    // For historical reasons, type is character varying and not integer.
-    @Column({ type: 'character varying', nullable: true  })
+    // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
+    @Column({ type: 'character varying', transformer: new NumberTransformer(), nullable: true  })
     homeYouthClub: number;
 
     @Column({ default: 'fi' })

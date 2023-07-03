@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { lowercase, jsonDataToBoolean } from '../../common/transformers';
+import { NumberTransformer } from 'src/utils/helpers';
 
 /**
  * Entity model for youth worker.
@@ -27,8 +28,8 @@ export class YouthWorker {
     @Column({ name: 'isSuperUser', default: false, transformer: jsonDataToBoolean })
     isAdmin: boolean;
 
-    // For historical reasons, type is character varying and not integer.
-    @Column({ type: 'character varying', nullable: true  })
+    // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
+    @Column({ type: 'character varying', transformer: new NumberTransformer(), nullable: true  })
     mainYouthClub: number;
 
     @Column({ default: null, nullable: true })
