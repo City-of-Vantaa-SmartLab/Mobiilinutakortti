@@ -27,7 +27,7 @@ export class AnnouncementService {
         return contentWithLangOrDefault;
     };
 
-    private async getSelectedRecipients(youthClub: string): Promise<Junior[]> {
+    private async getSelectedRecipients(youthClub: number): Promise<Junior[]> {
         const twoWeeksInSeconds = 1209600;
         const checkIns = await this.clubService.getCheckins({clubId: youthClub, date: new Date().toString()}, twoWeeksInSeconds);
         const checkedInJuniors = checkIns.map((checkIn) => {

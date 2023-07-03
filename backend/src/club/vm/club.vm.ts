@@ -2,7 +2,7 @@ import { Messages } from '../classes/messages';
 import { Club } from '../entities';
 
 export class ClubViewModel {
-    id: string;
+    id: number;
     name: string;
     postCode: string;
     active: boolean;

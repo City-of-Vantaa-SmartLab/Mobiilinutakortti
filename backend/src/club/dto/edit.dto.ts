@@ -4,7 +4,7 @@ import { Messages } from '../classes/messages';
 export class EditClubDto {
 
     @IsNotEmpty()
-    readonly id: string;
+    readonly id: number;
 
     readonly name: string;
 

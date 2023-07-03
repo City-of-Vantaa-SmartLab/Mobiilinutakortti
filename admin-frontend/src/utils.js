@@ -60,11 +60,11 @@ export const ageValidator = (value, allValues) => {
 }
 
 export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
-  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name, active: youthClub.active})));
+  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id, name: youthClub.name, active: youthClub.active})));
 
 export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
   .then((res) => res.data.map((youthClub) => {
-        return youthClub.active ? { id: youthClub.id.toString(), name: youthClub.name } : null;
+        return youthClub.active ? { id: youthClub.id, name: youthClub.name } : null;
   }
 ));
 

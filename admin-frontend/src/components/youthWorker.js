@@ -27,7 +27,6 @@ export const YouthWorkerList = (props) => {
     addYouthClubsToState();
   }, []);
 
-
   if (youthClubs.length === 0) {
     return null
   }

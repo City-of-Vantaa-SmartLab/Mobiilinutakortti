@@ -4,5 +4,5 @@ export interface Recipient {
     lang: Language;
     name: string;
     phoneNumber: string;
-    homeYouthClub?: string;
+    homeYouthClub?: number;
 }
