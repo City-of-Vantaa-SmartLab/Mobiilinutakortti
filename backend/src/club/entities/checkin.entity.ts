@@ -11,9 +11,9 @@ export class CheckIn {
     @Column({ type: 'timestamp with time zone' })
     checkInTime: Date;
 
-    @ManyToOne(type => Club)
+    @ManyToOne(() => Club)
     club: Club;
 
-    @ManyToOne(type => Junior, junior => junior.checkIns, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Junior, junior => junior.checkIns)
     junior: Junior;
 }
