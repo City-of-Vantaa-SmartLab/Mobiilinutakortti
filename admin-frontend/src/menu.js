@@ -29,40 +29,49 @@ const Menu = () => {
         primaryText="Nuorisotilat"
         leftIcon={<ListIcon />}
       />
-      {isAdmin && (
-        <React.Fragment>
-          <MenuItemLink
-            to="/editYouthClubs"
-            primaryText="Nuorisotilojen muokkaus"
-            leftIcon={<ListIcon />}
-          />
-          <MenuItemLink
-            to="/youthWorker"
-            primaryText="Nuorisotyöntekijät"
-            leftIcon={<ListIcon />}
-          />
-          <MenuItemLink
-            to="/announcement/create"
-            primaryText="Tiedotus"
-            leftIcon={<MailOutlineIcon />}
-          />
-          {showExtraEntries && <MenuItemLink
-            to="/extraEntryType"
-            primaryText="Merkintätyypit"
-            leftIcon={<CreateIcon />}
-          />}
-          <MenuItemLink
-            to="/newSeason"
-            primaryText="Aloita uusi kausi"
-            leftIcon={<NewSeasonIcon />}
-          />
-          <MenuItemLink
-            to="/deleteExpiredUsers"
-            primaryText="Poista vanhat käyttäjät"
-            leftIcon={<DeleteIcon />}
-          />
-        </React.Fragment>
-      )}
+      {isAdmin &&
+        <MenuItemLink
+          to="/editYouthClubs"
+          primaryText="Nuorisotilojen muokkaus"
+          leftIcon={<ListIcon />}
+        />
+      }
+      {isAdmin &&
+        <MenuItemLink
+          to="/youthWorker"
+          primaryText="Nuorisotyöntekijät"
+          leftIcon={<ListIcon />}
+        />
+      }
+      {isAdmin && <MenuItemLink
+          to="/announcement/create"
+          primaryText="Tiedotus"
+          leftIcon={<MailOutlineIcon />}
+        />
+      }
+      <MenuItemLink
+        to="/extraEntry"
+        primaryText="Lisämerkinnät"
+        leftIcon={<CreateIcon />}
+      />
+      {(showExtraEntries && isAdmin) && <MenuItemLink
+          to="/extraEntryType"
+          primaryText="Merkintätyypit"
+          leftIcon={<CreateIcon />}
+        />
+      }
+      {isAdmin && <MenuItemLink
+          to="/newSeason"
+          primaryText="Aloita uusi kausi"
+          leftIcon={<NewSeasonIcon />}
+        />
+      }
+      {isAdmin && <MenuItemLink
+          to="/deleteExpiredUsers"
+          primaryText="Poista vanhat käyttäjät"
+          leftIcon={<DeleteIcon />}
+        />
+      }
     </MenuContainer>
   );
 };

@@ -17,22 +17,22 @@ const CustomToolbar = (props) => (
   </Toolbar>
 );
 
-export const ExtraEntryList = (props) => {
+export const ExtraEntryTypeList = (props) => {
   return (
     <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
-        <TextField label="Merkintätyyppi" source="title" />
+        <TextField label="Merkintätyyppi" source="name" />
         <TextField label="Yläikäraja" source="expiryAge" />
       </Datagrid>
     </List>
   );
 }
 
-export const ExtraEntryCreate = (props) => {
+export const ExtraEntryTypeCreate = (props) => {
   return (
     <Create title="Lisää merkintätyyppi" {...props}>
       <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
-        <TextInput label="Merkintätyyppi" source="title" validate={required()} />
+        <TextInput label="Merkintätyyppi" source="name" validate={required()} />
         <TextInput label="Yläikäraja" source="expiryAge" validate={required()} />
       </SimpleForm>
     </Create>

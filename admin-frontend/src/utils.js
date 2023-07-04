@@ -1,5 +1,7 @@
-import { GET_LIST } from 'react-admin';
+import { GET_LIST, HttpError } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
+import api from './api'
+import { httpClientWithRefresh } from './httpClients';
 
 export const genderChoices = [
   { id: 'm', name: 'Mies' },
@@ -69,3 +71,33 @@ export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
 ));
 
 export const isSubstring = (mainString, subString) => mainString.includes(subString);
+
+export const getExtraTypeLabel = async (id) => {
+
+  const url = api.extraEntry.type + id;
+  const options = {
+      method: 'GET'
+  };
+  return await httpClientWithRefresh(url, options)
+    .then(response => {
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+        }
+        console.log('response', response)
+      return { data: response };
+  });        
+}
+
+export const getExtraEntryTypes = async () => {
+  const url = api.extraEntry.typeList;
+  const options = {
+      method: 'GET'
+  };
+  return await httpClientWithRefresh(url, options)
+    .then(response => {
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+        }
+      return response;
+  });        
+}
