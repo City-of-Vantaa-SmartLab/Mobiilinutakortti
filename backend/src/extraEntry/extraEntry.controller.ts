@@ -3,6 +3,7 @@ import {
     UsePipes,
     ValidationPipe,
     UseGuards,
+    Param,
     Post,
     Get,
     Body
@@ -17,6 +18,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Message } from 'src/common/vm';
 import { ExtraEntryService } from './extraEntry.service';
 import { CreateExtraEntryTypeDto } from './dto/create.dto';
+import { JuniorExtraEntryViewModel } from 'src/junior/vm/juniorExtraEntry.vm';
 
 @Controller(`${content.Routes.api}/extraEntry`)
 @ApiTags('ExtraEntry')
@@ -42,5 +44,14 @@ export class ExtraEntryController {
     @ApiBearerAuth('admin')
     async createExtraEntry(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
         return new Message(await this.extraEntryService.createExtraEntry(extraEntryTypeData));
+    };
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Post(':id')
+    @ApiBearerAuth('youthWorker')
+    async getExtraEntriesForJunior(@Param('id') id: string): Promise<JuniorExtraEntryViewModel>  {
+        return new JuniorExtraEntryViewModel(await this.extraEntryService.getExtraEntriesForJunior(id));
     };
 }

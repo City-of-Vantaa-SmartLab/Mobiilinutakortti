@@ -102,7 +102,7 @@ export class JuniorService {
             this.logger.log({ userId: userId, juniorId: id }, `User fetched junior.`);
         }
 
-        return await this.juniorRepo.findOne({ where: {id}, relations: ['extraEntries', 'checkIns'] } );
+        return await this.juniorRepo.findOneBy({ id });
     }
 
     async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior> {
