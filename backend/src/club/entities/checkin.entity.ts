@@ -14,6 +14,6 @@ export class CheckIn {
     @ManyToOne(() => Club)
     club: Club;
 
-    @ManyToOne(() => Junior, junior => junior.checkIns)
+    @ManyToOne(() => Junior, junior => junior.checkIns, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     junior: Junior;
 }

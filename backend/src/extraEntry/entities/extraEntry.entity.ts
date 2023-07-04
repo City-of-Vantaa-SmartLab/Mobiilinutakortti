@@ -8,7 +8,7 @@ export class ExtraEntry {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Junior, junior => junior.extraEntries)
+    @ManyToOne(() => Junior, junior => junior.extraEntries, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     junior: Junior;
 
     @ManyToOne(() => ExtraEntryType)

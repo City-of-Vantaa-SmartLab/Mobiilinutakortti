@@ -78,9 +78,9 @@ export class Junior {
     @Column()
     photoPermission: boolean;
 
-    @OneToMany(() => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @OneToMany(() => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
 
-    @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
     extraEntries: ExtraEntry[];
 }
