@@ -4,6 +4,7 @@ import { makePhoneNumberInternational, lowercase, trimString } from '../../commo
 import { CheckIn } from '../../club/entities';
 import { ConfigHelper } from '../../configHandler';
 import { NumberTransformer } from 'src/utils/helpers';
+import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
 
 @Entity()
 export class Junior {
@@ -77,6 +78,9 @@ export class Junior {
     @Column()
     photoPermission: boolean;
 
-    @OneToMany(type => CheckIn, checkIn => checkIn.junior, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+    @OneToMany(() => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
+
+    @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
+    extraEntries: ExtraEntry[];
 }

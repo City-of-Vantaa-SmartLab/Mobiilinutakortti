@@ -5,10 +5,11 @@ import { SessionDBModule } from '../session/sessiondb.module';
 import { ExtraEntryService } from './extraEntry.service';
 import { ExtraEntryController } from './extraEntry.controller';
 import { ExtraEntryType } from './entities';
+import { Junior } from 'src/junior/entities';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ExtraEntryType]),
+    TypeOrmModule.forFeature([ExtraEntryType, Junior]),
     RolesModule,
     SessionDBModule,
   ],
