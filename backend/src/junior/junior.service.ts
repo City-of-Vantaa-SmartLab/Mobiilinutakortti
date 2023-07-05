@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { YouthWorker } from '../youthWorker/entities';
 import { Junior, Challenge } from './entities';
-import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content';
@@ -41,14 +41,14 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    public async getAllJuniorsQuery(filters?: any, extraEntries?: boolean) {
-        return extraEntries ? 
+    public getAllJuniorsQuery(filters?: any, extraEntries?: boolean): SelectQueryBuilder<Junior> {
+        return extraEntries ?
             this.juniorRepo.createQueryBuilder('user')
             .leftJoinAndSelect('user.extraEntries', 'extraEntry')
             .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
             .where(filters.query ? filters.query : '1=1', filters.filterValues)
             .orderBy(filters.order)
-            : 
+            :
             this.juniorRepo.createQueryBuilder('user')
             .where(filters.query ? filters.query : '1=1', filters.filterValues)
             .orderBy(filters.order)
@@ -56,7 +56,7 @@ export class JuniorService {
 
     async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
         const filters = getFilters(controls);
-        const juniorQueries = await this.getAllJuniorsQuery(filters);
+        const juniorQueries = this.getAllJuniorsQuery(filters);
         const total = await juniorQueries.getCount();
 
         const response = (await juniorQueries

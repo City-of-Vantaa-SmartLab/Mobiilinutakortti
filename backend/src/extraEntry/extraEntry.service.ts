@@ -7,7 +7,7 @@ import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { CreateExtraEntryTypeDto } from './dto/create.dto';
 import { ConfigHelper } from 'src/configHandler';
 import { Junior } from 'src/junior/entities';
-import { applyFilters, applySort, getFilters } from 'src/utils/helpers';
+import { getFilters } from 'src/utils/helpers';
 import { ListControlDto } from 'src/common/dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryViewModel } from './vm/extraEntry.vm';
@@ -62,21 +62,17 @@ export class ExtraEntryService {
 
     async getAllExtraEntries(controls?: ListControlDto, userId?: string): Promise<ExtraEntryListViewModel> {
         const filters = getFilters(controls);
-        const juniorQueries = await this.juniorService.getAllJuniorsQuery(filters, true);
-        const total = await juniorQueries.getCount();
+        let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
-        const response = (await juniorQueries
-            .take(filters.take)
-            .skip(filters.skip)
-            .getMany())
-            .map(e => {console.log(e); return new ExtraEntryViewModel(e)});
-        
-        
+        if (controls?.filters?.extraEntryType) {
+            juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
+        }
+        const juniors = juniorEntities.slice(filters.skip, filters.take).map(e => new ExtraEntryViewModel(e));
 
         if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched extra entries for juniors.`);
+            this.logger.log({ userId: userId, juniorIds: juniors.map(junior => junior.id) }, `User fetched extra entries for juniors.`);
         }
-        return new ExtraEntryListViewModel(response, total);
+        return new ExtraEntryListViewModel(juniors, juniorEntities.length);
     }
 };
 

@@ -75,8 +75,6 @@ export class ExtraEntryController {
     @Get('type/:id')
     @ApiBearerAuth('admin')
     async getExtraEntryType(@Param('id') id: any): Promise<ExtraEntryTypeViewModel> {
-        console.log('id', id)
-        console.log('typeof id', typeof id)
         return await this.extraEntryService.getExtraEntryType(id);
     }
 

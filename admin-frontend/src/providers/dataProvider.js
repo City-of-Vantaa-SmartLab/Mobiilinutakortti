@@ -7,11 +7,6 @@ import {
   youthClubProvider,
   youthWorkerProvider
 } from './';
-// import { youthClubProvider } from './youthClubProvider';
-// import { youthWorkerProvider } from './youthWorkerProvider';
-// import { announcementProvider } from './announcementProvider';
-// import { extraEntryTypeProvider } from './extraEntryTypeProvider';
-// import { extraEntryProvider } from './extraEntryProvider';
 
 export const dataProvider = (type, resource, params) => {
   switch (resource) {

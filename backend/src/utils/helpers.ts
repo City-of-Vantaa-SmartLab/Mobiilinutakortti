@@ -38,15 +38,15 @@ export const applyFilters = (filterOptions: FilterDto) => {
   Object.keys(filterOptions).forEach(property => {
       if (property === 'name') {
           queryParams.push("CONCAT (user.firstName, ' ', user.lastName) ILIKE :name")
-          filterValues['name'] = `%${filterOptions['name']}%`
+          filterValues['name'] = `%${filterOptions.name}%`
       } else if (property === 'phoneNumber') {
           queryParams.push('user.phoneNumber ILIKE :phoneNumber')
-          filterValues['phoneNumber'] = `%${filterOptions['phoneNumber']}%`
+          filterValues['phoneNumber'] = `%${filterOptions.phoneNumber}%`
       } else if (property === 'parentsPhoneNumber') {
           queryParams.push('user.parentsPhoneNumber ILIKE :parentsPhoneNumber')
-          filterValues['parentsPhoneNumber'] = `%${filterOptions['parentsPhoneNumber']}%`
+          filterValues['parentsPhoneNumber'] = `%${filterOptions.parentsPhoneNumber}%`
       } else if (property === 'extraEntryType') {
-          // this query is conducted after mapping junior entities
+          // This filtering is done after database query.
       } else {
           queryParams.push(`user.${property} = :${property}`)
           filterValues[property] = filterOptions[property]

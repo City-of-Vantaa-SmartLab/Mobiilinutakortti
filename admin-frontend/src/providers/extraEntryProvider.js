@@ -21,7 +21,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
         }
         case GET_LIST: {
             url = api.extraEntry.list;
-
+            
             const controls = {
                 filters: {
                     name: params.filter.name,

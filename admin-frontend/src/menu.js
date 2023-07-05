@@ -49,11 +49,11 @@ const Menu = () => {
           leftIcon={<MailOutlineIcon />}
         />
       }
-      <MenuItemLink
+      {showExtraEntries && <MenuItemLink
         to="/extraEntry"
         primaryText="Lisämerkinnät"
         leftIcon={<CreateIcon />}
-      />
+      />}
       {(showExtraEntries && isAdmin) && <MenuItemLink
           to="/extraEntryType"
           primaryText="Merkintätyypit"
