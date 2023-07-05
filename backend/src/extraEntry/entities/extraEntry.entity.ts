@@ -1,5 +1,5 @@
 import { Junior } from 'src/junior/entities';
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 import { ExtraEntryType } from './extraEntryType.entity';
 
 @Entity()

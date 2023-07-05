@@ -1,4 +1,4 @@
-import { FilterDto, SortDto } from "src/common/dto";
+import { FilterDto, ListControlDto, SortDto } from "src/common/dto";
 import { ValueTransformer } from "typeorm";
 
 export const obfuscate = (s: string): string => {
@@ -20,20 +20,33 @@ export class NumberTransformer implements ValueTransformer {
   };
 };
 
+export const getFilters = (controls?: ListControlDto) => {
+  let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
+  if (controls) {
+      order = controls.sort ? applySort(controls.sort) : {};
+      ({ query, filterValues } = controls.filters ? applyFilters(controls.filters) : { query: '', filterValues: [] });
+      take = controls.pagination ? controls.pagination.perPage : 0;
+      skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
+  }
+  return {order, filterValues, query, take, skip}
+}
+
 export const applyFilters = (filterOptions: FilterDto) => {
   const filterValues = {}
   const queryParams = []
 
   Object.keys(filterOptions).forEach(property => {
       if (property === 'name') {
-          queryParams.push(`CONCAT (user.firstName, ' ', user.lastName) ILIKE :${property}`)
-          filterValues[property] = `%${filterOptions[property]}%`
+          queryParams.push("CONCAT (user.firstName, ' ', user.lastName) ILIKE :name")
+          filterValues['name'] = `%${filterOptions['name']}%`
       } else if (property === 'phoneNumber') {
-          queryParams.push(`user.phoneNumber ILIKE :${property}`)
-          filterValues[property] = `%${filterOptions[property]}%`
+          queryParams.push('user.phoneNumber ILIKE :phoneNumber')
+          filterValues['phoneNumber'] = `%${filterOptions['phoneNumber']}%`
       } else if (property === 'parentsPhoneNumber') {
-          queryParams.push(`user.parentsPhoneNumber ILIKE :${property}`)
-          filterValues[property] = `%${filterOptions[property]}%`
+          queryParams.push('user.parentsPhoneNumber ILIKE :parentsPhoneNumber')
+          filterValues['parentsPhoneNumber'] = `%${filterOptions['parentsPhoneNumber']}%`
+      } else if (property === 'extraEntryType') {
+          // this query is conducted after mapping junior entities
       } else {
           queryParams.push(`user.${property} = :${property}`)
           filterValues[property] = filterOptions[property]

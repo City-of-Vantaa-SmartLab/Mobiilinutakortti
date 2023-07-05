@@ -21,7 +21,7 @@ import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
-import { applyFilters, applySort, obfuscate } from 'src/utils/helpers';
+import { applyFilters, applySort, getFilters, obfuscate } from 'src/utils/helpers';
 import { ConfigHelper } from '../configHandler';
 import { Status } from './enum/status.enum';
 
@@ -41,23 +41,27 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
-        if (controls) {
-            order = controls.sort ? applySort(controls.sort) : {};
-            ({ query, filterValues } = controls.filters ? applyFilters(controls.filters) : { query: '', filterValues: [] });
-            take = controls.pagination ? controls.pagination.perPage : 0;
-            skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
-        }
-        const total = await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .getCount()
+    public async getAllJuniorsQuery(filters?: any, extraEntries?: boolean) {
+        return extraEntries ? 
+            this.juniorRepo.createQueryBuilder('user')
+            .leftJoinAndSelect('user.extraEntries', 'extraEntry')
+            .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+            : 
+            this.juniorRepo.createQueryBuilder('user')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+    }
 
-        const response = (await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .orderBy(order)
-            .take(take)
-            .skip(skip)
+    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
+        const filters = getFilters(controls);
+        const juniorQueries = await this.getAllJuniorsQuery(filters);
+        const total = await juniorQueries.getCount();
+
+        const response = (await juniorQueries
+            .take(filters.take)
+            .skip(filters.skip)
             .getMany())
             .map(e => new JuniorUserViewModel(e));
 

@@ -7,10 +7,11 @@ import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { CreateExtraEntryTypeDto } from './dto/create.dto';
 import { ConfigHelper } from 'src/configHandler';
 import { Junior } from 'src/junior/entities';
-import { applyFilters, applySort } from 'src/utils/helpers';
+import { applyFilters, applySort, getFilters } from 'src/utils/helpers';
 import { ListControlDto } from 'src/common/dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryViewModel } from './vm/extraEntry.vm';
+import { JuniorService } from 'src/junior/junior.service';
 
 @Injectable()
 export class ExtraEntryService {
@@ -21,6 +22,7 @@ export class ExtraEntryService {
         private readonly extraEntryTypeRepo: Repository<ExtraEntryType>,
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
+        private readonly juniorService: JuniorService,
         ) { }
 
     async createExtraEntry(extraEntryData: CreateExtraEntryTypeDto){
@@ -59,32 +61,22 @@ export class ExtraEntryService {
     }
 
     async getAllExtraEntries(controls?: ListControlDto, userId?: string): Promise<ExtraEntryListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
-        if (controls) {
-            order = controls.sort ? applySort(controls.sort) : {};
-            ({ query, filterValues } = controls.filters ? applyFilters(controls.filters) : { query: '', filterValues: [] });
-            take = controls.pagination ? controls.pagination.perPage : 0;
-            skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
-        }
-        const total = await this.juniorRepo.createQueryBuilder('user')
-            .innerJoinAndSelect('user.extraEntries', 'extraEntries')
-            .where(query ? query : '1=1', filterValues)
-            .andWhere('user.extraEntries IS NOT NULL')
-            .getCount()
+        const filters = getFilters(controls);
+        const juniorQueries = await this.juniorService.getAllJuniorsQuery(filters, true);
+        const total = await juniorQueries.getCount();
 
-        const response = (await this.juniorRepo.createQueryBuilder('user')
-            .innerJoinAndSelect('user.extraEntries', 'extraEntries')
-            .where(query ? query : '1=1', filterValues)
-            .andWhere('user.extraEntries IS NOT NULL')
-            .orderBy(order)
-            .take(take)
-            .skip(skip)
+        const response = (await juniorQueries
+            .take(filters.take)
+            .skip(filters.skip)
             .getMany())
-            .map(e => new ExtraEntryViewModel(e));
+            .map(e => {console.log(e); return new ExtraEntryViewModel(e)});
+        
+        
 
         if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched juniors.`);
+            this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched extra entries for juniors.`);
         }
         return new ExtraEntryListViewModel(response, total);
     }
 };
+

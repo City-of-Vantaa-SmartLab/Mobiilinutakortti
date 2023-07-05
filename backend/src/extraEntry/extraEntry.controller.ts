@@ -6,7 +6,8 @@ import {
     Param,
     Post,
     Get,
-    Body
+    Body,
+    Query
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
@@ -21,6 +22,7 @@ import { CreateExtraEntryTypeDto } from './dto/create.dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryViewModel } from './vm/extraEntry.vm';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
+import { ListControlDto } from 'src/common/dto';
 
 @Controller(`${content.Routes.api}/extraEntry`)
 @ApiTags('ExtraEntry')
@@ -35,8 +37,9 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.ADMIN)
     @Get('list')
     @ApiBearerAuth('admin')
-    async getAllExtraEntries(): Promise<ExtraEntryListViewModel> {
-        return await this.extraEntryService.getAllExtraEntries();
+    async getAllExtraEntries(@Query('controls') query): Promise<ExtraEntryListViewModel> {
+        const controls = query ? JSON.parse(query) as ListControlDto : undefined;
+        return await this.extraEntryService.getAllExtraEntries(controls);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
