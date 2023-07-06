@@ -25,24 +25,23 @@ export class ExtraEntryService {
         private readonly juniorService: JuniorService,
         ) { }
 
-    async createExtraEntry(extraEntryData: CreateExtraEntryTypeDto){
-        const extraEntryType = {
-            name: extraEntryData.name,
-            expiryAge: extraEntryData.expiryAge,
+    async createExtraEntry(extraEntryData: CreateExtraEntryTypeDto, userId?: string): Promise<string> {
+        // TODO implementation, dto, juniorId
+        if (userId && ConfigHelper.detailedLogs()) {
+            this.logger.log({ userId: userId, juniorId: 0 }, `User created extra entry for junior.`);
         }
-        await this.extraEntryTypeRepo.save(extraEntryType);
-        return content.ExtraEntryTypeSaved;
+        return null;
     };
 
     async getExtraEntryType(id: number): Promise<ExtraEntryTypeViewModel> {
         return (await this.extraEntryTypeRepo.findOneBy({ id }));
     };
 
-    async getAllExtraEntryTypes(): Promise<any> {
+    async getAllExtraEntryTypes(): Promise<ExtraEntryTypeViewModel[]> {
         return (await this.extraEntryTypeRepo.find()).map(extraEntryType => new ExtraEntryTypeViewModel(extraEntryType));
     };
 
-    async createExtraEntryType(extraEntryData: CreateExtraEntryTypeDto){
+    async createExtraEntryType(extraEntryData: CreateExtraEntryTypeDto): Promise<string> {
         const extraEntryType = {
             name: extraEntryData.name,
             expiryAge: extraEntryData.expiryAge,

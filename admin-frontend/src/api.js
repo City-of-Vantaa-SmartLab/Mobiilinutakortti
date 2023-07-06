@@ -20,15 +20,15 @@ const apiEndpoints = {
   },
   extraEntry: {
     base: `${appUrl}/extraEntry/`,
-    list: `${appUrl}/extraEntry/list/`,
+    list: `${appUrl}/extraEntry/list`,
     create: `${appUrl}/extraEntry/create`,
     type: `${appUrl}/extraEntry/type/`,
-    typeList: `${appUrl}/extraEntry/type/list/`,
+    typeList: `${appUrl}/extraEntry/type/list`,
     typeCreate: `${appUrl}/extraEntry/type/create`
   },
   youthClub: {
     base: `${appUrl}/club/`,
-    list: `${appUrl}/club/list/`,
+    list: `${appUrl}/club/list`,
     edit: `${appUrl}/club/edit`,
     checkIn: `${appUrl}/club/check-in`,
     logBook: `${appUrl}/club/logbook`,

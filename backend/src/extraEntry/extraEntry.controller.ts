@@ -23,6 +23,7 @@ import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryViewModel } from './vm/extraEntry.vm';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { ListControlDto } from 'src/common/dto';
+import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 
 @Controller(`${content.Routes.api}/extraEntry`)
 @ApiTags('ExtraEntry')
@@ -34,29 +35,29 @@ export class ExtraEntryController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('list')
-    @ApiBearerAuth('admin')
-    async getAllExtraEntries(@Query('controls') query): Promise<ExtraEntryListViewModel> {
+    @ApiBearerAuth('youthWorker')
+    async getAllExtraEntries(@YouthWorker() youthWorker: { userId: string }, @Query('controls') query): Promise<ExtraEntryListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
-        return await this.extraEntryService.getAllExtraEntries(controls);
+        return await this.extraEntryService.getAllExtraEntries(controls, youthWorker.userId);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
-    @ApiBearerAuth('admin')
-    async createExtraEntry(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
-        return new Message(await this.extraEntryService.createExtraEntry(extraEntryTypeData));
+    @ApiBearerAuth('youthWorker')
+    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
+        return new Message(await this.extraEntryService.createExtraEntry(extraEntryTypeData, youthWorker.userId));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('type/list')
-    @ApiBearerAuth('admin')
-    async getAllExtraEntryTypes(): Promise<any> {
+    @ApiBearerAuth('youthWorker')
+    async getAllExtraEntryTypes(): Promise<ExtraEntryTypeViewModel[]> {
         return await this.extraEntryService.getAllExtraEntryTypes();
     }
 
@@ -71,9 +72,9 @@ export class ExtraEntryController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('type/:id')
-    @ApiBearerAuth('admin')
+    @ApiBearerAuth('youthWorker')
     async getExtraEntryType(@Param('id') id: any): Promise<ExtraEntryTypeViewModel> {
         return await this.extraEntryService.getExtraEntryType(id);
     }

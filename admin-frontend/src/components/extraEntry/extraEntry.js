@@ -90,7 +90,7 @@ export const ExtraEntryCreate = (props) => {
                 <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <SelectArrayInput label="Lisämerkinnät" source="extraEntries" choices={extraEntryTypeChoices} validate={required()} />
-            </SimpleForm>        
+            </SimpleForm>
         </Create>
     );
 };
