@@ -66,7 +66,7 @@ export class ExtraEntryService {
         if (controls?.filters?.extraEntryType) {
             juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
         }
-        const juniors = juniorEntities.slice(filters.skip, filters.take).map(e => new ExtraEntryViewModel(e));
+        const juniors = juniorEntities.slice(filters.skip, filters.skip + filters.take).map(e => new ExtraEntryViewModel(e));
 
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId, juniorIds: juniors.map(junior => junior.id) }, `User fetched extra entries for juniors.`);
