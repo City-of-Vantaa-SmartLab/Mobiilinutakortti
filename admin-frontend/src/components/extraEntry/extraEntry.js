@@ -4,7 +4,6 @@ import {
     Datagrid,
     EditButton,
     TextField,
-    Create,
     SimpleForm,
     TextInput,
     SelectInput,
@@ -12,33 +11,22 @@ import {
     Filter,
     Pagination,
     DateInput,
-    useRedirect,
     SelectArrayInput,
     ArrayField,
-    SimpleList
+    SingleFieldList,
+    ChipField,
+    Edit
 } from 'react-admin';
 import { ageValidator, getExtraEntryTypes } from '../../utils';
-
-import { useRecordContext } from 'react-admin';
-
-const CustomEditButton = () => {
-    const record = useRecordContext();
-    const redirect = useRedirect();
-
-    const redirectToEdit = () => {
-        const juniorId = record.id;
-        redirect(`/junior/${juniorId}`)
-    };
-    return <EditButton onClick={redirectToEdit}/>;
-}
 
 export const ExtraEntryList = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
 
     useEffect(() => {
         const addExtraEntryTypesToState = async () => {
-            const parsedExtraEntryTypes = await getExtraEntryTypes();
-            setExtraEntryTypeChoices(parsedExtraEntryTypes);
+            const extraEntryTypes = await getExtraEntryTypes();
+            const typesWithCustomOptions = [...extraEntryTypes, {id: -1, name: "Ei lisämerkintöjä"}, {id: -2, name: "Mikä tahansa lisämerkintä"}]
+            setExtraEntryTypeChoices(typesWithCustomOptions);
         };
         addExtraEntryTypesToState();
     }, []);
@@ -60,29 +48,29 @@ export const ExtraEntryList = (props) => {
                 <TextField source="age" label="Ikä" />
                 <TextField label="Puhelinnumero" source="phoneNumber" />
                 <ArrayField label="Lisämerkinnät" source="extraEntries">
-                    <SimpleList
-                        primaryText={record => record.extraEntryType.name}
-                    />
+                    <SingleFieldList linkType={false} >
+                        <ChipField source="extraEntryType.name" size="small" />
+                    </SingleFieldList>
                 </ArrayField>
-                <CustomEditButton />
+                <EditButton />
             </Datagrid>
         </List>
     )
 };
 
-export const ExtraEntryCreate = (props) => {
+export const ExtraEntryEdit = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
 
     useEffect(() => {
         const addExtraEntryTypesToState = async () => {
-            const parsedExtraEntryTypes = await getExtraEntryTypes();
-            setExtraEntryTypeChoices(parsedExtraEntryTypes);
+            const extraEntryTypes = await getExtraEntryTypes();
+            setExtraEntryTypeChoices(extraEntryTypes);
         };
         addExtraEntryTypesToState();
     }, []);
 
     return (
-        <Create title="Luo lisämerkintä" {...props}>
+        <Edit title="Moukkaa lisämerkintöjä" {...props}>
             <SimpleForm variant="standard" margin="normal">
                 <TextInput label="Etunimi" source="firstName" validate={required()} />
                 <TextInput label="Sukunimi" source="lastName" validate={required()} />
@@ -91,7 +79,7 @@ export const ExtraEntryCreate = (props) => {
                 <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
                 <SelectArrayInput label="Lisämerkinnät" source="extraEntries" choices={extraEntryTypeChoices} validate={required()} />
             </SimpleForm>
-        </Create>
+        </Edit>
     );
 };
 

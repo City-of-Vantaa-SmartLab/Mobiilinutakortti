@@ -17,7 +17,7 @@ import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
-import { ExtraEntryCreate, ExtraEntryList } from './components/extraEntry/extraEntry';
+import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -68,7 +68,7 @@ const App = () => {
                 permissions === 'ADMIN'
                     ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />
                     : null,
-                showExtraEntries && <Resource name="extraEntry" options={{ label: 'Lisämerkinnät' }} list={ExtraEntryList} create={ExtraEntryCreate} />,
+                showExtraEntries && <Resource name="extraEntry" options={{ label: 'Lisämerkinnät' }} list={ExtraEntryList} edit={ExtraEntryEdit} />,
                 permissions === 'ADMIN' && showExtraEntries
                     ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryTypeList} create={ExtraEntryTypeCreate} />
                     : null

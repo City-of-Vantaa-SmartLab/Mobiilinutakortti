@@ -25,12 +25,12 @@ export class ExtraEntryService {
         private readonly juniorService: JuniorService,
         ) { }
 
-    async createExtraEntry(extraEntryData: CreateExtraEntryTypeDto, userId?: string): Promise<string> {
+    async editExtraEntry(extraEntryData: CreateExtraEntryTypeDto, userId?: string): Promise<string> {
         // TODO implementation, dto, juniorId
         if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: 0 }, `User created extra entry for junior.`);
+            this.logger.log({ userId: userId, juniorId: 0 }, `User edited extra entry for junior.`);
         }
-        return null;
+        return 'Päivitys epäonnistui!';
     };
 
     async getExtraEntryType(id: number): Promise<ExtraEntryTypeViewModel> {
@@ -64,7 +64,13 @@ export class ExtraEntryService {
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
         if (controls?.filters?.extraEntryType) {
-            juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
+            if (controls?.filters?.extraEntryType === -1) {
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.extraEntries) && j.extraEntries.length === 0);
+            } else if (controls?.filters?.extraEntryType === -2) {
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.extraEntries) && j.extraEntries.length > 0);
+            } else { 
+                juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
+            }
         }
         const juniors = juniorEntities.slice(filters.skip, filters.skip + filters.take).map(e => new ExtraEntryViewModel(e));
 
