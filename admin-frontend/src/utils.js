@@ -69,3 +69,5 @@ export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
 ));
 
 export const isSubstring = (mainString, subString) => mainString.includes(subString);
+
+export const getExtraEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);

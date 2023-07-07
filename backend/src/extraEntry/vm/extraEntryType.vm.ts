@@ -2,12 +2,12 @@ import { ExtraEntryType } from '../entities';
 
 export class ExtraEntryTypeViewModel {
     id: number;
-    title: string;
+    name: string;
     expiryAge: number;
 
     constructor(extraEntryType: ExtraEntryType) {
         this.id = extraEntryType.id;
-        this.title = extraEntryType.title;
+        this.name = extraEntryType.name;
         this.expiryAge = extraEntryType.expiryAge;
     }
 }

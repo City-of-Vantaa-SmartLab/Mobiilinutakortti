@@ -7,7 +7,7 @@ export class ExtraEntryType {
     id: number;
 
     @Column()
-    title: string;
+    name: string;
 
     @Column()
     expiryAge: number;

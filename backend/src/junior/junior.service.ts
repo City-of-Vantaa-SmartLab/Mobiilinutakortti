@@ -10,18 +10,18 @@ import {
 } from '@nestjs/common';
 import { YouthWorker } from '../youthWorker/entities';
 import { Junior, Challenge } from './entities';
-import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
-import { ListControlDto, SortDto, FilterDto } from '../common/dto';
+import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
-import { obfuscate } from 'src/utils/helpers';
+import { applyFilters, applySort, getFilters, obfuscate } from 'src/utils/helpers';
 import { ConfigHelper } from '../configHandler';
 import { Status } from './enum/status.enum';
 
@@ -41,23 +41,27 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
-        if (controls) {
-            order = controls.sort ? this.applySort(controls.sort) : {};
-            ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
-            take = controls.pagination ? controls.pagination.perPage : 0;
-            skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
-        }
-        const total = await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .getCount()
+    public getAllJuniorsQuery(filters?: any, extraEntries?: boolean): SelectQueryBuilder<Junior> {
+        return extraEntries ?
+            this.juniorRepo.createQueryBuilder('user')
+            .leftJoinAndSelect('user.extraEntries', 'extraEntry')
+            .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+            :
+            this.juniorRepo.createQueryBuilder('user')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+    }
 
-        const response = (await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .orderBy(order)
-            .take(take)
-            .skip(skip)
+    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
+        const filters = getFilters(controls);
+        const juniorQueries = this.getAllJuniorsQuery(filters);
+        const total = await juniorQueries.getCount();
+
+        const response = (await juniorQueries
+            .take(filters.take)
+            .skip(filters.skip)
             .getMany())
             .map(e => new JuniorUserViewModel(e));
 
@@ -65,36 +69,6 @@ export class JuniorService {
             this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched juniors.`);
         }
         return new JuniorListViewModel(response, total);
-    }
-
-    private applyFilters(filterOptions: FilterDto) {
-        const filterValues = {}
-        const queryParams = []
-
-        Object.keys(filterOptions).forEach(property => {
-            if (property === 'name') {
-                queryParams.push(`CONCAT (user.firstName, ' ', user.lastName) ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else if (property === 'phoneNumber') {
-                queryParams.push(`user.phoneNumber ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else if (property === 'parentsPhoneNumber') {
-                queryParams.push(`user.parentsPhoneNumber ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else {
-                queryParams.push(`user.${property} = :${property}`)
-                filterValues[property] = filterOptions[property]
-            }
-        })
-        const query = queryParams.join(' AND ')
-        return { query, filterValues }
-    }
-
-    private applySort(sortOptions: SortDto) {
-        const order = {};
-        if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
-        if (sortOptions.field) { order[`user.${sortOptions.field}`] = sortOptions.order; }
-        return order;
     }
 
     async getJunior(id: string, userId?: string): Promise<Junior> {

@@ -5,7 +5,7 @@ import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
-import { ExtraEntryList, ExtraEntryCreate} from './components/extraEntryType';
+import { ExtraEntryTypeList, ExtraEntryTypeCreate} from './components/extraEntry/extraEntryType';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, adminRoutes } from './customRoutes';
@@ -17,6 +17,7 @@ import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
+import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 
 const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
@@ -67,8 +68,9 @@ const App = () => {
                 permissions === 'ADMIN'
                     ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />
                     : null,
+                showExtraEntries && <Resource name="extraEntry" options={{ label: 'Lisämerkinnät' }} list={ExtraEntryList} edit={ExtraEntryEdit} />,
                 permissions === 'ADMIN' && showExtraEntries
-                    ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryList} create={ExtraEntryCreate} />
+                    ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryTypeList} create={ExtraEntryTypeCreate} />
                     : null
             ]}
         </Admin>
@@ -76,3 +78,5 @@ const App = () => {
 }
 
 export default App;
+
+

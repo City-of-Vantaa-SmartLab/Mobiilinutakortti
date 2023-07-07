@@ -41,7 +41,6 @@ const SMSwarning = () => (
 
 
 export const JuniorList = (props) => {
-
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
     const notify = useNotify();
 

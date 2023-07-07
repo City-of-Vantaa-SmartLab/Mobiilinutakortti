@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 export class CreateExtraEntryTypeDto {
 
     @IsNotEmpty()
-    title: string;
+    name: string;
 
     @IsNotEmpty()
     expiryAge: number;

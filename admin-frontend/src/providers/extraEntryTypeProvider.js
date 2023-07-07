@@ -7,10 +7,17 @@ export const extraEntryTypeProvider = (type, params, httpClient) => {
     let options;
     switch (type) {
         case GET_ONE: {
-            return {
-                title: undefined,
-                expiryAge: undefined
-            }
+            url = api.extraEntry.type + params.id;
+            options = {
+                method: 'GET'
+            };
+            return httpClient(url, options)
+                .then(response => {
+                    if (response.statusCode < 200 || response.statusCode >= 300) {
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                    }
+                    return { data: response };
+                });
         }
         case GET_LIST: {
             url = api.extraEntry.typeList;
@@ -28,7 +35,7 @@ export const extraEntryTypeProvider = (type, params, httpClient) => {
         case CREATE: {
             const data = JSON.stringify({
                 expiryAge: params.data.expiryAge,
-                title: params.data.title
+                name: params.data.name
             });
             url = api.extraEntry.typeCreate;
             options = {

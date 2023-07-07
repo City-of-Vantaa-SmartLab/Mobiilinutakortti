@@ -6,7 +6,8 @@ import {
     Param,
     Post,
     Get,
-    Body
+    Body,
+    Query
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
@@ -18,7 +19,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Message } from 'src/common/vm';
 import { ExtraEntryService } from './extraEntry.service';
 import { CreateExtraEntryTypeDto } from './dto/create.dto';
-import { JuniorExtraEntryViewModel } from 'src/junior/vm/juniorExtraEntry.vm';
+import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
+import { ExtraEntryViewModel } from './vm/extraEntry.vm';
+import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
+import { ListControlDto } from 'src/common/dto';
+import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 
 @Controller(`${content.Routes.api}/extraEntry`)
 @ApiTags('ExtraEntry')
@@ -30,11 +35,39 @@ export class ExtraEntryController {
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.ADMIN)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Get('list')
+    @ApiBearerAuth('youthWorker')
+    async getAllExtraEntries(@YouthWorker() youthWorker: { userId: string }, @Query('controls') query): Promise<ExtraEntryListViewModel> {
+        const controls = query ? JSON.parse(query) as ListControlDto : undefined;
+        return await this.extraEntryService.getAllExtraEntries(controls, youthWorker.userId);
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Post('edit')
+    @ApiBearerAuth('youthWorker')
+    async editExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
+        return new Message(await this.extraEntryService.editExtraEntry(extraEntryTypeData, youthWorker.userId));
+    };
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Get(':id')
+    @ApiBearerAuth('youthWorker')
+    async getExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('id') id: string): Promise<any> {
+        return await this.extraEntryService.getExtraEntriesForJunior(id, youthWorker.userId);
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Get('type/list')
-    @ApiBearerAuth('admin')
-    async getAllExtraTypes(): Promise<any> {
-        return await this.extraEntryService.getAllExtraTypes();
+    @ApiBearerAuth('youthWorker')
+    async getAllExtraEntryTypes(): Promise<ExtraEntryTypeViewModel[]> {
+        return await this.extraEntryService.getAllExtraEntryTypes();
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -42,16 +75,16 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.ADMIN)
     @Post('type/create')
     @ApiBearerAuth('admin')
-    async createExtraEntry(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
-        return new Message(await this.extraEntryService.createExtraEntry(extraEntryTypeData));
+    async createExtraEntryType(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
+        return new Message(await this.extraEntryService.createExtraEntryType(extraEntryTypeData));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Post(':id')
+    @Get('type/:id')
     @ApiBearerAuth('youthWorker')
-    async getExtraEntriesForJunior(@Param('id') id: string): Promise<JuniorExtraEntryViewModel>  {
-        return new JuniorExtraEntryViewModel(await this.extraEntryService.getExtraEntriesForJunior(id));
-    };
+    async getExtraEntryType(@Param('id') id: number): Promise<ExtraEntryTypeViewModel> {
+        return await this.extraEntryService.getExtraEntryType(id);
+    }
 }
