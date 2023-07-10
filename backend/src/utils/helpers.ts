@@ -37,18 +37,18 @@ export const applyFilters = (filterOptions: FilterDto) => {
 
   Object.keys(filterOptions).forEach(property => {
       if (property === 'name') {
-          queryParams.push("CONCAT (user.firstName, ' ', user.lastName) ILIKE :name")
+          queryParams.push("CONCAT (junior.firstName, ' ', junior.lastName) ILIKE :name")
           filterValues['name'] = `%${filterOptions.name}%`
       } else if (property === 'phoneNumber') {
-          queryParams.push('user.phoneNumber ILIKE :phoneNumber')
+          queryParams.push('junior.phoneNumber ILIKE :phoneNumber')
           filterValues['phoneNumber'] = `%${filterOptions.phoneNumber}%`
       } else if (property === 'parentsPhoneNumber') {
-          queryParams.push('user.parentsPhoneNumber ILIKE :parentsPhoneNumber')
+          queryParams.push('junior.parentsPhoneNumber ILIKE :parentsPhoneNumber')
           filterValues['parentsPhoneNumber'] = `%${filterOptions.parentsPhoneNumber}%`
       } else if (property === 'extraEntryType') {
           // This filtering is done after database query.
       } else {
-          queryParams.push(`user.${property} = :${property}`)
+          queryParams.push(`junior.${property} = :${property}`)
           filterValues[property] = filterOptions[property]
       }
   })
@@ -59,7 +59,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
 export const applySort = (sortOptions: SortDto) => {
   const order = {};
   if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
-  if (sortOptions.field) { order[`user.${sortOptions.field}`] = sortOptions.order; }
+  if (sortOptions.field) { order[`junior.${sortOptions.field}`] = sortOptions.order; }
   return order;
 }
 

@@ -67,7 +67,7 @@ const Menu = () => {
         />
       }
       {isAdmin && <MenuItemLink
-          to="/deleteExpiredUsers"
+          to="/deleteExpiredJuniors"
           primaryText="Poista vanhat käyttäjät"
           leftIcon={<DeleteIcon />}
         />

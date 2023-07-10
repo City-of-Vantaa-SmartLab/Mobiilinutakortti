@@ -10,9 +10,9 @@ import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import styled from 'styled-components';
-import { Status } from '../utils';
+import { Status, statusChoices } from '../utils';
 
-const getExpiredUsers = () =>
+const getExpiredJuniors = () =>
   juniorProvider(
     GET_LIST,
     {
@@ -27,7 +27,9 @@ const InputContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const DeleteExpiredUsers = () => {
+const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+
+const DeleteExpiredJuniors = () => {
   const notify = useNotify();
   const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
 
@@ -40,7 +42,7 @@ const DeleteExpiredUsers = () => {
       setState(STATE.LOADING);
 
       try {
-        const { total } = await getExpiredUsers();
+        const { total } = await getExpiredJuniors();
         setExpiredUserCount(total);
       } catch (error) {
         notifyError('Käyttäjien haku epäonnistui');
@@ -81,22 +83,22 @@ const DeleteExpiredUsers = () => {
     return true;
   };
 
-  const deleteExpiredUsers = async () => {
-    const response = await httpClient(api.junior.deleteExpiredUsers, {
+  const deleteExpiredJuniors = async () => {
+    const response = await httpClient(api.junior.deleteExpired, {
       method: 'DELETE',
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
       notifyError('Virhe poistettaessa käyttäjiä');
       setState(STATE.INITIAL);
     } else {
-      notify('Vanhentuneet käyttäjät poistettu', 'success');
+      notify(response.message, 'success');
       setState(STATE.DONE);
     }
   };
 
   const handleClick = async () => {
     setState(STATE.LOADING);
-    (await authenticate()) && deleteExpiredUsers();
+    (await authenticate()) && deleteExpiredJuniors();
   };
 
   if (state === STATE.DONE) {
@@ -108,9 +110,13 @@ const DeleteExpiredUsers = () => {
       <Title title="Poista vanhat käyttäjät"></Title>
       <CardContent>
         <p>
-          Vanhojen käyttäjien poistaminen poistaa järjestelmästä kaikki
-          käyttäjätiedot nuorilta, joiden tila on "Tunnus vanhentunut". Näitä
-          käyttäjiä on yhteensä {expiredUserCount}.
+          Tämä toiminto poistaa järjestelmästä nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.expired).name}".
+        </p>
+        {showExtraEntries && <p>
+          Mikäli poistettavalla nuorella on lisämerkintöjä häntä ei poisteta, mutta tilakseen muutetaan "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}". Viimeisten lisämerkintöjensä vanhentuessa nuoret poistetaan järjestelmästä automaattisesti vuorokauden sisällä.
+        </p>}
+        <p>
+          Toiminto vaikuttaa {expiredUserCount} nuoreen.
         </p>
         <p>Kirjoita salasanasi, jos haluat jatkaa.</p>
         <InputContainer>
@@ -136,4 +142,4 @@ const DeleteExpiredUsers = () => {
   );
 };
 
-export default DeleteExpiredUsers;
+export default DeleteExpiredJuniors;

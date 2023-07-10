@@ -9,7 +9,7 @@ const apiEndpoints = {
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${appUrl}/junior/newSeason`,
-    deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
+    deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
     login: `${appUrl}/youthworker/login`,

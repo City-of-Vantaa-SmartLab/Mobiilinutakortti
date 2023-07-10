@@ -37,7 +37,7 @@ export const ParentsPhoneNumberNotValid = "Huoltajan puhelinnumero on virheellin
 export const SecurityContextNotValid = "Käyttäjätunnistuksessa tapahtui virhe, tunnistaudu Suomi.fi:n kautta uudelleen"
 export const JuniorAccountNotConfirmedOrFound = "Käyttäjätiliä ei ole tai sitä ei ole vielä hyväksytty"
 export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${count} käyttäjää asetettu tilaan "tunnus vanhentunut"`
-export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
+export const ExpiredUsersDeleted = (countRemoved: number, countExtraEntries: number) => `${countRemoved} vanhentunutta tunnusta poistettu, ${countExtraEntries} asetettu merkintärekisteriin`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
   fi: (recipientName: string, link: string, clubSpecificMessage: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}\n\n${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,
