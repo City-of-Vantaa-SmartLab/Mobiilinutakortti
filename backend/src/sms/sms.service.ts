@@ -86,8 +86,8 @@ export class SmsService {
                     this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
                     return false;
                 }
-            }).catch(() => {
-                this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+            }).catch((error) => {
+                this.logger.log('Batch send failed: endpoint responded with a non 200 status:', error);
                 return false;
             });
     }
