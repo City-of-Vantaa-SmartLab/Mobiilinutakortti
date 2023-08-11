@@ -76,9 +76,9 @@ export class SmsService {
      */
     private async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
-        const response = await this.httpService.post(endpoint, messageRequest).toPromise();
 
         try {
+            const response = await this.httpService.post(endpoint, messageRequest).toPromise();
             const { batchid, batchstatuscode, batchstatusdescription } = response.data;
             if (batchstatuscode === 1) {
                 this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
