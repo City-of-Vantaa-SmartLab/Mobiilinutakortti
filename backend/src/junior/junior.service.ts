@@ -358,7 +358,10 @@ export class JuniorService {
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .where('junior.status = :expiredStatus', { expiredStatus: Status.expired })
             .getMany();
+
+        // TODO: extra entry permits
         const extraEntryJuniorIds = expiredJuniors.filter(j => j.extraEntries.length > 0).map(j => j.id);
+        extraEntryJuniorIds.push("dummy-id-for-where-clause");
 
         const updated: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
             .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
@@ -371,6 +374,25 @@ export class JuniorService {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
         return content.ExpiredUsersDeleted(deleted.affected, updated.affected);
+    }
+
+    // Delete juniors that are only in the extra entry registry but who have no extra entries.
+    async cleanUpExtraEntryJuniors(): Promise<void> {
+        const extraEntryJuniors = await this.juniorRepo.createQueryBuilder()
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .where('junior.status = :extraEntriesOnly', { extraEntriesOnly: Status.extraEntriesOnly })
+            .getMany();
+
+        // TODO: extra entry permits
+        const removeJuniorIds = extraEntryJuniors.filter(j => j.extraEntries.length === 0).map(j => j.id);
+        if (removeJuniorIds.length > 0) {
+            const deleted: DeleteResult = await this.juniorRepo.createQueryBuilder()
+                .where('junior.id IN (:...removeJuniorIds)', { removeJuniorIds })
+                .delete()
+                .execute();
+
+            this.logger.log(`Deleted ${deleted.affected} extra entry registry juniors with no extra entries or permits.`);
+        }
     }
 
     /**

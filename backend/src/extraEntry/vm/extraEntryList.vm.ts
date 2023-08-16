@@ -1,10 +1,10 @@
-import { ExtraEntryViewModel } from "./extraEntry.vm";
+import { JuniorExtraEntriesViewModel } from "./juniorExtraEntries.vm";
 
 export class ExtraEntryListViewModel {
-    data: ExtraEntryViewModel[];
+    data: JuniorExtraEntriesViewModel[];
     total: number;
 
-    constructor(data: ExtraEntryViewModel[], total: number) {
+    constructor(data: JuniorExtraEntriesViewModel[], total: number) {
       this.data = data;
       this.total = total;
     }

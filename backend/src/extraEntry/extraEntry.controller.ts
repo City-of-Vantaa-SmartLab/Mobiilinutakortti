@@ -20,7 +20,6 @@ import { Message } from 'src/common/vm';
 import { ExtraEntryService } from './extraEntry.service';
 import { CreateExtraEntryTypeDto } from './dto/create.dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
-import { ExtraEntryViewModel } from './vm/extraEntry.vm';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { ListControlDto } from 'src/common/dto';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';

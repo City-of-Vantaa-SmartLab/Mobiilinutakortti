@@ -3,7 +3,7 @@ import { Junior } from 'src/junior/entities';
 import { formatName } from 'src/junior/junior.helper';
 import { calculateAge } from 'src/utils/helpers';
 
-export class ExtraEntryViewModel {
+export class JuniorExtraEntriesViewModel {
     id: string;
     displayName: string;
     firstName: string;
