@@ -18,6 +18,22 @@ const prepareCheckIn = (id) => {
   errorSound.pause();
   errorSound.currentTime = 0;
   sessionStorage.setItem("initialCheckIn", id);
+  sessionStorage.setItem("facingMode", "user");
+  successSound.volume = 1;
+  errorSound.volume = 1;
+}
+
+const prepareCheckIn2 = (id) => {
+  successSound.volume = 0;
+  successSound.play();
+  successSound.pause();
+  successSound.currentTime = 0;
+  errorSound.volume = 0;
+  errorSound.play();
+  errorSound.pause();
+  errorSound.currentTime = 0;
+  sessionStorage.setItem("initialCheckIn", id);
+  sessionStorage.setItem("facingMode", "environment");
   successSound.volume = 1;
   errorSound.volume = 1;
 }
@@ -28,7 +44,8 @@ const OpenCheckInButton = (props) => {
       pathname: `/checkIn/${props.record.id}`,
       state: {record: props.record}
     }}>
-      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" >Kirjautuminen</Button>
+      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" >Kirjautuminen etukameralla</Button>
+      <Button onClick={() => prepareCheckIn2(props.record.id)} variant="contained" >Kirjautuminen takakameralla</Button>
     </Link>
 )}
 
