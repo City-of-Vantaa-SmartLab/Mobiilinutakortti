@@ -1,10 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateExtraEntryDto {
+export class CreateExtraEntryTypeDto {
 
     @IsNotEmpty()
-    juniorId: string;
+    name: string;
 
     @IsNotEmpty()
-    extraEntryTypeId: number;
+    expiryAge: number;
 }

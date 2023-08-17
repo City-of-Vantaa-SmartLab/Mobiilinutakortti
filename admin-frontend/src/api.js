@@ -21,7 +21,8 @@ const apiEndpoints = {
   extraEntry: {
     base: `${appUrl}/extraEntry/`,
     list: `${appUrl}/extraEntry/list`,
-    edit: `${appUrl}/extraEntry/edit`,
+    create: `${appUrl}/extraEntry/create`,
+    delete: `${appUrl}/extraEntry/delete`,
     type: `${appUrl}/extraEntry/type/`,
     typeList: `${appUrl}/extraEntry/type/list`,
     typeCreate: `${appUrl}/extraEntry/type/create`

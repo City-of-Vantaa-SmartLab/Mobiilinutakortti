@@ -4,20 +4,21 @@ import { formatName } from 'src/junior/junior.helper';
 import { calculateAge } from 'src/utils/helpers';
 
 export class JuniorExtraEntriesViewModel {
+    age: number;
+    birthday: string;
     id: string;
     displayName: string;
-    firstName: string;
-    lastName: string;
-    nickName: string;
-    age: number;
-    phoneNumber: string;
     extraEntries: ExtraEntry[];
-
+    phoneNumber: string;
+    status: string;
+    
     constructor(entity: Junior) {
-        this.id = entity.id;
-        this.displayName = formatName(entity.firstName, entity.lastName, entity.nickName);
         this.age = calculateAge(entity.birthday);
-        this.phoneNumber = entity.phoneNumber;
+        this.birthday = entity.birthday;
+        this.displayName = formatName(entity.firstName, entity.lastName, entity.nickName);
         this.extraEntries = entity.extraEntries;
+        this.id = entity.id;
+        this.phoneNumber = entity.phoneNumber;
+        this.status = entity.status;
     }
 }
