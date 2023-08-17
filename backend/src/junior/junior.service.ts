@@ -21,7 +21,7 @@ import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
-import { applyFilters, applySort, getFilters, obfuscate } from 'src/utils/helpers';
+import { getFilters, obfuscate } from 'src/utils/helpers';
 import { ConfigHelper } from '../configHandler';
 import { Status } from './enum/status.enum';
 
@@ -43,13 +43,13 @@ export class JuniorService {
 
     public getAllJuniorsQuery(filters?: any, extraEntries?: boolean): SelectQueryBuilder<Junior> {
         return extraEntries ?
-            this.juniorRepo.createQueryBuilder('user')
-            .leftJoinAndSelect('user.extraEntries', 'extraEntry')
+            this.juniorRepo.createQueryBuilder('junior')
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
             .where(filters.query ? filters.query : '1=1', filters.filterValues)
             .orderBy(filters.order)
             :
-            this.juniorRepo.createQueryBuilder('user')
+            this.juniorRepo.createQueryBuilder('junior')
             .where(filters.query ? filters.query : '1=1', filters.filterValues)
             .orderBy(filters.order)
     }
@@ -324,12 +324,16 @@ export class JuniorService {
     }
 
     async createNewSeason({ expireDate }: SeasonExpiredDto, userId?: string): Promise<string> {
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder()
+            .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
+            .update()
+            .set({ status: Status.expired })
+            .execute();
+        const juniors = await this.juniorRepo.find();
+
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User created new season.`);
         }
-
-        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: Status.accepted }).execute()
-        const juniors = await this.juniorRepo.find();
 
         // This SMS is sent to the parents. We don't know the parent's preferred communications language, so we must use the junior's language.
         // NB: the SMS is sent to each parent regardless if they have agreed on receiving announcement SMSs or not. This case is mentioned in the end user agreement.
@@ -337,19 +341,58 @@ export class JuniorService {
             lang: junior.communicationsLanguage as content.Language,
             name: `${junior.firstName} ${junior.lastName}`,
             phoneNumber: junior.parentsPhoneNumber,
-        }));
+        }))
+        .filter(r => r.phoneNumber.substring(0, 6) !== "358777") // Skip test data numbers.
+        .filter(r => r.phoneNumber.substring(0, 6) !== "358999"); // Skip dummy phone numbers.
 
+        // NB: if SMS sending fails, the junior statuses have still been set.
         await this.smsService.sendNewSeasonSMS(recipients, expireDate);
 
         return content.NewSeasonCreated(result.affected);
     }
 
     async deleteExpired(userId?: string): Promise<string> {
-        const result: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
+        // Set expired juniors to extraEntriesOnly if they have any extra entries.
+        // When the extra entries expire, the juniors are automatically removed by nightly cleanup routines.
+        const expiredJuniors = await this.juniorRepo.createQueryBuilder('junior')
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .where('junior.status = :expiredStatus', { expiredStatus: Status.expired })
+            .getMany();
+
+        // TODO: extra entry permits
+        const extraEntryJuniorIds = expiredJuniors.filter(j => j.extraEntries.length > 0).map(j => j.id);
+        extraEntryJuniorIds.push("dummy-id-for-where-clause");
+
+        const updated: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
+            .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
+            .update()
+            .set({ status: Status.extraEntriesOnly })
+            .execute();
+
+        const deleted: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
-        return content.ExpiredUsersDeleted(result.affected);
+        return content.ExpiredUsersDeleted(deleted.affected, updated.affected);
+    }
+
+    // Delete juniors that are only in the extra entry registry but who have no extra entries.
+    async cleanUpExtraEntryJuniors(): Promise<void> {
+        const extraEntryJuniors = await this.juniorRepo.createQueryBuilder()
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .where('junior.status = :extraEntriesOnly', { extraEntriesOnly: Status.extraEntriesOnly })
+            .getMany();
+
+        // TODO: extra entry permits
+        const removeJuniorIds = extraEntryJuniors.filter(j => j.extraEntries.length === 0).map(j => j.id);
+        if (removeJuniorIds.length > 0) {
+            const deleted: DeleteResult = await this.juniorRepo.createQueryBuilder()
+                .where('junior.id IN (:...removeJuniorIds)', { removeJuniorIds })
+                .delete()
+                .execute();
+
+            this.logger.log(`Deleted ${deleted.affected} extra entry registry juniors with no extra entries or permits.`);
+        }
     }
 
     /**
@@ -385,7 +428,7 @@ export class JuniorService {
                 school: school_names[Math.floor(Math.random() * school_names.length)],
                 class: class_names[Math.floor(Math.random() * class_names.length)],
                 parentsName: first_names[Math.floor(Math.random() * first_names.length)] + " " + last_names[Math.floor(Math.random() * last_names.length)],
-                parentsPhoneNumber: "358400" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
+                parentsPhoneNumber: "358777" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
                 communicationsLanguage: 'fi',
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,

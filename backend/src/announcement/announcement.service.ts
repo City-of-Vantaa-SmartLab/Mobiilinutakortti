@@ -55,7 +55,7 @@ export class AnnouncementService {
     };
 
     private splitToBatches(recipientEmails: string[], batchSize: number): Array<string[]> {
-        const batchArrays = []; 
+        const batchArrays = [];
         for (let i = 0; i < recipientEmails.length; i += batchSize)
             batchArrays.push(recipientEmails.slice(i, i + batchSize));
         return batchArrays;
@@ -70,7 +70,7 @@ export class AnnouncementService {
             };
         });
     };
-    
+
     async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
         const settings = SMSConfig.getTeliaConfig();
 
@@ -79,15 +79,17 @@ export class AnnouncementService {
 
         const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionParent)
+            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 6) !== "358777")
             .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 6) !== "358999")
             .map((recipient: Junior) => ({
                 t: recipient.parentsPhoneNumber,
                 m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
             })
         ) : [];
-        
+
         const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionJunior)
+                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 6) !== "358777")
                 .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 6) !== "358999")
                 .map((recipient: Junior) => ({
                     t: recipient.phoneNumber,
@@ -98,7 +100,7 @@ export class AnnouncementService {
         const batch: BatchItem[] = parentBatch.concat(juniorBatch);
 
         if (batch.length < 1) {
-            throw new BadRequestException(content.RecipientsNotFound); 
+            throw new BadRequestException(content.RecipientsNotFound);
         };
 
         const messageRequest = {
@@ -107,7 +109,7 @@ export class AnnouncementService {
             from: settings.user,
             batch,
         } as TeliaBatchMessageRequest;
-        
+
         const attemptMessage = await this.smsService.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint);
         if (attemptMessage) {
             return content.SmsBatchSent;
@@ -121,7 +123,7 @@ export class AnnouncementService {
 
         const youthClubId = announcementData.youthClub;
         const selectedRecipients = !youthClubId ? await this.getAllForRecipients() : await this.getSelectedRecipients(youthClubId);
-        
+
         const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "en"), 50);
         const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "sv"), 50);
         const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
@@ -134,7 +136,7 @@ export class AnnouncementService {
         this.createEmailDataForLanguage(announcementData, recipientBatchesEn, "en").concat(
         this.createEmailDataForLanguage(announcementData, recipientBatchesSv, "sv")).concat(
         this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
-        
+
         const responses = Promise.all(emails.map(async (e) => {
             return await this.emailService.batchSendEmailsToUsers(e, settings)
         }));

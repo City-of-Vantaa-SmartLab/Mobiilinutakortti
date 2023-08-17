@@ -153,7 +153,7 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
-    @Delete('newSeason/clearExpired')
+    @Delete('newSeason/deleteExpired')
     @ApiBearerAuth('admin')
     async deleteExpiredJuniors(@YouthWorker() admin: { userId: string }) {
         return new Message(await this.juniorService.deleteExpired(admin.userId));
