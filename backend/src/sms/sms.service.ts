@@ -76,20 +76,21 @@ export class SmsService {
      */
     private async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
-        return this.httpService.post(endpoint, messageRequest).toPromise().then(
-            response => {
-                const { batchid, batchstatuscode, batchstatusdescription } = response.data;
-                if (batchstatuscode === 1) {
-                    this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return true;
-                } else {
-                    this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return false;
-                }
-            }).catch(() => {
-                this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
-                return false;
-            });
+
+        try {
+            const response = await this.httpService.post(endpoint, messageRequest).toPromise();
+            const { batchid, batchstatuscode, batchstatusdescription } = response.data;
+            if (batchstatuscode === 1) {
+                this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
+                return true;
+            } else {
+                this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
+            }
+        } catch (error) {
+            this.logger.log('Batch send failed: endpoint responded with a non 200 status and error:', error);
+        }
+
+        return false;
     }
 
     /**
