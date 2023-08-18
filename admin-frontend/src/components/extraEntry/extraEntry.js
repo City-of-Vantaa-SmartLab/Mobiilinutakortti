@@ -128,7 +128,7 @@ export const ExtraEntryEdit = (props) => {
                         };
 
                         const handleSelectChange = (e) => {
-                            setNewExtraEntryType(e.target.value)
+                            setNewExtraEntryType(e.target.value);
                         };
 
                         const handleAdd = async () => {
