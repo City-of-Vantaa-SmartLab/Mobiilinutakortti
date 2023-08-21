@@ -15,6 +15,8 @@ More detailed documentation is found in a README in respective directories of ea
 
 **Only Docker is needed to run the app.** If you want to run backend locally, you'll need NodeJS and PostgreSQL installed. More info in ./backend/README.md.
 
+For production use, Telia SMS service is required. Note that there are two endpoints (see environment variables section in backend documentation). **The use of the batch endpoint requires permit separately from Telia. Ensure your credentials have the permit.**
+
 ## Technologies
 
 - Frontend : React *(running on port 3001)*

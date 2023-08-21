@@ -108,6 +108,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
 * `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
+* `TELIA_BATCH_ENDPOINT`: Telia SMS service batch endpoint URL. NB: your Telia credentials must have a separate permit to use the end point.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
