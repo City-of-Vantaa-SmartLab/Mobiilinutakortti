@@ -27,7 +27,7 @@ import {
 } from 'react-admin';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getExtraEntryTypes, statusChoices } from '../../utils';
-import { ExtraEntryTable, ExtraEntryButton } from '../styledComponents/extraEntry';
+import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
 
@@ -76,7 +76,6 @@ export const ExtraEntryList = (props) => {
         </List>
     )
 };
-
 
 const CustomToolbar = ({cancel, ...others}) => (
     <Toolbar {...others}>
@@ -191,7 +190,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <Select
+                                            {availableChoices.length > 0 ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handleSelectChange}
                                                 value={newExtraEntryType}
@@ -200,10 +199,10 @@ export const ExtraEntryEdit = (props) => {
                                                 {availableChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select>
+                                            </Select> : <EmptyChoicesText>Ei valittavia merkintöjä</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button">
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button" disabled={newExtraEntryType === -1 || availableChoices.length === 0}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
@@ -211,7 +210,7 @@ export const ExtraEntryEdit = (props) => {
                                 </tbody>
                             </ExtraEntryTable>
                         </>
-                    }}               
+                    }}
                 </FormDataConsumer>
             </SimpleForm>
         </Edit>
