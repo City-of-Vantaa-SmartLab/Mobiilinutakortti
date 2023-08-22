@@ -1,5 +1,5 @@
 import api from '../api';
-import { GET_LIST, GET_ONE, HttpError, UPDATE } from 'react-admin';
+import { CREATE, DELETE, GET_LIST, GET_ONE, HttpError } from 'react-admin';
 import { parseErrorMessages } from '../utils';
 
 export const extraEntryProvider = (type, params, httpClient) => {
@@ -21,6 +21,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
         }
         case GET_LIST: {
             url = api.extraEntry.list;
+            const field = params.sort.field === "age" ? "birthday" : params.sort.field;
             
             const controls = {
                 filters: {
@@ -33,7 +34,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     perPage: params.pagination.perPage
                 },
                 sort: {
-                    field: params.sort.field,
+                    field: field,
                     order: params.sort.order
                 }
             };
@@ -51,21 +52,15 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     return response;
                 });
         }
-        case UPDATE: {
-            const data = {
-                id: params.data.id,
-                phoneNumber: params.data.phoneNumber,
-                lastName: params.data.lastName,
-                firstName: params.data.firstName,
-                nickName: params.data.nickName,
-                birthday: new Date(params.data.birthday),
-                extraEntries: params.data.extraEntries,
-            };
-            const jsonData = JSON.stringify(data);
-            url = api.extraEntry.edit;
+        case CREATE: {
+            const data = JSON.stringify({
+                juniorId: params.data.juniorId,
+                extraEntryTypeId: params.data.extraEntryTypeId
+            });
+            url = api.extraEntry.create;
             options = {
                 method: 'POST',
-                body: jsonData,
+                body: data,
                 headers: { "Content-Type": "application/json" },
             };
             return httpClient(url, options)
@@ -73,7 +68,20 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return { data } // React admin expects data as return value
+                    return { data: { id: '' } } // React admin expects data as return value
+                });
+        }
+        case DELETE: {
+            url = `${api.extraEntry.delete}/${params.data.extraEntryId}`;
+            options = {
+                method: 'DELETE'
+            };
+            return httpClient(url, options)
+                .then(response => {
+                    if (response.statusCode < 200 || response.statusCode >= 300) {
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                    }
+                    return { data: { id: params.id } }
                 });
         }
         default:

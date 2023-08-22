@@ -59,6 +59,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
 export const applySort = (sortOptions: SortDto) => {
   const order = {};
   if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
+  if (sortOptions.field.toLowerCase() === 'extraentries') { sortOptions.field = ''; }
   if (sortOptions.field) { order[`junior.${sortOptions.field}`] = sortOptions.order; }
   return order;
 }

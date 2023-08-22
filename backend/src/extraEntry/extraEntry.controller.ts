@@ -5,6 +5,7 @@ import {
     UseGuards,
     Param,
     Post,
+    Delete,
     Get,
     Body,
     Query
@@ -18,11 +19,12 @@ import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Message } from 'src/common/vm';
 import { ExtraEntryService } from './extraEntry.service';
-import { CreateExtraEntryTypeDto } from './dto/create.dto';
+import { CreateExtraEntryTypeDto } from './dto/createType.dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { ListControlDto } from 'src/common/dto';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';
+import { CreateExtraEntryDto } from './dto/create.dto';
 
 @Controller(`${content.Routes.api}/extraEntry`)
 @ApiTags('ExtraEntry')
@@ -45,10 +47,19 @@ export class ExtraEntryController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Post('edit')
+    @Post('create')
     @ApiBearerAuth('youthWorker')
-    async editExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
-        return new Message(await this.extraEntryService.editExtraEntry(extraEntryTypeData, youthWorker.userId));
+    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message>  {
+        return new Message(await this.extraEntryService.createExtraEntry(createExtraEntryData, youthWorker.userId));
+    };
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Delete('delete/:extraEntryId')
+    @ApiBearerAuth('youthWorker')
+    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message>  {
+        return new Message(await this.extraEntryService.deleteExtraEntry(extraEntryId, youthWorker.userId));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
