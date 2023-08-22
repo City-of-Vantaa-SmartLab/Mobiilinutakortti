@@ -11,7 +11,6 @@ export class JuniorExtraEntriesViewModel {
     extraEntries: ExtraEntry[];
     phoneNumber: string;
     status: string;
-
     constructor(entity: Junior) {
         this.age = calculateAge(entity.birthday);
         this.birthday = entity.birthday;

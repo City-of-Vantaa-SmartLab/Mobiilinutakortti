@@ -22,7 +22,6 @@ export const extraEntryProvider = (type, params, httpClient) => {
         case GET_LIST: {
             url = api.extraEntry.list;
             const field = params.sort.field === "age" ? "birthday" : params.sort.field;
-
             const controls = {
                 filters: {
                     name: params.filter.name,
