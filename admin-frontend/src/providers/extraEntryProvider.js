@@ -22,12 +22,12 @@ export const extraEntryProvider = (type, params, httpClient) => {
         case GET_LIST: {
             url = api.extraEntry.list;
             const field = params.sort.field === "age" ? "birthday" : params.sort.field;
-
             const controls = {
                 filters: {
                     name: params.filter.name,
                     phoneNumber: params.filter.phoneNumber,
                     extraEntryType: params.filter.extraEntryType,
+                    permitType: params.filter.permitType,
                 },
                 pagination: {
                     page: params.pagination.page,
@@ -55,7 +55,8 @@ export const extraEntryProvider = (type, params, httpClient) => {
         case CREATE: {
             const data = JSON.stringify({
                 juniorId: params.data.juniorId,
-                extraEntryTypeId: params.data.extraEntryTypeId
+                entryTypeId: params.data.entryTypeId,
+                isPermit: params.data.isPermit
             });
             url = api.extraEntry.create;
             options = {
@@ -68,11 +69,12 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return { data: { id: '' } } // React admin expects data as return value
+                    return { data: { id: '', message: response.message } } // React admin expects data as return value
                 });
         }
         case DELETE: {
-            url = `${api.extraEntry.delete}/${params.data.extraEntryId}`;
+            const urlBase = params.data.isPermit ? api.extraEntry.deletePermit : api.extraEntry.delete;
+            url = `${urlBase}/${params.data.deletableId}`;
             options = {
                 method: 'DELETE'
             };

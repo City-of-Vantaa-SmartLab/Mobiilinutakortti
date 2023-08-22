@@ -50,7 +50,7 @@ export class ExtraEntryController {
     @Post('create')
     @ApiBearerAuth('youthWorker')
     async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message> {
-        return new Message(await this.extraEntryService.createExtraEntry(createExtraEntryData, youthWorker.userId));
+        return new Message(await this.extraEntryService.createEntry(createExtraEntryData, youthWorker.userId));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -58,8 +58,17 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Delete('delete/:extraEntryId')
     @ApiBearerAuth('youthWorker')
-    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message> {
-        return new Message(await this.extraEntryService.deleteExtraEntry(extraEntryId, youthWorker.userId));
+    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message>  {
+        return new Message(await this.extraEntryService.deleteEntry(extraEntryId, youthWorker.userId));
+    };
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Delete('deletepermit/:permitId')
+    @ApiBearerAuth('youthWorker')
+    async deletePermit(@YouthWorker() youthWorker: { userId: string }, @Param('permitId') permitId: number): Promise<Message>  {
+        return new Message(await this.extraEntryService.deleteEntry(permitId, youthWorker.userId, true));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))

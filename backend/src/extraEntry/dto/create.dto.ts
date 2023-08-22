@@ -6,5 +6,7 @@ export class CreateExtraEntryDto {
     juniorId: string;
 
     @IsNotEmpty()
-    extraEntryTypeId: number;
+    entryTypeId: number;
+
+    isPermit: boolean;
 }

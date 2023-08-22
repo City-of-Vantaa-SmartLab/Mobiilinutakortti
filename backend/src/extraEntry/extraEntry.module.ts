@@ -7,10 +7,11 @@ import { ExtraEntryController } from './extraEntry.controller';
 import { ExtraEntry, ExtraEntryType } from './entities';
 import { Junior } from 'src/junior/entities';
 import { JuniorModule } from 'src/junior/junior.module';
+import { Permit } from './entities/permit.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ExtraEntry, ExtraEntryType, Junior]),
+    TypeOrmModule.forFeature([ExtraEntry, ExtraEntryType, Junior, Permit]),
     JuniorModule,
     RolesModule,
     SessionDBModule,
