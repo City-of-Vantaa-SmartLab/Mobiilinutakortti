@@ -272,6 +272,46 @@ export const ExtraEntryEdit = (props) => {
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>
+                            <ExtraEntryTable>
+                                <thead>
+                                    <tr><th>Luvat</th></tr>
+                                </thead>
+                                <tbody>
+                                    {formData.permits.map((permit) => {
+                                        return <tr key={permit.id}>
+                                            <td>{permit.permitType.name}</td>
+                                            <td>
+                                                <ExtraEntryButton value={permit.id} onClick={() => handleDelete(permit.id, true)} type="button">
+                                                    Poista <CancelOutlined />
+                                                </ExtraEntryButton>
+                                            </td>
+                                        </tr>
+                                    })}
+                                </tbody>
+                            </ExtraEntryTable>
+                            <ExtraEntryTable>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <Select
+                                                className={classes.selectInput}
+                                                onChange={handlePermitChange}
+                                                value={newPermitType}
+                                            >
+                                                <MenuItem value={-1}></MenuItem>
+                                                {availablePermitChoices.map(ac => (
+                                                    <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </td>
+                                        <td>
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button">
+                                                Lisää <Add />
+                                            </ExtraEntryButton>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </ExtraEntryTable>
                         </>
                     }}
                 </FormDataConsumer>
