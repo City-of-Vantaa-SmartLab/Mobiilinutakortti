@@ -69,12 +69,12 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
-                    return { data: { id: '' } } // React admin expects data as return value
+                    return { data: { id: '', message: response.message } } // React admin expects data as return value
                 });
         }
         case DELETE: {
             const urlBase = params.data.isPermit ? api.extraEntry.deletePermit : api.extraEntry.delete;
-            url = `${urlBase}/${params.data.juniorId}&/${params.data.deletableId}`;
+            url = `${urlBase}/${params.data.deletableId}`;
             options = {
                 method: 'DELETE'
             };

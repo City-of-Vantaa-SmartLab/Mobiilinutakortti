@@ -68,6 +68,7 @@ export class ExtraEntryService {
     }
 
     async getAllExtraEntries(controls?: ListControlDto, userId?: string): Promise<ExtraEntryListViewModel> {
+        const sortField = controls?.sort?.field;
         const filters = getFilters(controls);
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
@@ -87,23 +88,18 @@ export class ExtraEntryService {
         if (controls?.filters?.permitType) {
             // -1 = no permits
             if (controls?.filters?.permitType === -1) {
-                juniorEntities = juniorEntities.filter(j => {console.log('j.permits1', j.permits); return Array.isArray(j.permits) && j.permits.length === 0});
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.permits) && j.permits.length === 0);
             // -2 = any permit
             } else if (controls?.filters?.permitType === -2) {
-                juniorEntities = juniorEntities.filter(j => {console.log('j.permits2', j.permits); return Array.isArray(j.permits) && j.permits.length > 0});
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.permits) && j.permits.length > 0);
             } else {
-                juniorEntities = juniorEntities.filter(j => {console.log('j.permits3', j.permits); return j.permits.find(ee => ee.permitType.id === controls.filters.permitType)});
+                juniorEntities = juniorEntities.filter(j => j.permits.find(ee => ee.permitType.id === controls.filters.permitType));
             }
         }
 
-        if (controls?.sort?.field === "extraEntries") {
-            if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a.extraEntries.length - b.extraEntries.length);
-            if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b.extraEntries.length - a.extraEntries.length);
-        }
-
-        if (controls?.sort?.field === "permits") {
-            if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a.permits.length - b.permits.length);
-            if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b.permits.length - a.permits.length);
+        if (sortField === "extraEntries" || sortField === "permits") {
+            if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a[sortField].length - b[sortField].length);
+            if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b[sortField].length - a[sortField].length);
         }
 
         const juniors = (controls ? juniorEntities.slice(filters.skip, filters.skip + filters.take) : juniorEntities).map(e => new JuniorExtraEntriesViewModel(e));
@@ -115,12 +111,17 @@ export class ExtraEntryService {
         return new ExtraEntryListViewModel(juniors, juniorEntities.length);
     }
 
-    async deletePermit(juniorId: string, deletableType: number, userId?: string) {
+    async deletePermitIfAddedAsEntry(juniorId: string, deletableType: number, userId?: string): Promise<boolean> {
         const juniorWithPermits = await this.getExtraEntriesForJunior(juniorId);
         const deletablePermit = juniorWithPermits.permits.find((permit) => {
             return permit.permitType.id === deletableType;
         });
-        if (deletablePermit) this.deleteEntry(deletablePermit.id, userId, true);
+        if (deletablePermit) {
+            this.deleteEntry(deletablePermit.id, userId, true);
+            return true;
+        } else {
+            return false;
+        }
     };
 
     async createEntry(details: CreateExtraEntryDto, userId?: string): Promise<string> {
@@ -136,26 +137,31 @@ export class ExtraEntryService {
         const eeType = await this.extraEntryTypeRepo.findOneBy({ id: details.entryTypeId });
         if (!eeType) throw new BadRequestException(content.TypeNotFound);
 
+        let message = content.ExtraEntryAdded;
+
         if (isPermit) {
             const newPermit = {junior: junior, permitType: eeType};
             this.permitRepo.save(newPermit);
         } else {
             const newExtraEntry = {junior: junior, extraEntryType: eeType};
             this.extraEntryRepo.save(newExtraEntry);
-            this.deletePermit(details.juniorId, details.entryTypeId, userId);
+            const permitDeleted = await this.deletePermitIfAddedAsEntry(details.juniorId, details.entryTypeId, userId);
+            if (permitDeleted) message += " - lisämerkintää vastaava lupa poistettu";
         }
 
-        return `${details.juniorId} ${content.Updated}`;
+        return message;
     };
 
     async deleteEntry(deletableId: number, userId?: string, isPermit?: boolean): Promise<string> {
-        const entry = isPermit ? await this.permitRepo.createQueryBuilder('permit')
-            .leftJoinAndSelect('permit.junior', 'junior')
-            .where('permit.id = :id', { id: deletableId })
-            .getOne() : await this.extraEntryRepo.createQueryBuilder('extraEntry')
-            .leftJoinAndSelect('extraEntry.junior', 'junior')
-            .where('extraEntry.id = :id', { id: deletableId })
-            .getOne();
+        const entry = isPermit ? 
+            await this.permitRepo.createQueryBuilder('permit')
+                .leftJoinAndSelect('permit.junior', 'junior')
+                .where('permit.id = :id', { id: deletableId })
+                .getOne() : 
+            await this.extraEntryRepo.createQueryBuilder('extraEntry')
+                .leftJoinAndSelect('extraEntry.junior', 'junior')
+                .where('extraEntry.id = :id', { id: deletableId })
+                .getOne();
 
         if (!entry) throw new BadRequestException(content.ExtraEntryNotFound);
         const juniorId = entry?.junior?.id;
@@ -174,7 +180,7 @@ export class ExtraEntryService {
             await this.extraEntryRepo.remove(extraEntry);
         }
 
-        return `${juniorId} ${content.Updated}`;
+        return content.ExtraEntryDeleted;
     };
 
     // Delete expired extra entries and clean up extra entry registry juniors every night at 4 AM

@@ -116,11 +116,12 @@ export const ExtraEntryEdit = (props) => {
     };
 
     const handleDelete = async (eeId, isPermit) => {
-        const response = await extraEntryProvider(DELETE, {data: {extraEntryId: eeId, isPermit: isPermit}}, httpClientWithRefresh);
+        const response = await extraEntryProvider(DELETE, {data: {deletableId: eeId, isPermit: isPermit}}, httpClientWithRefresh);
         if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän poistamisessa');
         } else {
-            notify('Merkintä poistettu', 'success');
+            const message = response.data.message || 'Merkintä poistettu';
+            notify(message, 'success');
             refresh();
         }
     };
@@ -139,7 +140,8 @@ export const ExtraEntryEdit = (props) => {
          if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän lisäämisessä');
         } else {
-            notify('Merkintä lisätty', 'success');
+            const message = response.data.message || 'Merkintä lisätty';
+            notify(message, 'success');
             refresh();
         }
     };
@@ -211,7 +213,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            {availableChoices.length > 0 ? <Select
+                                            {availableEeChoices.length > 0 ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handleExtraEntryChange}
                                                 value={newExtraEntryType}
@@ -220,7 +222,7 @@ export const ExtraEntryEdit = (props) => {
                                                 {availableEeChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select> : <EmptyChoicesText>Ei valittavia merkintöjä</EmptyChoicesText>}
+                                            </Select> : <EmptyChoicesText>Ei valittavia lisämerkintöjä</EmptyChoicesText>}
                                         </td>
                                         <td>
                                             <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button" disabled={newExtraEntryType === -1}>
@@ -251,7 +253,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <Select
+                                            {availablePermitChoices.length > 0 ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handlePermitChange}
                                                 value={newPermitType}
@@ -260,10 +262,10 @@ export const ExtraEntryEdit = (props) => {
                                                 {availablePermitChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select>
+                                            </Select> : <EmptyChoicesText>Ei valittavia lupia</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button">
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button" disabled={newPermitType === -1}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
