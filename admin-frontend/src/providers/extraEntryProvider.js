@@ -72,7 +72,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
                 });
         }
         case DELETE: {
-            url = `${api.extraEntry.delete}/${params.data.juniorId}&/${params.data.extraEntryId}`;
+            url = `${api.extraEntry.delete}/${params.data.extraEntryId}`;
             options = {
                 method: 'DELETE'
             };

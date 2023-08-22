@@ -45,16 +45,20 @@ export class ExtraEntryService {
         return `${details.juniorId} ${content.Updated}`;
     };
 
-    async deleteExtraEntry(juniorId: string, extraEntryId: number, userId?: string): Promise<string> {
+    async deleteExtraEntry(extraEntryId: number, userId?: string): Promise<string> {
+        const extraEntry = await this.extraEntryRepo.createQueryBuilder('extraEntry')
+            .leftJoinAndSelect('extraEntry.junior', 'junior')
+            .where('extraEntry.id = :id', { id: extraEntryId })
+            .getOne();
+        if (!extraEntry) throw new BadRequestException(content.ExtraEntryNotFound);
+        const juniorId = extraEntry?.junior?.id;
+
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId, juniorId: juniorId }, `User deleted extra entry from junior.`);
         };
 
-        const extraEntry = await this.extraEntryRepo.findOneBy({ id: extraEntryId });
-        if (!extraEntry) throw new BadRequestException(content.ExtraEntryNotFound);
-
         await this.extraEntryRepo.remove(extraEntry);
-        return `${extraEntryId} ${content.Updated}`;
+        return `${juniorId} ${content.Updated}`;
     };
 
     async getExtraEntryType(id: number): Promise<ExtraEntryTypeViewModel> {
@@ -93,6 +97,7 @@ export class ExtraEntryService {
         const filters = getFilters(controls);
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
+        // Sorting and filtering of extra entries is easier done here than in database
         if (controls?.filters?.extraEntryType) {
             // -1 = no extra entries
             if (controls?.filters?.extraEntryType === -1) {
@@ -104,6 +109,12 @@ export class ExtraEntryService {
                 juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
             }
         }
+
+        if (controls?.sort?.field === "extraEntries") {
+            if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a.extraEntries.length - b.extraEntries.length);
+            if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b.extraEntries.length - a.extraEntries.length);
+        }
+
         const juniors = (controls ? juniorEntities.slice(filters.skip, filters.skip + filters.take) : juniorEntities).map(e => new JuniorExtraEntriesViewModel(e));
 
         if (userId && ConfigHelper.detailedLogs()) {

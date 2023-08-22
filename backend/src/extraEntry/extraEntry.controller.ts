@@ -56,10 +56,10 @@ export class ExtraEntryController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Delete('delete/:juniorId/:extraEntryId')
+    @Delete('delete/:extraEntryId')
     @ApiBearerAuth('youthWorker')
-    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('juniorId') juniorId: string, @Param('extraEntryId') extraEntryId: number): Promise<Message>  {
-        return new Message(await this.extraEntryService.deleteExtraEntry(juniorId, extraEntryId, youthWorker.userId));
+    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message>  {
+        return new Message(await this.extraEntryService.deleteExtraEntry(extraEntryId, youthWorker.userId));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useRefresh } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 import { MenuItem, Select } from '@material-ui/core';
 import { Add, CancelOutlined } from '@material-ui/icons';
@@ -24,7 +25,7 @@ import {
     DELETE,
     CREATE
 } from 'react-admin';
-import CancelIcon from '@material-ui/icons/Cancel';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getExtraEntryTypes, statusChoices } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
@@ -79,7 +80,7 @@ export const ExtraEntryList = (props) => {
 
 const CustomToolbar = ({cancel, ...others}) => (
     <Toolbar {...others}>
-        <Button label="Peruuta" onClick={cancel} alignIcon="left"><CancelIcon /></Button>
+        <Button label="Takaisin" onClick={cancel} alignIcon="left"><ArrowBackIcon /></Button>
     </Toolbar>
 );
 
@@ -88,6 +89,7 @@ export const ExtraEntryEdit = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
     const notify = useNotify();
     const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
+    const refresh = useRefresh();
     const redirect = useRedirect();
     const classes = useStyles();
 
@@ -103,43 +105,42 @@ export const ExtraEntryEdit = (props) => {
         redirect("/extraEntry");
     };
 
+    const handleDelete = async (eeId) => {
+        const response = await extraEntryProvider(DELETE, {data: {extraEntryId: eeId}}, httpClientWithRefresh);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            notifyError('Virhe lisämerkinnän poistamisessa');
+        } else {
+            notify('Lisämerkintä poistettu', 'success');
+            refresh();
+        }
+    };
+
+    const handleSelectChange = (e) => {
+        setNewExtraEntryType(e.target.value);
+    };
+
+    const handleAdd = async (juniorId) => {
+        const response = await extraEntryProvider(CREATE, {data: {juniorId: juniorId, extraEntryTypeId: newExtraEntryType}}, httpClientWithRefresh);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            notifyError('Virhe lisämerkinnän lisäämisessä');
+        } else {
+            notify('Lisämerkintä lisätty', 'success');
+            refresh();
+        }
+    };
+
     return (
         <Edit title="Muokkaa lisämerkintöjä" {...props}>
             <SimpleForm margin="normal"  toolbar={<CustomToolbar cancel={redirectToList}/>}>
                 <FormDataConsumer>
                     {({ formData }) => {
                         const status = statusChoices.find((item) => item.id === formData.status);
+                        const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI");
+
                         const selectedTypes = formData.extraEntries.map((entry) => {
                             return entry.extraEntryType?.id;
                         });
-
                         const availableChoices = extraEntryTypeChoices.filter(item => !selectedTypes.includes(item.id));
-
-                        const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI");
-
-                        const handleDelete = async (eeId) => {
-                            const response = await extraEntryProvider(DELETE, {data: {extraEntryId: eeId, juniorId: formData.id}}, httpClientWithRefresh);
-                            if (response.statusCode < 200 || response.statusCode >= 300) {
-                                notifyError('Virhe lisämerkinnän poistamisessa');
-                            } else {
-                                notify('Lisämerkintä poistettu', 'success');
-                                redirectToList();
-                            }
-                        };
-
-                        const handleSelectChange = (e) => {
-                            setNewExtraEntryType(e.target.value);
-                        };
-
-                        const handleAdd = async () => {
-                            const response = await extraEntryProvider(CREATE, {data: {juniorId: formData.id, extraEntryTypeId: newExtraEntryType}}, httpClientWithRefresh);
-                            if (response.statusCode < 200 || response.statusCode >= 300) {
-                                notifyError('Virhe lisämerkinnän lisäämisessä');
-                            } else {
-                                notify('Lisämerkintä lisätty', 'success');
-                                redirectToList();
-                            }
-                        };
 
                         return <>
                             <ExtraEntryTable>
@@ -165,7 +166,7 @@ export const ExtraEntryEdit = (props) => {
                                         <td>{status.name}</td>
                                     </tr>
                                     <tr>
-                                        <th><a href={`/junior/${formData.id}`}>Muokkaa nuoren tietoja</a></th>
+                                        <th><a href={`/#/junior/${formData.id}`}>Muokkaa nuoren tietoja</a></th>
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>
@@ -202,7 +203,7 @@ export const ExtraEntryEdit = (props) => {
                                             </Select>
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={handleAdd} type="button">
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button">
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
