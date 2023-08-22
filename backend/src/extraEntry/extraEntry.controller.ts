@@ -49,7 +49,7 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
     @ApiBearerAuth('youthWorker')
-    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message>  {
+    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message> {
         return new Message(await this.extraEntryService.createExtraEntry(createExtraEntryData, youthWorker.userId));
     };
 
@@ -58,7 +58,7 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Delete('delete/:extraEntryId')
     @ApiBearerAuth('youthWorker')
-    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message>  {
+    async deleteExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('extraEntryId') extraEntryId: number): Promise<Message> {
         return new Message(await this.extraEntryService.deleteExtraEntry(extraEntryId, youthWorker.userId));
     };
 
@@ -85,7 +85,7 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.ADMIN)
     @Post('type/create')
     @ApiBearerAuth('admin')
-    async createExtraEntryType(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message>  {
+    async createExtraEntryType(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message> {
         return new Message(await this.extraEntryService.createExtraEntryType(extraEntryTypeData));
     };
 

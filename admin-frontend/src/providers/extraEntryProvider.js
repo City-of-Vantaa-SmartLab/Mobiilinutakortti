@@ -17,12 +17,12 @@ export const extraEntryProvider = (type, params, httpClient) => {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
                     return { data: response };
-            });        
+            });
         }
         case GET_LIST: {
             url = api.extraEntry.list;
             const field = params.sort.field === "age" ? "birthday" : params.sort.field;
-            
+
             const controls = {
                 filters: {
                     name: params.filter.name,

@@ -11,6 +11,9 @@ export const ExtraEntryButton = styled.button`
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    :disabled {
+        cursor: not-allowed;
+    }
     svg {
         margin-left: 5px;
     }
@@ -30,4 +33,9 @@ export const ExtraEntryTable = styled.table`
     a:hover {
         text-decoration: underline;
     }
+`;
+
+export const EmptyChoicesText = styled.p`
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.54);
 `;
