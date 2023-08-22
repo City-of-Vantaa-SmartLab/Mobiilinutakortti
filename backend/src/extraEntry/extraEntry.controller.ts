@@ -49,7 +49,7 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
     @ApiBearerAuth('youthWorker')
-    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message>  {
+    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message> {
         return new Message(await this.extraEntryService.createEntry(createExtraEntryData, youthWorker.userId));
     };
 

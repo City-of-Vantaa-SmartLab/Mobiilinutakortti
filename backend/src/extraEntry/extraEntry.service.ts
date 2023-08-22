@@ -153,11 +153,11 @@ export class ExtraEntryService {
     };
 
     async deleteEntry(deletableId: number, userId?: string, isPermit?: boolean): Promise<string> {
-        const entry = isPermit ? 
+        const entry = isPermit ?
             await this.permitRepo.createQueryBuilder('permit')
                 .leftJoinAndSelect('permit.junior', 'junior')
                 .where('permit.id = :id', { id: deletableId })
-                .getOne() : 
+                .getOne() :
             await this.extraEntryRepo.createQueryBuilder('extraEntry')
                 .leftJoinAndSelect('extraEntry.junior', 'junior')
                 .where('extraEntry.id = :id', { id: deletableId })

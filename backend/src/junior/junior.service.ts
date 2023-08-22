@@ -380,7 +380,7 @@ export class JuniorService {
 
     // Delete juniors that are only in the extra entry registry but who have no extra entries.
     async cleanUpExtraEntryJuniors(): Promise<void> {
-        const extraEntryJuniors = await this.juniorRepo.createQueryBuilder()
+        const extraEntryJuniors = await this.juniorRepo.createQueryBuilder('junior')
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .where('junior.status = :extraEntriesOnly', { extraEntriesOnly: Status.extraEntriesOnly })
             .getMany();
