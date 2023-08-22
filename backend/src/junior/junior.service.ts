@@ -46,6 +46,8 @@ export class JuniorService {
             this.juniorRepo.createQueryBuilder('junior')
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
+            .leftJoinAndSelect('junior.permits', 'permit')
+            .leftJoinAndSelect('permit.permitType', 'permitType')
             .where(filters.query ? filters.query : '1=1', filters.filterValues)
             .orderBy(filters.order)
             :

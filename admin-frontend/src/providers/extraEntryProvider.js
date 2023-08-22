@@ -27,6 +27,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     name: params.filter.name,
                     phoneNumber: params.filter.phoneNumber,
                     extraEntryType: params.filter.extraEntryType,
+                    permitType: params.filter.permitType,
                 },
                 pagination: {
                     page: params.pagination.page,
@@ -54,7 +55,8 @@ export const extraEntryProvider = (type, params, httpClient) => {
         case CREATE: {
             const data = JSON.stringify({
                 juniorId: params.data.juniorId,
-                extraEntryTypeId: params.data.extraEntryTypeId
+                entryTypeId: params.data.entryTypeId,
+                isPermit: params.data.isPermit
             });
             url = api.extraEntry.create;
             options = {
@@ -71,7 +73,8 @@ export const extraEntryProvider = (type, params, httpClient) => {
                 });
         }
         case DELETE: {
-            url = `${api.extraEntry.delete}/${params.data.extraEntryId}`;
+            const urlBase = params.data.isPermit ? api.extraEntry.deletePermit : api.extraEntry.delete;
+            url = `${urlBase}/${params.data.juniorId}&/${params.data.deletableId}`;
             options = {
                 method: 'DELETE'
             };

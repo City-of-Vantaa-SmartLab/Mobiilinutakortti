@@ -5,6 +5,7 @@ import { CheckIn } from '../../club/entities';
 import { ConfigHelper } from '../../configHandler';
 import { NumberTransformer } from 'src/utils/helpers';
 import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
+import { Permit } from 'src/extraEntry/entities/permit.entity';
 
 @Entity()
 export class Junior {
@@ -83,4 +84,7 @@ export class Junior {
 
     @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
     extraEntries: ExtraEntry[];
+
+    @OneToMany(() => Permit, permit => permit.junior)
+    permits: Permit[];
 }

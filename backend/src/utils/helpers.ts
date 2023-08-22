@@ -45,7 +45,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
       } else if (property === 'parentsPhoneNumber') {
           queryParams.push('junior.parentsPhoneNumber ILIKE :parentsPhoneNumber')
           filterValues['parentsPhoneNumber'] = `%${filterOptions.parentsPhoneNumber}%`
-      } else if (property === 'extraEntryType') {
+      } else if ((property === 'extraEntryType' || property === 'permitType')) {
           // This filtering is done after database query.
       } else {
           queryParams.push(`junior.${property} = :${property}`)
