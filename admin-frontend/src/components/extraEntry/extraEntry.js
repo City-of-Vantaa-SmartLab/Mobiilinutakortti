@@ -202,7 +202,7 @@ export const ExtraEntryEdit = (props) => {
                                             </Select> : <EmptyChoicesText>Ei valittavia merkintöjä</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button" disabled={newExtraEntryType === -1}>
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button" disabled={newExtraEntryType === -1 || availableChoices.length === 0}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
