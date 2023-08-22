@@ -293,7 +293,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <Select
+                                            {availablePermitChoices.length > 0 ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handlePermitChange}
                                                 value={newPermitType}
@@ -302,10 +302,10 @@ export const ExtraEntryEdit = (props) => {
                                                 {availablePermitChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select>
+                                            </Select> : <EmptyChoicesText>Ei valittavia lupia</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button">
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button" disabled={newPermitType === -1}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
