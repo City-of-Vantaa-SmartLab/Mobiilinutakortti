@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from 'react-final-form';
+import Button from '@material-ui/core/Button';
 import QRCode from 'qrcode.react'
 import {
     List,
@@ -23,11 +24,11 @@ import {
     FormDataConsumer
 } from 'react-admin';
 import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices, Status } from '../utils';
-import Button from '@material-ui/core/Button';
 import { httpClientWithRefresh } from '../httpClients';
-import api from '../api';
 import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
+import { ExtraEntryLink } from './styledComponents/extraEntry';
+import api from '../api';
 
 
 const JuniorEditTitle = ({ record }) => (
@@ -38,7 +39,6 @@ const JuniorEditTitle = ({ record }) => (
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
 );
-
 
 export const JuniorList = (props) => {
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
@@ -194,6 +194,7 @@ export const JuniorEdit = (props) => {
 
 
 export const JuniorForm = (formType) => {
+    const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
     const [youthClubChoices, setYouthClubChoices] = useState([]);
     const { isAdmin } = useAdminPermission();
 
@@ -245,6 +246,12 @@ export const JuniorForm = (formType) => {
                     return formData.status === Status.accepted && (formType === 'create' || record.status !== Status.accepted) && <SMSwarning/>
                 }}
             </FormDataConsumer>
+            {(formType === 'edit' && showExtraEntries) &&<FormDataConsumer>
+                {({ formData }) => {
+                    return <ExtraEntryLink href={`/#/extraEntry/${formData.id}`}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
+
+                }}
+            </FormDataConsumer>}
         </SimpleForm>
     );
 }
