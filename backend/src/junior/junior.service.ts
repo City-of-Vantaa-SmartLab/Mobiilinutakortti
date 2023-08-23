@@ -364,7 +364,8 @@ export class JuniorService {
 
         const extraEntryJuniorIds = expiredJuniors.filter(j => (j.extraEntries.length > 0 || j.permits.length > 0 )).map(j => j.id);
 
-        const updated: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
+        const updated: UpdateResult = extraEntryJuniorIds.length === 0 ? null :
+            await this.juniorRepo.createQueryBuilder('junior')
             .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
             .update()
             .set({ status: Status.extraEntriesOnly })
@@ -374,7 +375,7 @@ export class JuniorService {
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
-        return content.ExpiredUsersDeleted(deleted.affected, updated.affected);
+        return content.ExpiredUsersDeleted(deleted.affected, updated?.affected ?? 0);
     }
 
     // Delete juniors that are only in the extra entry registry but who have no extra entries or permits.
