@@ -183,20 +183,25 @@ export class ExtraEntryService {
         return content.ExtraEntryDeleted;
     };
 
-    // Delete expired extra entries and clean up extra entry registry juniors every night at 4 AM
+    // Delete expired extra entries and permits, and clean up extra entry registry juniors every night at 4 AM
     @Cron('0 4 * * *')
     async cleanUpExtraEntryRegistry(): Promise<void> {
-        this.logger.log("Cleaning up extra entry registry.");
-        const juniorExtraEntries = (await this.getAllExtraEntries()).data;
+        this.logger.log("Cleaning up extra entry and permit registry.");
+        const juniorEntries = (await this.getAllExtraEntries()).data;
         const expiredExtraEntries = [];
+        const expiredPermits = [];
 
-        for (let junior of juniorExtraEntries) {
+        for (let junior of juniorEntries) {
             for (let ee of junior.extraEntries) {
                 if (junior.age >= ee.extraEntryType.expiryAge) {
                     expiredExtraEntries.push(ee.id);
                 }
             }
-            // TODO: extra entry permits
+            for (let p of junior.permits) {
+                if (junior.age >= p.permitType.expiryAge) {
+                    expiredPermits.push(p.id);
+                }
+            }
         }
 
         if (expiredExtraEntries.length > 0) {
@@ -205,6 +210,14 @@ export class ExtraEntryService {
                 .delete()
                 .execute();
             this.logger.log(`Deleted ${deleted.affected} expired extra entries.`);
+        }
+
+        if (expiredPermits.length > 0) {
+            const deleted: DeleteResult = await this.permitRepo.createQueryBuilder()
+                .where('permit.id IN (:...expiredIds)', { expiredIds: expiredPermits })
+                .delete()
+                .execute();
+            this.logger.log(`Deleted ${deleted.affected} expired permits.`);
         }
 
         await this.juniorService.cleanUpExtraEntryJuniors();

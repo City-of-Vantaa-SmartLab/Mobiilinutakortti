@@ -140,6 +140,7 @@ export const ExtraEntryEdit = (props) => {
          if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän lisäämisessä');
         } else {
+            isPermit ? setNewPermitType(-1) : setNewExtraEntryType(-1);
             const message = response.data.message || 'Merkintä lisätty';
             notify(message, 'success');
             refresh();
