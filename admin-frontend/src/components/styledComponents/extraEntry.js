@@ -39,3 +39,11 @@ export const EmptyChoicesText = styled.p`
     font-style: italic;
     color: rgba(0, 0, 0, 0.54);
 `;
+
+export const ExtraEntryLink = styled.a`
+    text-decoration: none;
+    font-weight: bold;
+    :hover {
+        text-decoration: underline;
+    }
+`;
