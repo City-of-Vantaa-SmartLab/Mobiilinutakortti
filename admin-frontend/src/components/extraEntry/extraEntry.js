@@ -140,6 +140,7 @@ export const ExtraEntryEdit = (props) => {
          if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän lisäämisessä');
         } else {
+            isPermit ? setNewPermitType(-1) : setNewExtraEntryType(-1);
             const message = response.data.message || 'Merkintä lisätty';
             notify(message, 'success');
             refresh();
@@ -266,46 +267,6 @@ export const ExtraEntryEdit = (props) => {
                                         </td>
                                         <td>
                                             <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button" disabled={newPermitType === -1 || availablePermitChoices.length === 0}>
-                                                Lisää <Add />
-                                            </ExtraEntryButton>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </ExtraEntryTable>
-                            <ExtraEntryTable>
-                                <thead>
-                                    <tr><th>Luvat</th></tr>
-                                </thead>
-                                <tbody>
-                                    {formData.permits.map((permit) => {
-                                        return <tr key={permit.id}>
-                                            <td>{permit.permitType.name}</td>
-                                            <td>
-                                                <ExtraEntryButton value={permit.id} onClick={() => handleDelete(permit.id, true)} type="button">
-                                                    Poista <CancelOutlined />
-                                                </ExtraEntryButton>
-                                            </td>
-                                        </tr>
-                                    })}
-                                </tbody>
-                            </ExtraEntryTable>
-                            <ExtraEntryTable>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            {availablePermitChoices.length > 0 ? <Select
-                                                className={classes.selectInput}
-                                                onChange={handlePermitChange}
-                                                value={newPermitType}
-                                            >
-                                                <MenuItem value={-1}></MenuItem>
-                                                {availablePermitChoices.map(ac => (
-                                                    <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
-                                                ))}
-                                            </Select> : <EmptyChoicesText>Ei valittavia lupia</EmptyChoicesText>}
-                                        </td>
-                                        <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button" disabled={newPermitType === -1}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
