@@ -50,7 +50,6 @@ export class RegisterJuniorDto {
     @IsDateString()
     readonly birthday: string;
 
-    @IsNotEmpty()
     readonly homeYouthClub: string;
 
     @IsNotEmpty()

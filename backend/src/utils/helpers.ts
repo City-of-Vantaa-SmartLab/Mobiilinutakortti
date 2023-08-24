@@ -12,11 +12,11 @@ export const obfuscate = (s: string): string => {
 // Character varying-type saves values as strings, but they need to be fetched as numbers
 export class NumberTransformer implements ValueTransformer {
   to(value: number): string {
-    return value.toString();
+    if (value) return value.toString();
   };
 
   from(value: string): number {
-    return parseInt(value);
+    if (value) return parseInt(value);
   };
 };
 
