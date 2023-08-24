@@ -8,11 +8,20 @@ export const genderChoices = [
   { id: '-', name: 'Ei halua määritellä'}
 ];
 
+export const Status = Object.freeze({
+  accepted: 'accepted',
+  pending: 'pending',
+  expired: 'expired',
+  failedCall: 'failedCall',
+  extraEntriesOnly: 'extraEntriesOnly'
+});
+
 export const statusChoices = [
-  { id: 'accepted', name: 'Kotisoitto tehty' },
-  { id: 'pending', name: 'Kotisoitto tekemättä' },
-  { id: 'expired', name:  'Tunnus vanhentunut' },
-  { id: 'failedCall', name: 'Kotisoittoa yritetty' }
+  { id: Status.accepted, name: 'Kotisoitto tehty' },
+  { id: Status.pending, name: 'Kotisoitto tekemättä' },
+  { id: Status.expired, name: 'Tunnus vanhentunut' },
+  { id: Status.failedCall, name: 'Kotisoittoa yritetty' },
+  { id: Status.extraEntriesOnly, name: 'Vain merkintärekisteri' }
 ];
 
 export const recipientChoicesForSms = [
@@ -51,12 +60,14 @@ export const ageValidator = (value, allValues) => {
 }
 
 export const getYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
-  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id.toString(), name: youthClub.name, active: youthClub.active})));
+  .then((res) => res.data.map((youthClub) => ({ id: youthClub.id, name: youthClub.name, active: youthClub.active})));
 
 export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
   .then((res) => res.data.map((youthClub) => {
-        return youthClub.active ? { id: youthClub.id.toString(), name: youthClub.name } : null;
+        return youthClub.active ? { id: youthClub.id, name: youthClub.name } : null;
   }
 ));
 
 export const isSubstring = (mainString, subString) => mainString.includes(subString);
+
+export const getExtraEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);

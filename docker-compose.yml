@@ -7,6 +7,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      args:
+        REACT_APP_ENABLE_EXTRA_ENTRIES: ${REACT_APP_ENABLE_EXTRA_ENTRIES}
     image: nutakortti/latest
     environment:
       AUTH_SIGNKEY:
@@ -29,6 +31,7 @@ services:
       RDS_PORT:
       RDS_USERNAME:
       REACT_APP_ADMIN_FRONTEND_URL:
+      REACT_APP_ENABLE_EXTRA_ENTRIES:
       REACT_APP_ENDPOINT:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:

@@ -26,7 +26,7 @@ export class ClubService {
         private readonly clubRepo: Repository<Club>,
     ) {}
 
-    async getClubById(clubId: string): Promise<Club> {
+    async getClubById(clubId: number): Promise<Club> {
         return await this.clubRepo.findOneBy({ id: clubId });
     }
 
@@ -34,7 +34,7 @@ export class ClubService {
         return (await this.clubRepo.find()).map(club => new ClubViewModel(club));
     }
 
-    async checkIfAlreadyCheckedIn(juniorId: string, clubId: string): Promise<boolean> {
+    async checkIfAlreadyCheckedIn(juniorId: string, clubId: number): Promise<boolean> {
         const now = new Date();
         const checkIns = await this.getCheckinsForClub(clubId);
         return checkIns.some((checkIn) =>
@@ -42,7 +42,7 @@ export class ClubService {
         );
     }
 
-    async getCheckinsForClub(clubId: string): Promise<CheckIn[]> {
+    async getCheckinsForClub(clubId: number): Promise<CheckIn[]> {
         const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });

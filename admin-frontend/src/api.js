@@ -9,7 +9,7 @@ const apiEndpoints = {
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${appUrl}/junior/newSeason`,
-    deleteExpiredUsers:`${appUrl}/junior/newSeason/clearExpired`
+    deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
     login: `${appUrl}/youthworker/login`,
@@ -18,9 +18,19 @@ const apiEndpoints = {
   announcement: {
     create: `${appUrl}/announcement/create`
   },
+  extraEntry: {
+    base: `${appUrl}/extraEntry/`,
+    list: `${appUrl}/extraEntry/list`,
+    create: `${appUrl}/extraEntry/create`,
+    delete: `${appUrl}/extraEntry/delete`,
+    deletePermit: `${appUrl}/extraEntry/deletepermit`,
+    type: `${appUrl}/extraEntry/type/`,
+    typeList: `${appUrl}/extraEntry/type/list`,
+    typeCreate: `${appUrl}/extraEntry/type/create`
+  },
   youthClub: {
     base: `${appUrl}/club/`,
-    list: `${appUrl}/club/list/`,
+    list: `${appUrl}/club/list`,
     edit: `${appUrl}/club/edit`,
     checkIn: `${appUrl}/club/check-in`,
     logBook: `${appUrl}/club/logbook`,

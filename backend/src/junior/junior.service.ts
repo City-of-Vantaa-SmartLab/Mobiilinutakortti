@@ -10,19 +10,20 @@ import {
 } from '@nestjs/common';
 import { YouthWorker } from '../youthWorker/entities';
 import { Junior, Challenge } from './entities';
-import { DeleteResult, QueryFailedError, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
 import { validate } from 'class-validator';
 import { SmsService } from '../sms/sms.service';
-import { ListControlDto, SortDto, FilterDto } from '../common/dto';
+import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
-import { obfuscate } from 'src/utils/helpers';
+import { getFilters, obfuscate } from 'src/utils/helpers';
 import { ConfigHelper } from '../configHandler';
+import { Status } from './enum/status.enum';
 
 @Injectable()
 export class JuniorService {
@@ -40,23 +41,29 @@ export class JuniorService {
         private readonly smsService: SmsService,
     ) { }
 
-    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
-        let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
-        if (controls) {
-            order = controls.sort ? this.applySort(controls.sort) : {};
-            ({ query, filterValues } = controls.filters ? this.applyFilters(controls.filters) : { query: '', filterValues: [] });
-            take = controls.pagination ? controls.pagination.perPage : 0;
-            skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
-        }
-        const total = await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .getCount()
+    public getAllJuniorsQuery(filters?: any, extraEntries?: boolean): SelectQueryBuilder<Junior> {
+        return extraEntries ?
+            this.juniorRepo.createQueryBuilder('junior')
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
+            .leftJoinAndSelect('junior.permits', 'permit')
+            .leftJoinAndSelect('permit.permitType', 'permitType')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+            :
+            this.juniorRepo.createQueryBuilder('junior')
+            .where(filters.query ? filters.query : '1=1', filters.filterValues)
+            .orderBy(filters.order)
+    }
 
-        const response = (await this.juniorRepo.createQueryBuilder('user')
-            .where(query ? query : '1=1', filterValues)
-            .orderBy(order)
-            .take(take)
-            .skip(skip)
+    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
+        const filters = getFilters(controls);
+        const juniorQueries = this.getAllJuniorsQuery(filters);
+        const total = await juniorQueries.getCount();
+
+        const response = (await juniorQueries
+            .take(filters.take)
+            .skip(filters.skip)
             .getMany())
             .map(e => new JuniorUserViewModel(e));
 
@@ -64,36 +71,6 @@ export class JuniorService {
             this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched juniors.`);
         }
         return new JuniorListViewModel(response, total);
-    }
-
-    private applyFilters(filterOptions: FilterDto) {
-        const filterValues = {}
-        const queryParams = []
-
-        Object.keys(filterOptions).forEach(property => {
-            if (property === 'name') {
-                queryParams.push(`CONCAT (user.firstName, ' ', user.lastName) ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else if (property === 'phoneNumber') {
-                queryParams.push(`user.phoneNumber ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else if (property === 'parentsPhoneNumber') {
-                queryParams.push(`user.parentsPhoneNumber ILIKE :${property}`)
-                filterValues[property] = `%${filterOptions[property]}%`
-            } else {
-                queryParams.push(`user.${property} = :${property}`)
-                filterValues[property] = filterOptions[property]
-            }
-        })
-        const query = queryParams.join(' AND ')
-        return { query, filterValues }
-    }
-
-    private applySort(sortOptions: SortDto) {
-        const order = {};
-        if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
-        if (sortOptions.field) { order[`user.${sortOptions.field}`] = sortOptions.order; }
-        return order;
     }
 
     async getJunior(id: string, userId?: string): Promise<Junior> {
@@ -108,7 +85,7 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ phoneNumber });
     }
 
-    async getJuniorsByHomeYouthClub(homeYouthClub: string): Promise<Junior[]> {
+    async getJuniorsByHomeYouthClub(homeYouthClub: number): Promise<Junior[]> {
         return await this.juniorRepo.findBy({ homeYouthClub });
     }
 
@@ -176,7 +153,7 @@ export class JuniorService {
             }
 
             // Only allow account renewal if existing junior's status is expired or pending.
-            if (["expired", "pending"].includes(existingJunior.status)) {
+            if ([Status.expired, Status.pending].includes(existingJunior.status as Status)) {
                 this.logger.log(`Overwriting junior ${existingJunior.phoneNumber}`);
                 junior = existingJunior;
                 renew = true;
@@ -217,7 +194,7 @@ export class JuniorService {
             throw e;
         }
 
-        if (junior.status === 'accepted' && !noSMS) {
+        if (junior.status === Status.accepted && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
@@ -235,7 +212,7 @@ export class JuniorService {
 
     async resetLogin(phoneNumber: string): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
-        if (junior && (junior.status === 'accepted' || junior.status === 'expired')) {
+        if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
             const challenge = await this.setChallenge(phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,
@@ -282,7 +259,7 @@ export class JuniorService {
             throw new BadRequestException(errors);
         }
         // Only admins (not regular youth workers) can manually update status from expired state.
-        if (prevStatus === 'expired' && details.status !== prevStatus) {
+        if (prevStatus === Status.expired && details.status !== prevStatus) {
             const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
             if (!youthWorker?.isAdmin) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
@@ -296,7 +273,7 @@ export class JuniorService {
             this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
         }
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
-        if ((prevStatus === 'expired' || prevStatus === 'pending' || prevStatus === 'failedCall') && details.status === 'accepted') {
+        if ((prevStatus === Status.expired || prevStatus === Status.pending || prevStatus === Status.failedCall) && details.status === Status.accepted) {
             const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
@@ -349,12 +326,16 @@ export class JuniorService {
     }
 
     async createNewSeason({ expireDate }: SeasonExpiredDto, userId?: string): Promise<string> {
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder()
+            .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
+            .update()
+            .set({ status: Status.expired })
+            .execute();
+        const juniors = await this.juniorRepo.find();
+
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User created new season.`);
         }
-
-        const result: UpdateResult = await this.juniorRepo.createQueryBuilder().update().set({ status: "expired" }).execute()
-        const juniors = await this.juniorRepo.find();
 
         // This SMS is sent to the parents. We don't know the parent's preferred communications language, so we must use the junior's language.
         // NB: the SMS is sent to each parent regardless if they have agreed on receiving announcement SMSs or not. This case is mentioned in the end user agreement.
@@ -362,19 +343,58 @@ export class JuniorService {
             lang: junior.communicationsLanguage as content.Language,
             name: `${junior.firstName} ${junior.lastName}`,
             phoneNumber: junior.parentsPhoneNumber,
-        }));
+        }))
+        .filter(r => r.phoneNumber.substring(0, 6) !== "358777") // Skip test data numbers.
+        .filter(r => r.phoneNumber.substring(0, 6) !== "358999"); // Skip dummy phone numbers.
 
+        // NB: if SMS sending fails, the junior statuses have still been set.
         await this.smsService.sendNewSeasonSMS(recipients, expireDate);
 
         return content.NewSeasonCreated(result.affected);
     }
 
     async deleteExpired(userId?: string): Promise<string> {
-        const result: DeleteResult = await this.juniorRepo.delete({ status: 'expired' })
+        // Set expired juniors to extraEntriesOnly if they have any extra entries or permits.
+        // When the extra entries or permits expire, the juniors are automatically removed by nightly cleanup routines.
+        const expiredJuniors = await this.juniorRepo.createQueryBuilder('junior')
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .leftJoinAndSelect('junior.permits', 'permit')
+            .where('junior.status = :expiredStatus', { expiredStatus: Status.expired })
+            .getMany();
+
+        const extraEntryJuniorIds = expiredJuniors.filter(j => (j.extraEntries.length > 0 || j.permits.length > 0 )).map(j => j.id);
+
+        const updated: UpdateResult = extraEntryJuniorIds.length === 0 ? null :
+            await this.juniorRepo.createQueryBuilder('junior')
+            .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
+            .update()
+            .set({ status: Status.extraEntriesOnly })
+            .execute();
+
+        const deleted: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
-        return content.ExpiredUsersDeleted(result.affected);
+        return content.ExpiredUsersDeleted(deleted.affected, updated?.affected ?? 0);
+    }
+
+    // Delete juniors that are only in the extra entry registry but who have no extra entries or permits.
+    async cleanUpExtraEntryJuniors(): Promise<void> {
+        const extraEntryJuniors = await this.juniorRepo.createQueryBuilder('junior')
+            .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
+            .leftJoinAndSelect('junior.permits', 'permit')
+            .where('junior.status = :extraEntriesOnly', { extraEntriesOnly: Status.extraEntriesOnly })
+            .getMany();
+
+        const removeJuniorIds = extraEntryJuniors.filter(j => (j.extraEntries.length === 0 && j.permits.length === 0)).map(j => j.id);
+        if (removeJuniorIds.length > 0) {
+            const deleted: DeleteResult = await this.juniorRepo.createQueryBuilder()
+                .where('junior.id IN (:...removeJuniorIds)', { removeJuniorIds })
+                .delete()
+                .execute();
+
+            this.logger.log(`Deleted ${deleted.affected} extra entry registry juniors with no extra entries or permits.`);
+        }
     }
 
     /**
@@ -410,12 +430,12 @@ export class JuniorService {
                 school: school_names[Math.floor(Math.random() * school_names.length)],
                 class: class_names[Math.floor(Math.random() * class_names.length)],
                 parentsName: first_names[Math.floor(Math.random() * first_names.length)] + " " + last_names[Math.floor(Math.random() * last_names.length)],
-                parentsPhoneNumber: "358400" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
+                parentsPhoneNumber: "358777" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
                 communicationsLanguage: 'fi',
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,
                 homeYouthClub: (Math.floor(Math.random() * 14) + 1).toString(),
-                status: Math.random() < 0.5 ? "accepted" : "pending",
+                status: Math.random() < 0.5 ? Status.accepted : Status.pending,
                 photoPermission: Math.random() < 0.5 ? true : false
             } as RegisterJuniorDto;
             await this.registerJunior(data, undefined, true);

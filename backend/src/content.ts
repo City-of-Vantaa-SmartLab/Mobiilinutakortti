@@ -17,6 +17,10 @@ export const LockedOut = "Liian monta väärää yritystä."
 export const Reset = "Palautuslinkki lähetetty."
 export const Updated = "Päivitetty."
 export const UserNotFound = "Käyttäjää ei löydy."
+export const TypeNotFound = "Lisämerkintätyyppiä ei löydy."
+export const ExtraEntryAdded = "Merkintä lisätty"
+export const ExtraEntryDeleted = "Merkintä poistettu"
+export const ExtraEntryNotFound = "Poistettavaa merkintää ei löytynyt."
 export const MessageTypeNotFound = "Viestin tyyppi tuntematon."
 export const EmailServiceNotAvailable = "Sähköpostipalvelu on tilapäisesti pois käytöstä."
 export const EmailBatchFailed = "Sähköpostierän lähettäminen epäonnistui."
@@ -30,12 +34,14 @@ export const Routes = {
     api: "/api",
     admin: "/nuorisotyontekijat",
 }
+export const ExtraEntryTypeSaveFailed = "Merkintätyypin tallennus epäonnistui."
+export const ExtraEntryTypeSaved = "Merkintätyyppi tallennettu"
 export const PhoneNumberNotValid = "Puhelinnumero on virheellinen"
 export const ParentsPhoneNumberNotValid = "Huoltajan puhelinnumero on virheellinen"
 export const SecurityContextNotValid = "Käyttäjätunnistuksessa tapahtui virhe, tunnistaudu Suomi.fi:n kautta uudelleen"
 export const JuniorAccountNotConfirmedOrFound = "Käyttäjätiliä ei ole tai sitä ei ole vielä hyväksytty"
 export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${count} käyttäjää asetettu tilaan "tunnus vanhentunut"`
-export const ExpiredUsersDeleted = (count: number) => `${count} vanhentunutta tunnusta poistettu`
+export const ExpiredUsersDeleted = (countRemoved: number, countExtraEntries: number) => `${countRemoved} vanhentunutta tunnusta poistettu, ${countExtraEntries} asetettu merkintärekisteriin`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
   fi: (recipientName: string, link: string, clubSpecificMessage: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}\n\n${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,

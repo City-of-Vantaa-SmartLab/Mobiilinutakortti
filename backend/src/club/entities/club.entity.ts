@@ -5,7 +5,7 @@ import { Messages } from '../classes/messages';
 @Entity()
 export class Club {
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @Column({ unique: true })
     name: string;

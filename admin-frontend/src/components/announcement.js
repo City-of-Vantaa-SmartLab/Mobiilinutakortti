@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
     SimpleForm,
     SelectInput,
@@ -30,6 +31,12 @@ const MsgSection = styled.section`
         max-width: 90%;
     }
 `;
+
+const useStyles = makeStyles({
+    selectInput: {
+        minWidth: "300px"
+    }
+});
 
 const SectionTitle = ({title}) => (
     <span>{title}</span>
@@ -78,6 +85,7 @@ export const AnnouncementCreate = (props) => {
     const [ allSelected, setAllSelected ] = useState(false);
     const notify = useNotify();
     const redirect = useRedirect();
+    const classes = useStyles();
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
@@ -122,7 +130,7 @@ export const AnnouncementCreate = (props) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
-                <SelectInput sx={{ minWidth: "350px" }} disabled={allSelected} label="Koskien nuorisotilaa" source="youthClub" choices={allSelected ? [] : youthClubChoices} validate={!allSelected && required()} helperText={selectHelperText} />
+                <SelectInput className={classes.selectInput} disabled={allSelected} label="Koskien nuorisotilaa" source="youthClub" choices={allSelected ? [] : youthClubChoices} validate={!allSelected && required()} helperText={selectHelperText} />
                 <MessageSectionForLanguage langCode="fi" />
                 <MessageSectionForLanguage langCode="en" />
                 <MessageSectionForLanguage langCode="sv" />

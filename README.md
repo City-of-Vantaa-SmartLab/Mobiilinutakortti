@@ -123,6 +123,10 @@ With the `SUPER_ADMIN_FEATURES` enabled and the backend running, use these two t
 
 Qr-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
 
+## Extra entries
+
+In the admin-frontend there is a possibility to enable extra entry registry via an environment variable (see its README.md). The extra entries are hidden in the UI by default. The extra entries enable permissions and markings to entries of type `<what> <expiry age>`. For example, if a junior has a permission to participate into a gym intro course, there could be an extra entry of type `<Gym course> <21>`, and the junior would have a permission for it. After completing the intro course, he could be given a permanent marking for the gym course. The marking would expire when the junior turns 21 years.
+
 ## Troubleshooting
 
 ### Login not working
