@@ -20,14 +20,16 @@ export class JuniorEditInterceptor implements NestInterceptor {
         let dataChanged = false;
 
         // Interceptor for non-nullable fields
-        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'homeYouthClub', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent', 'emailPermissionParent'];
+        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent', 'emailPermissionParent'];
         dataChanged = nonNullableFields.some(field => {
             body[field] = body[field] ?? '';
             return body[field] !== userToEdit[field];
         });
 
+        body.homeYouthClub = body.homeYouthClub === -1 ? body.homeYouthClub = null : body.homeYouthClub;
+
         // Interceptor for nullable fields
-        const nullableFields = ['additionalContactInformation', 'parentsEmail'];
+        const nullableFields = ['additionalContactInformation', 'parentsEmail', 'homeYouthClub'];
         dataChanged = dataChanged || nullableFields.some(field => {
             return body[field] !== userToEdit[field];
         });

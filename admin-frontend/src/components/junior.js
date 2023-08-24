@@ -35,7 +35,6 @@ const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
 );
 
-
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
 );
@@ -139,20 +138,24 @@ export const JuniorList = (props) => {
     )
 };
 
-const getDummyPhoneNumber = async (cb) => {
-    const url = api.junior.dummynumber;
-    await httpClientWithRefresh(url)
-      .then(response => {
-          if (response.message) {
-              cb("phoneNumber", response.message)
-          }
-      });
+const getDummyPhoneNumber = async (cb, fieldName) => {
+    if (fieldName === "parentsPhoneNumber") {
+        cb(fieldName, "3587770000");
+    } else {
+        const url = api.junior.dummynumber;
+        await httpClientWithRefresh(url)
+        .then(response => {
+            if (response.message) {
+                cb(fieldName, response.message);
+            }
+        });
+    }
 }
 
-const DummyPhoneNumberButton = () => {
+const DummyPhoneNumberButton = ({fieldName}) => {
     const form = useForm();
     return (
-        <Button variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((field, value) => form.change(field, value))}>
+        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((field, value) => form.change(field, value), fieldName)}>
             Käytä korvikepuhelinnumeroa
         </Button>
     )
@@ -201,7 +204,8 @@ export const JuniorForm = (formType) => {
     useEffect(() => {
         const addYouthClubsToState = async () => {
             const parsedYouthClubs = await getActiveYouthClubs();
-            setYouthClubChoices(parsedYouthClubs);
+            const youthClubsWithCustomOptions = [{id: -1, name: ""}, ...parsedYouthClubs];
+            setYouthClubChoices(youthClubsWithCustomOptions);
         };
         addYouthClubsToState();
     }, []);
@@ -213,21 +217,24 @@ export const JuniorForm = (formType) => {
             {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
             <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
             <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
-            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()}/>
-            <BooleanInput label="Infoviestit sallittu" source="smsPermissionJunior" />
+            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} />
             <FormDataConsumer>
-                {() => <DummyPhoneNumberButton />}
+                {() => <DummyPhoneNumberButton fieldName="phoneNumber"/>}
             </FormDataConsumer>
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} />
             {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
             {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} />)}
             {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
             <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} />
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} />
+            <FormDataConsumer>
+                {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber"/>}
+            </FormDataConsumer>
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} />
             <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" />
             <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" />
             {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
-            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} validate={required()} />
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} />
             {formType === 'create' ?
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
