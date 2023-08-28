@@ -189,7 +189,7 @@ export const ExtraEntryEdit = (props) => {
                                         <td>{status.name}</td>
                                     </tr>
                                     <tr>
-                                        <th><a href={`/#/junior/${formData.id}`}>Muokkaa nuoren tietoja</a></th>
+                                        <th><a href={`${process.env.REACT_APP_ADMIN_FRONTEND_URL}#/junior/${formData.id}`}>Muokkaa nuoren tietoja</a></th>
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>

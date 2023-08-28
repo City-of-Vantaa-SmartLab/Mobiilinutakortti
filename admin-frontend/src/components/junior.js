@@ -255,7 +255,7 @@ export const JuniorForm = (formType) => {
             </FormDataConsumer>
             {(formType === 'edit' && showExtraEntries) &&<FormDataConsumer>
                 {({ formData }) => {
-                    return <ExtraEntryLink href={`/#/extraEntry/${formData.id}`}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
+                    return <ExtraEntryLink href={`${process.env.REACT_APP_ADMIN_FRONTEND_URL}#/extraEntry/${formData.id}`}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
 
                 }}
             </FormDataConsumer>}
