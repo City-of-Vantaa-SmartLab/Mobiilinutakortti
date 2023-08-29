@@ -375,7 +375,10 @@ export class JuniorService {
         if (userId && ConfigHelper.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
-        return content.ExpiredUsersDeleted(deleted.affected, updated?.affected ?? 0);
+
+        return updated?.affected ?
+            content.ExpiredUsersDeletedWithExtraEntries(deleted.affected, updated?.affected) :
+            content.ExpiredUsersDeleted(deleted.affected);
     }
 
     // Delete juniors that are only in the extra entry registry but who have no extra entries or permits.
