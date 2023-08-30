@@ -9,6 +9,7 @@ const apiEndpoints = {
     base: `${appUrl}/junior/`,
     dummynumber: `${appUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${appUrl}/junior/newSeason`,
+    newSeasonSMSCount: `${appUrl}/junior/newSeason/SMSCount`,
     deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
@@ -16,7 +17,8 @@ const apiEndpoints = {
     logout: `${appUrl}/youthworker/logout`,
   },
   announcement: {
-    create: `${appUrl}/announcement/create`
+    create: `${appUrl}/announcement/create`,
+    dryRun: `${appUrl}/announcement/dryrun`
   },
   extraEntry: {
     base: `${appUrl}/extraEntry/`,

@@ -1,5 +1,5 @@
 import api from '../api';
-import { CREATE, GET_ONE, HttpError } from 'react-admin';
+import { CREATE, GET_ONE, GET_LIST, HttpError } from 'react-admin';
 import { parseErrorMessages } from '../utils';
 
 export const announcementProvider = (type, params, httpClient) => {
@@ -22,6 +22,26 @@ export const announcementProvider = (type, params, httpClient) => {
                 msgType: undefined,
                 youthClub: undefined
             }
+        }
+        case GET_LIST: {
+            const data = JSON.stringify({
+                recipient: params.data.recipient,
+                msgType: params.data.msgType,
+                youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
+            });
+            url = api.announcement.dryRun;
+            options = {
+                method: 'POST',
+                body: data,
+                headers: { "Content-Type": "application/json" },
+            };
+            return httpClient(url, options)
+                .then(response => {
+                    if (response.statusCode < 200 || response.statusCode >= 300) {
+                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                    };
+                    return { data: response.message }; // React admin expects data as return value
+                });
         }
         case CREATE: {
             // If all language versions of content and title are deleted or otherwise empty, params.data returns the whole title and content objects as null:
@@ -49,7 +69,7 @@ export const announcementProvider = (type, params, httpClient) => {
                 title: titles,
                 recipient: params.data.recipient,
                 msgType: params.data.msgType,
-                youthClub: params.data.youthClub
+                youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
             });
             url = api.announcement.create;
             options = {

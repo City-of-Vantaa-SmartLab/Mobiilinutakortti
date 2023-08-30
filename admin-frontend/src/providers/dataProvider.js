@@ -1,5 +1,5 @@
 import { httpClientWithRefresh } from '../httpClients';
-import { 
+import {
   announcementProvider,
   extraEntryProvider,
   extraEntryTypeProvider,

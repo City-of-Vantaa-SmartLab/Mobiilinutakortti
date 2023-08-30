@@ -22,36 +22,36 @@ export class AnnouncementService {
         private readonly juniorService: JuniorService
         ) { }
 
-    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string  {
-        const contentWithLangOrDefault = content[langCode] || content.fi;
-        return contentWithLangOrDefault;
+    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string | null {
+        return content ? (content[langCode] || content.fi) : null;
     };
 
-    private async getSelectedRecipients(youthClub: number): Promise<Junior[]> {
+    private async getRecipientsByYouthClub(youthClubId: number): Promise<Junior[]> {
         const twoWeeksInSeconds = 1209600;
-        const checkIns = await this.clubService.getCheckins({clubId: youthClub, date: new Date().toString()}, twoWeeksInSeconds);
+        const checkIns = await this.clubService.getCheckins({clubId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
         const checkedInJuniors = checkIns.map((checkIn) => {
             return checkIn.junior;
         });
 
-        const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClub);
+        const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClubId);
         const allRecipients = checkedInJuniors.concat(juniorsByHomeClub);
         const uniqueRecipients = new Set<Junior>(allRecipients);
         return Array.from(uniqueRecipients);
     }
 
-    private async getAllForRecipients(): Promise<Junior[]> {
+    // NB: this leaves out juniors that have no home youth club unless they have visited some youth club recently.
+    private async getRecipientsForAllYouthClubs(): Promise<Junior[]> {
         const activeClubs = (await this.clubService.getClubs()).filter(club => club.active);
-        const recipientsByClub = await Promise.all(activeClubs.map(async(club) =>  await this.getSelectedRecipients(club.id)));
+        const recipientsByClub = await Promise.all(activeClubs.map(async(club) => await this.getRecipientsByYouthClub(club.id)));
         const recipients = recipientsByClub.reduce((a, b) => a.concat(b), []);
         return recipients;
     }
 
     private getEmailRecipientsByLanguage(recipients: Junior[], langCode: string): string[] {
-        return recipients.filter((recipient) => recipient.communicationsLanguage === langCode)
-                .filter((recipientWithLang) => recipientWithLang.emailPermissionParent)
-                .map((allowedRecipient) => allowedRecipient.parentsEmail)
-                .filter(email => /^\S+@\S+\.\S+$/.test(email));
+        return recipients.filter((r: Junior) => r.communicationsLanguage === langCode)
+                .filter((r: Junior) => r.emailPermissionParent)
+                .map((r: Junior) => r.parentsEmail)
+                .filter((email: string) => /^\S+@\S+\.\S+$/.test(email));
     };
 
     private splitToBatches(recipientEmails: string[], batchSize: number): Array<string[]> {
@@ -72,10 +72,11 @@ export class AnnouncementService {
     };
 
     async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
-        const settings = SMSConfig.getTeliaConfig();
+        const settings = announcementData.dryRun ? null : SMSConfig.getTeliaConfig();
 
-        const youthClubId = announcementData.youthClub;
-        const selectedRecipients = !youthClubId ? await this.getAllForRecipients() : await this.getSelectedRecipients(youthClubId);
+        const selectedRecipients = announcementData.youthClub ?
+            await this.getRecipientsByYouthClub(announcementData.youthClub) :
+            await this.getRecipientsForAllYouthClubs();
 
         const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionParent)
@@ -99,6 +100,10 @@ export class AnnouncementService {
 
         const batch: BatchItem[] = parentBatch.concat(juniorBatch);
 
+        if (announcementData.dryRun) {
+            return batch.length.toString();
+        }
+
         if (batch.length < 1) {
             throw new BadRequestException(content.RecipientsNotFound);
         };
@@ -119,14 +124,19 @@ export class AnnouncementService {
     };
 
     async clubAnnouncementEmail(announcementData: AnnouncementData): Promise<string> {
-        const settings = EmailConfig.getEmailConfig();
+        const settings = announcementData.dryRun ? null : EmailConfig.getEmailConfig();
 
-        const youthClubId = announcementData.youthClub;
-        const selectedRecipients = !youthClubId ? await this.getAllForRecipients() : await this.getSelectedRecipients(youthClubId);
+        const selectedRecipients = announcementData.youthClub ?
+            await this.getRecipientsByYouthClub(announcementData.youthClub) :
+            await this.getRecipientsForAllYouthClubs();
 
         const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "en"), 50);
         const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "sv"), 50);
         const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
+
+        if (announcementData.dryRun) {
+            return (recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length).toString();
+        }
 
         if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
             throw new BadRequestException(content.RecipientsNotFound);
@@ -137,7 +147,7 @@ export class AnnouncementService {
         this.createEmailDataForLanguage(announcementData, recipientBatchesSv, "sv")).concat(
         this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
 
-        const responses = Promise.all(emails.map(async (e) => {
+        const responses = Promise.all(emails.map(async (e: EmailBatchItem) => {
             return await this.emailService.batchSendEmailsToUsers(e, settings)
         }));
 

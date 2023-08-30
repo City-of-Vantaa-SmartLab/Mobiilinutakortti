@@ -325,8 +325,20 @@ export class JuniorService {
         return next;
     }
 
+    async queryNewSeasonSMSCount(): Promise<string> {
+        const juniors = (await this.juniorRepo.createQueryBuilder('junior')
+            .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
+            .getMany());
+
+        const recipients = juniors
+            .filter(j => j.parentsPhoneNumber.substring(0, 6) !== "358777") // Skip test data numbers.
+            .filter(j => j.parentsPhoneNumber.substring(0, 6) !== "358999"); // Skip dummy phone numbers.
+
+        return recipients.length.toString();
+    }
+
     async createNewSeason({ expireDate }: SeasonExpiredDto, userId?: string): Promise<string> {
-        const result: UpdateResult = await this.juniorRepo.createQueryBuilder()
+        const result: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
             .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
             .update()
             .set({ status: Status.expired })

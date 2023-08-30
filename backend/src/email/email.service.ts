@@ -6,9 +6,9 @@ import { EmailConfig } from './emailConfigHandler';
 
 @Injectable()
 export class EmailService {
-    
+
     private readonly logger = new Logger('Email Service');
-    
+
     constructor(
         ) { }
 
@@ -18,7 +18,7 @@ export class EmailService {
                 Destination: {
                     BccAddresses: batchItem.to,
                 },
-                Message: { 
+                Message: {
                     Subject: {
                         Data: batchItem.title,
                     },
@@ -32,7 +32,7 @@ export class EmailService {
             };
             return messageInput;
         }
-        
+
         async batchSendEmailsToUsers(batch: EmailBatchItem, settings: EmailSettings): Promise<boolean> {
             if (batch.to.length < 1) return;
             if (batch.to.length >= 1) {

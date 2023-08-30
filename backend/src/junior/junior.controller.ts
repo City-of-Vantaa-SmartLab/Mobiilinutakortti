@@ -144,6 +144,15 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
+    @Get('newSeason/SMSCount')
+    @ApiBearerAuth('admin')
+    async queryNewSeasonSMSCount() {
+        return new Message(await this.juniorService.queryNewSeasonSMSCount());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.ADMIN)
     @Post('newSeason')
     @ApiBearerAuth('admin')
     async createNewSeason(@YouthWorker() admin: { userId: string }, @Body() expireDate: SeasonExpiredDto) {

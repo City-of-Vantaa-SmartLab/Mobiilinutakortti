@@ -3,6 +3,7 @@ import {
     UsePipes,
     ValidationPipe,
     UseGuards,
+    Get,
     Post,
     Body,
     BadRequestException
@@ -29,16 +30,29 @@ export class AnnouncementController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
+    @Post('dryrun')
+    @ApiBearerAuth('youthWorker')
+    async clubAnnouncementDryRun(@Body() announcementData: AnnouncementData): Promise<Message> {
+        announcementData.dryRun = true;
+        return this.serviceCall(announcementData);
+    };
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
     @ApiBearerAuth('youthWorker')
-    async clubAnnouncement(@Body() announcementData: AnnouncementData): Promise<Message>  {
-        const messageType = announcementData.msgType;
-        if (messageType === 'email') {
-            return  new Message(await this.announcementService.clubAnnouncementEmail(announcementData));
-        } else if (messageType === 'sms') {
+    async clubAnnouncement(@Body() announcementData: AnnouncementData): Promise<Message> {
+        return this.serviceCall(announcementData);
+    };
+
+    private async serviceCall(announcementData: AnnouncementData): Promise<Message> {
+        if (announcementData.msgType === 'email') {
+            return new Message(await this.announcementService.clubAnnouncementEmail(announcementData));
+        } else if (announcementData.msgType === 'sms') {
             return new Message(await this.announcementService.clubAnnouncementSms(announcementData));
         } else {
             throw new BadRequestException(content.MessageTypeNotFound);
         };
-    };
+    }
 }
