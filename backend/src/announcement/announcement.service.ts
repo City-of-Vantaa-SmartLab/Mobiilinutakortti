@@ -135,7 +135,10 @@ export class AnnouncementService {
         const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
 
         if (announcementData.dryRun) {
-            return (recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length).toString();
+            return (recipientBatchesEn.map(b => b.length).reduce((sum, l) => sum + l, 0) +
+                    recipientBatchesSv.map(b => b.length).reduce((sum, l) => sum + l, 0) +
+                    recipientBatchesFi.map(b => b.length).reduce((sum, l) => sum + l, 0)
+            ).toString();
         }
 
         if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
