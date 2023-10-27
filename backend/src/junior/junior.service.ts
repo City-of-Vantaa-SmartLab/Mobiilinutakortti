@@ -56,7 +56,7 @@ export class JuniorService {
             .orderBy(filters.order)
     }
 
-    async listAllJuniors(controls?: ListControlDto, userId?: string): Promise<JuniorListViewModel> {
+    async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
         const filters = getFilters(controls);
         const juniorQueries = this.getAllJuniorsQuery(filters);
         const total = await juniorQueries.getCount();
@@ -67,17 +67,10 @@ export class JuniorService {
             .getMany())
             .map(e => new JuniorUserViewModel(e));
 
-        if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorIds: response.map(junior => junior.id) }, `User fetched juniors.`);
-        }
         return new JuniorListViewModel(response, total);
     }
 
-    async getJunior(id: string, userId?: string): Promise<Junior> {
-        if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: id }, `User fetched junior.`);
-        }
-
+    async getJunior(id: string): Promise<Junior> {
         return await this.juniorRepo.findOneBy({ id });
     }
 
@@ -118,7 +111,7 @@ export class JuniorService {
     // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club youth workers, and sometimes this results in a contact to maintenance, i.e. developers.
     // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
     async registerJunior(registrationData: RegisterJuniorDto, userId?: string, noSMS: boolean = false): Promise<string> {
-        this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} ${registrationData.phoneNumber} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
+        this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} xxxxxx${registrationData.phoneNumber.slice(-4)} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
 
         let existingJunior = await this.getUniqueJunior(
             registrationData.phoneNumber,
@@ -154,11 +147,11 @@ export class JuniorService {
 
             // Only allow account renewal if existing junior's status is expired or pending.
             if ([Status.expired, Status.pending].includes(existingJunior.status as Status)) {
-                this.logger.log(`Overwriting junior ${existingJunior.phoneNumber}`);
+                this.logger.log(`Overwriting junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}`);
                 junior = existingJunior;
                 renew = true;
             } else {
-                this.logger.error(`Unable to overwrite existing junior ${existingJunior.phoneNumber}, because status is not expired or pending.`);
+                this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}, because status is not expired or pending.`);
                 throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
@@ -183,11 +176,11 @@ export class JuniorService {
         }
 
         try {
-            this.logger.log(`Saving junior ${junior.phoneNumber}`);
+            this.logger.log(`Saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}`);
             // Creates new or updates an existing junior.
             await this.juniorRepo.save(junior);
         } catch (e) {
-            this.logger.error(`Error saving junior ${junior.phoneNumber}: ${e.name}: ${e.message}`);
+            this.logger.error(`Error saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ${e.name}: ${e.message}`);
             if (e instanceof QueryFailedError) {
                 throw new ConflictException(content.JuniorAlreadyExists);
             }

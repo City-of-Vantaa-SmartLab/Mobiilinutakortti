@@ -109,18 +109,18 @@ export class SmsService {
      * to send individual messages to multiple users.
      */
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        this.logger.log(`Sending SMS to ${messageRequest.to[0]}`);
+        this.logger.log(`Sending SMS to xxxxxx${messageRequest.to[0].slice(-4)}`);
         return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
             response => {
                 if (response.data.accepted[0].to === messageRequest.to[0]) {
-                    this.logger.log(`SMS send to ${messageRequest.to[0]}`);
+                    this.logger.log(`SMS send to xxxxxx${messageRequest.to[0].slice(-4)}`);
                     return true;
                 } else {
-                    this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}: ${response}.`);
+                    this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
                     return false;
                 }
             }).catch(error => {
-                this.logger.log(`Failed to send SMS to ${messageRequest.to[0]}.`);
+                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
                 return false;
             });
 

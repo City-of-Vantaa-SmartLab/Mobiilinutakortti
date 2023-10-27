@@ -51,11 +51,7 @@ export class ExtraEntryService {
     };
 
     // Similar function can be made for juniors checkIns when needed: simply replace extraEntries with checkIns
-    async getExtraEntriesForJunior(id: string, userId?: string): Promise<JuniorExtraEntriesViewModel> {
-        if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: id }, `User fetched extra entries and permits for junior.`);
-        };
-
+    async getExtraEntriesForJunior(id: string): Promise<JuniorExtraEntriesViewModel> {
         const junior = await this.juniorRepo.createQueryBuilder('user')
             .leftJoinAndSelect('user.extraEntries', 'extraEntry')
             .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
@@ -67,7 +63,7 @@ export class ExtraEntryService {
         return new JuniorExtraEntriesViewModel(junior);
     }
 
-    async getAllExtraEntries(controls?: ListControlDto, userId?: string): Promise<ExtraEntryListViewModel> {
+    async getAllExtraEntries(controls?: ListControlDto): Promise<ExtraEntryListViewModel> {
         const sortField = controls?.sort?.field;
         const filters = getFilters(controls);
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
@@ -104,10 +100,6 @@ export class ExtraEntryService {
 
         const juniors = (controls ? juniorEntities.slice(filters.skip, filters.skip + filters.take) : juniorEntities).map(e => new JuniorExtraEntriesViewModel(e));
 
-        if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorIds: juniors.map(junior => junior.id) }, `User fetched extra entries for juniors.`);
-        }
-
         return new ExtraEntryListViewModel(juniors, juniorEntities.length);
     }
 
@@ -128,7 +120,7 @@ export class ExtraEntryService {
         const isPermit = details.isPermit;
 
         if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: details.juniorId }, `User created ${isPermit ? "a permit" : "an extra entry"} for junior.`);
+            this.logger.log({ userId: userId, juniorId: details.juniorId, entryTypeId: details.entryTypeId }, `User created ${isPermit ? "a permit" : "an extra entry"} for junior.`);
         };
 
         const junior = await this.juniorRepo.findOneBy({ id: details.juniorId });
@@ -167,7 +159,7 @@ export class ExtraEntryService {
         const juniorId = entry?.junior?.id;
 
         if (userId && ConfigHelper.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: juniorId }, `User deleted ${isPermit ? "permit" : "extra entry"} from junior.`);
+            this.logger.log({ userId: userId, juniorId: juniorId, entryId: deletableId }, `User deleted ${isPermit ? "permit" : "extra entry"} from junior.`);
         };
 
         if (isPermit) {
@@ -209,7 +201,7 @@ export class ExtraEntryService {
                 .where('extra_entry.id IN (:...expiredIds)', { expiredIds: expiredExtraEntries })
                 .delete()
                 .execute();
-            this.logger.log(`Deleted ${deleted.affected} expired extra entries.`);
+            this.logger.log({ count: deleted.affected, ids: expiredExtraEntries }, "Deleted expired extra entries.");
         }
 
         if (expiredPermits.length > 0) {
@@ -217,7 +209,7 @@ export class ExtraEntryService {
                 .where('permit.id IN (:...expiredIds)', { expiredIds: expiredPermits })
                 .delete()
                 .execute();
-            this.logger.log(`Deleted ${deleted.affected} expired permits.`);
+            this.logger.log({ count: deleted.affected, ids: expiredPermits }, "Deleted expired permits.");
         }
 
         await this.juniorService.cleanUpExtraEntryJuniors();

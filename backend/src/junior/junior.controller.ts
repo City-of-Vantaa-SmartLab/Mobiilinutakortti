@@ -91,9 +91,9 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('list')
     @ApiBearerAuth('youthWorker')
-    async getAllJuniors(@YouthWorker() youthWorker: { userId: string }, @Query('controls') query): Promise<JuniorListViewModel> {
+    async getAllJuniors(@Query('controls') query: any): Promise<JuniorListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
-        return await this.juniorService.listAllJuniors(controls, youthWorker.userId);
+        return await this.juniorService.listAllJuniors(controls);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -110,8 +110,8 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get(':id')
     @ApiBearerAuth('youthWorker')
-    async getOneJunior(@YouthWorker() youthWorker: { userId: string }, @Param('id') id: string): Promise<JuniorUserViewModel> {
-        return new JuniorUserViewModel(await this.juniorService.getJunior(id, youthWorker.userId));
+    async getOneJunior(@Param('id') id: string): Promise<JuniorUserViewModel> {
+        return new JuniorUserViewModel(await this.juniorService.getJunior(id));
     }
 
     /**

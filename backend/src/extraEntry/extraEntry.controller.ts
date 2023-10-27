@@ -39,9 +39,9 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('list')
     @ApiBearerAuth('youthWorker')
-    async getAllExtraEntries(@YouthWorker() youthWorker: { userId: string }, @Query('controls') query): Promise<ExtraEntryListViewModel> {
+    async getAllExtraEntries(@Query('controls') query: any): Promise<ExtraEntryListViewModel> {
         const controls = query ? JSON.parse(query) as ListControlDto : undefined;
-        return await this.extraEntryService.getAllExtraEntries(controls, youthWorker.userId);
+        return await this.extraEntryService.getAllExtraEntries(controls);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -76,8 +76,8 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get(':id')
     @ApiBearerAuth('youthWorker')
-    async getExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Param('id') id: string): Promise<any> {
-        return await this.extraEntryService.getExtraEntriesForJunior(id, youthWorker.userId);
+    async getExtraEntry(@Param('id') id: string): Promise<any> {
+        return await this.extraEntryService.getExtraEntriesForJunior(id);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
