@@ -182,6 +182,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                             <ErrorMessage>{errors.termsOfUse && t.parentRegistration.errors[errors.termsOfUse as ErrorKey]}</ErrorMessage>
                         </>
                     ))}
+                    <p>{t.parentRegistration.form.correctNote}</p>
                     <SubmitButton type="submit">{t.parentRegistration.form.submit}</SubmitButton>
                     <a target='_blank' rel="noopener noreferrer" href={t.parentRegistration.form.privacyPolicy.href}>
                         {t.parentRegistration.form.privacyPolicy.title}

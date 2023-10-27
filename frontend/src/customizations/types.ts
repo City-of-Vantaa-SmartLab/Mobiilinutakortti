@@ -173,6 +173,7 @@ export interface Translations {
       communicationsLanguageDescription: string,
 
       termsOfUse: ReactNode,
+      correctNote: string,
       submit: ReactNode,
       privacyPolicy: {
         title: ReactNode,

@@ -105,6 +105,7 @@ export const translations: Translations = {
           Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>käyttöehdot</a>
         </>
       ),
+      correctNote: 'Varmistathan, että täyttämäsi tiedot ovat oikein ennen hakemuksen lähettämistä.',
       submit: 'Lähetä hakemus',
       privacyPolicy: {
         title: 'Lue tarkemmin, kuinka käsittelemme tietojasi.',
