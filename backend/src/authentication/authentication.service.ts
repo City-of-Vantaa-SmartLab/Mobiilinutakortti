@@ -35,19 +35,27 @@ export class AuthenticationService {
         private readonly sessionDBService: SessionDBService
     ) { }
 
+    // TODO: async loginYouthWorkerEntraID(loginData: ???): Promise<JWTToken> {
+    //    const token = this.signToken(user.id, true);
+    //    this.sessionDBService.addSession(user.id, token.access_token);
+    //    this.logger.log(`User login: ${user.id} (${user.email})`);
+    //    return token;
+    // }
+
     async loginYouthWorker(loginData: LoginYouthWorkerDto): Promise<JWTToken> {
         const user = await this.youthWorkerService.getYouthWorkerByEmail(loginData.email);
         if (!user) { throw new BadRequestException(content.UserNotFound); }
+
         const lockedOut = await this.youthWorkerService.isLockedOut(user.id);
         if (lockedOut) {
             const timeRemaining = new Date((new Date((await this.youthWorkerService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
             const hoursRemaining = timeRemaining.getUTCHours();
             throw new ForbiddenException(`${content.LockedOut} Kokeile uudestaan ${hoursRemaining} tunnin päästä.`);
         }
-        const token = await this.validateYouthWorker({
-            provided: loginData.password, expected: user.password,
-        }, user.id);
 
+        await this.validateYouthWorker({ provided: loginData.password, expected: user.password }, user.id);
+
+        const token = this.signToken(user.id, true);
         this.sessionDBService.addSession(user.id, token.access_token);
         this.logger.log(`User login: ${user.id} (${user.email})`);
         return token;
@@ -63,14 +71,13 @@ export class AuthenticationService {
         return this.signToken(challengeResponse);
     }
 
-    private async validateYouthWorker(attempt: { provided: string, expected: string }, userId: string): Promise<JWTToken> {
+    private async validateYouthWorker(attempt: { provided: string, expected: string }, userId: string): Promise<void> {
         const passwordMatch = await compare(attempt.provided, attempt.expected);
         if (!passwordMatch) {
             await this.youthWorkerService.addFailedAttempt(userId);
             throw new UnauthorizedException(content.FailedLogin);
         }
         await this.youthWorkerService.deleteLockoutRecord(userId);
-        return this.signToken(userId, true);
     }
 
     signToken(userId: string, isYouthWorker = false): JWTToken {

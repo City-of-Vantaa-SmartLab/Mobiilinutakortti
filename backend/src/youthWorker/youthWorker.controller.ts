@@ -1,6 +1,6 @@
 import {
   Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, UseInterceptors,
-  Get, Param, BadRequestException, Delete
+  Get, Param, BadRequestException, ForbiddenException, Delete
 } from '@nestjs/common';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto, EditYouthWorkerDto } from './dto';
 import { YouthWorkerService } from './youthWorker.service';
@@ -106,6 +106,9 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   async login(@Body() userData: LoginYouthWorkerDto): Promise<JWTToken> {
+    if (process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
+        throw new ForbiddenException('Local login is disabled if Microsoft Entra ID is in use.');
+    }
     return await this.authenticationService.loginYouthWorker(userData);
   }
 
