@@ -18,8 +18,14 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
+import EntraLogin from './components/entraLandingPage'
 
-const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
+const CustomLoginPage = () =>
+  process.env.REACT_APP_ENTRA_TENANT_ID !== null ? (
+    <EntraLogin />
+  ) : (
+    <Login backgroundImage="/nuta-admin-bg.jpg" />
+  );
 
 const messages = {
     'fi': finnishMessages,
