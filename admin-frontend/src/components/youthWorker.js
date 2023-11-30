@@ -18,6 +18,7 @@ import {
 import { getYouthClubs, getActiveYouthClubs } from '../utils';
 
 export const YouthWorkerList = (props) => {
+  const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
     const addYouthClubsToState = async () => {
@@ -32,7 +33,7 @@ export const YouthWorkerList = (props) => {
   }
 
   return (
-    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
       <Datagrid>
         <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
         <TextField label="Sähköposti" source="email" />
@@ -70,6 +71,7 @@ export const YouthWorkerCreate = (props) => {
 };
 
 export const YouthWorkerEdit = (props) => {
+  const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
   const [youthClubChoices, setYouthClubChoices] = useState([]);
 
   useEffect(() => {
@@ -101,11 +103,11 @@ export const YouthWorkerEdit = (props) => {
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
       <SimpleForm variant="standard" margin="normal" redirect="list">
-        <TextInput label="Sähköposti" source="email" type="email" />
-        <TextInput label="Etunimi" source="firstName" />
-        <TextInput label="Sukunimi" source="lastName" />
+        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
+        <TextInput label="Etunimi" source="firstName" disabled={useEntraID} />
+        <TextInput label="Sukunimi" source="lastName" disabled={useEntraID} />
         <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
-        <BooleanInput label="Ylläpitäjä" source="isAdmin" />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >
   );

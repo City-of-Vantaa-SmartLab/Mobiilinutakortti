@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
-import { ConfigHelper } from '../../configHandler';
+import { ConfigHandler } from '../../configHandler';
 import { NumberTransformer } from 'src/utils/helpers';
 import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
 import { Permit } from 'src/extraEntry/entities/permit.entity';
@@ -59,7 +59,7 @@ export class Junior {
     gender: string;
 
     // Additional check introduced to allow testDB to run (for npm run test): SQLite doesn't have a date data type.
-    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    @Column({ type: 'date', default: ConfigHandler.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
     // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
@@ -73,7 +73,7 @@ export class Junior {
     status: string;
 
     // See testDB note above.
-    @Column({ type: 'date', default: ConfigHelper.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
+    @Column({ type: 'date', default: ConfigHandler.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     creationDate: string;
 
     @Column()

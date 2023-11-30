@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export class ConfigHelper {
+export class ConfigHandler {
 
     static isTest() {
         return process.env.NODE_ENV === 'test';

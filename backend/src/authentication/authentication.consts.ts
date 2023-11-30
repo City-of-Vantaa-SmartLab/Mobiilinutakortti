@@ -1,4 +1,4 @@
-import { ConfigHelper } from '../configHandler';
+import { ConfigHandler } from '../configHandler';
 
 // Expires August 31st
 const juniorExpiryMonth = 7;
@@ -14,7 +14,7 @@ function getDaysUntilNextExpiry(): number {
 
 export const saltRounds = 10;
 export const jwt = {
-    secret: ConfigHelper.getJWTSecret(),
+    secret: ConfigHandler.getJWTSecret(),
     juniorExpiry: `${getDaysUntilNextExpiry()}d`,
     youthWorkerExpiry: `15m`,
 };

@@ -57,7 +57,6 @@ export class YouthWorkerController {
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('getSelf')
-  @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
   async getSelf(@YouthWorker() youthWorkerData: any): Promise<YouthWorkerUserViewModel> {
     return new YouthWorkerUserViewModel(await this.youthWorkerService.getYouthWorker(youthWorkerData.userId));
@@ -67,7 +66,6 @@ export class YouthWorkerController {
   @AllowedRoles(Roles.YOUTHWORKER)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('refresh')
-  @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
   async refreshJWT(@YouthWorker() youthWorkerData: any): Promise<JWTToken> {
     return this.authenticationService.updateAuthToken(youthWorkerData);
@@ -81,7 +79,6 @@ export class YouthWorkerController {
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('login')
-  @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
   async autoLogin(@YouthWorker() youthWorkerData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
@@ -91,7 +88,6 @@ export class YouthWorkerController {
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('logout')
-  @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
   async logout(@YouthWorker() youthWorkerData: any): Promise<Check> {
     return new Check(await this.authenticationService.logoutYouthWorker(youthWorkerData));
@@ -123,8 +119,8 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   @ApiBearerAuth('admin')
-  async create(@Body() userData: RegisterYouthWorkerDto): Promise<Message> {
-    return new Message(await this.youthWorkerService.registerYouthWorker(userData));
+  async create(@YouthWorker() admin: { userId: string }, @Body() userData: RegisterYouthWorkerDto): Promise<Message> {
+    return new Message(await this.youthWorkerService.registerYouthWorker(userData, admin.userId));
   }
 
   /**
@@ -139,8 +135,8 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('edit')
   @ApiBearerAuth('admin')
-  async edit(@Body() userData: EditYouthWorkerDto): Promise<Message> {
-    return new Message(await this.youthWorkerService.editYouthWorker(userData));
+  async edit(@YouthWorker() admin: { userId: string }, @Body() userData: EditYouthWorkerDto): Promise<Message> {
+    return new Message(await this.youthWorkerService.editYouthWorker(userData, admin.userId));
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
@@ -148,6 +144,7 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('changePassword')
   @ApiBearerAuth('admin')
+  @ApiBearerAuth('youthWorker')
   async changePassword(@YouthWorker() youthWorkerData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
     return new Message(await this.youthWorkerService.changePassword(youthWorkerData.userId, userDate));
   }
@@ -187,8 +184,8 @@ export class YouthWorkerController {
   @AllowedRoles(Roles.ADMIN)
   @Delete(':id')
   @ApiBearerAuth('admin')
-  async deleteYouthWorker(@Param('id') id: string): Promise<Message> {
-    return new Message(await this.youthWorkerService.deleteYouthWorker(id));
+  async deleteYouthWorker(@YouthWorker() admin: { userId: string }, @Param('id') id: string): Promise<Message> {
+    return new Message(await this.youthWorkerService.deleteYouthWorker(id, admin.userId));
   }
 
 }

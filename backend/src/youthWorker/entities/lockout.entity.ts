@@ -1,6 +1,6 @@
 import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 import { YouthWorker } from './youthWorker.entity';
-import { ConfigHelper } from '../../configHandler';
+import { ConfigHandler } from '../../configHandler';
 
 @Entity()
 export class Lockout {
@@ -15,7 +15,7 @@ export class Lockout {
     attempts: number;
 
     @Column({
-        type: ConfigHelper.isTest() ? 'text' : 'timestamp with time zone',
+        type: ConfigHandler.isTest() ? 'text' : 'timestamp with time zone',
         default: getDefaultDate(),
     })
     expiry: string;
@@ -24,5 +24,5 @@ export class Lockout {
 function getDefaultDate() {
     const currentTime = new Date();
     currentTime.setHours(currentTime.getHours() + 3, currentTime.getMinutes());
-    return ConfigHelper.isTest() ? currentTime.getTime() : currentTime;
+    return ConfigHandler.isTest() ? currentTime.getTime() : currentTime;
 }

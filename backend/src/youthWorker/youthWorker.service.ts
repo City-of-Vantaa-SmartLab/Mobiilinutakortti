@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { YouthWorker, Lockout } from './entities';
@@ -14,6 +14,7 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
  */
 @Injectable()
 export class YouthWorkerService {
+    private readonly logger = new Logger('Youth Worker Service');
 
     /**
      * @param youthWorkerRepo - The youth worker repository.
@@ -74,7 +75,7 @@ export class YouthWorkerService {
      * @param registrationData - the details to register.
      * @returns Promise<string> - a success message.
      */
-    async registerYouthWorker(registrationData: RegisterYouthWorkerDto): Promise<string> {
+    async registerYouthWorker(registrationData: RegisterYouthWorkerDto, adminId?: string): Promise<string> {
         const userExists = await this.getYouthWorkerByEmail(registrationData.email);
         if (userExists) { throw new ConflictException(content.YouthWorkerAlreadyExists); }
         const hashedPassword = await hash(registrationData.password, saltRounds);
@@ -84,6 +85,10 @@ export class YouthWorkerService {
             mainYouthClub: registrationData.mainYouthClub,
         } as YouthWorker;
         await this.createYouthWorker(youthWorker);
+
+        if (adminId) {
+            this.logger.log({ adminId: adminId, youthWorkerEmail: registrationData.email }, registrationData.isAdmin ? ' Admin created new admin user.' : 'Admin created new youth worker.');
+        }
         return content.Created(registrationData.email);
     }
 
@@ -96,6 +101,8 @@ export class YouthWorkerService {
         user.password = newPassword;
         user.passwordLastChanged = new Date();
         await this.youthWorkerRepo.save(user);
+
+        this.logger.log({ youthWorkerId: user.id }, 'Youth worker changed their password.');
         return content.PasswordUpdated;
     }
 
@@ -103,19 +110,24 @@ export class YouthWorkerService {
      * @param details the details to change, including the ID of the user in question.
      * @return Promise<string>  a success message.
      */
-    async editYouthWorker(details: EditYouthWorkerDto): Promise<string> {
+    async editYouthWorker(details: EditYouthWorkerDto, adminId: string): Promise<string> {
         const user = await this.youthWorkerRepo.findOneBy({ id: details.id });
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.email !== details.email.toLowerCase()) {
             const emailInUse = await this.getYouthWorkerByEmail(details.email);
             if (emailInUse) { throw new ConflictException(content.YouthWorkerAlreadyExists); }
         }
+
+        const wasAdmin = user.isAdmin;
         user.email = details.email;
         user.firstName = details.firstName;
         user.lastName = details.lastName;
         user.isAdmin = details.isAdmin;
         user.mainYouthClub = details.mainYouthClub;
         await this.youthWorkerRepo.save(user);
+
+        const note = (wasAdmin && !details.isAdmin) ? ' Youth worker is no longer an admin.' : ((details.isAdmin && !wasAdmin) ? ' Youth worker is now an admin.' : '');
+        this.logger.log({ adminId: adminId, youthWorkerId: user.id }, 'Admin modified youth worker.' + note);
         return `${details.email} ${content.Updated}`;
     }
 
@@ -123,10 +135,11 @@ export class YouthWorkerService {
      * This method deletes the provided youth worker.
      * @param id the id of the user to delete.
      */
-    async deleteYouthWorker(id: string) {
+    async deleteYouthWorker(id: string, adminId: string) {
         const youthWorker = await this.getYouthWorker(id);
         if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
         this.youthWorkerRepo.remove(youthWorker);
+        this.logger.log({ adminId: adminId, youthWorkerId: id }, 'Admin deleted youth worker.');
         return `${id} ${content.Deleted}`;
     }
 
