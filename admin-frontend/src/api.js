@@ -14,6 +14,7 @@ const apiEndpoints = {
   },
   auth: {
     login: `${appUrl}/youthworker/login`,
+    loginEntraID: `${appUrl}/youthworker/loginEntraID`,
     logout: `${appUrl}/youthworker/logout`,
   },
   announcement: {

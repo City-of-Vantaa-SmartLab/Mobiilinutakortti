@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { ThemeProvider } from '@material-ui/styles';
+import { useLogin, useNotify } from 'react-admin';
 
 const theme = createTheme({
   palette: {
@@ -39,9 +40,16 @@ const theme = createTheme({
 });
 
 export default function EntraLogin() {
-  
+
+  const login = useLogin();
+  const notify = useNotify();
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    // TODO: kutsu MSALin sisäänkirjautuminen ja passaa eteenpäin token + muu oleellinen tieto
+    login({ dummydata: 'dummy' }).catch(() =>
+      notify('Sisäänkirjautuminen epäonnistui. Yritä uudelleen.')
+    );
   };
 
   return (
@@ -67,7 +75,7 @@ export default function EntraLogin() {
           <Typography variant="h6">
             Tervetuloa Nutakortin nuorisotyöntekijän käyttöliittymään.
           </Typography>
-          <Box onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
             <Button
               type="submit"
               color="primary"

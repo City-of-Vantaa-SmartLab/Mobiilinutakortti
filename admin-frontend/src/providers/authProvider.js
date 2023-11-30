@@ -3,10 +3,16 @@ import { httpClient } from '../httpClients';
 import api from '../api';
 import { userToken } from '../utils';
 
+const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
-        const url = api.auth.login;
-        const { username, password } = params;
+        const url = useEntraID ? api.auth.loginEntraID : api.auth.login;
+
+        // TODO: korvaa dummydata oikealla (token)
+        const { username, password, dummydata } = params;
+        console.log(dummydata);
+
         const options = {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
@@ -68,7 +74,7 @@ export const authProvider = (type, params) => {
     }
     if (type === AUTH_GET_PERMISSIONS) {
         const role = localStorage.getItem('role')
-        return role ? Promise.resolve(role) : Promise.reject();
+        return role ? Promise.resolve(role) : Promise.reject('Role not defined.');
     }
     return Promise.resolve();
 }

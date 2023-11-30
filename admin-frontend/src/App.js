@@ -18,10 +18,10 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
-import EntraLogin from './components/entraLandingPage'
+import EntraLogin from './components/entraLoginPage'
 
 const CustomLoginPage = () =>
-  process.env.REACT_APP_ENTRA_TENANT_ID !== null ? (
+  !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
     <EntraLogin />
   ) : (
     <Login backgroundImage="/nuta-admin-bg.jpg" />
