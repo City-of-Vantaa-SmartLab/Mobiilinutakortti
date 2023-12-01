@@ -13,6 +13,7 @@ const apiEndpoints = {
     deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
+    check: `${appUrl}/youthworker/check`,
     login: `${appUrl}/youthworker/login`,
     loginEntraID: `${appUrl}/youthworker/loginEntraID`,
     logout: `${appUrl}/youthworker/logout`,

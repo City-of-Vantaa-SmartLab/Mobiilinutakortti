@@ -78,7 +78,7 @@ export class YouthWorkerController {
    */
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
-  @Get('login')
+  @Get('check')
   @ApiBearerAuth('youthWorker')
   async autoLogin(@YouthWorker() youthWorkerData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.

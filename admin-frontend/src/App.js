@@ -40,7 +40,7 @@ const App = () => {
 
     useEffect(() => {
         let validCheck = setInterval(async () => {
-            const url = api.auth.login;
+            const url = api.auth.check;
             const body = {
                 method: 'GET'
             };
