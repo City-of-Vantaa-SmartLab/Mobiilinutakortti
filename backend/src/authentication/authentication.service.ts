@@ -21,6 +21,7 @@ import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
 import { secretString } from './secret';
 import { SessionDBService } from '../session/sessiondb.service';
+import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -35,12 +36,14 @@ export class AuthenticationService {
         private readonly sessionDBService: SessionDBService
     ) { }
 
-    // TODO: async loginYouthWorkerEntraID(loginData: ???): Promise<JWTToken> {
+    async loginYouthWorkerEntraID(loginData: LoginYouthWorkerEntraDto): Promise<JWTToken> {
+    //  TODO: verify entratoken
     //    const token = this.signToken(user.id, true);
     //    this.sessionDBService.addSession(user.id, token.access_token);
     //    this.logger.log(`User login: ${user.id} (${user.email})`);
-    //    return token;
-    // }
+    //   return token;
+        return 
+    }
 
     async loginYouthWorker(loginData: LoginYouthWorkerDto): Promise<JWTToken> {
         const user = await this.youthWorkerService.getYouthWorkerByEmail(loginData.email);
