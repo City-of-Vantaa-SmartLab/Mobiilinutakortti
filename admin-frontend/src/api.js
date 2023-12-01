@@ -46,7 +46,8 @@ const apiEndpoints = {
     self: `${appUrl}/youthworker/getSelf`,
     refresh: `${appUrl}/youthworker/refresh`,
     password: `${appUrl}/youthworker/changePassword`,
-    base: `${appUrl}/youthworker/`
+    base: `${appUrl}/youthworker/`,
+    setMainYouthClub: `${appUrl}/youthworker/setMainYouthClub`
   }
 }
 

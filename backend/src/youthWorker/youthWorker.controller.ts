@@ -188,4 +188,16 @@ export class YouthWorkerController {
     return new Message(await this.youthWorkerService.deleteYouthWorker(id, admin.userId));
   }
 
+  /**
+   * Sets the main (default) youth club for the youth worker for whom the bearer token belongs to.
+   */
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+  @AllowedRoles(Roles.ADMIN, Roles.YOUTHWORKER)
+  @Post('setMainYouthClub')
+  @ApiBearerAuth('admin')
+  @ApiBearerAuth('youthWorker')
+  async setMainYouthClub(@YouthWorker() youthWorker: { userId: string }, @Body() body: { clubId: string }): Promise<Check> {
+    return new Check(await this.youthWorkerService.setMainYouthClub(body.clubId, youthWorker.userId));
+  }
 }

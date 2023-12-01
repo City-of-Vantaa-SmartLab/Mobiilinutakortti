@@ -166,4 +166,17 @@ export class YouthWorkerService {
         await this.lockoutRepo.remove(lockout);
         return true;
     }
+
+    async setMainYouthClub(clubId: string, userId: string): Promise<boolean> {
+        const youthWorker = await this.getYouthWorker(userId);
+        if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
+        try {
+            youthWorker.mainYouthClub = parseInt(clubId);
+        } catch {
+            throw new BadRequestException(content.ClubNotFound);
+        }
+        await this.youthWorkerRepo.save(youthWorker);
+        this.logger.log({ youthWorkerId: userId, clubId: clubId }, 'Youth worker updated their main youth club.');
+        return true;
+    }
 }

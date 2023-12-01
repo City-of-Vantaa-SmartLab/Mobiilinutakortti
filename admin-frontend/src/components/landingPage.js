@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNotify } from 'react-admin';
 import { getYouthClubs } from '../utils'
+import { httpClientWithRefresh } from '../httpClients';
+import api from '../api';
 
 export const LandingPage = () => {
+  const notify = useNotify();
   const [youthClubs, setYouthClubs] = useState([]);
   const dropdownRef = useRef(null);
   const userInfo = useRef(null);
+  const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
 
   useEffect(() => {
     userInfo.current = JSON.parse(localStorage.getItem('userInfo'));
@@ -27,6 +32,20 @@ export const LandingPage = () => {
 
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const handleYouthClubChange = (e) => { setSelectedYouthClub(e.target.value) };
+
+  const setDefaultYouthClub = async () => {
+    const response = await httpClientWithRefresh(api.youthWorker.setMainYouthClub, {
+      method: 'POST',
+      body: JSON.stringify({
+        clubId: selectedYouthClub,
+      }),
+    });
+    if (response) {
+      notify('Oletusnuorisotila asetettu');
+    } else {
+      notify('Virhe asettaessa nuorisotilaa');
+    }
+  };
 
   const listSelectedClubJuniors = () => {
     window.location = (selectedYouthClub.toString() === '-1') ?
@@ -55,10 +74,25 @@ export const LandingPage = () => {
             <option key={yc.label} value={yc.value}>{yc.label}</option>
           ))}
         </select>
+        {(useEntraID && selectedYouthClub.toString() !== '-1') && (<button style={{
+          marginLeft: '0.5rem',
+          background: 'none',
+          border: 'none',
+          color: '-webkit-link',
+          cursor: 'pointer',
+          fontSize: '1rem',
+          padding: '0',
+          textDecoration: 'underline' }}
+          onClick={setDefaultYouthClub}>
+          (aseta valittu oletukseksi)
+        </button>)}
       </div>
       <p>tai listaa <a href='#/junior'>kaikki nuoret</a>.</p>
-      {userInfo.current?.passwordLastChanged ? null : (<div style={{marginTop: '3em'}}>
+      {(useEntraID || userInfo.current?.passwordLastChanged) ? null : (<div style={{marginTop: '3em'}}>
         <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
+      </div>)}
+      {(useEntraID && (!userInfo.current?.mainYouthClubId || userInfo.current?.mainYouthClubId?.toString() === '-1')) && (<div style={{marginTop: '3em'}}>
+        <p>Voit asettaa itsellesi oletusnuorisotilan yltä.</p>
       </div>)}
     </div>
   );
