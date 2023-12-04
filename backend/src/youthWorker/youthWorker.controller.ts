@@ -18,6 +18,7 @@ import { Message, Check } from '../common/vm';
 import * as content from '../content';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { LoginYouthWorkerEntraDto } from './dto/login.dto';
 
 /**
  * This controller contains all actions to be carried out on the '/youthworker' route.
@@ -78,7 +79,7 @@ export class YouthWorkerController {
    */
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
-  @Get('login')
+  @Get('check')
   @ApiBearerAuth('youthWorker')
   async autoLogin(@YouthWorker() youthWorkerData: any): Promise<Check> {
     // This is a simple route the frontend can hit to verify a valid JWT.
@@ -91,6 +92,20 @@ export class YouthWorkerController {
   @ApiBearerAuth('youthWorker')
   async logout(@YouthWorker() youthWorkerData: any): Promise<Check> {
     return new Check(await this.authenticationService.logoutYouthWorker(youthWorkerData));
+  }
+
+  /**
+   * A route that validates entraId login. If successful, a JWT access token is returned.
+   *
+   * @returns - { access_token }
+   */
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('loginEntraID')
+  async loginEntra(@Body() loginData:LoginYouthWorkerEntraDto): Promise<JWTToken> {
+    if (!process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
+        throw new ForbiddenException('Local login is enabled. Microsoft Entra ID is not in use.');
+    }
+    return await this.authenticationService.loginYouthWorkerEntraID(loginData);
   }
 
   /**

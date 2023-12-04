@@ -21,6 +21,8 @@ import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
 import { secretString } from './secret';
 import { SessionDBService } from '../session/sessiondb.service';
+import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
+import { ConfigHandler } from '../configHandler';
 
 @Injectable()
 export class AuthenticationService {
@@ -35,12 +37,38 @@ export class AuthenticationService {
         private readonly sessionDBService: SessionDBService
     ) { }
 
-    // TODO: async loginYouthWorkerEntraID(loginData: ???): Promise<JWTToken> {
-    //    const token = this.signToken(user.id, true);
-    //    this.sessionDBService.addSession(user.id, token.access_token);
-    //    this.logger.log(`User login: ${user.id} (${user.email})`);
-    //    return token;
-    // }
+    async loginYouthWorkerEntraID(loginData: LoginYouthWorkerEntraDto): Promise<JWTToken> {
+        const tokenParts = loginData.token.split('.');
+        if (tokenParts.length !== 3) {
+            this.logger.error('Entra ID token has incorrect format.');
+            return;
+        }
+
+        try {
+            const header = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
+            // Key id claim indicates the particular public key that was used to validate the token.
+            const publicKey = header.kid ? await ConfigHandler.getPublicKey(header.kid) : null;
+            if (!publicKey) {
+                return;
+            }
+
+            // We have only one scope in use, so no need to check it separately. (If there is one, it must be the one.)
+            // The audience is the App ID with a protocol. App ID in the key discovery URL.
+            const audience = 'api://' + process.env.ENTRA_APP_KEY_DISCOVERY_URL.match(/\?appid=(.*)$/)[1];
+            this.jwtService.verify(loginData.token, { publicKey: publicKey, algorithms: ['RS256'], audience: audience });
+        } catch (err) {
+            this.logger.error('Entra ID token validation failed.');
+            const error: string = err as string;
+            this.logger.error(error);
+            return;
+        }
+
+        // TODO get user id from logindata
+        // const token = this.signToken(user.id, true);
+        // this.sessionDBService.addSession(user.id, token.access_token);
+        // this.logger.log(`User login: ${user.id} (${user.email})`);
+        // return token;
+    }
 
     async loginYouthWorker(loginData: LoginYouthWorkerDto): Promise<JWTToken> {
         const user = await this.youthWorkerService.getYouthWorkerByEmail(loginData.email);
@@ -94,7 +122,7 @@ export class AuthenticationService {
     generateSecurityContext(@Body() acsData: AcsDto): SecurityContextDto {
         // Note: there might be multiple first names but it doesn't matter here.
         const { sessionIndex, nameId, firstName, lastName, zipCode } = acsData;
-        const expiryTime = ((new Date().getTime() / 1000) + 3600).toString();
+        const expiryTime = ((new Date().getTime() / 1000) + 3600).toString(); // 1 h validity time
         const signed = sign(`${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
         return {
             sessionIndex,
