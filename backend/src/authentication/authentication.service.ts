@@ -16,12 +16,13 @@ import * as content from '../content';
 import { LoginJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
 import { JWTToken } from './jwt.model';
-import { jwt} from './authentication.consts';
+import { getAudienceAndScope, getPublicKey, jwt} from './authentication.consts';
 import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
 import { secretString } from './secret';
 import { SessionDBService } from '../session/sessiondb.service';
 import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
+import {verify} from 'jsonwebtoken'
 
 @Injectable()
 export class AuthenticationService {
@@ -37,12 +38,42 @@ export class AuthenticationService {
     ) { }
 
     async loginYouthWorkerEntraID(loginData: LoginYouthWorkerEntraDto): Promise<JWTToken> {
-    //  TODO: verify entratoken
+        const algorithm= "RS256";
+        const tokenParts = loginData.token.split(".");
+
+        if (tokenParts.length !== 3) {
+          this.logger.error("Entra AD token has incorrect format.");
+          return;
+        }
+        const [headerB64, payloadB64] = tokenParts;
+        try {
+          const header = JSON.parse(Buffer.from(headerB64, "base64").toString());
+          // Kid claim indicates the particular public key that was used to validate the token.
+          const publicKey = header.kid ? await getPublicKey(header.kid) : null;
+      
+          if (!publicKey) {
+            return;
+          }
+          // Todo: tarviiko audiencea ja scopea tarkistaa
+          const { aud, scp } = getAudienceAndScope(payloadB64);
+          // TODO: audience and scope envs.
+          if (aud !== process.env.ENTRA_APP_AUDIENCE || !scp.includes(process.env.ENTRA_APP_SCOPE)) {
+            this.logger.error("Invalid audience or scope.");
+            return;
+          }
+
+          verify(loginData.token, publicKey, {algorithms: [algorithm], audience: process.env.ENTRA_APP_AUDIENCE});
+        } catch (err) {
+            this.logger.error("Entra AD token validation failed.");
+            const error: string = err as string;
+            this.logger.error(error);
+            return;
+        }
+
     //    const token = this.signToken(user.id, true);
     //    this.sessionDBService.addSession(user.id, token.access_token);
     //    this.logger.log(`User login: ${user.id} (${user.email})`);
-    //   return token;
-        return 
+    //    return token;
     }
 
     async loginYouthWorker(loginData: LoginYouthWorkerDto): Promise<JWTToken> {
