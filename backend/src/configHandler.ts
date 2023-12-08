@@ -1,28 +1,28 @@
+import { Logger } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 interface KeyData {
-  kid: string;
-  x5c: string[];
+    kid: string;
+    x5c: string[];
 }
 
 export class ConfigHandler {
 
+    private static readonly _logger = new Logger('ConfigHandler');
     private static _keyRefreshDay: Date = new Date();
     private static _keys: KeyData[] = [];
 
     // Gets the public certificate from Entra ID service.
     static async getPublicKey(kid: string): Promise<string | null> {
         // Refresh only once a day.
-        if (ConfigHandler._keys.length > 0 && ConfigHandler._keyRefreshDay.getDate() === new Date().getDate()) {
-            return;
-        }
-
-        try {
-            ConfigHandler._keys = (await (await fetch(process.env.ENTRA_APP_KEY_DISCOVERY_URL)).json()).keys;
-            ConfigHandler._keyRefreshDay = new Date();
-            console.log('Entra ID keys updated.');
-        } catch (error) {
-            console.error('Entra ID key fetching failed.', error);
+        if (ConfigHandler._keys.length === 0 || ConfigHandler._keyRefreshDay.getDate() !== new Date().getDate()) {
+            try {
+                ConfigHandler._keys = (await (await fetch(process.env.ENTRA_APP_KEY_DISCOVERY_URL)).json()).keys;
+                ConfigHandler._keyRefreshDay = new Date();
+                ConfigHandler._logger.log('Entra ID keys updated.');
+            } catch (error) {
+                ConfigHandler._logger.error('Entra ID key fetching failed: ' + error);
+            }
         }
 
         const key = ConfigHandler._keys.find(k => k.kid = kid);

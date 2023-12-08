@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Avatar,
   Button,
@@ -11,6 +10,8 @@ import {
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { ThemeProvider } from '@material-ui/styles';
 import { useLogin, useNotify } from 'react-admin';
+import { useEffect } from 'react';
+import { MSALApp } from './msalApp';
 
 const theme = createTheme({
   palette: {
@@ -44,12 +45,24 @@ export default function EntraLogin() {
   const login = useLogin();
   const notify = useNotify();
 
+  useEffect(() => {
+    const msalLogin = async () => {
+      await MSALApp.initNew();
+      if (!MSALApp.appUsername) return;
+      const token = await MSALApp.getAuthorizationBearerToken();
+      if (token?.accessToken) {
+        login({ dummydata: 'dummy' }).catch(() =>
+          notify('Sisäänkirjautuminen epäonnistui. Yritä uudelleen.')
+        );
+        // TODO: kutsu backendiä tokenilla + muu oleellinen tieto
+      }
+    }
+    msalLogin();
+  }, [login, notify]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // TODO: kutsu MSALin sisäänkirjautuminen ja passaa eteenpäin token + muu oleellinen tieto
-    login({ dummydata: 'dummy' }).catch(() =>
-      notify('Sisäänkirjautuminen epäonnistui. Yritä uudelleen.')
-    );
+    MSALApp.login();
   };
 
   return (
