@@ -1,17 +1,12 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken } from '../utils';
-
-const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+import { userToken, setUserInfo, clearUserInfo } from '../utils';
 
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
-        const url = useEntraID ? api.auth.loginEntraID : api.auth.login;
-
-        // TODO: korvaa dummydata oikealla (token)
-        const { username, password, dummydata } = params;
-        console.log(dummydata);
+        const url = api.auth.login;
+        const { username, password } = params;
 
         const options = {
             method: 'POST',
@@ -29,17 +24,7 @@ export const authProvider = (type, params) => {
             })
             .then(() => httpClient(api.youthWorker.self, { method: 'GET' }))
             .then((response) => {
-                localStorage.setItem('userInfo', JSON.stringify({
-                  firstName: response.firstName,
-                  mainYouthClubId: response.mainYouthClub || -1,
-                  passwordLastChanged: response.passwordLastChanged
-                }));
-
-                if (response.isAdmin) {
-                    localStorage.setItem('role', 'ADMIN');
-                } else {
-                    localStorage.setItem('role', 'YOUTHWORKER');
-                }
+                setUserInfo(response);
                 // Forces recalculation of custom routes based on user role inside App.js.
                 // This is made so that if a youth worker was logged in on the same browser that an admin now uses to log in,
                 // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
@@ -60,8 +45,8 @@ export const authProvider = (type, params) => {
         return localStorage.getItem(userToken) ? Promise.resolve() : Promise.reject();
     }
     if (type === AUTH_LOGOUT) {
-        // Remove userInfo here so that React doesn't try to load useEffect stuff in landing page.
-        localStorage.removeItem('userInfo');
+        // Clear userInfo here so that React doesn't try to load useEffect stuff in landing page.
+        clearUserInfo();
         const url = api.auth.logout;
         const options = {
             method: 'GET'

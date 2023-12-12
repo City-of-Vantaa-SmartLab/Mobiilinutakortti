@@ -4,7 +4,9 @@ const authConfig = {
   auth: {
     clientId: process.env.REACT_APP_ENTRA_CLIENT_ID,
     authority: `https://login.microsoftonline.com/${process.env.REACT_APP_ENTRA_TENANT_ID}`,
-    redirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
+    redirectUri: 'http://localhost:3002/'
+    // TODO
+    //redirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
   },
   cache: {
     cacheLocation: 'memoryStorage',

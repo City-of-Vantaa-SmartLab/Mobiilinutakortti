@@ -8,6 +8,8 @@ export class MSALApp {
     static setUsernameFromAccounts() {
         const accounts = MSALApp.instance.getAllAccounts();
 
+        console.log("accounts");
+        console.log(accounts);
         if (accounts.length > 0) {
             MSALApp.appUsername = accounts[0].username;
             if (accounts.length > 1) {
@@ -26,19 +28,15 @@ export class MSALApp {
         await MSALApp.instance.initialize();
         this.setUsernameFromAccounts();
 
-        MSALApp.instance
-        .handleRedirectPromise()
-        .then((response) => {
-            if (response) {
-                MSALApp.appUsername = response.account.username;
-            } else {
-                this.setUsernameFromAccounts();
-            }
-            console.log('User: ' + MSALApp.appUsername);
-        })
-        .catch((error) => {
-            console.error('MSAL login failed with error: ' + error);
-        });
+        const response = await MSALApp.instance.handleRedirectPromise();
+        if (response) {
+            console.debug("MSAL response: true");
+            MSALApp.appUsername = response.account.username;
+        } else {
+            console.debug("MSAL response: false");
+            this.setUsernameFromAccounts();
+        }
+        console.log('User: ' + MSALApp.appUsername);
     }
 
     static login() {

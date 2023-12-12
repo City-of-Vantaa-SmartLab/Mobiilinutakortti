@@ -9,9 +9,11 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { ThemeProvider } from '@material-ui/styles';
-import { useLogin, useNotify } from 'react-admin';
 import { useEffect } from 'react';
 import { MSALApp } from './msalApp';
+import { httpClient } from '../httpClients';
+import api from '../api';
+import { userToken, setUserInfo } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -42,23 +44,30 @@ const theme = createTheme({
 
 export default function EntraLogin() {
 
-  const login = useLogin();
-  const notify = useNotify();
-
   useEffect(() => {
     const msalLogin = async () => {
       await MSALApp.initNew();
       if (!MSALApp.appUsername) return;
+
       const token = await MSALApp.getAuthorizationBearerToken();
       if (token?.accessToken) {
-        login({ dummydata: 'dummy' }).catch(() =>
-          notify('Sisäänkirjautuminen epäonnistui. Yritä uudelleen.')
+        // TODO: any other info to send to backend besides token?
+        const accessToken = await httpClient(
+          api.auth.loginEntraID,
+          { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
         );
-        // TODO: kutsu backendiä tokenilla + muu oleellinen tieto
+        localStorage.setItem(userToken, accessToken);
+
+        // TODO: what to do if something goes wrong?
+        // TODO: clear MSAL stuff
+
+        const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
+        setUserInfo(userInfo);
+        window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL; // Go to landingPage.
       }
     }
     msalLogin();
-  }, [login, notify]);
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getYouthClubs } from '../utils'
+import { getYouthClubs, getUserInfo } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
@@ -12,7 +12,7 @@ export const LandingPage = () => {
   const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
 
   useEffect(() => {
-    userInfo.current = JSON.parse(localStorage.getItem('userInfo'));
+    userInfo.current = getUserInfo();
     if (!!userInfo.current) {
       const addYouthClubsToState = async () => {
         const parsedYouthClubs = await getYouthClubs();
@@ -27,6 +27,7 @@ export const LandingPage = () => {
       // without the '#/login' the app would be in infinite loop between
       // REACT_APP_ADMIN_FRONTEND_URL and REACT_APP_ADMIN_FRONTEND_URL#
       window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
+      // TODO: if useEntraID -> entra login page
     }
   }, []);
 

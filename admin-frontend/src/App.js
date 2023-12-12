@@ -20,12 +20,7 @@ import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 import EntraLogin from './components/entraLoginPage'
 
-const CustomLoginPage = () =>
-  !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
-    <EntraLogin />
-  ) : (
-    <Login backgroundImage="/nuta-admin-bg.jpg" />
-  );
+const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
 
 const messages = {
     'fi': finnishMessages,
@@ -41,10 +36,8 @@ const App = () => {
     useEffect(() => {
         let validCheck = setInterval(async () => {
             const url = api.auth.check;
-            const body = {
-                method: 'GET'
-            };
-            if(!window.location.href.includes("checkIn")){
+            const body = { method: 'GET' };
+            if (!window.location.href.includes("checkIn")) {
                 await httpClient(url, body).then(async (response) => {
                     if (response.statusCode < 200 || response.statusCode >= 300 || response.result === false) {
                         await authProvider(AUTH_LOGOUT, {});
@@ -59,6 +52,14 @@ const App = () => {
             validCheck = null;
         }
     }, []);
+
+    // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
+    // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
+    // TODO: correct URLs
+    if (window.location.href.includes('http://localhost:3002/loginEntraID') ||
+        window.location.href.includes('http://localhost:3002/#code')) {
+        return (<EntraLogin />)
+    }
 
     return (
         <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
@@ -84,5 +85,3 @@ const App = () => {
 }
 
 export default App;
-
-
