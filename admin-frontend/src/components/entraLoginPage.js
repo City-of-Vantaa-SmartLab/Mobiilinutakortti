@@ -51,16 +51,14 @@ export default function EntraLogin() {
 
       const token = await MSALApp.getAuthorizationBearerToken();
       if (token?.accessToken) {
-        // TODO: any other info to send to backend besides token?
-        const accessToken = await httpClient(
+        const { access_token } = await httpClient(
           api.auth.loginEntraID,
           { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
         );
-        localStorage.setItem(userToken, accessToken);
+        localStorage.setItem(userToken, access_token);
 
         // TODO: what to do if something goes wrong?
         // TODO: clear MSAL stuff
-
         const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
         setUserInfo(userInfo);
         window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL; // Go to landingPage.

@@ -125,7 +125,7 @@ With the `SUPER_ADMIN_FEATURES` enabled and the backend running, use these two t
 
 ## QR-code reading
 
-Qr-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
+QR-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
 
 ## Extra entries
 

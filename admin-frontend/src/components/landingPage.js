@@ -26,10 +26,11 @@ export const LandingPage = () => {
       // Since the landing page is at REACT_APP_ADMIN_FRONTEND_URL,
       // without the '#/login' the app would be in infinite loop between
       // REACT_APP_ADMIN_FRONTEND_URL and REACT_APP_ADMIN_FRONTEND_URL#
-      window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
-      // TODO: if useEntraID -> entra login page
+      //
+      // If using Entra for login, the redirect URI page is the login page.
+      window.location.href = useEntraID ? process.env.REACT_APP_ENTRA_REDIRECT_URI : process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
     }
-  }, []);
+  }, [useEntraID]);
 
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const handleYouthClubChange = (e) => { setSelectedYouthClub(e.target.value) };

@@ -74,9 +74,11 @@ Or, in Mac OSX (might not work exactly like this, check out if you have lo0):
 
   echo "rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 127.0.0.1 port 3000" | sudo pfctl -ef -
 
-## Creating a youth worker user
+## Creating an initial admin user
 
 If you are not using Microsoft Entra ID to login users (as is by default; see environment variables section below), you need to add an initial admin user. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
+
+If you are using Microsoft Entra ID to login users, admin privileges are added on user login based on whether the user belongs to a group that has a role called 'Admin'. Configure the two groups (youthworkers and admins) in Entra accordingly, adding the 'Admin' role to the group for admins.
 
 ## Testing SMS functionality
 

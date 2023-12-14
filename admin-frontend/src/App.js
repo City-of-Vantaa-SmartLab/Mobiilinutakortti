@@ -20,7 +20,12 @@ import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 import EntraLogin from './components/entraLoginPage'
 
-const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
+const CustomLoginPage = () =>
+  !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
+    <EntraLogin />
+  ) : (
+    <Login backgroundImage="/nuta-admin-bg.jpg" />
+  );
 
 const messages = {
     'fi': finnishMessages,
@@ -55,9 +60,7 @@ const App = () => {
 
     // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
     // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
-    // TODO: correct URLs
-    if (window.location.href.includes('http://localhost:3002/loginEntraID') ||
-        window.location.href.includes('http://localhost:3002/#code')) {
+    if (process.env.REACT_APP_ENTRA_TENANT_ID && window.location.href.includes(process.env.REACT_APP_ENTRA_REDIRECT_URI)) {
         return (<EntraLogin />)
     }
 

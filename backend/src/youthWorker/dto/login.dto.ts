@@ -16,5 +16,5 @@ export class LoginYouthWorkerDto {
 export class LoginYouthWorkerEntraDto {
 
     @IsNotEmpty()
-    readonly token: string;
+    readonly msalToken: string;
 }

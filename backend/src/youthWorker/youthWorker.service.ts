@@ -127,7 +127,7 @@ export class YouthWorkerService {
         await this.youthWorkerRepo.save(user);
 
         const note = (wasAdmin && !details.isAdmin) ? ' Youth worker is no longer an admin.' : ((details.isAdmin && !wasAdmin) ? ' Youth worker is now an admin.' : '');
-        this.logger.log({ adminId: adminId, youthWorkerId: user.id }, 'Admin modified youth worker.' + note);
+        if (adminId) this.logger.log({ adminId: adminId, youthWorkerId: user.id }, 'Admin modified youth worker.' + note);
         return `${details.email} ${content.Updated}`;
     }
 

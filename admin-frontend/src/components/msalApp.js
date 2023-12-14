@@ -7,13 +7,11 @@ export class MSALApp {
 
     static setUsernameFromAccounts() {
         const accounts = MSALApp.instance.getAllAccounts();
-
-        console.log("accounts");
-        console.log(accounts);
         if (accounts.length > 0) {
             MSALApp.appUsername = accounts[0].username;
             if (accounts.length > 1) {
                 console.warn('Multiple accounts detected. Selected first one.');
+                console.debug(accounts);
             }
         }
     }
@@ -36,7 +34,7 @@ export class MSALApp {
             console.debug("MSAL response: false");
             this.setUsernameFromAccounts();
         }
-        console.log('User: ' + MSALApp.appUsername);
+        console.debug('User: ' + MSALApp.appUsername);
     }
 
     static login() {

@@ -75,6 +75,11 @@ export const isSubstring = (mainString, subString) => mainString.includes(subStr
 export const getExtraEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);
 
 export const setUserInfo = (userInfo) => {
+  if (!userInfo || !userInfo.firstName) {
+    console.error("No user info to set.");
+    return;
+  }
+
   localStorage.setItem('userInfo', JSON.stringify({
     firstName: userInfo.firstName,
     mainYouthClubId: userInfo.mainYouthClub || -1,

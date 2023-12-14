@@ -101,7 +101,7 @@ export class YouthWorkerController {
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('loginEntraID')
-  async loginEntra(@Body() loginData:LoginYouthWorkerEntraDto): Promise<JWTToken> {
+  async loginEntra(@Body() loginData: LoginYouthWorkerEntraDto): Promise<JWTToken> {
     if (!process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
         throw new ForbiddenException('Local login is enabled. Microsoft Entra ID is not in use.');
     }
@@ -118,7 +118,7 @@ export class YouthWorkerController {
   @Post('login')
   async login(@Body() userData: LoginYouthWorkerDto): Promise<JWTToken> {
     if (process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
-        throw new ForbiddenException('Local login is disabled if Microsoft Entra ID is in use.');
+        throw new ForbiddenException('Microsoft Entra ID is in use. Local login is disabled.');
     }
     return await this.authenticationService.loginYouthWorker(userData);
   }
