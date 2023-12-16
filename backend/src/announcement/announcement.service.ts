@@ -48,10 +48,12 @@ export class AnnouncementService {
     }
 
     private getEmailRecipientsByLanguage(recipients: Junior[], langCode: string): string[] {
-        return recipients.filter((r: Junior) => r.communicationsLanguage === langCode)
+        const filteredArray = recipients.filter((r: Junior) => r.communicationsLanguage === langCode)
                 .filter((r: Junior) => r.emailPermissionParent)
                 .map((r: Junior) => r.parentsEmail)
                 .filter((email: string) => /^\S+@\S+\.\S+$/.test(email));
+        const uniqueRecipients = new Set<string>(filteredArray);
+        return Array.from(uniqueRecipients);
     };
 
     private splitToBatches(recipientEmails: string[], batchSize: number): Array<string[]> {
