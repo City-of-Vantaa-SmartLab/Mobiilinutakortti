@@ -192,3 +192,20 @@ Configure the EB CLI:
 **Deploy a new version to production:**
 * While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
 * To see how things are progressing, type: `eb events -f`
+
+### Searching logs
+
+Nutakortti has been configured to use AWS CloudWatch for log streaming.
+
+Since the AWS browser GUI doesn't offer the means to directly download full logs, CLI tools might be needed when browsing logs.
+
+The EB CLI tool has a command to download all logs from a specific CloudWatch log group, but it does not work: it only downloads what would be visible in AWS management console at that moment. For older events, the tool will create 0-byte files.
+
+The [AWS CLI tool](https://aws.amazon.com/cli/) can be used to get [CloudWatch log events](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/logs/get-log-events.html), but that would require the use of the `--next-token` parameter in a script to actually download all the logs.
+
+There exists [a nice tool](https://github.com/jorgebastida/awslogs) to solve the problem. So, in case one needs all the logs for whatever reason, use the AWS CLI directly by scripting, or use for example the awslogs for an easy solution. To use the tool:
+
+1. Install awslogs using pip: `pip install awslogs`
+2. Set up AWS CLI (command: `aws configure`)
+3. Set up default region for awslogs (environment variable `AWS_REGION`) or give it as a command line parameter.
+4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`
