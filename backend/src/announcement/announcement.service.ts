@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ClubService } from '../club/club.service';
 import { JuniorService } from '../junior/junior.service';
 import * as content from '../content';
@@ -14,6 +14,8 @@ import { EmailBatchItem } from 'src/email/models/emailModels.model';
 
 @Injectable()
 export class AnnouncementService {
+
+    private readonly logger = new Logger('Announcement Service');
 
     constructor(
         private readonly clubService: ClubService,
@@ -73,7 +75,7 @@ export class AnnouncementService {
         });
     };
 
-    async clubAnnouncementSms(announcementData: AnnouncementData): Promise<string> {
+    async clubAnnouncementSms(announcementData: AnnouncementData, userId: string): Promise<string> {
         const settings = announcementData.dryRun ? null : SMSConfig.getTeliaConfig();
 
         const selectedRecipients = announcementData.youthClub ?
@@ -117,6 +119,7 @@ export class AnnouncementService {
             batch,
         } as TeliaBatchMessageRequest;
 
+        this.logger.log(`User ${userId} is sending ${batch.length} SMS messages.`);
         const attemptMessage = await this.smsService.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint);
         if (attemptMessage) {
             return content.SmsBatchSent;
@@ -125,7 +128,7 @@ export class AnnouncementService {
         };
     };
 
-    async clubAnnouncementEmail(announcementData: AnnouncementData): Promise<string> {
+    async clubAnnouncementEmail(announcementData: AnnouncementData, userId: string): Promise<string> {
         const settings = announcementData.dryRun ? null : EmailConfig.getEmailConfig();
 
         const selectedRecipients = announcementData.youthClub ?
@@ -136,11 +139,13 @@ export class AnnouncementService {
         const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "sv"), 50);
         const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
 
+        const totalAmount =
+            recipientBatchesEn.map(b => b.length).reduce((sum, l) => sum + l, 0) +
+            recipientBatchesSv.map(b => b.length).reduce((sum, l) => sum + l, 0) +
+            recipientBatchesFi.map(b => b.length).reduce((sum, l) => sum + l, 0);
+
         if (announcementData.dryRun) {
-            return (recipientBatchesEn.map(b => b.length).reduce((sum, l) => sum + l, 0) +
-                    recipientBatchesSv.map(b => b.length).reduce((sum, l) => sum + l, 0) +
-                    recipientBatchesFi.map(b => b.length).reduce((sum, l) => sum + l, 0)
-            ).toString();
+            return totalAmount.toString();
         }
 
         if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
@@ -152,6 +157,7 @@ export class AnnouncementService {
         this.createEmailDataForLanguage(announcementData, recipientBatchesSv, "sv")).concat(
         this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
 
+        this.logger.log(`User ${userId} is sending ${totalAmount} email messages.`);
         const responses = Promise.all(emails.map(async (e: EmailBatchItem) => {
             return await this.emailService.batchSendEmailsToUsers(e, settings)
         }));
