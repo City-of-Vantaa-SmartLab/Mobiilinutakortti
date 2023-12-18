@@ -117,10 +117,6 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 * `TELIA_USERNAME`: Telia SMS service user name.
 
-Additionally, the frontend apps require these environment variables:
-* `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
-* `REACT_APP_ADMIN_FRONTEND_URL`: (only for admin-frontend) URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
-
 ## Swagger documentation
 
 Swagger documentation endpoint located at "api/swagger". The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoint only need to mark which tag it belong to and which authentication level it have. Optional comments can be added for context.
