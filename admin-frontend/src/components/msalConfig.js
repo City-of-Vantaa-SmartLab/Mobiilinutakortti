@@ -8,10 +8,12 @@ const authConfig = {
   },
   cache: {
     cacheLocation: 'memoryStorage',
+    temporaryCacheLocation: 'memoryStorage',
     storeAuthStateInCookie: true
   },
   system: {
     loggerOptions: {
+      logLevel: LogLevel.Info,
       loggerCallback: (level, message, containsPii) => {
         if (containsPii) {
           return;

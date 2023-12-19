@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { ThemeProvider } from '@material-ui/styles';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
@@ -44,10 +44,18 @@ const theme = createTheme({
 
 export default function EntraLogin() {
 
+  const [ userName, setUserName] = useState(null);
+  const [ loginInProgress, setLoginInProgress] = useState(true);
+
   useEffect(() => {
-    const msalLogin = async () => {
+    const tryLogin = async () => {
       await MSALApp.initNew();
-      if (!MSALApp.appUsername) return;
+      console.debug("MSAL app initialized.");
+      if (!MSALApp.appUsername) {
+        setLoginInProgress(false);
+        return;
+      }
+      setUserName(MSALApp.appUsername);
 
       const token = await MSALApp.getAuthorizationBearerToken();
       if (token?.accessToken) {
@@ -55,21 +63,24 @@ export default function EntraLogin() {
           api.auth.loginEntraID,
           { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
         );
+
+        await MSALApp.logout();
+        sessionStorage.clear();
         localStorage.setItem(userToken, access_token);
 
-        // TODO: what to do if something goes wrong?
-        // TODO: clear MSAL stuff
         const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
         setUserInfo(userInfo);
         window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL; // Go to landingPage.
       }
     }
-    msalLogin();
+    tryLogin();
   }, []);
 
   const handleSubmit = (event) => {
+    setLoginInProgress(true);
     event.preventDefault();
     MSALApp.login();
+    setLoginInProgress(false);
   };
 
   return (
@@ -95,18 +106,24 @@ export default function EntraLogin() {
           <Typography variant="h6">
             Tervetuloa Nutakortin nuorisotyöntekijän käyttöliittymään.
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
-            <Button
-              type="submit"
-              color="primary"
-              size="large"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Kirjaudu Nutakorttiin
-            </Button>
-          </Box>
+          {!userName ?
+            (<Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
+              <Button
+                type="submit"
+                color="primary"
+                size="large"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled={loginInProgress}
+              >
+                Kirjaudu Nutakorttiin
+              </Button>
+            </Box>) :
+            (<Typography variant="caption">
+              Kirjaudutaan sisään käyttäjätunnuksella {userName}...
+            </Typography>)
+          }
         </Box>
       </Container>
     </ThemeProvider>

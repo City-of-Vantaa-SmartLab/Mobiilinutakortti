@@ -16,6 +16,13 @@ export class MSALApp {
         }
     }
 
+    static async logout() {
+        await MSALApp.instance.logoutRedirect({onRedirectNavigate: () => {
+            return false;
+        }});
+        await MSALApp.instance.clearCache();
+    }
+
     static async initNew() {
         if (!!MSALApp.instance) {
             console.debug('MSALApp already initialized.');
@@ -24,15 +31,10 @@ export class MSALApp {
 
         MSALApp.instance = new MSAL.PublicClientApplication(MSALConfig.authConfig);
         await MSALApp.instance.initialize();
-        this.setUsernameFromAccounts();
-
         const response = await MSALApp.instance.handleRedirectPromise();
         if (response) {
             console.debug("MSAL response: true");
             MSALApp.appUsername = response.account.username;
-        } else {
-            console.debug("MSAL response: false");
-            this.setUsernameFromAccounts();
         }
         console.debug('User: ' + MSALApp.appUsername);
     }
