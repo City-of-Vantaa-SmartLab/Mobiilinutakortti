@@ -64,13 +64,11 @@ export default function EntraLogin() {
           { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
         );
 
-        await MSALApp.logout();
-        sessionStorage.clear();
         localStorage.setItem(userToken, access_token);
-
         const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
         setUserInfo(userInfo);
-        window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL; // Go to landingPage.
+
+        await MSALApp.logout();
       }
     }
     tryLogin();

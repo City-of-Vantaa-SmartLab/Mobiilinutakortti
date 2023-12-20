@@ -5,22 +5,13 @@ export class MSALApp {
     static instance;
     static appUsername;
 
-    static setUsernameFromAccounts() {
-        const accounts = MSALApp.instance.getAllAccounts();
-        if (accounts.length > 0) {
-            MSALApp.appUsername = accounts[0].username;
-            if (accounts.length > 1) {
-                console.warn('Multiple accounts detected. Selected first one.');
-                console.debug(accounts);
-            }
-        }
-    }
-
     static async logout() {
-        await MSALApp.instance.logoutRedirect({onRedirectNavigate: () => {
-            return false;
-        }});
-        await MSALApp.instance.clearCache();
+        // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
+        // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
+        // would like to log out of.
+        await MSALApp.instance.logoutRedirect({
+            postLogoutRedirectUri: process.env.REACT_APP_ADMIN_FRONTEND_URL, // Redirects user to landingPage.
+        });
     }
 
     static async initNew() {
@@ -45,7 +36,10 @@ export class MSALApp {
             return;
         }
         MSALApp.instance.loginRedirect({
-            scopes: MSALConfig.loginRequestScopes
+            scopes: MSALConfig.loginRequestScopes,
+            extraQueryParameters: {
+                max_age: 600, // Request a 10 minute lifetime, the minimum.
+            }
         });
     }
 
