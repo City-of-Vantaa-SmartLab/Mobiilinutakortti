@@ -1,16 +1,43 @@
 import * as MSAL from '@azure/msal-browser'
 import * as MSALConfig from './msalConfig'
+import { checkLogoutMSAL, doLogoutMSAL } from '../utils';
 
 export class MSALApp {
     static instance;
     static appUsername;
 
     static async logout() {
+        const account = MSALApp.instance.getActiveAccount();
+        console.debug("MSALApp: account to log out: " + account?.username);
+        let shouldLogout = !!account;
+
+        if (shouldLogout && !localStorage.getItem(doLogoutMSAL)) {
+            localStorage.setItem(doLogoutMSAL, true);
+            const request = {
+                scopes: MSALConfig.tokenRequestScopes
+            }
+            // If the acquireTokenSilent doesn't error out, it will reload the page.
+            // We have set the doLogoutMSAL because of that so that next time we'll skip this.
+            await MSALApp.instance.acquireTokenSilent(request).catch(async error => {
+                shouldLogout = !(error instanceof MSAL.InteractionRequiredAuthError)
+            });
+        }
+
+        // NB: see above; this code will not be executed if acquireTokenSilent doesn't fail.
+        console.debug("MSALApp: reached over acquireTokenSilent.");
+        localStorage.removeItem(checkLogoutMSAL);
+        localStorage.removeItem(doLogoutMSAL);
+
+        if (!shouldLogout) {
+            console.debug("MSALApp: nothing to log out.");
+            return;
+        }
+
         // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
         // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
         // would like to log out of.
         await MSALApp.instance.logoutRedirect({
-            postLogoutRedirectUri: process.env.REACT_APP_ADMIN_FRONTEND_URL, // Redirects user to landingPage.
+            postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
         });
     }
 
@@ -24,22 +51,18 @@ export class MSALApp {
         await MSALApp.instance.initialize();
         const response = await MSALApp.instance.handleRedirectPromise();
         if (response) {
-            console.debug("MSAL response: true");
             MSALApp.appUsername = response.account.username;
         }
-        console.debug('User: ' + MSALApp.appUsername);
+        console.debug('MSAL user: ' + MSALApp.appUsername);
     }
 
-    static login() {
+    static async login() {
         if (!MSALApp.instance) {
             console.error('MSALApp not initialized.');
             return;
         }
-        MSALApp.instance.loginRedirect({
-            scopes: MSALConfig.loginRequestScopes,
-            extraQueryParameters: {
-                max_age: 600, // Request a 10 minute lifetime, the minimum.
-            }
+        await MSALApp.instance.loginRedirect({
+            scopes: MSALConfig.loginRequestScopes
         });
     }
 
@@ -49,8 +72,8 @@ export class MSALApp {
             return null;
         }
 
+        MSALApp.instance.setActiveAccount(MSALApp.instance.getAccountByUsername(MSALApp.appUsername));
         const request = {
-            account: MSALApp.instance.getAccountByUsername(MSALApp.appUsername),
             scopes: MSALConfig.tokenRequestScopes
         }
 

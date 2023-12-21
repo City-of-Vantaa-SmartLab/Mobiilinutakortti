@@ -37,6 +37,8 @@ export const messageTypeChoices = [
 ];
 
 export const userToken = 'user-token';
+export const checkLogoutMSAL = 'check-logout-msal';
+export const doLogoutMSAL = 'do-logout-msal';
 
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {

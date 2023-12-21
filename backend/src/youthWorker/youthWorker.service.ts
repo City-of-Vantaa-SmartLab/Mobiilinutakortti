@@ -146,7 +146,7 @@ export class YouthWorkerService {
     async isLockedOut(youthWorkerId: string): Promise<boolean> {
         const lockoutRecord = await this.getLockoutRecord(youthWorkerId);
         if (!lockoutRecord) { return false; }
-        const expired = await this.checkLockoutExpired(lockoutRecord);
+        const expired = await this.hasLockoutPeriodEnded(lockoutRecord);
         if (expired) { return false; }
         return lockoutRecord.attempts >= maximumAttempts;
     }
@@ -160,7 +160,7 @@ export class YouthWorkerService {
         await this.lockoutRepo.save(lockoutRecord);
     }
 
-    private async checkLockoutExpired(lockout: Lockout): Promise<boolean> {
+    private async hasLockoutPeriodEnded(lockout: Lockout): Promise<boolean> {
         const expired = new Date(lockout.expiry) < new Date();
         if (!expired) { return false; }
         await this.lockoutRepo.remove(lockout);

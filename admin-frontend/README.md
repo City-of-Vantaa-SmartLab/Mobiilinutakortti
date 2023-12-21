@@ -25,7 +25,7 @@ If you are not using Microsoft Entra ID to login users (as is by default; see th
 ## Environment variables / secrets
 
 There are following environment variables:
-* `REACT_APP_ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
+* `REACT_APP_ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "/nuorisotyontekijat"
 * `REACT_APP_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
 * `REACT_APP_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.

@@ -115,8 +115,8 @@ export class AuthenticationService {
         return token;
     }
 
-    async logoutYouthWorker(youthWorkerData: { userId: string, authToken: string }): Promise<boolean> {
-        return this.sessionDBService.logoutUser(youthWorkerData.userId);
+    async logoutYouthWorker(youthWorkerData: { userId: string, authToken: string }, automatic: boolean = false): Promise<boolean> {
+        return this.sessionDBService.logoutUser(youthWorkerData.userId, automatic);
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {

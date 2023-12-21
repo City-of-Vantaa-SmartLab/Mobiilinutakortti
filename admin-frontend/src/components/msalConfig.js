@@ -7,9 +7,8 @@ const authConfig = {
     redirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
   },
   cache: {
-    cacheLocation: 'memoryStorage',
-    temporaryCacheLocation: 'memoryStorage',
-    storeAuthStateInCookie: true
+    cacheLocation: 'sessionStorage',
+    temporaryCacheLocation: 'sessionStorage'
   },
   system: {
     loggerOptions: {

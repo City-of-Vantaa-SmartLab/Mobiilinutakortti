@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo } from '../utils';
+import { userToken, setUserInfo, checkLogoutMSAL } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -46,38 +46,51 @@ export default function EntraLogin() {
 
   const [ userName, setUserName] = useState(null);
   const [ loginInProgress, setLoginInProgress] = useState(true);
+  const [ logoutInProgress, setLogoutInProgress] = useState(false);
 
   useEffect(() => {
     const tryLogin = async () => {
       await MSALApp.initNew();
       console.debug("MSAL app initialized.");
-      if (!MSALApp.appUsername) {
-        setLoginInProgress(false);
-        return;
-      }
       setUserName(MSALApp.appUsername);
 
-      const token = await MSALApp.getAuthorizationBearerToken();
-      if (token?.accessToken) {
-        const { access_token } = await httpClient(
-          api.auth.loginEntraID,
-          { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
-        );
-
-        localStorage.setItem(userToken, access_token);
-        const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
-        setUserInfo(userInfo);
-
+      const checkLogout = localStorage.getItem(checkLogoutMSAL);
+      if (checkLogout) {
+        setLogoutInProgress(true);
         await MSALApp.logout();
+      } else {
+        if (!MSALApp.appUsername) {
+          setLoginInProgress(false);
+          return;
+        }
+        const token = await MSALApp.getAuthorizationBearerToken();
+        if (token?.accessToken) {
+          const { access_token } = await httpClient(
+            api.auth.loginEntraID,
+            { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
+          );
+
+          localStorage.setItem(userToken, access_token);
+          const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
+          setUserInfo(userInfo);
+
+          // At this point the user is not signed out of MSAL.
+          // We could sign them out, but it would result in a prompt for the user to choose which account they would like
+          // to sign out of. This would be very confusing in the middle of a login process.
+          // If it was possible to sign the user out quietly, this is where it should be done.
+
+          // Go to landingPage.
+          window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
+        }
       }
     }
     tryLogin();
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     setLoginInProgress(true);
     event.preventDefault();
-    MSALApp.login();
+    await MSALApp.login();
     setLoginInProgress(false);
   };
 
@@ -119,7 +132,7 @@ export default function EntraLogin() {
               </Button>
             </Box>) :
             (<Typography variant="caption">
-              Kirjaudutaan sisään käyttäjätunnuksella {userName}...
+              Kirjataan {logoutInProgress ? 'ulos' : 'sisään'} käyttäjätunnus {userName}...
             </Typography>)
           }
         </Box>

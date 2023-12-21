@@ -7,6 +7,7 @@ import { YouthWorkerService } from './youthWorker.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
+import { ApiUserGuard } from './apiuser.guard';
 import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
@@ -59,7 +60,7 @@ export class YouthWorkerController {
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('getSelf')
   @ApiBearerAuth('youthWorker')
-  async getSelf(@YouthWorker() youthWorkerData: any): Promise<YouthWorkerUserViewModel> {
+  async getSelf(@YouthWorker() youthWorkerData: { userId: string }): Promise<YouthWorkerUserViewModel> {
     return new YouthWorkerUserViewModel(await this.youthWorkerService.getYouthWorker(youthWorkerData.userId));
   }
 
@@ -68,12 +69,14 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('refresh')
   @ApiBearerAuth('youthWorker')
-  async refreshJWT(@YouthWorker() youthWorkerData: any): Promise<JWTToken> {
+  async refreshJWT(@YouthWorker() youthWorkerData: { userId: string, authToken: string }): Promise<JWTToken> {
     return this.authenticationService.updateAuthToken(youthWorkerData);
   }
 
   /**
-   * A simple route that allows the frontend to tell whether the current token is valid, and belongs to a youth worker/admin
+   * A simple route that allows the frontend to tell whether the current token is valid, and is a youth worker or admin.
+   * This is done using guards.
+   * This also checks if the user account has been locked.
    *
    * @returns - true if successful, false otherwise.
    */
@@ -81,8 +84,8 @@ export class YouthWorkerController {
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('check')
   @ApiBearerAuth('youthWorker')
-  async autoLogin(@YouthWorker() youthWorkerData: any): Promise<Check> {
-    // This is a simple route the frontend can hit to verify a valid JWT.
+  async check(@YouthWorker() youthWorkerData: { userId: string }): Promise<Check> {
+    if (!!process.env.ENTRA_APP_KEY_DISCOVERY_URL) return new Check(true);
     return new Check(!(await this.youthWorkerService.isLockedOut(youthWorkerData.userId)));
   }
 
@@ -90,8 +93,17 @@ export class YouthWorkerController {
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('logout')
   @ApiBearerAuth('youthWorker')
-  async logout(@YouthWorker() youthWorkerData: any): Promise<Check> {
+  async logout(@YouthWorker() youthWorkerData: { userId: string, authToken: string }): Promise<Check> {
     return new Check(await this.authenticationService.logoutYouthWorker(youthWorkerData));
+  }
+
+  // Do not use AuthGuard('jwt') when the user is being automatically logged out as the token has expired.
+  // Use the ApiUserGuard instead.
+  @UseGuards(ApiUserGuard, RolesGuard, SessionGuard)
+  @Get('autologout')
+  @ApiBearerAuth('youthWorker')
+  async autologout(@YouthWorker() youthWorkerData: { userId: string, authToken: string }): Promise<Check> {
+    return new Check(await this.authenticationService.logoutYouthWorker(youthWorkerData, true));
   }
 
   /**
@@ -160,7 +172,7 @@ export class YouthWorkerController {
   @Post('changePassword')
   @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
-  async changePassword(@YouthWorker() youthWorkerData: any, @Body() userDate: ChangePasswordDto): Promise<Message> {
+  async changePassword(@YouthWorker() youthWorkerData: { userId: string }, @Body() userDate: ChangePasswordDto): Promise<Message> {
     return new Message(await this.youthWorkerService.changePassword(youthWorkerData.userId, userDate));
   }
 

@@ -3,6 +3,7 @@ import { useNotify } from 'react-admin';
 import { getYouthClubs, getUserInfo } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 export const LandingPage = () => {
   const notify = useNotify();
@@ -11,6 +12,7 @@ export const LandingPage = () => {
   const userInfo = useRef(null);
   const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
 
+  useAutoLogout(true);
   useEffect(() => {
     userInfo.current = getUserInfo();
     if (!!userInfo.current) {
