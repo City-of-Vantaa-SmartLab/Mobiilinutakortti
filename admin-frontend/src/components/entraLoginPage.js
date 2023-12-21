@@ -22,11 +22,12 @@ const theme = createTheme({
     },
   },
   typography: {
-    h6: {
-      fontWeight: 400,
-      fontSize: '18px',
-      textAlign: 'center',
+    body2: {
+      padding: '1rem 0'
     },
+    caption: {
+      color: 'red'
+    }
   },
   overrides: {
     MuiCssBaseline: {
@@ -47,6 +48,7 @@ export default function EntraLogin() {
   const [ userName, setUserName] = useState(null);
   const [ loginInProgress, setLoginInProgress] = useState(true);
   const [ logoutInProgress, setLogoutInProgress] = useState(false);
+  const [ errorState, setErrorState] = useState(false);
 
   useEffect(() => {
     const tryLogin = async () => {
@@ -65,14 +67,19 @@ export default function EntraLogin() {
         }
         const token = await MSALApp.getAuthorizationBearerToken();
         if (token?.accessToken) {
-          const { access_token } = await httpClient(
-            api.auth.loginEntraID,
-            { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
-          );
-
-          localStorage.setItem(userToken, access_token);
-          const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
-          setUserInfo(userInfo);
+          try {
+            const { access_token } = await httpClient(
+              api.auth.loginEntraID,
+              { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
+            );
+            localStorage.setItem(userToken, access_token);
+            const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
+            setUserInfo(userInfo);
+          } catch (error) {
+            setErrorState(true);
+            console.log(error);
+            return;
+          }
 
           // At this point the user is not signed out of MSAL.
           // We could sign them out, but it would result in a prompt for the user to choose which account they would like
@@ -114,7 +121,7 @@ export default function EntraLogin() {
               <LockOutlinedIcon />
             </Avatar>
           </Box>
-          <Typography variant="h6">
+          <Typography variant="body1" align="center">
             Tervetuloa Nutakortin nuorisotyöntekijän käyttöliittymään.
           </Typography>
           {!userName ?
@@ -131,10 +138,20 @@ export default function EntraLogin() {
                 Kirjaudu Nutakorttiin
               </Button>
             </Box>) :
-            (<Typography variant="caption">
+            (<Typography variant="body2" align="center">
               Kirjataan {logoutInProgress ? 'ulos' : 'sisään'} käyttäjätunnus {userName}...
             </Typography>)
           }
+          {errorState && (<>
+            <Typography variant="caption">
+              Virhe sisäänkirjautuessa. Virkistä sivu ja yritä uudelleen.
+            </Typography>
+            <Box sx={{ m: 1 }}></Box>
+            <Typography variant="caption">
+              Jos ongelma toistuu, varmista ylläpitäjältä, että sähköpostiosoitteesi ei ole käytössä jollain toisella tunnuksella Nutakortissa. Pyydä tällöin ylläpitäjää poistamaan vanha/ylimääräinen tunnus.
+            </Typography>
+          </>)}
+
         </Box>
       </Container>
     </ThemeProvider>
