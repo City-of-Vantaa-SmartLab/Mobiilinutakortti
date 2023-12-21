@@ -11,34 +11,38 @@ export class MSALApp {
         console.debug("MSALApp: account to log out: " + account?.username);
         let shouldLogout = !!account;
 
-        if (shouldLogout && !localStorage.getItem(doLogoutMSAL)) {
+        if (!shouldLogout) {
+            console.debug("MSALApp: nothing to log out.");
+            localStorage.removeItem(checkLogoutMSAL);
+            localStorage.removeItem(doLogoutMSAL);
+            return;
+        }
+
+        if (!localStorage.getItem(doLogoutMSAL)) {
             localStorage.setItem(doLogoutMSAL, true);
             const request = {
                 scopes: MSALConfig.tokenRequestScopes
             }
-            // If the acquireTokenSilent doesn't error out, it will reload the page.
-            // We have set the doLogoutMSAL because of that so that next time we'll skip this.
+            // This call will end up reloading the page.
             await MSALApp.instance.acquireTokenSilent(request).catch(async error => {
-                shouldLogout = !(error instanceof MSAL.InteractionRequiredAuthError)
+                if (error instanceof MSAL.InteractionRequiredAuthError) {
+                    // If interaction is required, that means the user must sign in again anyway, so no need to logout first.
+                    console.debug("MSALApp: silent token acquire failed, interaction required.");
+                    localStorage.removeItem(checkLogoutMSAL);
+                    localStorage.removeItem(doLogoutMSAL);
+                }
+            });
+        } else {
+            localStorage.removeItem(checkLogoutMSAL);
+            localStorage.removeItem(doLogoutMSAL);
+
+            // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
+            // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
+            // would like to log out of.
+            await MSALApp.instance.logoutRedirect({
+                postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
             });
         }
-
-        // NB: see above; this code will not be executed if acquireTokenSilent doesn't fail.
-        console.debug("MSALApp: reached over acquireTokenSilent.");
-        localStorage.removeItem(checkLogoutMSAL);
-        localStorage.removeItem(doLogoutMSAL);
-
-        if (!shouldLogout) {
-            console.debug("MSALApp: nothing to log out.");
-            return;
-        }
-
-        // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
-        // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
-        // would like to log out of.
-        await MSALApp.instance.logoutRedirect({
-            postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
-        });
     }
 
     static async initNew() {
