@@ -21,6 +21,8 @@ import { ChangePasswordDto } from './dto/changePassword.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LoginYouthWorkerEntraDto } from './dto/login.dto';
 
+const useEntraID = !!process.env.ENTRA_APP_KEY_DISCOVERY_URL;
+
 /**
  * This controller contains all actions to be carried out on the '/youthworker' route.
  * All returns consider the body returned in the case of success, please note:
@@ -44,6 +46,9 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('registerAdmin')
   async registerAdmin(@Body() userData: RegisterYouthWorkerDto): Promise<Message> {
+    if (useEntraID) {
+        throw new ForbiddenException('Microsoft Entra ID is in use. No need to register first admin.');
+    }
     const allow = process.env.SUPER_ADMIN_FEATURES || "no";
     if ( allow === "yes" ) {
       return new Message(await this.youthWorkerService.registerYouthWorker(userData));
@@ -85,7 +90,7 @@ export class YouthWorkerController {
   @Get('check')
   @ApiBearerAuth('youthWorker')
   async check(@YouthWorker() youthWorkerData: { userId: string }): Promise<Check> {
-    if (!!process.env.ENTRA_APP_KEY_DISCOVERY_URL) return new Check(true);
+    if (useEntraID) return new Check(true);
     return new Check(!(await this.youthWorkerService.isLockedOut(youthWorkerData.userId)));
   }
 
@@ -114,7 +119,7 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('loginEntraID')
   async loginEntra(@Body() loginData: LoginYouthWorkerEntraDto): Promise<JWTToken> {
-    if (!process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
+    if (!useEntraID) {
         throw new ForbiddenException('Local login is enabled. Microsoft Entra ID is not in use.');
     }
     return await this.authenticationService.loginYouthWorkerEntraID(loginData);
@@ -129,7 +134,7 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')
   async login(@Body() userData: LoginYouthWorkerDto): Promise<JWTToken> {
-    if (process.env.ENTRA_APP_KEY_DISCOVERY_URL) {
+    if (useEntraID) {
         throw new ForbiddenException('Microsoft Entra ID is in use. Local login is disabled.');
     }
     return await this.authenticationService.loginYouthWorker(userData);
@@ -147,6 +152,9 @@ export class YouthWorkerController {
   @Post('register')
   @ApiBearerAuth('admin')
   async create(@YouthWorker() admin: { userId: string }, @Body() userData: RegisterYouthWorkerDto): Promise<Message> {
+    if (useEntraID) {
+        throw new ForbiddenException('Microsoft Entra ID is in use. Creating users locally is disabled.');
+    }
     return new Message(await this.youthWorkerService.registerYouthWorker(userData, admin.userId));
   }
 
@@ -173,6 +181,9 @@ export class YouthWorkerController {
   @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
   async changePassword(@YouthWorker() youthWorkerData: { userId: string }, @Body() userDate: ChangePasswordDto): Promise<Message> {
+    if (useEntraID) {
+        throw new ForbiddenException('Microsoft Entra ID is in use. Password management is disabled.');
+    }
     return new Message(await this.youthWorkerService.changePassword(youthWorkerData.userId, userDate));
   }
 

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import fetch from 'node-fetch';
+import { HttpService } from '@nestjs/axios';
 
 interface KeyData {
     kid: string;
@@ -12,13 +12,16 @@ export class ConfigHandler {
     private static readonly _logger = new Logger('ConfigHandler');
     private static _keyRefreshDay: Date = new Date();
     private static _keys: KeyData[] = [];
+    private static _httpService = new HttpService();
 
     // Gets the public certificate from Entra ID service. The certificate has the public key.
     static async getPublicCert(kid: string): Promise<string | null> {
         // Refresh keys once a day.
         if (ConfigHandler._keys.length === 0 || ConfigHandler._keyRefreshDay.getDate() !== new Date().getDate()) {
             try {
-                ConfigHandler._keys = ((await (await fetch(process.env.ENTRA_APP_KEY_DISCOVERY_URL)).json()) as { keys: KeyData[] }).keys;
+                await ConfigHandler._httpService.get(process.env.ENTRA_APP_KEY_DISCOVERY_URL).toPromise().then(res => {
+                    ConfigHandler._keys = (res.data as { keys: KeyData[] }).keys;
+                });
                 ConfigHandler._keyRefreshDay = new Date();
                 ConfigHandler._logger.log('Entra ID keys updated.');
             } catch (error) {

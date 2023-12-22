@@ -72,8 +72,8 @@ export class AuthenticationService {
                     id: body.oid,
                     email: body.unique_name,
                     firstName: body.name,
-                    lastName: body.name,
-                    password: 'Entra ID login',
+                    lastName: '(Entra ID)',
+                    password: '(Entra ID)',
                     isAdmin: body?.roles?.includes(this.adminGroupRole) || false
                 } as YouthWorker;
                 this.logger.log('User not found, creating new with id: ' + user.id);
