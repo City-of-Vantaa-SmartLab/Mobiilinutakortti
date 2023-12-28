@@ -29,7 +29,7 @@ export class ConfigHandler {
             }
         }
 
-        const key = ConfigHandler._keys.find(k => k.kid = kid);
+        const key = ConfigHandler._keys.find(k => k.kid === kid);
         // Assume certificate is a root certificate (issued by accounts.accesscontrol.windows.net), so [0]
         return key ? '-----BEGIN CERTIFICATE-----\n' + key.x5c[0] + '\n-----END CERTIFICATE-----\n' : null;
     }

@@ -63,7 +63,7 @@ export class AuthenticationService {
             if (!appId) throw new Error("No app ID in Entra key discovery URL.");
 
             // For some reason, this does not work via jwtService and we have to use verify directly.
-            // this.jwtService.verify(loginData.msalToken, { publicKey: publicKey, algorithms: ['RS256'], audience: 'api://' + appId[1] });
+            // this.jwtService.verify(loginData.msalToken, { publicKey: publicCert, algorithms: ['RS256'], audience: 'api://' + appId[1] });
             verify(loginData.msalToken, publicCert, { algorithms: ['RS256'], audience: 'api://' + appId[1] });
 
             let user = await this.youthWorkerService.getYouthWorker(body.oid);
