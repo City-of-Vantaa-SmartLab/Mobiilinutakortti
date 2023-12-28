@@ -10,7 +10,7 @@ import { EmailConfig } from 'src/email/emailConfigHandler';
 import { AnnouncementLanguageVersions } from './classes/announcementLanguageVersions';
 import { Junior } from 'src/junior/entities';
 import { EmailService } from 'src/email/email.service';
-import { EmailBatchItem } from 'src/email/models/emailModels.model';
+import { EmailAnnouncement } from 'src/email/models/emailModels.model';
 
 @Injectable()
 export class AnnouncementService {
@@ -65,7 +65,7 @@ export class AnnouncementService {
         return batchArrays;
     };
 
-    private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: Array<string[]>, lang: string): EmailBatchItem[] {
+    private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: Array<string[]>, lang: string): EmailAnnouncement[] {
         return recipients.map(r => {
             return {
                 to: r,
@@ -158,14 +158,12 @@ export class AnnouncementService {
         this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
 
         this.logger.log(`User ${userId} is sending ${totalAmount} email messages.`);
-        const responses = Promise.all(emails.map(async (e: EmailBatchItem) => {
-            return await this.emailService.batchSendEmailsToUsers(e, settings)
-        }));
+        // The way email works we have no real idea whether the messages have been sent or not, as a message might bounce hours after
+        // delivery attempt. Therefore we just always say emails sent and use the bounce address (configured in SES) to catch actual problems.
+        // If there are other technical problems they are logged in the email service. If there are hundreds of emails to send we
+        // aren't going to wait for them to finish anyway before acknowledging the frontend.
+        emails.map(async (e: EmailAnnouncement) => this.emailService.sendEmailsToUsers(e, settings));
 
-        if ((await responses).reduce((x,y) => {return x && y}, true)) {
-            return content.EmailBatchSent;
-        } else {
-            throw new InternalServerErrorException(content.EmailBatchFailed);
-        };
+        return content.EmailAnnouncementSent;
     };
 };

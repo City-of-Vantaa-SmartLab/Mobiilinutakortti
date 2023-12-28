@@ -125,7 +125,7 @@ export const AnnouncementCreate = (props) => {
     }, []);
 
     const onSuccess = () => {
-        notify("Viesti lähetetty");
+        notify("Tiedote lähetetty");
         redirect("/");
     };
 

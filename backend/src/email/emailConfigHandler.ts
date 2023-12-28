@@ -14,7 +14,7 @@ export class EmailConfig {
 
         const source = process.env.EMAIL_SOURCE;
         const returnPath = process.env.EMAIL_RETURN_PATH;
-        
+
         if (!source || !returnPath ) {
             logger.error("Unable to find email config");
             throw new BadRequestException(content.EmailServiceNotAvailable);
