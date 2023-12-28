@@ -22,7 +22,7 @@ import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
 import { getFilters, obfuscate } from 'src/utils/helpers';
-import { ConfigHelper } from '../configHandler';
+import { ConfigHandler } from '../configHandler';
 import { Status } from './enum/status.enum';
 
 @Injectable()
@@ -155,7 +155,7 @@ export class JuniorService {
                 throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
-            if (userId && ConfigHelper.detailedLogs()) {
+            if (userId && ConfigHandler.detailedLogs()) {
                 this.logger.log({ userId: userId }, `User creates new junior.`);
             }
             this.logger.log('Existing junior not found, creating new.');
@@ -262,7 +262,7 @@ export class JuniorService {
         }
         await this.juniorRepo.save(user);
 
-        if (ConfigHelper.detailedLogs()) {
+        if (ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
         }
         //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
@@ -288,7 +288,7 @@ export class JuniorService {
         const junior = await this.getJunior(id);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
         this.juniorRepo.remove(junior);
-        if (userId && ConfigHelper.detailedLogs()) {
+        if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId, juniorId: id }, `User deleted junior.`);
         }
         return `${id} ${content.Deleted}`;
@@ -338,7 +338,7 @@ export class JuniorService {
             .execute();
         const juniors = await this.juniorRepo.find();
 
-        if (userId && ConfigHelper.detailedLogs()) {
+        if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId }, `User created new season.`);
         }
 
@@ -377,7 +377,7 @@ export class JuniorService {
             .execute();
 
         const deleted: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
-        if (userId && ConfigHelper.detailedLogs()) {
+        if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
 

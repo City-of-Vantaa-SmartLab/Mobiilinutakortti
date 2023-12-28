@@ -20,11 +20,14 @@ The start script is the same as dev script, but you must set the required enviro
 
 ## Creating a youth worker user
 
-The application needs at least one youth worker user to work properly. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
+If you are not using Microsoft Entra ID to login users (as is by default; see the environment variables section below), you need to add an initial admin user. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
 
 ## Environment variables / secrets
 
-There are three environment variables:
-* `REACT_APP_ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/"
+There are following environment variables:
+* `REACT_APP_ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "/nuorisotyontekijat"
 * `REACT_APP_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `REACT_APP_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.
+* `REACT_APP_ENTRA_REDIRECT_URI`: If using Entra ID for login, the redirect URI configured in the login scope, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/loginEntraID". Note that the page must reside outside react-admin router, as MSAL returns the code as an URL fragment (after a # sign), which also marks a route so there would be a conflict.
+* `REACT_APP_ENTRA_TENANT_ID`: Microsoft Entra tenant ID. If given, Microsoft Entra ID will be used for login. Login and user management based on database data will be disabled. A different login page will be used to initiate Entra ID login.

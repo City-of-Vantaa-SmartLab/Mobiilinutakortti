@@ -17,6 +17,8 @@ import {
 } from 'react-admin';
 import { getYouthClubs, getActiveYouthClubs } from '../utils';
 
+const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+
 export const YouthWorkerList = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
@@ -32,9 +34,9 @@ export const YouthWorkerList = (props) => {
   }
 
   return (
-    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
       <Datagrid>
-        <FunctionField label="Nimi" render={record => `${record.firstName} ${record.lastName}`} />
+        <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
         <TextField label="Sähköposti" source="email" />
         <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
         <BooleanField label="Ylläpitäjä" source="isAdmin" />
@@ -101,11 +103,11 @@ export const YouthWorkerEdit = (props) => {
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
       <SimpleForm variant="standard" margin="normal" redirect="list">
-        <TextInput label="Sähköposti" source="email" type="email" />
-        <TextInput label="Etunimi" source="firstName" />
-        <TextInput label="Sukunimi" source="lastName" />
+        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
+        <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />
+        {!useEntraID && (<TextInput label="Sukunimi" source="lastName" />)}
         <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
-        <BooleanInput label="Ylläpitäjä" source="isAdmin" />
+        <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >
   );

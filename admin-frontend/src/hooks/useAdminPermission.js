@@ -3,11 +3,15 @@ import { AUTH_GET_PERMISSIONS } from 'react-admin';
 import { authProvider } from '../providers';
 
 const useAdminPermission = () => {
-  const [isAdmin, setstate] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const getPermissions = async () => {
-    const permissions = await authProvider(AUTH_GET_PERMISSIONS);
-    setstate(permissions === 'ADMIN');
+    try {
+      const permissions = await authProvider(AUTH_GET_PERMISSIONS);
+      setIsAdmin(permissions === 'ADMIN');
+    } catch {
+      // It's fine if there's no permission info yet (user hasn't logged in).
+    }
   };
 
   useEffect(() => {

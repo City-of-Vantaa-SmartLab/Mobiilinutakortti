@@ -6,11 +6,12 @@ import Menu from './menu';
 
 const CustomUserMenu = props => (
     <UserMenu {...props}>
-        <MenuItemLink
-            to="/password"
-            primaryText="Salasana"
-            leftIcon={<LockIcon />}
-        />
+        {!process.env.REACT_APP_ENTRA_TENANT_ID ? (
+            <MenuItemLink
+                to="/password"
+                primaryText="Salasana"
+                leftIcon={<LockIcon />}
+            />) : null}
     </UserMenu>
 );
 const CustomNotification = styled(Notification)`

@@ -7,7 +7,7 @@ import { ExtraEntryType } from './entities';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { CreateExtraEntryTypeDto } from './dto/createType.dto';
 import { CreateExtraEntryDto } from './dto/create.dto';
-import { ConfigHelper } from 'src/configHandler';
+import { ConfigHandler } from 'src/configHandler';
 import { Junior } from 'src/junior/entities';
 import { getFilters } from 'src/utils/helpers';
 import { ListControlDto } from 'src/common/dto';
@@ -119,7 +119,7 @@ export class ExtraEntryService {
     async createEntry(details: CreateExtraEntryDto, userId?: string): Promise<string> {
         const isPermit = details.isPermit;
 
-        if (userId && ConfigHelper.detailedLogs()) {
+        if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId, juniorId: details.juniorId, entryTypeId: details.entryTypeId }, `User created ${isPermit ? "a permit" : "an extra entry"} for junior.`);
         };
 
@@ -158,7 +158,7 @@ export class ExtraEntryService {
         if (!entry) throw new BadRequestException(content.ExtraEntryNotFound);
         const juniorId = entry?.junior?.id;
 
-        if (userId && ConfigHelper.detailedLogs()) {
+        if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId, juniorId: juniorId, entryId: deletableId }, `User deleted ${isPermit ? "permit" : "extra entry"} from junior.`);
         };
 

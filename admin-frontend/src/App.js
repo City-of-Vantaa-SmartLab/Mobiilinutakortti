@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Admin, Resource, Login } from 'react-admin';
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
@@ -10,16 +10,20 @@ import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, adminRoutes } from './customRoutes';
 import ChildCareIcon from '@material-ui/icons/ChildCare';
-import { httpClient } from './httpClients'
-import api from './api';
-import { AUTH_LOGOUT } from 'react-admin';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
+import EntraLogin from './components/entraLoginPage';
+import useAutoLogout from './hooks/useAutoLogout';
 
-const CustomLoginPage = () => <Login backgroundImage="/nuta-admin-bg.jpg" />;
+const CustomLoginPage = () =>
+  !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
+    <EntraLogin />
+  ) : (
+    <Login backgroundImage="/nuta-admin-bg.jpg" />
+  );
 
 const messages = {
     'fi': finnishMessages,
@@ -31,28 +35,13 @@ const App = () => {
     const { isAdmin } = useAdminPermission();
     const customRoutes = routes.concat(...isAdmin ? adminRoutes : []);
     const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+    useAutoLogout();
 
-    useEffect(() => {
-        let validCheck = setInterval(async () => {
-            const url = api.auth.login;
-            const body = {
-                method: 'GET'
-            };
-            if(!window.location.href.includes("checkIn")){
-                await httpClient(url, body).then(async (response) => {
-                    if (response.statusCode < 200 || response.statusCode >= 300 || response.result === false) {
-                        await authProvider(AUTH_LOGOUT, {});
-                        window.location.reload();
-                    }
-                })
-            }
-        }, 60000);
-
-        return () => {
-            clearInterval(validCheck);
-            validCheck = null;
-        }
-    }, []);
+    // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
+    // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
+    if (process.env.REACT_APP_ENTRA_TENANT_ID && (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI)) {
+        return (<EntraLogin />)
+    }
 
     return (
         <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
@@ -78,5 +67,3 @@ const App = () => {
 }
 
 export default App;
-
-

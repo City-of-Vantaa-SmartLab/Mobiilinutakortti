@@ -5,7 +5,7 @@ import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
 import { ClubService } from '../club/club.service';
 import * as content from '../content';
-import { ConfigHelper } from '../configHandler';
+import { ConfigHandler } from '../configHandler';
 import moment = require('moment');
 
 
@@ -127,7 +127,7 @@ export class SmsService {
     }
 
     private getOneTimeLink(challenge: Challenge): string {
-        return `${ConfigHelper.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
+        return `${ConfigHandler.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
     private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string, clubSpecificMessage?: string) {

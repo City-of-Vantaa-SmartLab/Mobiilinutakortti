@@ -16,6 +16,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.last-local-build-id
 
 npm-debug.log*
 yarn-debug.log*
