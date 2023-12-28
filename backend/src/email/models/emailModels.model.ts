@@ -1,7 +1,7 @@
 export interface Destination {
-    ToAddresses?: string[],
+    ToAddresses: string[],
     CcAddresses?: string[],
-    BccAddresses: string[],
+    BccAddresses?: string[],
 }
 
 export interface TextContent {
@@ -14,17 +14,6 @@ export interface Body {
     Html?: TextContent,
 }
 
-export interface Text {
-    ToAddresses?: string[],
-    CcAddresses?: string[],
-    BccAddresses: string[],
-}
-
-export interface Destination {
-    ToAddresses?: string[],
-    CcAddresses?: string[],
-}
-
 export interface MessageContent {
     Subject: TextContent,
     Body: Body,
@@ -35,7 +24,7 @@ export interface Tag {
     Value: string
 }
 
-export interface EmailContentConfig {
+export interface EmailData {
   Source: string,
   Destination: Destination,
   Message: MessageContent,
@@ -47,7 +36,7 @@ export interface EmailContentConfig {
   ConfigurationSetName?:  string,
 }
 
-export interface EmailBatchItem {
+export interface EmailAnnouncement {
     to: string[],
     title: string,
     message: string,

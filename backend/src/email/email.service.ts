@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { EmailBatchItem, EmailContentConfig } from './models/emailModels.model';
+import { EmailAnnouncement, EmailData } from './models/emailModels.model';
 import { EmailSettings } from './models/emailSettings.model';
 import { EmailConfig } from './emailConfigHandler';
 
@@ -9,54 +9,55 @@ export class EmailService {
 
     private readonly logger = new Logger('Email Service');
 
-    constructor(
-        ) { }
+    constructor() { }
 
-        private getMessageInput(batchItem: EmailBatchItem, settings: EmailSettings): EmailContentConfig {
-            const messageInput = {
+    // NB: on one hand it would be kind of nice to send a single message to N recipients at a time.
+    // On the other hand this caused problems in practice. For example Google Mail refused to receive
+    // messages if too many people received the message with the same Message-ID.
+    // Therefore we will always sent the message to each recipient separately using the To field and not Bcc.
+    private getMessages(announcement: EmailAnnouncement, settings: EmailSettings): EmailData[] {
+        const messages = new Array<EmailData>;
+        for (const recipient of announcement.to) {
+            messages.push({
                 Source: settings.source,
                 Destination: {
-                    BccAddresses: batchItem.to,
+                    ToAddresses: [recipient]
                 },
                 Message: {
                     Subject: {
-                        Data: batchItem.title,
+                        Data: announcement.title
                     },
                     Body: {
                         Text: {
-                        Data: batchItem.message,
+                            Data: announcement.message
                         },
                     },
                 },
                 ReturnPath: settings.returnPath
-            };
-            return messageInput;
+            });
         }
+        return messages;
+    }
 
-        async batchSendEmailsToUsers(batch: EmailBatchItem, settings: EmailSettings): Promise<boolean> {
-            if (batch.to.length < 1) return;
-            if (batch.to.length >= 1) {
-                this.logger.log(`Batch sending ${batch.to.length} emails.`);
-            };
+    async sendEmailsToUsers(announcement: EmailAnnouncement, settings: EmailSettings): Promise<void> {
+        if (announcement.to.length < 1) return;
 
-            const sesSettings = EmailConfig.getSesConfig();
-            const client = new SESClient(sesSettings);
-            const messageInput = this.getMessageInput(batch, settings);
-            const command = new SendEmailCommand(messageInput);
+        const sesSettings = EmailConfig.getSesConfig();
+        const client = new SESClient(sesSettings);
+        const messages = this.getMessages(announcement, settings);
 
-            return await client.send(command).then(
-                response => {
-                    const { httpStatusCode, requestId } = response.$metadata;
-                    if ((httpStatusCode >= 200) && (httpStatusCode < 300)) {
-                        this.logger.log(`Batch with requestId ${requestId} received successfully`);
-                        return true;
-                    } else {
-                        this.logger.log(`Batch with requestId ${requestId} failed, code ${httpStatusCode}`);
-                        return false;
-                    };
+        for (const message of messages) {
+            const command = new SendEmailCommand(message);
+            client.send(command).then(response => {
+                const { httpStatusCode, requestId } = response.$metadata;
+                if ((httpStatusCode >= 200) && (httpStatusCode < 300)) {
+                    this.logger.log(`Request ${requestId} OK`);
+                } else {
+                    this.logger.log(`Request ${requestId} failed with code: ${httpStatusCode}`);
+                };
             }).catch((error) => {
                 this.logger.log('Email error: ', error);
-                return false;
             });
+        }
     }
 };
