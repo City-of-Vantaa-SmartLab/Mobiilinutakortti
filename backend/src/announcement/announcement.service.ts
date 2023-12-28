@@ -58,21 +58,12 @@ export class AnnouncementService {
         return Array.from(uniqueRecipients);
     };
 
-    private splitToBatches(recipientEmails: string[], batchSize: number): Array<string[]> {
-        const batchArrays = [];
-        for (let i = 0; i < recipientEmails.length; i += batchSize)
-            batchArrays.push(recipientEmails.slice(i, i + batchSize));
-        return batchArrays;
-    };
-
-    private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: Array<string[]>, lang: string): EmailAnnouncement[] {
-        return recipients.map(r => {
-            return {
-                to: r,
-                title: announcementData.title[lang] || announcementData.title["fi"],
-                message: announcementData.content[lang] || announcementData.content["fi"]
-            };
-        });
+    private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: string[], lang: string): EmailAnnouncement {
+        return {
+            to: recipients,
+            title: announcementData.title[lang] || announcementData.title["fi"],
+            message: announcementData.content[lang] || announcementData.content["fi"]
+        };
     };
 
     async clubAnnouncementSms(announcementData: AnnouncementData, userId: string): Promise<string> {
@@ -135,34 +126,32 @@ export class AnnouncementService {
             await this.getRecipientsByYouthClub(announcementData.youthClub) :
             await this.getRecipientsForAllYouthClubs();
 
-        const recipientBatchesEn: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "en"), 50);
-        const recipientBatchesSv: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "sv"), 50);
-        const recipientBatchesFi: Array<string[]> = this.splitToBatches(this.getEmailRecipientsByLanguage(selectedRecipients, "fi"), 50);
+        const recipientsEn: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "en");
+        const recipientsSv: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "sv");
+        const recipientsFi: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "fi");
 
-        const totalAmount =
-            recipientBatchesEn.map(b => b.length).reduce((sum, l) => sum + l, 0) +
-            recipientBatchesSv.map(b => b.length).reduce((sum, l) => sum + l, 0) +
-            recipientBatchesFi.map(b => b.length).reduce((sum, l) => sum + l, 0);
+        const totalAmount = recipientsEn.length + recipientsSv.length + recipientsFi.length;
 
         if (announcementData.dryRun) {
             return totalAmount.toString();
         }
 
-        if ((recipientBatchesEn.length + recipientBatchesSv.length + recipientBatchesFi.length) === 0) {
+        if (totalAmount === 0) {
             throw new BadRequestException(content.RecipientsNotFound);
         };
 
-        const emails =
-        this.createEmailDataForLanguage(announcementData, recipientBatchesEn, "en").concat(
-        this.createEmailDataForLanguage(announcementData, recipientBatchesSv, "sv")).concat(
-        this.createEmailDataForLanguage(announcementData, recipientBatchesFi, "fi"));
+        const emails = [
+            this.createEmailDataForLanguage(announcementData, recipientsEn, "en"),
+            this.createEmailDataForLanguage(announcementData, recipientsSv, "sv"),
+            this.createEmailDataForLanguage(announcementData, recipientsFi, "fi")
+        ];
 
         this.logger.log(`User ${userId} is sending ${totalAmount} email messages.`);
         // The way email works we have no real idea whether the messages have been sent or not, as a message might bounce hours after
         // delivery attempt. Therefore we just always say emails sent and use the bounce address (configured in SES) to catch actual problems.
         // If there are other technical problems they are logged in the email service. If there are hundreds of emails to send we
         // aren't going to wait for them to finish anyway before acknowledging the frontend.
-        emails.map(async (e: EmailAnnouncement) => this.emailService.sendEmailsToUsers(e, settings));
+        emails.map(async (ea: EmailAnnouncement) => this.emailService.sendEmailsToUsers(ea, settings));
 
         return content.EmailAnnouncementSent;
     };
