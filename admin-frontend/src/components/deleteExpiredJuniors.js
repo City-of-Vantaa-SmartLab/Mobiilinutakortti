@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Title, useNotify, GET_LIST } from 'react-admin';
 import { Redirect } from 'react-router-dom';
-import Card from '@material-ui/core/Card';
-import Button from '@material-ui/core/Button';
-import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
+import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@material-ui/core';
 import { juniorProvider } from '../providers/juniorProvider';
 import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
-import styled from 'styled-components';
 import { Status, statusChoices } from '../utils';
 
 const getExpiredJuniors = () =>
@@ -23,10 +19,6 @@ const getExpiredJuniors = () =>
     httpClient,
   );
 
-const InputContainer = styled.div`
-  margin-bottom: 1rem;
-`;
-
 const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
 
 const DeleteExpiredJuniors = () => {
@@ -35,7 +27,11 @@ const DeleteExpiredJuniors = () => {
 
   const [state, setState] = useState(STATE.INITIAL);
   const [expiredUserCount, setExpiredUserCount] = useState(0);
-  const [password, setPassword] = useState('');
+  const [checkboxState, setCheckboxState] = useState(false);
+
+  const onCheckboxChange = (event) => {
+    setCheckboxState(!!event.target.checked);
+  };
 
   useEffect(() => {
     const getExpiredUserCount = async () => {
@@ -55,34 +51,6 @@ const DeleteExpiredJuniors = () => {
     getExpiredUserCount();
   }, [notifyError]);
 
-  const authenticate = async () => {
-    try {
-      // Get information about the currently logged in user.
-      const { email } = await httpClient(api.youthWorker.self, {
-        method: 'GET',
-      });
-
-      // Attempt to authenticate with the logged in user's email and
-      // the provided password.
-      const response = await httpClient(api.auth.login, {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        setState(STATE.INITIAL);
-        notifyError('Virheellinen salasana');
-        return false;
-      }
-    } catch (error) {
-      setState(STATE.INITIAL);
-      notifyError('Virhe käyttäjän tunnistautumisessa');
-      return false;
-    }
-
-    return true;
-  };
-
   const deleteExpiredJuniors = async () => {
     const response = await httpClient(api.junior.deleteExpired, {
       method: 'DELETE',
@@ -98,7 +66,7 @@ const DeleteExpiredJuniors = () => {
 
   const handleClick = async () => {
     setState(STATE.LOADING);
-    (await authenticate()) && deleteExpiredJuniors();
+    deleteExpiredJuniors();
   };
 
   if (state === STATE.DONE) {
@@ -118,21 +86,14 @@ const DeleteExpiredJuniors = () => {
         <p>
           Toiminto vaikuttaa {expiredUserCount} nuoreen.
         </p>
-        <p>Kirjoita salasanasi, jos haluat jatkaa.</p>
-        <InputContainer>
-          <TextField
-            label="Salasana"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </InputContainer>
+        <FormControlLabel label="Ymmärrän yllä esitetyn tekstin sisällön ja haluan poistaa toimintoa koskevat nuoret." control={<Checkbox onChange={(event) => onCheckboxChange(event)} color="primary"/>}/>
+
         <Button
           onClick={handleClick}
           variant="contained"
-          disabled={state !== STATE.INITIAL || !password || !expiredUserCount}
+          disabled={state !== STATE.INITIAL || !checkboxState}
           color="primary"
-          label="Kyllä"
+          label="Poista vanhat käyttäjät"
           size="large"
         >
           {state === STATE.INITIAL ? 'Poista vanhat käyttäjät' : 'Odota'}

@@ -6,7 +6,7 @@ import { YouthWorkerController } from './youthWorker/youthWorker.controller';
 import { YouthWorkerModule } from './youthWorker/youthWorker.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthenticationController } from './authentication/authentication.controller';
-import { ConfigHelper } from './configHandler';
+import { ConfigHandler } from './configHandler';
 import { JuniorModule } from './junior/junior.module';
 import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
@@ -28,7 +28,7 @@ import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(ConfigHelper.getTypeOrmModuleConfig()),
+    TypeOrmModule.forRoot(ConfigHandler.getTypeOrmModuleConfig()),
     YouthWorkerModule,
     JuniorModule,
     AuthenticationModule,

@@ -13,8 +13,11 @@ const apiEndpoints = {
     deleteExpired:`${appUrl}/junior/newSeason/deleteExpired`
   },
   auth: {
+    check: `${appUrl}/youthworker/check`,
     login: `${appUrl}/youthworker/login`,
+    loginEntraID: `${appUrl}/youthworker/loginEntraID`,
     logout: `${appUrl}/youthworker/logout`,
+    autologout: `${appUrl}/youthworker/autologout`,
   },
   announcement: {
     create: `${appUrl}/announcement/create`,
@@ -45,7 +48,8 @@ const apiEndpoints = {
     self: `${appUrl}/youthworker/getSelf`,
     refresh: `${appUrl}/youthworker/refresh`,
     password: `${appUrl}/youthworker/changePassword`,
-    base: `${appUrl}/youthworker/`
+    base: `${appUrl}/youthworker/`,
+    setMainYouthClub: `${appUrl}/youthworker/setMainYouthClub`
   }
 }
 

@@ -7,6 +7,8 @@ The application consists of three subprojects: backend, frontend and admin-front
 
 More detailed documentation is found in a README in respective directories of each project.
 
+Mobiilinutarkotti by default uses local user management via database. With environment variables, a single-tenant Microsoft Entra ID login is possible. Mobiilinutakortti uses SMS service by Telia, and email service by Amazon.
+
 ## Prerequisites
 
 - NodeJS - v16
@@ -47,6 +49,8 @@ NOTE:
     This is because Docker might have some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
 
 ## Create an initial admin
+
+NB: this section only applies if you are _not_ using Microsoft Entra ID to login users. By default, Entra ID is not used. It can be enabled via environment variables.
 
 The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SUPER_ADMIN_FEATURES` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
 
@@ -121,7 +125,7 @@ With the `SUPER_ADMIN_FEATURES` enabled and the backend running, use these two t
 
 ## QR-code reading
 
-Qr-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
+QR-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
 
 ## Extra entries
 

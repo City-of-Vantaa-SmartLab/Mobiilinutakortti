@@ -43,14 +43,14 @@ export class SessionDBService {
     }
   }
 
-  logoutUser(userId: string): boolean {
+  logoutUser(userId: string, automatic: boolean = false): boolean {
     const userIndex = this.sessions.findIndex(s => s.ownerId === userId);
     if (userIndex > -1) {
       this.sessions.splice(userIndex, 1);
-      this.logger.log(`User logout: ${userId}`);
+      this.logger.log(`User ${automatic ? 'auto-' : ''}logout: ${userId}`);
       return true;
     } else {
-      this.logger.warn(`Tried to logout nonexistent session for user ${userId}`);
+      this.logger.warn(`Tried to ${automatic ? 'auto-' : ''}logout nonexistent session for user ${userId}`);
       return false;
     }
   }

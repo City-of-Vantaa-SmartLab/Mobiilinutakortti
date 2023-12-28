@@ -1,13 +1,41 @@
+import { Logger } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { HttpService } from '@nestjs/axios';
 
-export class ConfigHelper {
+interface KeyData {
+    kid: string;
+    x5c: string[];
+}
+
+export class ConfigHandler {
+
+    private static readonly _logger = new Logger('ConfigHandler');
+    private static _keyRefreshDay: Date = new Date();
+    private static _keys: KeyData[] = [];
+    private static _httpService = new HttpService();
+
+    // Gets the public certificate from Entra ID service. The certificate has the public key.
+    static async getPublicCert(kid: string): Promise<string | null> {
+        // Refresh keys once a day.
+        if (ConfigHandler._keys.length === 0 || ConfigHandler._keyRefreshDay.getDate() !== new Date().getDate()) {
+            try {
+                await ConfigHandler._httpService.get(process.env.ENTRA_APP_KEY_DISCOVERY_URL).toPromise().then(res => {
+                    ConfigHandler._keys = (res.data as { keys: KeyData[] }).keys;
+                });
+                ConfigHandler._keyRefreshDay = new Date();
+                ConfigHandler._logger.log('Entra ID keys updated.');
+            } catch (error) {
+                ConfigHandler._logger.error('Entra ID key fetching failed: ' + error);
+            }
+        }
+
+        const key = ConfigHandler._keys.find(k => k.kid === kid);
+        // Assume certificate is a root certificate (issued by accounts.accesscontrol.windows.net), so [0]
+        return key ? '-----BEGIN CERTIFICATE-----\n' + key.x5c[0] + '\n-----END CERTIFICATE-----\n' : null;
+    }
 
     static isTest() {
         return process.env.NODE_ENV === 'test';
-    }
-
-    static getJWTSecret(): string {
-        return process.env.JWT || 'Remember to make me more secure before prod!';
     }
 
     static getTypeOrmModuleConfig(): TypeOrmModuleOptions {

@@ -12,3 +12,9 @@ export class LoginYouthWorkerDto {
     @IsNotEmpty()
     readonly password: string;
 }
+
+export class LoginYouthWorkerEntraDto {
+
+    @IsNotEmpty()
+    readonly msalToken: string;
+}

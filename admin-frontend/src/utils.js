@@ -37,6 +37,8 @@ export const messageTypeChoices = [
 ];
 
 export const userToken = 'user-token';
+export const checkLogoutMSAL = 'check-logout-msal';
+export const doLogoutMSAL = 'do-logout-msal';
 
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {
@@ -73,3 +75,30 @@ export const getActiveYouthClubs = () => dataProvider(GET_LIST, 'youthClub')
 export const isSubstring = (mainString, subString) => mainString.includes(subString);
 
 export const getExtraEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);
+
+export const setUserInfo = (userInfo) => {
+  if (!userInfo || !userInfo.firstName) {
+    console.error("No user info to set.");
+    return;
+  }
+
+  localStorage.setItem('userInfo', JSON.stringify({
+    firstName: userInfo.firstName,
+    mainYouthClubId: userInfo.mainYouthClub || -1,
+    passwordLastChanged: userInfo.passwordLastChanged
+  }));
+
+  if (userInfo.isAdmin) {
+    localStorage.setItem('role', 'ADMIN');
+  } else {
+    localStorage.setItem('role', 'YOUTHWORKER');
+  }
+}
+
+export const getUserInfo = () => {
+  return JSON.parse(localStorage.getItem('userInfo'));
+}
+
+export const clearUserInfo = () => {
+  localStorage.removeItem('userInfo');
+}
