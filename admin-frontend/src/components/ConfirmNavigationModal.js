@@ -3,20 +3,20 @@ import styled from "styled-components";
 import { Button } from '@material-ui/core';
 
 const ModalContainer = styled.div`
-  position: fixed; 
+  position: fixed;
   padding-top: 50px;
-  left: 0; 
+  left: 0;
   top: 0;
   width: 100%;
-  height: 100%; 
+  height: 100%;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10;
   .modal-content {
     background-color: white;
-    padding: 1.2em; 
-    margin: auto; 
-    min-width: 200px;  
+    padding: 1.2em;
+    margin: auto;
+    min-width: 200px;
     max-width: 600px;
     display: flex;
     align-items: center;

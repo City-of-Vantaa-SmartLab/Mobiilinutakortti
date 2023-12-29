@@ -36,6 +36,8 @@ export const messageTypeChoices = [
   { id: 'email', name: 'Sähköposti' },
 ];
 
+export const checkInClubId = 'checkInClubId';
+export const logoutCheckInClubId = 'logoutCheckInClubId';
 export const userToken = 'user-token';
 export const checkLogoutMSAL = 'check-logout-msal';
 export const doLogoutMSAL = 'do-logout-msal';

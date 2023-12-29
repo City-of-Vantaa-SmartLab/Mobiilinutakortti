@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, checkLogoutMSAL } from '../utils';
+import { userToken, setUserInfo, checkLogoutMSAL, logoutCheckInClubId } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -56,10 +56,16 @@ export default function EntraLogin() {
       console.debug("MSAL app initialized.");
       setUserName(MSALApp.appUsername);
 
-      const checkLogout = localStorage.getItem(checkLogoutMSAL);
+      // If there is a stored checkInClubId, we are navigating to a QR reader check in page. We must logout beforehand.
+      const storedCheckInClubId = sessionStorage.getItem(logoutCheckInClubId);
+      const checkLogout = !!localStorage.getItem(checkLogoutMSAL) || !!storedCheckInClubId;
       if (checkLogout) {
         setLogoutInProgress(true);
         await MSALApp.logout();
+        if (storedCheckInClubId) {
+          sessionStorage.removeItem(logoutCheckInClubId);
+          window.location = '/#/checkIn/' + storedCheckInClubId;
+        }
       } else {
         if (!MSALApp.appUsername) {
           setLoginInProgress(false);
@@ -142,6 +148,11 @@ export default function EntraLogin() {
               Kirjataan {logoutInProgress ? 'ulos' : 'sisään'} käyttäjätunnus {userName}...
             </Typography>)
           }
+          <Box sx={{ m: 1 }}></Box>
+          <Typography variant="subtitle1">
+            Jos mitään ei tapahdu, kokeile <a href='/loginEntraID'>virkistää</a> sivu.
+          </Typography>
+          <Box sx={{ m: 1 }}></Box>
           {errorState && (<>
             <Typography variant="caption">
               Virhe sisäänkirjautuessa. Virkistä sivu ja yritä uudelleen.

@@ -11,6 +11,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
+import { checkInClubId, userToken } from '../../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -39,8 +40,7 @@ const CheckInView = (props) => {
   const notify = useNotify();
 
   const logout = () => {
-    sessionStorage.removeItem("checkInClubId")
-
+    sessionStorage.removeItem(checkInClubId)
     if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
       document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
     } else {
@@ -49,14 +49,14 @@ const CheckInView = (props) => {
   }
 
   useEffect(() => {
-    localStorage.removeItem("user-token")
-    const checkInClubId = sessionStorage.getItem("checkInClubId");
+    localStorage.removeItem(userToken)
+    const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
     const path = props.location.pathname;
     const m = path.match(/\d+/);
     const id = m !== null ? m.shift() : null;
     // checkInClubId is set by the youth worker when they click on the log in button for a club.
     // This prevents the users from manually changing the club id in the browser address bar.
-    if (id !== checkInClubId) {
+    if (id !== storedCheckInClubId) {
       logout();
     }
   }, [props.location.pathname])
