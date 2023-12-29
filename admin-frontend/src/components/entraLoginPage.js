@@ -64,7 +64,7 @@ export default function EntraLogin() {
         await MSALApp.logout();
         if (storedCheckInClubId) {
           sessionStorage.removeItem(logoutCheckInClubId);
-          window.location = '/#/checkIn/' + storedCheckInClubId;
+          window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/checkIn/' + storedCheckInClubId;
         }
       } else {
         if (!MSALApp.appUsername) {
@@ -150,7 +150,7 @@ export default function EntraLogin() {
           }
           <Box sx={{ m: 1 }}></Box>
           <Typography variant="subtitle1">
-            Jos mitään ei tapahdu, kokeile <a href='/loginEntraID'>virkistää</a> sivu.
+            Jos mitään ei tapahdu, kokeile <a href='/nuorisotyontekijat/loginEntraID'>virkistää</a> sivu.
           </Typography>
           <Box sx={{ m: 1 }}></Box>
           {errorState && (<>

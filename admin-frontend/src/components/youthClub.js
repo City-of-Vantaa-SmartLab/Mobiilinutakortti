@@ -9,6 +9,8 @@ import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from '../audio/audio.js'
 import { checkInClubId, logoutCheckInClubId } from '../utils';
 
+const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+
 const prepareCheckIn = (id) => {
   successSound.volume = 0;
   successSound.play();
@@ -19,7 +21,7 @@ const prepareCheckIn = (id) => {
   errorSound.pause();
   errorSound.currentTime = 0;
   sessionStorage.setItem(checkInClubId, id);
-  if (process.env.REACT_APP_ENTRA_REDIRECT_URI) {
+  if (useEntraID) {
     sessionStorage.setItem(logoutCheckInClubId, id);
   }
   successSound.volume = 1;
@@ -28,7 +30,7 @@ const prepareCheckIn = (id) => {
 
 const OpenCheckInButton = (props) => {
     // In case of Entra ID login, we must first sign out the user. The Entra login page will handle redirecting to the checkIn page.
-  return process.env.REACT_APP_ENTRA_REDIRECT_URI ? (
+  return useEntraID ? (
     <a href={process.env.REACT_APP_ENTRA_REDIRECT_URI}>
       <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" disabled={!props.record.active}>Kirjautuminen</Button>
     </a>
