@@ -1,6 +1,6 @@
 import * as MSAL from '@azure/msal-browser'
 import * as MSALConfig from './msalConfig'
-import { checkLogoutMSAL, doLogoutMSAL } from '../utils';
+import { checkLogoutMSAL, inProgressLogoutMSAL } from '../utils';
 
 export class MSALApp {
     static instance;
@@ -14,27 +14,29 @@ export class MSALApp {
         if (!shouldLogout) {
             console.debug("MSALApp: nothing to log out.");
             localStorage.removeItem(checkLogoutMSAL);
-            localStorage.removeItem(doLogoutMSAL);
+            localStorage.removeItem(inProgressLogoutMSAL);
             return;
         }
 
-        if (!localStorage.getItem(doLogoutMSAL)) {
-            localStorage.setItem(doLogoutMSAL, true);
+        if (!localStorage.getItem(inProgressLogoutMSAL)) {
+            localStorage.setItem(inProgressLogoutMSAL, true);
             const request = {
                 scopes: MSALConfig.tokenRequestScopes
             }
-            // This call will end up reloading the page.
-            await MSALApp.instance.acquireTokenSilent(request).catch(async error => {
+            // This call will end up sometimes reloading the page regardless of manual reload. But for consistency, do it manually so it happens every time.
+            await MSALApp.instance.acquireTokenSilent(request).then(() => {
+                window.location.reload();
+            }).catch(async error => {
                 if (error instanceof MSAL.InteractionRequiredAuthError) {
                     // If interaction is required, that means the user must sign in again anyway, so no need to logout first.
                     console.debug("MSALApp: silent token acquire failed, interaction required.");
                     localStorage.removeItem(checkLogoutMSAL);
-                    localStorage.removeItem(doLogoutMSAL);
+                    localStorage.removeItem(inProgressLogoutMSAL);
                 }
             });
         } else {
             localStorage.removeItem(checkLogoutMSAL);
-            localStorage.removeItem(doLogoutMSAL);
+            localStorage.removeItem(inProgressLogoutMSAL);
 
             // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
             // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they

@@ -39,8 +39,8 @@ export const messageTypeChoices = [
 export const checkInClubId = 'checkInClubId';
 export const logoutCheckInClubId = 'logoutCheckInClubId';
 export const userToken = 'user-token';
-export const checkLogoutMSAL = 'check-logout-msal';
-export const doLogoutMSAL = 'do-logout-msal';
+export const checkLogoutMSAL = 'checkLogoutMSAL';
+export const inProgressLogoutMSAL = 'inProgressLogoutMSAL';
 
 export const parseErrorMessages = (messageList) => {
   if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {

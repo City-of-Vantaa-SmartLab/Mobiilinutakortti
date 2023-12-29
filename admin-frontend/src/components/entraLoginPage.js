@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, checkLogoutMSAL, logoutCheckInClubId } from '../utils';
+import { userToken, setUserInfo, checkLogoutMSAL, inProgressLogoutMSAL, logoutCheckInClubId } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -62,7 +62,7 @@ export default function EntraLogin() {
       if (checkLogout) {
         setLogoutInProgress(true);
         await MSALApp.logout();
-        if (storedCheckInClubId) {
+        if (storedCheckInClubId && !localStorage.getItem(inProgressLogoutMSAL)) {
           sessionStorage.removeItem(logoutCheckInClubId);
           window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/checkIn/' + storedCheckInClubId;
         }
