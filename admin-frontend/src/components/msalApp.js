@@ -24,12 +24,14 @@ export class MSALApp {
                 scopes: MSALConfig.tokenRequestScopes
             }
             // This call will end up sometimes reloading the page regardless of manual reload. But for consistency, do it manually so it happens every time.
+            console.debug('Trying to acquire MSAL token silently for logout.');
             await MSALApp.instance.acquireTokenSilent(request).then(() => {
+                console.debug('MSAL token silent acquisition success, need to logout manually.');
                 window.location.reload();
             }).catch(async error => {
                 if (error instanceof MSAL.InteractionRequiredAuthError) {
                     // If interaction is required, that means the user must sign in again anyway, so no need to logout first.
-                    console.debug("MSALApp: silent token acquire failed, interaction required.");
+                    console.debug("MSALApp: silent token acquire failed, no need to logout manually.");
                     localStorage.removeItem(checkLogoutMSAL);
                     localStorage.removeItem(inProgressLogoutMSAL);
                 }
@@ -41,6 +43,7 @@ export class MSALApp {
             // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
             // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
             // would like to log out of.
+            console.debug('Calling MSAL logout redirect.');
             await MSALApp.instance.logoutRedirect({
                 postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
             });
@@ -83,6 +86,7 @@ export class MSALApp {
             scopes: MSALConfig.tokenRequestScopes
         }
 
+        console.debug('Trying to acquire MSAL token silently.');
         return await MSALApp.instance.acquireTokenSilent(request).catch(async error => {
             if (error instanceof MSAL.InteractionRequiredAuthError) {
                 console.log('Silent token acquisition fail, using redirect.');

@@ -78,22 +78,6 @@ export class YouthWorkerController {
     return this.authenticationService.updateAuthToken(youthWorkerData);
   }
 
-  /**
-   * A simple route that allows the frontend to tell whether the current token is valid, and is a youth worker or admin.
-   * This is done using guards.
-   * This also checks if the user account has been locked.
-   *
-   * @returns - true if successful, false otherwise.
-   */
-  @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-  @AllowedRoles(Roles.YOUTHWORKER)
-  @Get('check')
-  @ApiBearerAuth('youthWorker')
-  async check(@YouthWorker() youthWorkerData: { userId: string }): Promise<Check> {
-    if (useEntraID) return new Check(true);
-    return new Check(!(await this.youthWorkerService.isLockedOut(youthWorkerData.userId)));
-  }
-
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
   @AllowedRoles(Roles.YOUTHWORKER)
   @Get('logout')
@@ -102,7 +86,7 @@ export class YouthWorkerController {
     return new Check(await this.authenticationService.logoutYouthWorker(youthWorkerData));
   }
 
-  // Do not use AuthGuard('jwt') when the user is being automatically logged out as the token has expired.
+  // Do not use AuthGuard('jwt') when the user is being automatically logged out as the token might be expired.
   // Use the ApiUserGuard instead.
   @UseGuards(ApiUserGuard, RolesGuard, SessionGuard)
   @Get('autologout')

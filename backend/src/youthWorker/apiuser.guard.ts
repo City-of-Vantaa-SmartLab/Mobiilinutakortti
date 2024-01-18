@@ -7,7 +7,7 @@ import { Request } from 'express';
 import { verify, decode, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import { jwt } from '../authentication/authentication.consts';
 
-// This is a guard that accepts expired JWTs.
+// This is a guard that accepts slightly expired JWTs.
 // It's meant to mainly extract the userId from the auth token.
 
 @Injectable()
@@ -27,9 +27,10 @@ export class ApiUserGuard implements CanActivate {
     try {
       const payload: JwtPayload = decode(token, { json: true });
 
-      // Allow for 5 minutes old tokens to pass the auto logout.
-      // Frontend has an auto refresh interval of 10 minutes and backend issues tokens with 15 minute expiry time.
-      const freshEnough = (Math.round(Date.now() / 1000) - payload.exp) < 300;
+      // Frontend has an auto logout interval but backend issued tokens might have just expired.
+      // Allow for just expired tokens to pass e.g. for the auto logout.
+      const allowedDifferenceInSeconds = 10;
+      const freshEnough = (Math.round(Date.now() / 1000) - payload.exp) < allowedDifferenceInSeconds;
       if (!freshEnough) return false;
 
       // Set the user for other guards.
