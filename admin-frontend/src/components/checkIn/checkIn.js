@@ -11,7 +11,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
-import { checkInClubId, userToken } from '../../utils';
+import { checkInClubId, logoutCheckInClubId, userToken } from '../../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -31,7 +31,6 @@ const QrReaderContainer = styled.div`
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
-
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
@@ -39,17 +38,14 @@ const CheckInView = (props) => {
   const [checkInSuccess, setCheckInSuccess] = useState(null);
   const notify = useNotify();
 
-  const logout = () => {
-    sessionStorage.removeItem(checkInClubId)
-    if (process.env.REACT_APP_ADMIN_FRONTEND_URL) {
-      document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
-    } else {
-      document.location.href = "/";
-    }
+  const goToLogin = () => {
+    sessionStorage.removeItem(checkInClubId);
+    document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL || "/";
   }
 
   useEffect(() => {
-    localStorage.removeItem(userToken)
+    localStorage.removeItem(userToken);
+    sessionStorage.removeItem(logoutCheckInClubId);
     const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
     const path = props.location.pathname;
     const m = path.match(/\d+/);
@@ -57,7 +53,7 @@ const CheckInView = (props) => {
     // checkInClubId is set by the youth worker when they click on the log in button for a club.
     // This prevents the users from manually changing the club id in the browser address bar.
     if (id !== storedCheckInClubId) {
-      logout();
+      goToLogin();
     }
   }, [props.location.pathname])
 
@@ -127,7 +123,7 @@ const CheckInView = (props) => {
       <Notification />
       <CheckinBackground />
       <NavigationPrompt
-        afterConfirm={logout}
+        afterConfirm={goToLogin}
         disableNative={true}
         when={true}
       >

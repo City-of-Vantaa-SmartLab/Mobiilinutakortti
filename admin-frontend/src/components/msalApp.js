@@ -1,6 +1,6 @@
 import * as MSAL from '@azure/msal-browser'
 import * as MSALConfig from './msalConfig'
-import { checkLogoutMSAL, inProgressLogoutMSAL } from '../utils';
+import { MSALAppCheckIfLogoutNeeded, MSALAppLogoutInProgress } from '../utils';
 
 export class MSALApp {
     static instance;
@@ -11,34 +11,38 @@ export class MSALApp {
         console.debug("MSALApp: account to log out: " + account?.username);
         let shouldLogout = !!account;
 
+        // Case 1: nothing to log out.
         if (!shouldLogout) {
             console.debug("MSALApp: nothing to log out.");
-            localStorage.removeItem(checkLogoutMSAL);
-            localStorage.removeItem(inProgressLogoutMSAL);
+            localStorage.removeItem(MSALAppCheckIfLogoutNeeded);
+            localStorage.removeItem(MSALAppLogoutInProgress);
             return;
         }
 
-        if (!localStorage.getItem(inProgressLogoutMSAL)) {
-            localStorage.setItem(inProgressLogoutMSAL, true);
+        // Case 2: something to probably logout. Let's try refreshing token to see if explicit logout is really needed.
+        if (!localStorage.getItem(MSALAppLogoutInProgress)) {
+            localStorage.setItem(MSALAppLogoutInProgress, true);
             const request = {
                 scopes: MSALConfig.tokenRequestScopes
             }
             // This call will end up sometimes reloading the page regardless of manual reload. But for consistency, do it manually so it happens every time.
             console.debug('Trying to acquire MSAL token silently for logout.');
             await MSALApp.instance.acquireTokenSilent(request).then(() => {
-                console.debug('MSAL token silent acquisition success, need to logout manually.');
+                console.debug('MSALApp: silent token acquisition success. Need to logout manually.');
                 window.location.reload();
             }).catch(async error => {
+                console.debug("MSALApp: silent token acquire error: " + error);
                 if (error instanceof MSAL.InteractionRequiredAuthError) {
                     // If interaction is required, that means the user must sign in again anyway, so no need to logout first.
-                    console.debug("MSALApp: silent token acquire failed, no need to logout manually.");
-                    localStorage.removeItem(checkLogoutMSAL);
-                    localStorage.removeItem(inProgressLogoutMSAL);
+                    console.debug("MSALApp: no need to logout manually.");
+                    localStorage.removeItem(MSALAppCheckIfLogoutNeeded);
+                    localStorage.removeItem(MSALAppLogoutInProgress);
                 }
             });
+        // Case 3: last time in case 2 we've checked that the user indeed needs to logout so let's logout.
         } else {
-            localStorage.removeItem(checkLogoutMSAL);
-            localStorage.removeItem(inProgressLogoutMSAL);
+            localStorage.removeItem(MSALAppCheckIfLogoutNeeded);
+            localStorage.removeItem(MSALAppLogoutInProgress);
 
             // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
             // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they

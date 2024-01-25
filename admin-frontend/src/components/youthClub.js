@@ -21,9 +21,7 @@ const prepareCheckIn = (id) => {
   errorSound.pause();
   errorSound.currentTime = 0;
   sessionStorage.setItem(checkInClubId, id);
-  if (useEntraID) {
-    sessionStorage.setItem(logoutCheckInClubId, id);
-  }
+  useEntraID && sessionStorage.setItem(logoutCheckInClubId, id);
   successSound.volume = 1;
   errorSound.volume = 1;
 }

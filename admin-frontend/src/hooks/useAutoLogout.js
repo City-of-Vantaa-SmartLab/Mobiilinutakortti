@@ -8,13 +8,14 @@ function useAutoLogout() {
     const youthWorkerInactiveTime = 900000; // 15 minutes
 
     useEffect(() => {
+        const isEntraLoginPage =
+            process.env.REACT_APP_ENTRA_TENANT_ID &&
+            (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI);
+        if (isEntraLoginPage) {
+            return;
+        }
+
         let logoutUser = setInterval(async () => {
-            console.info('Automatically logging out user.');
-
-            const isEntraLoginPage =
-                process.env.REACT_APP_ENTRA_TENANT_ID &&
-                (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI);
-
             // The hash may change due to routing, so we check these inside the interval function.
             const isLoggedOutPage =
                 isEntraLoginPage ||
@@ -22,7 +23,8 @@ function useAutoLogout() {
                 window.location.hash?.includes('checkIn'); // QR code reader page
 
             if (!isLoggedOutPage) {
-                await authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userToken) });
+                console.info('Automatically logging out user.');
+                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userToken) });
             } else
                 // Remove the local session token in case the user has somehow reached this logged out page being logged in.
                 localStorage.removeItem(userToken);

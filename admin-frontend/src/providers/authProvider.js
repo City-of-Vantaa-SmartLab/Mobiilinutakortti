@@ -1,7 +1,7 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, clearUserInfo, checkLogoutMSAL } from '../utils';
+import { userToken, setUserInfo, clearUserInfo, MSALAppCheckIfLogoutNeeded } from '../utils';
 
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
@@ -58,22 +58,21 @@ export const authProvider = (type, params) => {
         // Set this so MSAL logout will be triggered in login page.
         if (useEntraID) {
             console.debug("Will check MSAL logout need.");
-            localStorage.setItem(checkLogoutMSAL, true);
+            localStorage.setItem(MSALAppCheckIfLogoutNeeded, true);
         }
 
         const url = !!automatic ? api.auth.autologout : api.auth.logout;
         const options = {
             method: 'GET'
         };
-        httpClient(url, options).then(() => {
-          localStorage.removeItem(userToken);
-          localStorage.removeItem('role');
-          return Promise.resolve();
-        }).then(() => {
+        const cleanup = () => {
+            localStorage.removeItem(userToken);
+            localStorage.removeItem('role');
             window.location.href = useEntraID ?
                 process.env.REACT_APP_ENTRA_REDIRECT_URI :
                 process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
-        })
+        };
+        httpClient(url, options).then(cleanup, cleanup);
     }
     if (type === AUTH_GET_PERMISSIONS) {
         const role = localStorage.getItem('role')

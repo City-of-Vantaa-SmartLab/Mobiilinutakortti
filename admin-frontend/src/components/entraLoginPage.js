@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, checkLogoutMSAL, inProgressLogoutMSAL, logoutCheckInClubId } from '../utils';
+import { userToken, setUserInfo, MSALAppCheckIfLogoutNeeded, MSALAppLogoutInProgress, logoutCheckInClubId } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -52,18 +52,27 @@ export default function EntraLogin() {
 
   useEffect(() => {
     const tryLogin = async () => {
-      await MSALApp.initNew();
-      console.debug("MSAL app initialized.");
-      setUserName(MSALApp.appUsername);
+      try {
+        await MSALApp.initNew();
+        console.debug("MSAL app initialized.");
+        setUserName(MSALApp.appUsername);
+      } catch (error) {
+        setErrorState(true);
+        console.log(error);
+        return;
+      }
 
       // If there is a stored checkInClubId, we are navigating to a QR reader check in page. We must logout beforehand.
       const storedCheckInClubId = sessionStorage.getItem(logoutCheckInClubId);
-      const checkLogout = !!localStorage.getItem(checkLogoutMSAL) || !!storedCheckInClubId;
+      const checkLogout = !!localStorage.getItem(MSALAppCheckIfLogoutNeeded) || !!storedCheckInClubId;
       if (checkLogout) {
         setLogoutInProgress(true);
+
+        // NB: the following call might end up reloading the page a couple of times.
         await MSALApp.logout();
-        if (storedCheckInClubId && !localStorage.getItem(inProgressLogoutMSAL)) {
+        if (storedCheckInClubId && !localStorage.getItem(MSALAppLogoutInProgress)) {
           sessionStorage.removeItem(logoutCheckInClubId);
+          console.debug("Redirecting to check in page with id: " + storedCheckInClubId);
           window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/checkIn/' + storedCheckInClubId;
         }
       } else {
@@ -87,7 +96,7 @@ export default function EntraLogin() {
             return;
           }
 
-          // At this point the user is not signed out of MSAL.
+          // Note: at this point the user is not signed out of MSAL.
           // We could sign them out, but it would result in a prompt for the user to choose which account they would like
           // to sign out of. This would be very confusing in the middle of a login process.
           // If it was possible to sign the user out quietly, this is where it should be done.
@@ -158,8 +167,9 @@ export default function EntraLogin() {
               Virhe sisäänkirjautuessa. Virkistä sivu ja yritä uudelleen.
             </Typography>
             <Box sx={{ m: 1 }}></Box>
+            {/* This is a thing that has actually happened: MSAL library didn't work if the browser wasn't recent enough. */}
             <Typography variant="caption">
-              Jos ongelma toistuu, varmista ylläpitäjältä, että sähköpostiosoitteesi ei ole käytössä jollain toisella tunnuksella Nutakortissa. Pyydä tällöin ylläpitäjää poistamaan vanha/ylimääräinen tunnus.
+              Jos ongelma toistuu, varmista ylläpitäjältä, että sähköpostiosoitteesi ei ole käytössä jollain toisella tunnuksella Nutakortissa. Pyydä tällöin ylläpitäjää poistamaan vanha/ylimääräinen tunnus. Koita myös päivittää selaimesi uusimpaan versioon.
             </Typography>
           </>)}
 
