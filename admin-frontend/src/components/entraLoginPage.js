@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, MSALAppCheckIfLogoutNeeded, MSALAppLogoutInProgress, logoutCheckInClubId } from '../utils';
+import { userToken, setUserInfo, MSALAppLogoutInProgress } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -47,7 +47,6 @@ export default function EntraLogin() {
 
   const [ userName, setUserName] = useState(null);
   const [ loginInProgress, setLoginInProgress] = useState(true);
-  const [ logoutInProgress, setLogoutInProgress] = useState(false);
   const [ errorState, setErrorState] = useState(false);
 
   useEffect(() => {
@@ -62,24 +61,19 @@ export default function EntraLogin() {
         return;
       }
 
-      // If there is a stored checkInClubId, we are navigating to a QR reader check in page. We must logout beforehand.
-      const storedCheckInClubId = sessionStorage.getItem(logoutCheckInClubId);
-      const checkLogout = !!localStorage.getItem(MSALAppCheckIfLogoutNeeded) || !!storedCheckInClubId;
-      if (checkLogout) {
-        setLogoutInProgress(true);
-
-        // NB: the following call might end up reloading the page a couple of times.
-        await MSALApp.logout();
-        if (storedCheckInClubId && !localStorage.getItem(MSALAppLogoutInProgress)) {
-          sessionStorage.removeItem(logoutCheckInClubId);
-          console.debug("Redirecting to check in page with id: " + storedCheckInClubId);
-          window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/checkIn/' + storedCheckInClubId;
-        }
+      // User has been prompted to log out from MSAL and this is a redirect after that.
+      // User should have a valid session token by now. Continue to landingPage.
+      if (localStorage.getItem(MSALAppLogoutInProgress)) {
+          localStorage.removeItem(MSALAppLogoutInProgress);
+          window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
+          return;
       } else {
         if (!MSALApp.appUsername) {
+          localStorage.removeItem(MSALAppLogoutInProgress);
           setLoginInProgress(false);
           return;
         }
+
         const token = await MSALApp.getAuthorizationBearerToken();
         if (token?.accessToken) {
           try {
@@ -88,21 +82,18 @@ export default function EntraLogin() {
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
             );
             localStorage.setItem(userToken, access_token);
+
             const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
             setUserInfo(userInfo);
+
+            localStorage.setItem(MSALAppLogoutInProgress, true);
+            await MSALApp.logout();
+
           } catch (error) {
             setErrorState(true);
             console.log(error);
             return;
           }
-
-          // Note: at this point the user is not signed out of MSAL.
-          // We could sign them out, but it would result in a prompt for the user to choose which account they would like
-          // to sign out of. This would be very confusing in the middle of a login process.
-          // If it was possible to sign the user out quietly, this is where it should be done.
-
-          // Go to landingPage.
-          window.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
         }
       }
     }
@@ -152,9 +143,12 @@ export default function EntraLogin() {
               >
                 Kirjaudu Nutakorttiin
               </Button>
+              <Typography variant="body2" align="center">
+                Sisäänkirjautuessasi sinua pyydetään lopuksi kirjautumaan tililtäsi ulos. Tämä on normaalia.
+              </Typography>
             </Box>) :
             (<Typography variant="body2" align="center">
-              Kirjataan {logoutInProgress ? 'ulos' : 'sisään'} käyttäjätunnus {userName}...
+              Kirjataan sisään käyttäjätunnus {userName}...
             </Typography>)
           }
           <Box sx={{ m: 1 }}></Box>

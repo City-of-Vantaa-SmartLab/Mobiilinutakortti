@@ -1,7 +1,7 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, clearUserInfo, MSALAppCheckIfLogoutNeeded } from '../utils';
+import { userToken, setUserInfo, clearUserInfo } from '../utils';
 
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
@@ -54,17 +54,12 @@ export const authProvider = (type, params) => {
         // Clear userInfo here so that React doesn't try to load useEffect stuff in landing page.
         clearUserInfo();
 
-        const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
-        // Set this so MSAL logout will be triggered in login page.
-        if (useEntraID) {
-            console.debug("Will check MSAL logout need.");
-            localStorage.setItem(MSALAppCheckIfLogoutNeeded, true);
-        }
-
         const url = !!automatic ? api.auth.autologout : api.auth.logout;
         const options = {
             method: 'GET'
         };
+
+        const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
         const cleanup = () => {
             localStorage.removeItem(userToken);
             localStorage.removeItem('role');

@@ -37,9 +37,7 @@ export const messageTypeChoices = [
 ];
 
 export const checkInClubId = 'checkInClubId';
-export const logoutCheckInClubId = 'logoutCheckInClubId';
 export const userToken = 'user-token';
-export const MSALAppCheckIfLogoutNeeded = 'MSALAppCheckIfLogoutNeeded';
 export const MSALAppLogoutInProgress = 'MSALAppLogoutInProgress';
 
 export const parseErrorMessages = (messageList) => {

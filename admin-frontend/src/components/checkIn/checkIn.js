@@ -11,7 +11,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
-import { checkInClubId, logoutCheckInClubId, userToken } from '../../utils';
+import { checkInClubId, userToken } from '../../utils';
 
 const Container = styled.div`
   height: 100%;
@@ -45,7 +45,6 @@ const CheckInView = (props) => {
 
   useEffect(() => {
     localStorage.removeItem(userToken);
-    sessionStorage.removeItem(logoutCheckInClubId);
     const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
     const path = props.location.pathname;
     const m = path.match(/\d+/);
