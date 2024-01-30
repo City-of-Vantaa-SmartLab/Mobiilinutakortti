@@ -38,9 +38,9 @@ If using Entra ID to login we would like to require password each time a user wi
 
 Ideally, we would just empty MSAL cache in the browser. That data, however, is under microsoft.com domain and hence unreachable.
 
-Another option would be to configure in Entra ID to ask for password each time credentials are prompted for, but this is possible only for Azure native apps.
+Another option would be to configure in Entra ID to ask for password each time credentials are prompted for, but this is possible only for Azure cloud-native apps.
 
-A third option we considered was to rely on a 10 minute token refresh time - after that time, MSAL would be effectively logged out. However, in practice this didn't seem to work reliably and we had to resort to explicitly asking the user to log out.
+A third option we considered was to rely on a 10 minute access token lifetime - after that time, MSAL would be effectively logged out. However, in practice this didn't seem to work reliably and we had to resort to explicitly asking the user to log out. This is because as part of login flow, normally [acquireTokenSilent](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-acquire-token) would be called. It uses the refresh token if access token lifetime has been reached. The refresh token's lifetime is always 24 hours for SPA apps. And even if acquireTokenSilent weren't called and refresh tokens never used, if a user just closed the browser after signing in, there would be 10 minutes available for attackers to re-login without a password.
 
 There are three ways the user can logout: manually from the menu, automatically after idle time (15 minutes), or when going to a club check in page (QR reader). The last one is not only a hassle, but the automatic logout is a security risk: if we wouldn't log out the user explicitly, they might still be logged in to Entra ID unbeknownst to the user. Then again if we do ask the user to log out explicitly, the auto-logout would end up in the "choose which account to log out from" dialog.
 
