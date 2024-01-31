@@ -144,7 +144,7 @@ export default function EntraLogin() {
                 Kirjaudu Nutakorttiin
               </Button>
               <Typography variant="body2" align="center">
-                Sisäänkirjautuessasi sinua pyydetään lopuksi kirjautumaan tililtäsi ulos. Tämä on normaalia.
+                Entra ID -tilillä sisäänkirjautumisen yhteydessä sinulta kysytään miltä tililtä uloskirjautuminen tapahtuu. Sinun tulee valita sama tili, jolla kirjauduit sisään.
               </Typography>
             </Box>) :
             (<Typography variant="body2" align="center">
