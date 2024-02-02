@@ -1,4 +1,4 @@
-FROM node:16.15.1
+FROM node:20.11.0
 
 RUN mkdir -p /frontend
 WORKDIR /frontend

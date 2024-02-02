@@ -1,4 +1,4 @@
-FROM node:16.15.1
+FROM node:20.11.0
 WORKDIR /admin-frontend
 COPY package*.json ./
 RUN npm ci
