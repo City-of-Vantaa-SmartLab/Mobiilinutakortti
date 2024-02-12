@@ -35,7 +35,7 @@ export const post = async (uri: string, params?: object): Promise<any> => {
 };
 
 export const getCachedToken = async (): Promise<any> => {
-    const response = await fetch('/token');
+    const response = await fetch('/swTokenCache');
     if (response.status === 200 || response.status === 201) {
         return response.json();
     } else throw new Error(response.statusText);

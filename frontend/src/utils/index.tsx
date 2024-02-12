@@ -1,7 +1,7 @@
 // Attempt to cache the token to the service worker, see src/public/sw.js
 const cacheToken = async (token: string | null) => {
     try {
-        await fetch('/token', { method: "POST", body: JSON.stringify({ token: token }) });
+        await fetch('/swTokenCache', { method: "POST", body: JSON.stringify({ token: token }) });
     } catch (err) {
         // Service worker not available
     }

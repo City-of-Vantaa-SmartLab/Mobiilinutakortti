@@ -6,7 +6,8 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-const SHARED_DATA_ENDPOINT = '/token';
+// Use unique enough string so as not to interfere with other queries.
+const SHARED_DATA_ENDPOINT = '/swTokenCache';
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
