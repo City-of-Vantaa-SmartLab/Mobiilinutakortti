@@ -86,6 +86,8 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 
 ## Environment variables / secrets
 
+In the following list the terms "IdP metadata XML" and "metadata XML" are used. The latter refers to service provider metadata, i.e. for this application. The metadata XML refers to the XML file used to register the service to Suomi.fi. Similarly, IdP metadata XML is the identity provider's (Suomi.fi) metadata file.
+
 * `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 * `AWS_SES_KEY_ID`: Key ID for Amazon SES.
 * `AWS_SES_KEY_VALUE`: Key value for Amazon SES.

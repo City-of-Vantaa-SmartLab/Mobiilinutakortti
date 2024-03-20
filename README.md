@@ -213,3 +213,9 @@ There exists [a nice tool](https://github.com/jorgebastida/awslogs) to solve the
 2. Set up AWS CLI (command: `aws configure`)
 3. Set up default region for awslogs (environment variable `AWS_REGION`) or give it as a command line parameter.
 4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`
+
+## Maintenance
+
+Normally there's only the certificates to update. TLS certificates are updated to AWS (or wherever the service is running).
+
+For Suomi.fi certificate updates, see the file `./backend/certs/README.md`.

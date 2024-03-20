@@ -46,16 +46,19 @@ The CSR file is not needed anymore. The CER file is your public key, the certifi
 
 ## Updating Suomi.fi certificates
 
-You will need the new certificate, its private key, and the Suomi.fi metadata file for Nutakortti. Then follow these steps:
+You will need the new certificate, its private key, and the Suomi.fi metadata file for Nutakortti. You'll find the metadata file stored in AWS S3 bucket if you don't have it.
+
+Then follow these steps:
 
 1. Update the new certificate to the metadata file.
 2. Ensure the technical contact person in the metadata file is up-to-date.
-3. Upload the new certificate to DVV. See detailed steps below.
+3. Upload the new certificate to DVV. See note and detailed steps below.
 4. Write the new certificate over the file `nutakortti-prod.cer`.
-5. Update the private key to environment variable.
-6. Restart the service with the new certificate file.
+5. Update the private key to environment variable (`SP_PKEY`). See `README.md` for backend for more details.
+6. Restart the service with the new certificate file (step 4).
+7. Whatever the source for your metadata file was (S3 bucket or something else), remember to update it with the new version for next certificate update.
 
-The step 3 (Upload the new certificate to DVV) needs a person who has permission to use DVV's "Palveluhallinnan Tunnistus" service. Vantaa has normally had a couple of persons with the permission. They should do as follows:
+Note: The step 3 (Upload the new certificate to DVV) needs a person who has permission to use DVV's "Palveluhallinnan Tunnistus" service. Vantaa has normally had a couple of persons with the permission. They should do as follows:
 
 1. Go to [DVV palveluhallinta](https://palveluhallinta.suomi.fi/fi/).
 2. Go to "tunnistuksen hallintaliittymä".
