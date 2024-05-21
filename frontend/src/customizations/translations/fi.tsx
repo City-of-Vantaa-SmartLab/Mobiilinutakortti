@@ -137,7 +137,7 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä lähinuorisotilaasi tai Mobiilinutakortin yhteyshenkilöön p. +358 400 662739 (virka-aikana).',
+      message: (<>Jokin meni pieleen. Jos virhe toistuu useasti, ole yhteydessä <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>lähinuorisotilaasi</a>.</>),
       back: 'Takaisin',
     }
   },

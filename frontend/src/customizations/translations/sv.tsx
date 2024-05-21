@@ -128,7 +128,7 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Något gick fel. Om felet återkommer ofta, kontakta din närmaste ungdomsklubb eller Nutakortets kontaktperson, tel. +358 400 662739 (mån-fre 8-16).',
+      message: (<>Något gick fel. Om felet återkommer ofta, kontakta din <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>närmaste ungdomsklubb</a>.</>),
       back: 'Tillbaka',
     }
   },

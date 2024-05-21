@@ -129,7 +129,7 @@ export const translations: Translations = {
       )
     },
     error: {
-      message: 'Something went wrong. If the error recurs often, contact your nearest youth club or the Nuta card contact person, tel. +358 400 662739 (Mon-Fri 8-16).',
+      message: (<>Something went wrong. If the error recurs often, contact your <a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/fi/palveluhakemisto/palvelu/nuorisotilatoiminta#tab-units'>nearest youth club</a>.</>),
       back: 'Back',
     }
   },
