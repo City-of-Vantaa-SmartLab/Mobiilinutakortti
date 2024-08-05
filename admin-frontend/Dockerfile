@@ -1,4 +1,4 @@
-FROM node:16.15.1
+FROM node:20.16.0
 WORKDIR /admin-frontend
 COPY package*.json ./
 ARG BUILD_ID
