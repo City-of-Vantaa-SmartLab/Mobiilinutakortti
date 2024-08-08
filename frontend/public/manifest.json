@@ -17,5 +17,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "rgb(60, 143, 222)",
-  "background_color": "rgb(60, 143, 222)"
+  "background_color": "rgb(60, 143, 222)",
+  "version": "1.0.0",
+  "manifest_version": 3
 }
