@@ -20,7 +20,6 @@ function* getUserInfo(action: getUser): Generator<any, any, any> {
     } catch (error) {
         yield call(deleteToken);
         yield put({ type: authTypes.LOGOUT });
-        window.location.href = '/login'
     }
 }
 
