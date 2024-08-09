@@ -138,24 +138,18 @@ export const JuniorList = (props) => {
     )
 };
 
-const getDummyPhoneNumber = async (cb, fieldName) => {
-    if (fieldName === "parentsPhoneNumber") {
-        cb(fieldName, "3587770000");
-    } else {
-        const url = api.junior.dummynumber;
-        await httpClientWithRefresh(url)
-        .then(response => {
-            if (response.message) {
-                cb(fieldName, response.message);
-            }
-        });
-    }
+const getDummyPhoneNumber = async (cb) => {
+    const url = api.junior.dummynumber;
+    await httpClientWithRefresh(url)
+    .then(response => {
+        if (response.message) cb(response.message);
+    });
 }
 
 const DummyPhoneNumberButton = ({fieldName}) => {
     const form = useForm();
     return (
-        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((field, value) => form.change(field, value), fieldName)}>
+        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber(value => form.change(fieldName, value))}>
             Käytä korvikepuhelinnumeroa
         </Button>
     )
@@ -219,7 +213,7 @@ export const JuniorForm = (formType) => {
             <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
             <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} />
             <FormDataConsumer>
-                {() => <DummyPhoneNumberButton fieldName="phoneNumber"/>}
+                {() => <DummyPhoneNumberButton fieldName="phoneNumber" />}
             </FormDataConsumer>
             <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} />
             {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
@@ -228,7 +222,7 @@ export const JuniorForm = (formType) => {
             <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
             <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} />
             <FormDataConsumer>
-                {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber"/>}
+                {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber" />}
             </FormDataConsumer>
             <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} />
             <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" />

@@ -305,13 +305,15 @@ export class JuniorService {
         return await this.challengeRepo.findOneBy({ junior });
     }
 
+    // Dummy phone numbers start with 999.
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
         const juniors = await this.listAllJuniors();
         const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 6) === "358999").map(j => j.phoneNumber);
+        const parentsPhoneNumbers = juniors.data.filter(j => j.parentsPhoneNumber.substring(0, 6) === "358999").map(j => j.parentsPhoneNumber);
         let next = "";
         for (var i = 0; i < 1000000; i++) {
             next = "358999" + i.toString().padStart(6, '0');
-            if (!phoneNumbers.includes(next)) {
+            if (!phoneNumbers.includes(next) && !parentsPhoneNumbers.includes(next)) {
                 break;
             }
         }
@@ -416,7 +418,7 @@ export class JuniorService {
     }
 
     /**
-     * This is a test method, only to be used during testing.
+     * This is a test method, only to be used during testing. Test phone numbers start with 777.
      */
     async createTestDataJuniors(numberOfCases: string): Promise<string> {
         const num = parseInt(numberOfCases);
