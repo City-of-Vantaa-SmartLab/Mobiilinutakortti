@@ -49,20 +49,20 @@ export const RegisteredSmsContent = {
   en: (recipientName: string, link: string, clubSpecificMessage: string) => `Hi ${recipientName}! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link}\n\n${clubSpecificMessage || 'Best regards, Vantaa youth services'}`,
 }
 export const ExpiredSmsContent = {
-  fi: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hei\n\n'
-    + `Nuoren ${recipientName} Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
+  fi: (period: string, expiredDate: string, link: string) => 'Hei\n\n'
+    + `Nuoren Mobiilinutakortti odottaa uusimista kaudelle ${period}. `
     + 'Alla olevasta linkistä pääset uusimaan nuoren hakemuksen ja päivittämään yhteystiedot. '
     + `Edellisen kauden QR-koodi lakkaa toimimasta ${expiredDate}.\n\n`
     + `${link}\n\n`
     + 'Terveisin,\nVantaan Nuorisopalvelut',
-  sv: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hej\n\n'
-     + `Nutakortet för barnet ${recipientName} väntar på förnyelse för säsongen ${period}. `
+  sv: (period: string, expiredDate: string, link: string) => 'Hej\n\n'
+     + `Nutakortet för ett barn väntar på förnyelse för säsongen ${period}. `
      + 'Genom att klicka på länken nedan kan du förnya barnets ansökan och uppdatera kontaktinformationen. '
      + `QR-koden för föregående säsong slutar fungera vid ${expiredDate}.\n\n`
      + `${link}\n\n`
      + 'Bästa hälsningar,\nVanda ungdomstjänster',
-  en: (recipientName: string, period: string, expiredDate: string, link: string) => 'Hi\n\n'
-    + `The Nuta card of child ${recipientName} awaits renewal for season ${period}. `
+  en: (period: string, expiredDate: string, link: string) => 'Hi\n\n'
+    + `The Nuta card of a child awaits renewal for season ${period}. `
     + 'By clicking the link below you can renew the child\'s application and update the contact information. '
     + `The QR code for the previous season stops working at ${expiredDate}.\n\n`
     + `${link}\n\n`

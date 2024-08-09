@@ -37,7 +37,7 @@ export class SmsService {
         const oneTimeLink = this.getOneTimeLink(challenge);
         const clubSpecificMessage = (await this.clubService.getClubById(recipient.homeYouthClub))?.messages[recipient.lang];
 
-        const message = this.getMessage(recipient.lang, recipient.name, content.SMSSender, oneTimeLink, clubSpecificMessage);
+        const message = this.getMessage(recipient.lang, recipient.name, oneTimeLink, clubSpecificMessage);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -58,9 +58,10 @@ export class SmsService {
             batchEndPoint,
         } = SMSConfig.getTeliaConfig();
 
+        // NB: not sending recipient names anymore because sometimes the parents' phone numbers have typos in them. This apparently created unnecessary security risks. The phone numbers used here are for the parents.
         const batch: BatchItem[] = recipients.map(recipient => ({
             t: recipient.phoneNumber,
-            m: this.getExpiredMessage(recipient.lang, recipient.name, expireDate),
+            m: this.getExpiredMessage(recipient.lang, expireDate),
         }));
 
         const messageRequest = {
@@ -119,7 +120,7 @@ export class SmsService {
                     this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
                     return false;
                 }
-            }).catch(error => {
+            }).catch(() => {
                 this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
                 return false;
             });
@@ -130,13 +131,12 @@ export class SmsService {
         return `${ConfigHandler.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
     }
 
-    private getMessage(lang: content.Language, recipientName: string, systemName: string, link: string, clubSpecificMessage?: string) {
+    private getMessage(lang: content.Language, recipientName: string, link: string, clubSpecificMessage?: string) {
         return content.RegisteredSmsContent[lang](recipientName, link, clubSpecificMessage);
     }
 
-    private getExpiredMessage(lang: content.Language, recipientName: string, expiredDate: string): string {
+    private getExpiredMessage(lang: content.Language, expiredDate: string): string {
         return content.ExpiredSmsContent[lang](
-            recipientName,
             this.getSeasonPeriod(),
             moment(expiredDate).format('DD.MM.YYYY'),
             process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'
