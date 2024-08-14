@@ -11,8 +11,8 @@ Mobiilinutarkotti by default uses local user management via database. With envir
 
 ## Prerequisites
 
-- NodeJS - v16
-- PostgreSQL - v16 (developed with v10 and v11, later updated to v16)
+- NodeJS - v20 preferred
+- PostgreSQL - v16 preferred
 - Docker (optional)
 
 **Only Docker is needed to run the app.** If you want to run backend locally, you'll need NodeJS and PostgreSQL installed. More info in ./backend/README.md.

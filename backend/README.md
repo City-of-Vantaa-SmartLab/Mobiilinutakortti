@@ -6,8 +6,8 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 
 ## System requirements:
 
-- Node JS - v16
-- PostgreSQL - v16 (developed with v10 and v11, later updated to v16)
+- NodeJS - v20 preferred
+- PostgreSQL - v16 preferred
 - Docker (optional)
 
 ## Running with Docker
