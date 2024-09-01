@@ -6,7 +6,7 @@
     "@types/jest": "^24.9.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^12.20.54",
-    "@types/react": "^18.0.17",
+    "@types/react": "^18.3.5",
     "@types/react-dom": "^18.0.6",
     "@types/react-measure": "^2.0.8",
     "@types/styled-components": "^5.1.25",
