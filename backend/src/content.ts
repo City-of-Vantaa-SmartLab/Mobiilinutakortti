@@ -44,9 +44,9 @@ export const ExpiredUsersDeleted = (countRemoved: number) => `${countRemoved} va
 export const ExpiredUsersDeletedWithExtraEntries = (countRemoved: number, countExtraEntries: number) => `${countRemoved} vanhentunutta tunnusta poistettu, ${countExtraEntries} asetettu merkintärekisteriin`
 export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
-  fi: (recipientName: string, link: string, clubSpecificMessage: string) => `Hei ${recipientName}! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}\n\n${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,
-  sv: (recipientName: string, link: string, clubSpecificMessage: string) => `Hej ${recipientName}! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link}\n\n${clubSpecificMessage || 'Vänliga hälsningar, Vanda ungdomstjänster'}`,
-  en: (recipientName: string, link: string, clubSpecificMessage: string) => `Hi ${recipientName}! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link}\n\n${clubSpecificMessage || 'Best regards, Vantaa youth services'}`,
+  fi: (link: string, clubSpecificMessage: string) => `Hei! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}\n\n${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,
+  sv: (link: string, clubSpecificMessage: string) => `Hej! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link}\n\n${clubSpecificMessage || 'Vänliga hälsningar, Vanda ungdomstjänster'}`,
+  en: (link: string, clubSpecificMessage: string) => `Hi! A Nuta card has been created for you. You can log in to the service via this one-time login link: ${link}\n\n${clubSpecificMessage || 'Best regards, Vantaa youth services'}`,
 }
 export const ExpiredSmsContent = {
   fi: (period: string, expiredDate: string, link: string) => 'Hei\n\n'

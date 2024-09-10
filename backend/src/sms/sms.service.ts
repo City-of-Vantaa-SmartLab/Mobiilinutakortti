@@ -34,10 +34,8 @@ export class SmsService {
             }
         }
 
-        const oneTimeLink = this.getOneTimeLink(challenge);
-        const clubSpecificMessage = (await this.clubService.getClubById(recipient.homeYouthClub))?.messages[recipient.lang];
+        const message = await this.getRegisteredMessage(recipient.lang, challenge, recipient.homeYouthClub);
 
-        const message = this.getMessage(recipient.lang, recipient.name, oneTimeLink, clubSpecificMessage);
         const messageRequest = {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
@@ -127,12 +125,10 @@ export class SmsService {
 
     }
 
-    private getOneTimeLink(challenge: Challenge): string {
-        return `${ConfigHandler.getFrontendPort()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
-    }
-
-    private getMessage(lang: content.Language, recipientName: string, link: string, clubSpecificMessage?: string) {
-        return content.RegisteredSmsContent[lang](recipientName, link, clubSpecificMessage);
+    private async getRegisteredMessage(lang: content.Language, challenge: Challenge, homeYouthClub?: number) {
+        const oneTimeLink = `${ConfigHandler.getFrontendUrl()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
+        const clubSpecificMessage = homeYouthClub ? (await this.clubService.getClubById(homeYouthClub))?.messages[lang] : '';
+        return content.RegisteredSmsContent[lang](oneTimeLink, clubSpecificMessage);
     }
 
     private getExpiredMessage(lang: content.Language, expiredDate: string): string {
