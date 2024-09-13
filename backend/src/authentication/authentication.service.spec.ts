@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { YouthWorkerService } from '../youthWorker/youthWorker.service';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { YouthWorker, Lockout } from '../youthWorker/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
@@ -13,7 +13,7 @@ import { getTestDB } from '../../test/testdb';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 import { AppModule } from '../app.module';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../youthWorker/dto';
-import { BadRequestException, UnauthorizedException, HttpModule } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JuniorService } from '../junior/junior.service';
 import { JuniorModule } from '../junior/junior.module';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
@@ -22,7 +22,7 @@ import { SmsModule } from '../sms/sms.module';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
-  let connection: Connection;
+  let connection: DataSource;
   let service: AuthenticationService;
   let youthWorkerService: YouthWorkerService;
   let juniorService: JuniorService;
@@ -48,9 +48,9 @@ describe('AuthenticationService', () => {
   let testLoginJunior: LoginJuniorDto;
 
   beforeAll(async () => {
-    connection = await getTestDB();
+    connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, JwtModule.register({
         secret: jwt.secret,
       })],
       providers: [YouthWorkerService, AuthenticationService, JuniorService, {
@@ -68,7 +68,7 @@ describe('AuthenticationService', () => {
           provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
         }, JwtStrategy],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -84,7 +84,7 @@ describe('AuthenticationService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {

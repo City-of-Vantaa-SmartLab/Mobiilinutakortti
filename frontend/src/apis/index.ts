@@ -15,7 +15,7 @@ export const get = async (uri: string, token?: string): Promise<any> => {
         return response.json();
     } else throw new Error(response.statusText);
 
-};
+}
 
 export const post = async (uri: string, params?: object): Promise<any> => {
     const url: string = `${baseURL}${uri}`;
@@ -32,11 +32,11 @@ export const post = async (uri: string, params?: object): Promise<any> => {
         return response.json();
     } else throw new Error(response.statusText);
 
-};
+}
 
 export const getCachedToken = async (): Promise<any> => {
     const response = await fetch('/swTokenCache');
     if (response.status === 200 || response.status === 201) {
         return response.json();
     } else throw new Error(response.statusText);
-  }
+}

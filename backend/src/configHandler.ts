@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
+import { map, lastValueFrom } from 'rxjs';
 
 interface KeyData {
     kid: string;
@@ -19,9 +20,11 @@ export class ConfigHandler {
         // Refresh keys once a day.
         if (ConfigHandler._keys.length === 0 || ConfigHandler._keyRefreshDay.getDate() !== new Date().getDate()) {
             try {
-                await ConfigHandler._httpService.get(process.env.ENTRA_APP_KEY_DISCOVERY_URL).toPromise().then(res => {
-                    ConfigHandler._keys = (res.data as { keys: KeyData[] }).keys;
-                });
+                const request = ConfigHandler._httpService
+                    .get(process.env.ENTRA_APP_KEY_DISCOVERY_URL)
+                    .pipe(map((response) => response.data as { keys: KeyData[] }));
+                ConfigHandler._keys = (await lastValueFrom(request)).keys;
+
                 ConfigHandler._keyRefreshDay = new Date();
                 ConfigHandler._logger.log('Entra ID keys updated.');
             } catch (error) {

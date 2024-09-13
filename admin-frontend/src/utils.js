@@ -48,7 +48,7 @@ export const parseErrorMessages = (messageList) => {
   }
 }
 
-export const ageValidator = (value, allValues) => {
+export const ageValidator = (value, _) => {
   const valueAsTimestamp = Date.parse(value.toString());
 
   if (isNaN(valueAsTimestamp)) {

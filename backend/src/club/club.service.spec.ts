@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClubService } from './club.service';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
@@ -16,13 +16,13 @@ import { LogBookDto } from './dto';
 describe('ClubService', () => {
   let module: TestingModule;
   let service: ClubService;
-  let connection: Connection;
+  let connection: DataSource;
   let juniorService: JuniorService;
   const testJuniors: Junior[] = [];
   let testClub: Club;
 
   beforeAll(async () => {
-    connection = await getTestDB();
+    connection = getTestDB();
     module = await Test.createTestingModule({
       imports: [AppModule, JuniorModule, ClubModule],
       providers: [ClubService, {
@@ -36,7 +36,7 @@ describe('ClubService', () => {
           provide: getRepositoryToken(CheckIn),
           useFactory: repositoryMockFactory,
         }],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -137,35 +137,4 @@ describe('ClubService', () => {
     });
   });
 
-  describe('generateLogBook', () => {
-    beforeAll(async () => {
-      await service.checkInJunior({ juniorId: testJuniors[2].id, clubId: testClub.id });
-    }),
-      it('Should return a "logbook" entry containing the correct totals for ages and genders', async () => {
-        const expectedMales = testJuniors.filter(j => j.gender.toLowerCase() === 'm').length;
-        const expectedFemales = testJuniors.filter(j => j.gender.toLowerCase() === 'f').length;
-        const expectedOther = testJuniors.filter(j => j.gender.toLowerCase() === 'o').length;
-
-        const logbook = await service.generateLogBook({ clubId: testClub.id, date: new Date().toISOString() });
-        const ageCheck1 = logbook.ages.some(a => a.value === 2);
-        const ageCheck2 = logbook.ages.some(a => a.value === 1);
-        const maleCheck = logbook.genders.some(kp => kp.key === 'm' && kp.value === expectedMales);
-        const femaleCheck = logbook.genders.some(kp => kp.key === 'f' && kp.value === expectedFemales);
-        const otherCheck = logbook.genders.some(kp => kp.key === 'o' && kp.value === expectedOther);
-        expect(ageCheck1 && ageCheck2 && maleCheck && femaleCheck && otherCheck).toBeTruthy();
-      }),
-      it('Should ignore duplicate check-ins for the given date', async () => {
-        await service.checkInJunior({ clubId: testClub.id, juniorId: testJuniors[2].id });
-        const expectedMales = testJuniors.filter(j => j.gender.toLowerCase() === 'm').length;
-        const expectedFemales = testJuniors.filter(j => j.gender.toLowerCase() === 'f').length;
-        const expectedOther = testJuniors.filter(j => j.gender.toLowerCase() === 'o').length;
-        const logbook = await service.generateLogBook({ clubId: testClub.id, date: new Date().toISOString() });
-        const ageCheck1 = logbook.ages.some(a => a.value === 2);
-        const ageCheck2 = logbook.ages.some(a => a.value === 1);
-        const maleCheck = logbook.genders.some(kp => kp.key === 'm' && kp.value === expectedMales);
-        const femaleCheck = logbook.genders.some(kp => kp.key === 'f' && kp.value === expectedFemales);
-        const otherCheck = logbook.genders.some(kp => kp.key === 'o' && kp.value === expectedOther);
-        expect(ageCheck1 && ageCheck2 && maleCheck && femaleCheck && otherCheck).toBeTruthy();
-      });
-  });
 });

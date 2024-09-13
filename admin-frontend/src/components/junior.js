@@ -81,9 +81,12 @@ export const JuniorList = (props) => {
         try {
             const newWindow = window.open('');
             const container = document.createElement('div');
+            // React 17 syntax, ignore deprecation warning until updated to React 18.
             ReactDOM.render(
-                <QRCodeWithStatusMessage status={status} id={id} />,
-                container,
+                <React.StrictMode>
+                    <QRCodeWithStatusMessage status={status} id={id} />
+                </React.StrictMode>,
+                container
             );
             setTimeout(() => (newWindow.document.title = `QR-koodi ${owner}`), 0);
             newWindow.document.body.appendChild(container);

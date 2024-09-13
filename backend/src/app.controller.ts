@@ -1,6 +1,5 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { join } from 'path';
 import * as content from './content';
 
 @Controller()

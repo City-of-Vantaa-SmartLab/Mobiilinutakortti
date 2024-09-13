@@ -3,7 +3,12 @@ import * as url from 'url';
 import * as zlib from 'zlib';
 import * as xmlbuilder from 'xmlbuilder2';
 import * as XML from 'pixl-xml';
-import { assignIn } from 'lodash';
+
+type SAMLQuery = {
+  SAMLRequest: string,
+  SigAlg: string,
+  Signature: string
+}
 
 export class SAMLHelper {
   private_key: string;
@@ -26,14 +31,14 @@ export class SAMLHelper {
   We modify the contents manually and take care of base64 encoding, zlib deflating, modifying the XML, and signing.
   */
   fixMissingXMLAttributes(logout_url: string): string {
-    // url parses %2B from the query string as spaces, so we replace them with +
+    // url parses %2B (ASCII code for '+') from the query string as spaces, so we replace them with +
     const old_saml_request = url
       .parse(decodeURIComponent(logout_url), true)
       .query.SAMLRequest.toString()
       .replace(/ /g, '+');
     const deflated = Buffer.from(old_saml_request, 'base64');
     const xml_string = zlib.inflateRawSync(deflated).toString();
-    const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+    const xml_json = XML.parse(xml_string, { preserveAttributes: true }) as any;
 
     const fixed_xml = xmlbuilder
       .create({
@@ -60,11 +65,14 @@ export class SAMLHelper {
       .end();
 
     const new_saml_request = zlib.deflateRawSync(fixed_xml).toString('base64');
+    const new_logout_url = url.parse(this.sso_logout_url, true);
+
     const query = this._signSamlRequest(new_saml_request);
-    let new_logout_url = url.parse(this.sso_logout_url, true);
-    new_logout_url.query = assignIn(query, new_logout_url.query);
+    new_logout_url.query.SAMLRequest = query.SAMLRequest;
+    new_logout_url.query.SigAlg = query.SigAlg;
+    new_logout_url.query.Signature = query.Signature;
+
     new_logout_url.search = null;
-    new_logout_url.query = query;
     return url.format(new_logout_url);
   }
 
@@ -92,13 +100,13 @@ export class SAMLHelper {
     try {
       const deflated = Buffer.from(saml_request, 'base64');
       const xml_string = zlib.inflateRawSync(deflated).toString();
-      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true }) as any;
       id = xml_json._Attribs['ID'];
     } catch {}
     return id;
   }
 
-  private _signSamlRequest(saml_request: string) {
+  private _signSamlRequest(saml_request: string): SAMLQuery {
     const saml_request_data = 'SAMLRequest=' + encodeURIComponent(saml_request);
     const sigalg_data =
       '&SigAlg=' +

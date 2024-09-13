@@ -1,7 +1,7 @@
-import { Connection, createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-export async function getTestDB(): Promise<Connection> {
-    return await createConnection({
+export function getTestDB(): DataSource {
+    return new DataSource({
         type: 'sqlite',
         database: 'test/testdb.sql',
         entities: ['src/**/*.entity{.ts,.js}'],

@@ -16,7 +16,7 @@ const CheckMarkContainer = styled.div`
     transform: translateZ(0);
     animation: draw 1.2s ease forwards;
     -webkit-animation: draw 1.2s ease forwards;
-    transform-box: fill-box
+    transform-box: fill-box;
     transform: scale(2.4) rotate(-13deg);
 }
 -webkit-@keyframes draw {

@@ -161,7 +161,7 @@ export class SsoService {
       const options = {
         in_response_to: request_id
       }
-      this.sp.create_logout_response_url(this.idp, options, (err, response_url) => {
+      this.sp.create_logout_response_url(this.idp, options, (_, response_url) => {
         this.logger.log('Created logout response URL for request ID: ' + options.in_response_to);
         res.redirect(response_url);
       });

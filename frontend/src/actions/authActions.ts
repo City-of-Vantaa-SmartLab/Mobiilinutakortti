@@ -23,7 +23,7 @@ function* getUserInfo(action: getUser): Generator<any, any, any> {
     }
 }
 
-function* authWithCachedToken(action: AuthWithCache): Generator<any, any, any> {
+function* authWithCachedToken(_: AuthWithCache): Generator<any, any, any> {
     let response
     try {
       response = yield call(getCachedToken);

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { YouthWorker, Lockout } from '../youthWorker/entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
@@ -11,7 +11,6 @@ import { JwtStrategy } from '../authentication/jwt.strategy';
 import { getTestDB } from '../../test/testdb';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 import { AppModule } from '../app.module';
-import { HttpModule } from '@nestjs/common';
 import { JuniorModule } from '../junior/junior.module';
 import { Challenge, Junior } from '../junior/entities';
 import { SmsModule } from '../sms/sms.module';
@@ -21,13 +20,13 @@ import { secretString } from './secret';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
-  let connection: Connection;
+  let connection: DataSource;
   let service: AuthenticationService;
 
   beforeAll(async () => {
-    connection = await getTestDB();
+    connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, HttpModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, JwtModule.register({
         secret: jwt.secret,
       })],
       providers: [AuthenticationService, {
@@ -45,7 +44,7 @@ describe('AuthenticationService', () => {
           provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
         }, JwtStrategy],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -54,7 +53,7 @@ describe('AuthenticationService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {

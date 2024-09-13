@@ -25,15 +25,15 @@ export interface Tag {
 }
 
 export interface EmailData {
-  Source: string,
-  Destination: Destination,
-  Message: MessageContent,
-  ReplyToAddresses?: string[],
-  ReturnPath?: string,
-  SourceArn?: string,
-  ReturnPathArn?: string,
-  Tags?: Tag[],
-  ConfigurationSetName?:  string,
+    Source: string,
+    Destination: Destination,
+    Message: MessageContent,
+    ReplyToAddresses?: string[],
+    ReturnPath?: string,
+    SourceArn?: string,
+    ReturnPathArn?: string,
+    Tags?: Tag[],
+    ConfigurationSetName?:  string,
 }
 
 export interface EmailAnnouncement {

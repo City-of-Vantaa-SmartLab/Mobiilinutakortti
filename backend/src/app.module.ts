@@ -1,6 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
 import { AppController } from './app.controller';
 import { YouthWorkerController } from './youthWorker/youthWorker.controller';
 import { YouthWorkerModule } from './youthWorker/youthWorker.module';
@@ -56,5 +55,5 @@ export class AppModule implements NestModule {
     consumer.apply(RoutersMiddleware).forRoutes('/**');
   }
 
-  constructor(private readonly connection: Connection) { }
+  constructor() { }
 }

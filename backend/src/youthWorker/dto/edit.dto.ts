@@ -12,10 +12,7 @@ export class EditYouthWorkerDto {
     email: string;
 
     firstName: string;
-
     lastName: string;
-
     isAdmin: boolean;
-
     mainYouthClub: number;
 }

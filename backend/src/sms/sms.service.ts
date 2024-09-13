@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
 import { Challenge } from '../junior/entities';
 import { SMSConfig } from './smsConfigHandler';
@@ -82,20 +83,21 @@ export class SmsService {
      */
     async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
-        return this.httpService.post(endpoint, messageRequest).toPromise().then(
-            response => {
-                const { batchid, batchstatuscode, batchstatusdescription } = response.data;
-                if (batchstatuscode === 1) {
-                    this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return true;
-                } else {
-                    this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
-                    return false;
-                }
-            }).catch(() => {
-                this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+
+        try {
+            const response = await lastValueFrom(this.httpService.post(endpoint, messageRequest));
+            const { batchid, batchstatuscode, batchstatusdescription } = response.data;
+            if (batchstatuscode === 1) {
+                this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
+                return true;
+            } else {
+                this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
                 return false;
-            });
+            }
+        } catch {
+            this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
+            return false;
+        }
     }
 
     /**
@@ -109,20 +111,20 @@ export class SmsService {
      */
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
         this.logger.log(`Sending SMS to xxxxxx${messageRequest.to[0].slice(-4)}`);
-        return this.httpService.post(teliaEndPoint, messageRequest).toPromise().then(
-            response => {
-                if (response.data.accepted[0].to === messageRequest.to[0]) {
-                    this.logger.log(`SMS send to xxxxxx${messageRequest.to[0].slice(-4)}`);
-                    return true;
-                } else {
-                    this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
-                    return false;
-                }
-            }).catch(() => {
-                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
-                return false;
-            });
 
+        try {
+            const response = await lastValueFrom(this.httpService.post(teliaEndPoint, messageRequest));
+            if (response.data.accepted[0].to === messageRequest.to[0]) {
+                this.logger.log(`SMS send to xxxxxx${messageRequest.to[0].slice(-4)}`);
+                return true;
+            } else {
+                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
+                return false;
+            }
+        } catch {
+            this.logger.log(`POST error: failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
+            return false;
+        }
     }
 
     private async getRegisteredMessage(lang: content.Language, challenge: Challenge, homeYouthClub?: number) {

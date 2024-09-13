@@ -1,6 +1,5 @@
 import { authTypes, authActions, authState } from '../types/authTypes';
 
-
 const initialState: authState = {
     loggingIn: false,
     loggedIn: false,

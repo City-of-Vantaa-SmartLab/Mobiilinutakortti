@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { YouthWorker, Lockout } from './entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
@@ -22,7 +22,7 @@ describe('YouthWorkerService', () => {
     email: 'YouthWOrker@servIce.teSt', firstName: 'Youth',
     lastName: 'Worker', password: 'Secret',
   } as YouthWorker;
-  let connection: Connection;
+  let connection: DataSource;
   let service: YouthWorkerService;
 
   const testRegisterYouthWorker = {
@@ -33,7 +33,7 @@ describe('YouthWorkerService', () => {
   let youthWorkerToEdit: EditYouthWorkerDto;
 
   beforeAll(async () => {
-    connection = await getTestDB();
+    connection = getTestDB();
     module = await Test.createTestingModule({
       imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, JwtModule.register({
         secret: jwt.secret,
@@ -45,7 +45,7 @@ describe('YouthWorkerService', () => {
           provide: getRepositoryToken(Lockout),
           useFactory: repositoryMockFactory,
         }, JwtStrategy],
-    }).overrideProvider(Connection)
+    }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
 
@@ -55,7 +55,7 @@ describe('YouthWorkerService', () => {
 
   afterAll(async () => {
     await module.close();
-    await connection.close();
+    await connection.destroy();
   });
 
   it('should be defined', () => {
@@ -133,7 +133,7 @@ describe('YouthWorkerService', () => {
           id: youthWorkerToEdit.id, firstName: youthWorkerToEdit.firstName, lastName: youthWorkerToEdit.lastName,
           email: 'NewEmail@groovy.com', isAdmin: false,
         } as EditYouthWorkerDto;
-        await service.editYouthWorker(dto);
+        await service.editYouthWorker(dto, '');
         const updatedYouthWorker = await service.getYouthWorkerByEmail(dto.email);
         const updatedList = await service.listAllYouthWorkers();
         expect(updatedYouthWorker.email === dto.email.toLowerCase() && updatedYouthWorker.isAdmin === dto.isAdmin
@@ -147,7 +147,7 @@ describe('YouthWorkerService', () => {
       youthWorkerToDelete = (await service.listAllYouthWorkers())[0].id;
     }),
       it('Should delete the user provided', async () => {
-        await service.deleteYouthWorker(youthWorkerToDelete);
+        await service.deleteYouthWorker(youthWorkerToDelete, '');
         const YouthWorkerList = await service.listAllYouthWorkers();
         expect(YouthWorkerList.findIndex(a => a.id === youthWorkerToDelete) < 0);
       });

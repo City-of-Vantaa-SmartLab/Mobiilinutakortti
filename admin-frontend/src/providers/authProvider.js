@@ -30,7 +30,7 @@ export const authProvider = (type, params) => {
                 // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
                 // This also works vice versa.
                 window.location.reload();
-            })
+            }).resolve();
     }
     if (type === AUTH_ERROR) {
         const status = params.status;

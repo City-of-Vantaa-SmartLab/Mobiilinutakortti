@@ -1,6 +1,5 @@
 import { Column } from 'typeorm';
 
-
 export class Messages {
     @Column({ nullable: true })
     fi: string;

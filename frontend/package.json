@@ -32,7 +32,9 @@
     "yup": "^0.28.5"
   },
   "overrides": {
-    "typescript": "^5.5.4"
+    "react-scripts": {
+      "typescript": "5.5.4"
+    }
   },
   "scripts": {
     "start": "react-scripts start",

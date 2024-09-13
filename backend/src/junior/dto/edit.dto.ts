@@ -6,31 +6,18 @@ export class EditJuniorDto {
     readonly id: string;
 
     phoneNumber: string;
-
     smsPermissionJunior: boolean;
-
     firstName: string;
-
     lastName: string;
-
     nickName: string;
-
     postCode: string;
-
     school: string;
-
     class: string;
-
     parentsName: string;
-
     parentsPhoneNumber: string;
-
     smsPermissionParent: boolean;
-
     parentsEmail: string;
-
     emailPermissionParent: boolean;
-
     additionalContactInformation: string;
 
     @Length(1, 1)
@@ -40,10 +27,7 @@ export class EditJuniorDto {
     birthday: string;
 
     homeYouthClub: number;
-
     communicationsLanguage: string;
-
     status: string;
-
     photoPermission: boolean;
 }

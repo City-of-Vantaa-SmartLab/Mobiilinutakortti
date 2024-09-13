@@ -1,5 +1,5 @@
 import {
-  Controller, Post, Body, Get, Res, Req, UseFilters, HttpException
+  Controller, Post, Get, Res, Req
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { SsoService } from './sso.service';
@@ -20,7 +20,7 @@ export class SsoController {
     this.ssoService.getLoginRequestUrl(res);
   }
 
-  // This is called when coming back from Suomi.fi identification.
+  // This is called by the user's browser when the user returns from Suomi.fi identification.
   @Post('acs')
   loginResponse(@Req() req: Request, @Res() res: Response) {
     this.ssoService.handleLoginResponse(req, res);

@@ -7,7 +7,7 @@ export class Lockout {
     @PrimaryColumn()
     youthWorkerId: string
 
-    @OneToOne(type => YouthWorker, { onDelete: 'CASCADE' })
+    @OneToOne(_ => YouthWorker, { onDelete: 'CASCADE' })
     @JoinColumn()
     youthWorker: YouthWorker;
 
