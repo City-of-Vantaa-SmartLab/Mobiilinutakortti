@@ -19,23 +19,23 @@ export interface Club {
 export interface FormValues {
     juniorFirstName: string,
     juniorLastName: string,
-    juniorNickName: string,
+    juniorNickName?: string,
     juniorBirthday: string,
     juniorPhoneNumber: string,
     smsPermissionJunior: string,
     juniorGender: string,
-    postCode: string,
+    postCode?: string,
     photoPermission: string,
-    school: string,
-    class: string,
-    communicationsLanguage: string
+    school?: string,
+    class?: string,
+    communicationsLanguage?: string
     parentFirstName: string,
     parentLastName: string,
     parentPhoneNumber: string,
     smsPermissionParent: string,
-    parentsEmail: string,
-    emailPermissionParent: string,
-    additionalContactInformation: string,
+    parentsEmail?: string,
+    emailPermissionParent?: string,
+    additionalContactInformation?: string,
     youthClub: number,
     termsOfUse: boolean
 }
