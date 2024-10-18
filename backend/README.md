@@ -63,7 +63,7 @@ Since the Suomi.fi identity provider for SSO is configured against a test enviro
 
 Since Suomi.fi expects to communicate over HTTPS and not HTTP, we will also need to have:
 
-  * The RSA private key of the test environment. When you have it, store it in `backend/certs/nutakortti-test_private_key.pem`. This will make the backend service use that for TLS communication also, enabling HTTPS automatically.
+  * The RSA private key of the test environment. When you have it, store it in `backend/certs/nutakortti-test_private_key.pem`. This will make the backend service use that for TLS communication also, enabling HTTPS automatically. Note that normally (e.g. in production) the certificate for TLS is different from the SAML signing certificate, but here we would use the same one.
   * The default HTTPS port 443 redirected to your local backend port.
 
 In many systems (e.g. Linux), port numbers below 1024 are privileged. If you don't want to run the service with elevated privileges, in Linux you could forward the port for example with *iptables*:

@@ -10,6 +10,7 @@ import { Logger } from 'nestjs-pino';
 async function bootstrap() {
   // This is for local development only.
   // In test and production environments the HTTPS is provided by a separate AWS load balancer.
+  // NB: normally the TLS certificate is different from the SAML signing certificate, but here we use the same for both cases.
   let httpsOptions = null;
   if (fs.existsSync('./certs/nutakortti-test_private_key.pem')) {
     httpsOptions = {
