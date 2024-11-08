@@ -49,7 +49,7 @@ const RegistrationView: React.FC = () => {
         return sc ? JSON.parse(sc) : {};
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         const query = new URLSearchParams(location.search);
         const encoded_sc = query.get('sc');
         if (encoded_sc) {
@@ -66,10 +66,10 @@ const RegistrationView: React.FC = () => {
                     sessionStorage.removeItem('sc');
                     get('/acs')
                         .then(response => window.location.replace(response.url))
-                        .catch(e => setError(true))
+                        .catch(_ => setError(true))
                 }
             })
-            .catch(e => setError(true))
+            .catch(_ => setError(true))
     }, [location.search, queryToSecurityContext])
 
 
@@ -81,9 +81,8 @@ const RegistrationView: React.FC = () => {
         // Have to base64-encode the string if there are exotic characters in the user name, otherwise fetch fails to invalid headers.
         // Since btoa fails with with non-Latin1 characters we first encode them to hex and then to raw bytes.
         const b64sc = btoa(encodeURIComponent(JSON.stringify(sc)).replace(/%([0-9A-F]{2})/g,
-            (match, p1) => {
-                return String.fromCharCode(parseInt('0x' + p1));
-        }));
+            (_, p1) => { return String.fromCharCode(parseInt('0x' + p1)); }
+        ));
         get('/logout', b64sc)
             .then(response => {
                 if (response.url) {
@@ -92,7 +91,7 @@ const RegistrationView: React.FC = () => {
                     setError(true);
                 }
             })
-            .catch((e) => {
+            .catch(_ => {
                 setError(true);
             })
     }
@@ -100,7 +99,7 @@ const RegistrationView: React.FC = () => {
         get('/club/list')
             .then(response => setClubs(response.filter((club: Club) => club.active)
             ))
-            .catch((e) => setError(true))
+            .catch(_ => setError(true))
     }, []);
 
     return (

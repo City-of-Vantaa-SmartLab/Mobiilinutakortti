@@ -102,7 +102,7 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          Hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>käyttöehdot</a>
+          Annan suostumukseni tietojen käsittelylle Nutakortti-palvelun yhteydessä ja hyväksyn&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>käyttöehdot</a>.
         </>
       ),
       correctNote: 'Varmistathan, että täyttämäsi tiedot ovat oikein ennen hakemuksen lähettämistä.',

@@ -99,7 +99,7 @@ export const translations: Translations = {
 
       termsOfUse: (
         <>
-          I agree to&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>the terms of use</a>
+          I consent to the processing of data in connection with the Nutakortti service and accept&nbsp;<a target='_blank' rel="noopener noreferrer" href='https://www.vantaa.fi/sites/default/files/document/Mobiilinutakortin%20k%C3%A4ytt%C3%B6ehdot.pdf'>the terms of use</a>.
         </>
       ),
       correctNote: 'Please ensure the information you have given is correct before sending the application.',
