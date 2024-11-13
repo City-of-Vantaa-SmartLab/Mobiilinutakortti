@@ -12,6 +12,8 @@ import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
 import { checkInClubId, userToken } from '../../utils';
+import { Button } from '@material-ui/core';
+import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
 const Container = styled.div`
   height: 100%;
@@ -31,11 +33,14 @@ const QrReaderContainer = styled.div`
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
 `
+
 const CheckInView = (props) => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
+  const [showCameraToggle, setShowCameraToggle] = useState(false);
+  const [useAlternativeCamera, setUseAlternativeCamera] = useState(false);
   const notify = useNotify();
 
   const goToLogin = () => {
@@ -47,20 +52,24 @@ const CheckInView = (props) => {
     localStorage.removeItem(userToken);
     const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
     const path = props.location.pathname;
-    const m = path.match(/\d+/);
-    const id = m !== null ? m.shift() : null;
+    const matchId = path.match(/\d+/);
+    const id = matchId !== null ? matchId.shift() : null;
     // checkInClubId is set by the youth worker when they click on the log in button for a club.
     // This prevents the users from manually changing the club id in the browser address bar.
     if (id !== storedCheckInClubId) {
       goToLogin();
     }
-  }, [props.location.pathname])
 
-  // reload the page in 3 minutes to fix qr reader stopping scanning after a period of time
-  useEffect(() => {
-    const timer = setTimeout(() => window.location.reload(), 180000);
-    return () => clearTimeout(timer);
-  }, [])
+    let isMounted = true;
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      if (isMounted) {
+        const cameras = devices.filter(dev => dev.kind === 'videoinput');
+        if (cameras.length > 1) setShowCameraToggle(true);
+        console.debug(cameras);
+      }
+    })
+    return () => isMounted = false;
+  }, [props.location.pathname])
 
   const tryToPlayAudio = (success) => {
     if (success) {
@@ -113,7 +122,8 @@ const CheckInView = (props) => {
     }
   };
 
-  const handleError = () => {
+  const handleError = (e) => {
+    console.error(e);
     notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
   };
 
@@ -139,7 +149,7 @@ const CheckInView = (props) => {
                 delay={300}
                 onScan={handleScan}
                 onError={handleError}
-                facingMode="user"
+                facingMode={useAlternativeCamera ? 'environment' : 'user'}
                 style={{ width: "100%", height: "100%" }}
             />
           </QrReaderContainer>
@@ -148,6 +158,17 @@ const CheckInView = (props) => {
       {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>
+      )}
+      {(showCameraToggle) && (
+        <Button
+          style={{ marginTop: '1em' }}
+          color="primary"
+          size="large"
+          variant="contained"
+          onClick={() => {const use = !useAlternativeCamera; setUseAlternativeCamera(use)}}
+        >
+          <SwitchCameraIcon />&nbsp;&nbsp;Vaihda&nbsp;kameraa
+        </Button>
       )}
     </Container>
   )

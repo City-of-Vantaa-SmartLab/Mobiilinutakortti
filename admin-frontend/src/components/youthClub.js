@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { successSound, errorSound } from '../audio/audio.js'
 import { checkInClubId } from '../utils';
+import ListIcon from '@material-ui/icons/List';
+import PieChartIcon from '@material-ui/icons/PieChart';
+import CropFreeIcon from '@material-ui/icons/CropFree';
 
 const prepareCheckIn = (id) => {
   successSound.volume = 0;
@@ -24,7 +27,6 @@ const prepareCheckIn = (id) => {
 }
 
 const OpenCheckInButton = (props) => {
-    // In case of Entra ID login, we must first sign out the user. The Entra login page will handle redirecting to the checkIn page.
   return (
     <Link to={{
       pathname: `/checkIn/${props.record.id}`,
@@ -34,17 +36,17 @@ const OpenCheckInButton = (props) => {
         pointerEvents: !props.record.active ? "none": "auto"
       }}
     >
-      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" disabled={!props.record.active}>Kirjautuminen</Button>
+      <Button onClick={() => prepareCheckIn(props.record.id)} variant="contained" disabled={!props.record.active}><CropFreeIcon />&nbsp;Kirjautuminen</Button>
     </Link>
   )
 }
 
 const OpenLogBookButton = (props) => (
-  <Button variant="contained" href={`#/logbook/${props.record.id}`} >Logbook</Button>
+  <Button variant="contained" href={`#/logbook/${props.record.id}`} ><PieChartIcon />&nbsp;Logbook</Button>
 )
 
-const OpenLogBookCheckInsButton = (props) => (
-  <Button variant="contained" href={`#/checkIns/${props.record.id}`} >Kirjautumiset</Button>
+const OpenCheckInsButton = (props) => (
+  <Button variant="contained" href={`#/checkIns/${props.record.id}`} ><ListIcon />&nbsp;Kirjautumiset</Button>
 )
 
 export const YouthClubList = (props) => (
@@ -54,7 +56,7 @@ export const YouthClubList = (props) => (
       {/* <TextField label="Postinumero" source="postCode" /> */}
       <OpenCheckInButton />
       <OpenLogBookButton />
-      <OpenLogBookCheckInsButton />
+      <OpenCheckInsButton />
     </Datagrid>
   </List>
 );
