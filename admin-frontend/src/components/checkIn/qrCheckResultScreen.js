@@ -4,7 +4,9 @@ import CheckMark from './checkMark';
 import ErrorMark from './errorMark';
 
 const Wrapper = styled.div`
-  width: 48em;
+  position: absolute;
+  max-width: 40em;
+  width: 100%;
   height: 100%;
   display: flex;
 
@@ -18,8 +20,7 @@ const Header = styled.span`
     color: #f9e51e;
     display: inline-block;
     margin-top: 0.6em;
-    margin-bot: 1.4em;
-    font-size: 58px;
+    font-size: 50px;
     font-family: 'GT-Walsheim-Bold';
 `
 

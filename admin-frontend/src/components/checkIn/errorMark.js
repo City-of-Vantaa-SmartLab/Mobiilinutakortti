@@ -45,7 +45,7 @@ const CheckMarkContainer = styled.div`
 
 const ErrorMark = () =>  (
   <CheckMarkContainer>
-    <svg width={550} height={550} viewBox="0 0 500 500" >
+    <svg max-width={550} max-height={550} viewBox="0 0 500 500" >
       <g transform="translate(250, 250)">
         <circle cx="0" cy="0"  r="230" fill="#f9e51e" />
         <circle id="circle" cx="0" cy="0" r="186" fill="#f7423a" />

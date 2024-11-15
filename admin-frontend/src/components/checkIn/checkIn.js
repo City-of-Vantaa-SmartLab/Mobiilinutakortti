@@ -17,21 +17,27 @@ import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
 const Container = styled.div`
   height: 100%;
-  width: 100;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
 `;
 
+const cameraSize = '38em';
+
 const QrReaderContainer = styled.div`
-  margin-top: 7.4em;
-  width: 32em;
-  max-width: 100%;
-  border: 55px solid #f9e51e;
+  max-width: ${cameraSize};
+  max-height: ${cameraSize};
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  border: 3em solid #f9e51e;
   -webkit-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
+  box-sizing: border-box;
 `
 
 const CheckInView = (props) => {
@@ -150,7 +156,7 @@ const CheckInView = (props) => {
                 onScan={handleScan}
                 onError={handleError}
                 facingMode={useAlternativeCamera ? 'environment' : 'user'}
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: {cameraSize}, height: {cameraSize} }}
             />
           </QrReaderContainer>
       )}
@@ -161,7 +167,7 @@ const CheckInView = (props) => {
       )}
       {(showCameraToggle) && (
         <Button
-          style={{ marginTop: '1em' }}
+          style={{ position: 'absolute', bottom: '2em' }}
           color="primary"
           size="large"
           variant="contained"
