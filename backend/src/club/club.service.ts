@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CheckIn, Club } from './entities';
 import { LessThan, Repository } from 'typeorm';
 import { Junior } from '../junior/entities';
-import { ClubViewModel, LogBookViewModel } from './vm';
+import { ClubViewModel, CheckInStatsViewModel } from './vm';
 import * as content from '../content';
-import { CheckInDto, LogBookDto } from './dto';
-import * as ageRanges from './logbookAgeRanges.json';
+import { CheckInDto, CheckInStatsSettingsDto } from './dto';
+import * as ageRanges from './statisticsAgeRanges.json';
 import { Gender } from '../utils/constants';
 import { Cron } from '@nestjs/schedule';
 import { differenceInHours, sub } from 'date-fns';
@@ -49,10 +49,10 @@ export class ClubService {
     }
 
     // Get checkins for a time period by providing the time period in unix timestamp, otherwise checkins are returned for the selected day
-    async getCheckins(logbookDetails: LogBookDto, timePeriod?: number): Promise<CheckIn[]> {
-        const startOfTimePeriod = timePeriod ? new Date(logbookDetails.date).setHours(0, 0, 0, 0) - timePeriod : new Date(logbookDetails.date).setHours(0, 0, 0, 0);
-        const endOfTimePeriod = new Date(logbookDetails.date).setHours(23, 59, 59, 59);
-        const clubCheckIns = (await this.getCheckinsForClub(logbookDetails.clubId))
+    async getCheckins(settings: CheckInStatsSettingsDto, timePeriod?: number): Promise<CheckIn[]> {
+        const startOfTimePeriod = timePeriod ? new Date(settings.date).setHours(0, 0, 0, 0) - timePeriod : new Date(settings.date).setHours(0, 0, 0, 0);
+        const endOfTimePeriod = new Date(settings.date).setHours(23, 59, 59, 59);
+        const clubCheckIns = (await this.getCheckinsForClub(settings.clubId))
             .filter(checkIn => (this.isBetween(new Date(checkIn.checkInTime).getTime(), startOfTimePeriod, endOfTimePeriod)) && checkIn.junior);
         return clubCheckIns;
     }
@@ -81,8 +81,8 @@ export class ClubService {
         return `${details.id} ${content.Updated}`;
     }
 
-    async generateLogBook(logbookDetails: LogBookDto): Promise<LogBookViewModel> {
-        const checkIns = await this.getCheckins(logbookDetails);
+    async generateStats(settings: CheckInStatsSettingsDto): Promise<CheckInStatsViewModel> {
+        const checkIns = await this.getCheckins(settings);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
@@ -103,14 +103,14 @@ export class ClubService {
         });
         const byGenderAndAge = Object.entries(byGender).reduce((result, [gender, juniors]) => ({
             ...result,
-            [gender]: this.getAgesForLogBook(juniors.map(junior => new Date(junior.birthday))),
+            [gender]: this.getAgesForStatistics(juniors.map(junior => new Date(junior.birthday))),
         }), {});
 
-        const clubName = (await this.getClubById(logbookDetails.clubId)).name;
-        return new LogBookViewModel(clubName, byGenderAndAge);
+        const clubName = (await this.getClubById(settings.clubId)).name;
+        return new CheckInStatsViewModel(clubName, byGenderAndAge);
     }
 
-    private getAgesForLogBook(allJuniorAges: Date[]): Map<string, number> {
+    private getAgesForStatistics(allJuniorAges: Date[]): Map<string, number> {
         const ages = new Map();
         const allJuniorAgesAsNumbers = allJuniorAges.map(age => this.getAgeFromDate(age));
         ageRanges.ranges.forEach(range => {

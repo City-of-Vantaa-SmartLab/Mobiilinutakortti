@@ -41,12 +41,12 @@ const OpenCheckInButton = (props) => {
   )
 }
 
-const OpenLogBookButton = (props) => (
-  <Button variant="contained" href={`#/logbook/${props.record.id}`} ><PieChartIcon />&nbsp;Logbook</Button>
+const OpenCheckInStatsButton = (props) => (
+  <Button variant="contained" href={`#/statistics/${props.record.id}`} ><PieChartIcon />&nbsp;Tilastot</Button>
 )
 
-const OpenCheckInsButton = (props) => (
-  <Button variant="contained" href={`#/checkIns/${props.record.id}`} ><ListIcon />&nbsp;Kirjautumiset</Button>
+const OpenCheckInLogButton = (props) => (
+  <Button variant="contained" href={`#/log/${props.record.id}`} ><ListIcon />&nbsp;Kirjautumiset</Button>
 )
 
 export const YouthClubList = (props) => (
@@ -55,8 +55,8 @@ export const YouthClubList = (props) => (
       <TextField label="Nimi" source="name" />
       {/* <TextField label="Postinumero" source="postCode" /> */}
       <OpenCheckInButton />
-      <OpenLogBookButton />
-      <OpenCheckInsButton />
+      <OpenCheckInStatsButton />
+      <OpenCheckInLogButton />
     </Datagrid>
   </List>
 );

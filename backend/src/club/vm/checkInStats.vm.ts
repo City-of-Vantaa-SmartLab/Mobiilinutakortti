@@ -1,6 +1,6 @@
-export class LogBookViewModel {
+export class CheckInStatsViewModel {
   clubName: string;
-  statistics: LogBookStatistics[];
+  statistics: CheckInStatistics[];
 
   constructor(clubName: string, byGenderAndAge: GroupedAggregate) {
     this.clubName = clubName;
@@ -23,7 +23,7 @@ export class LogBookViewModel {
   }
 }
 
-interface LogBookStatistics {
+interface CheckInStatistics {
   gender: string;
   count: number;
   ageRanges: {

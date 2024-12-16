@@ -183,13 +183,13 @@ export class ExtraEntryService {
         const expiredExtraEntries = [];
         const expiredPermits = [];
 
-        for (let junior of juniorEntries) {
-            for (let ee of junior.extraEntries) {
+        for (const junior of juniorEntries) {
+            for (const ee of junior.extraEntries) {
                 if (junior.age >= ee.extraEntryType.expiryAge) {
                     expiredExtraEntries.push(ee.id);
                 }
             }
-            for (let p of junior.permits) {
+            for (const p of junior.permits) {
                 if (junior.age >= p.permitType.expiryAge) {
                     expiredPermits.push(p.id);
                 }

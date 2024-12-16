@@ -1,2 +1,2 @@
 export { CheckInDto } from './checkIn.dto';
-export { LogBookDto } from './logbook.dto';
+export { CheckInStatsSettingsDto } from './checkInStatsSettings.dto';

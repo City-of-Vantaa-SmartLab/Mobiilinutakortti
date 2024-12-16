@@ -18,29 +18,29 @@ export const StyledDialogTitle = styled(DialogTitle)`
     padding-left: 0px !important;
 `;
 
-export const LogBookTextFieldContainer = styled.div`
+export const CheckInLogTextFieldContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
 `;
 
-export const LogBookCard = styled(Card)`
+export const CheckInLogCard = styled(Card)`
     width: 800px;
 `;
 
-export const LogBookCardHeader = styled(CardHeader)`
+export const CheckInLogCardHeader = styled(CardHeader)`
     text-align: center;
 `;
 
-export const LogBookCardContent = styled(CardContent)`
+export const CheckInLogCardContent = styled(CardContent)`
     margin: 0px 30px;
 `;
 
-export const LogBookCardContentSelect = styled(LogBookCardContent)`
+export const CheckInLogCardContentSelect = styled(CheckInLogCardContent)`
     display: flex;
     justify-content: center;
 `;
 
-export const LogBookTextField = styled(TextField)`
+export const CheckInLogTextField = styled(TextField)`
     width:100px;
 `;

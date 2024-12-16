@@ -4,28 +4,27 @@ import { Form } from 'react-final-form';
 import { Button } from '@material-ui/core';
 import {
     Container,
-    LogBookCard,
-    LogBookCardHeader,
-    LogBookCardContent,
-    LogBookTextField,
-    LogBookTextFieldContainer,
-    LogBookCardContentSelect,
+    CheckInLogCard,
+    CheckInLogCardHeader,
+    CheckInLogCardContent,
+    CheckInLogTextField,
+    CheckInLogTextFieldContainer,
+    CheckInLogCardContentSelect,
     VerticalCardPadding,
     StyledDialogTitle
-} from './styledComponents/logbook';
+} from './styledComponents/checkInLog';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
-// Alternative labels for mapping the genders 1-to-1 to LogBook
+// Alternative labels for mapping the genders similarly to 3rd party statistics applications.
 const genderLabel = {
     m: 'Poika',
     f: 'Tyttö',
     o: 'Ei binäärinen',
 };
 
-// "Logbook"
-// Similar to logbook list view (logbookList.js), but displays general statistics, not names.
-let LogBookView = (props) => {
+// Similar to CheckInLogView, but displays general statistics, not names.
+const CheckInStatisticsView = (props) => {
     const [clubName, setClubName] = useState('');
     const [data, setData] = useState([]);
     const [searchDate, setSearchDate] = useState('');
@@ -37,10 +36,10 @@ let LogBookView = (props) => {
         setSearchDate('');
     }
 
-    const getLogBookEntry = async values => {
+    const getCheckInStats = async values => {
         const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
-            const url = api.youthClub.logBook;
+            const url = api.youthClub.checkInStats;
             const body = JSON.stringify({
                 clubId: props.match.params.youthClubId,
                 date: date
@@ -66,29 +65,29 @@ let LogBookView = (props) => {
     return (
         <Container>
             <Form
-                onSubmit={getLogBookEntry}
+                onSubmit={getCheckInStats}
                 render={({ handleSubmit }) => (
                     <form onSubmit={handleSubmit}>
-                        <LogBookCard>
-                            <LogBookCardHeader title="Valitse Päivämäärä" />
-                            <LogBookCardContentSelect>
+                        <CheckInLogCard>
+                            <CheckInLogCardHeader title="Valitse päivämäärä" />
+                            <CheckInLogCardContentSelect>
                                 <DateInput label="Päivämäärä" source="queryDate" />
                                 <Button type="submit">Hae</Button>
-                            </LogBookCardContentSelect>
-                        </LogBookCard>
+                            </CheckInLogCardContentSelect>
+                        </CheckInLogCard>
                     </form>
                 )}
             />
             <VerticalCardPadding />
             {clubName !== '' &&
-                <LogBookCard>
-                    <LogBookCardHeader title={clubName} subheader={searchDate} />
-                    <LogBookCardContent>
+                <CheckInLogCard>
+                    <CheckInLogCardHeader title={clubName} subheader={searchDate} />
+                    <CheckInLogCardContent>
                         {data.map(({ gender, count, ageRanges }) => (
                             <div key={`${gender} container`}>
                                 <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
-                                <LogBookTextFieldContainer>
-                                    <LogBookTextField
+                                <CheckInLogTextFieldContainer>
+                                    <CheckInLogTextField
                                         key={gender}
                                         label={genderLabel[gender]}
                                         defaultValue={count}
@@ -96,11 +95,11 @@ let LogBookView = (props) => {
                                         variant="filled"
                                         InputProps={{ readOnly: true }}
                                     />
-                                </LogBookTextFieldContainer>
+                                </CheckInLogTextFieldContainer>
                                 <StyledDialogTitle>Ikä</StyledDialogTitle>
-                                <LogBookTextFieldContainer>
+                                <CheckInLogTextFieldContainer>
                                     {ageRanges.map(({ ageRange, count: countByAgeRange }) => (
-                                        <LogBookTextField
+                                        <CheckInLogTextField
                                             key={`${gender} ${ageRange}`}
                                             label={ageRange}
                                             defaultValue={countByAgeRange}
@@ -109,14 +108,14 @@ let LogBookView = (props) => {
                                             InputProps={{ readOnly: true }}
                                         />
                                     ))}
-                                </LogBookTextFieldContainer>
+                                </CheckInLogTextFieldContainer>
                             </div>
                         ))}
-                    </LogBookCardContent>
-                </LogBookCard>
+                    </CheckInLogCardContent>
+                </CheckInLogCard>
             }
         </Container>
     )
 }
 
-export default LogBookView;
+export default CheckInStatisticsView;
