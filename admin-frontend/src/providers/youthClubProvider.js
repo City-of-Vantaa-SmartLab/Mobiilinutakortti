@@ -16,6 +16,7 @@ export const youthClubProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw new HttpError(parseErrorMessages(response.message), response.statusCode);
                     }
+                    console.log(response); // TODO
                     return { data: response.sort((a,b) => a.name.localeCompare(b.name, 'fi', { sensitivity: 'base' })), total: response.length };
                 });
         }

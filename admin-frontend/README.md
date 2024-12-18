@@ -27,6 +27,7 @@ If you are not using Microsoft Entra ID to login users (as is by default; see th
 There are following environment variables:
 * `REACT_APP_ADMIN_FRONTEND_URL`: URL where to go when an admin logouts, e.g. "/nuorisotyontekijat"
 * `REACT_APP_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
+* `REACT_APP_ENABLE_KOMPASSI_INTEGRATION`: if evaluates to true, show Kompassi (a statistics system) related settings in the admin frontend's club views.
 * `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
 * `REACT_APP_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.
 * `REACT_APP_ENTRA_REDIRECT_URI`: If using Entra ID for login, the redirect URI configured in the login scope, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/loginEntraID". Note that the page must reside outside react-admin router, as MSAL returns the code as an URL fragment (after a # sign), which also marks a route so there would be a conflict.

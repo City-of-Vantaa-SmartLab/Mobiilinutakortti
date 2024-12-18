@@ -7,13 +7,13 @@ import { ExtraEntryType } from './entities';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
 import { CreateExtraEntryTypeDto } from './dto/createType.dto';
 import { CreateExtraEntryDto } from './dto/create.dto';
-import { ConfigHandler } from 'src/configHandler';
-import { Junior } from 'src/junior/entities';
-import { getFilters } from 'src/utils/helpers';
+import { ConfigHandler } from '../configHandler';
+import { Junior } from '../junior/entities';
+import { getFilters } from '../common/helpers';
 import { ListControlDto } from 'src/common/dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { JuniorExtraEntriesViewModel } from './vm/juniorExtraEntries.vm';
-import { JuniorService } from 'src/junior/junior.service';
+import { JuniorService } from '../junior/junior.service';
 import { Cron } from '@nestjs/schedule';
 import { Permit } from './entities/permit.entity';
 

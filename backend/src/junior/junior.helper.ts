@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
-import { SecurityContextDto } from "src/authentication/dto";
-import { obfuscate } from 'src/utils/helpers';
+import { SecurityContextDto } from '../authentication/dto';
+import { obfuscate } from '../common/helpers';
 
 const logger = new Logger('Junior Service Helper');
 

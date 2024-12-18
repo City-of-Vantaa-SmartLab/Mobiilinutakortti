@@ -24,6 +24,7 @@ import pino from 'pino';
 import { AnnouncementController } from './announcement/announcement.controller';
 import { ExtraEntryModule } from './extraEntry/extraEntry.module';
 import { ExtraEntryController } from './extraEntry/extraEntry.controller';
+import { KompassiModule } from './kompassi/kompassi.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ExtraEntryController } from './extraEntry/extraEntry.controller';
     SessionDBModule,
     AnnouncementModule,
     ExtraEntryModule,
+    KompassiModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({

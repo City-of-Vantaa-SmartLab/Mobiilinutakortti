@@ -49,7 +49,7 @@ export class YouthWorkerController {
     if (useEntraID) {
         throw new ForbiddenException('Microsoft Entra ID is in use. No need to register first admin.');
     }
-    const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+    const allow = process.env.SETUP_ENDPOINTS || "no";
     if ( allow === "yes" ) {
       return new Message(await this.youthWorkerService.registerYouthWorker(userData));
     }

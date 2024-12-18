@@ -1,5 +1,6 @@
 import { Messages } from '../classes/messages';
 import { Club } from '../entities';
+import { KompassiIntegration } from '../entities';
 
 export class ClubViewModel {
     id: number;
@@ -7,6 +8,7 @@ export class ClubViewModel {
     postCode: string;
     active: boolean;
     messages: Messages;
+    kompassiIntegration: KompassiIntegration;
 
     constructor(club: Club) {
         this.id = club.id;
@@ -14,5 +16,6 @@ export class ClubViewModel {
         this.postCode = club.postCode;
         this.active = club.active;
         this.messages = club.messages;
+        this.kompassiIntegration = club.kompassiIntegration;
     }
 }

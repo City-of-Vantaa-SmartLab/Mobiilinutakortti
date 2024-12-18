@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessiondb.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
+import { KompassiModule } from '../kompassi/kompassi.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { SessionModule } from '../session/session.module';
     }),
     SessionDBModule,
     RolesModule,
-    SessionModule
+    SessionModule,
+    KompassiModule
   ],
   providers: [ClubService],
   controllers: [ClubController],

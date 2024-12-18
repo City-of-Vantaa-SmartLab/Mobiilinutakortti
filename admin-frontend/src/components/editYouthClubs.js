@@ -10,7 +10,8 @@ import {
   BooleanInput,
   BooleanField,
   Toolbar,
-  SaveButton
+  SaveButton,
+  NumberField
 } from 'react-admin';
 
 const StatusHelperText = () => (
@@ -27,6 +28,8 @@ const CustomToolbar = (props) => (
   </Toolbar>
 );
 
+const kompassiIntegration = process.env.REACT_APP_ENABLE_KOMPASSI_INTEGRATION;
+
 export const EditYouthClubsList = (props) => (
   <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
     <Datagrid>
@@ -35,6 +38,7 @@ export const EditYouthClubsList = (props) => (
       <TextField label="Tilakohtainen viesti FI" source="messages.fi" />
       <TextField label="Tilakohtainen viesti EN" source="messages.en" />
       <TextField label="Tilakohtainen viesti SV" source="messages.sv" />
+      kompassiIntegration && <BooleanField label="Kompassi-integraatio" source="kompassiIntegration?.enabled" defaultValue={false} />
       <EditButton />
     </Datagrid>
   </List>
@@ -48,6 +52,12 @@ export const EditYouthClubs = (props) => (
       <TextInput label="Tilakohtainen viesti FI" source="messages.fi" />
       <TextInput label="Tilakohtainen viesti EN" source="messages.en" />
       <TextInput label="Tilakohtainen viesti SV" source="messages.sv" />
+      kompassiIntegration && {<>
+        <BooleanField label="Kompassi-integraatio" source="kompassiIntegration?.enabled" defaultValue={false} />
+        <NumberField label="Kompassi organisaatio-id" source="kompassiIntegration?.organizationId" />
+        <NumberField label="Kompassi ryhmä-id" source="kompassiIntegration?.groupId" />
+        <TextField label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration?.activityTypeIds" />
+      </>}
       <MessageHelperText />
     </SimpleForm>
   </Edit >

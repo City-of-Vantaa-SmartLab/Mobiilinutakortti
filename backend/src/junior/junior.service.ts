@@ -21,9 +21,10 @@ import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { validateParentData } from './junior.helper';
-import { getFilters, obfuscate } from 'src/utils/helpers';
+import { getFilters, obfuscate } from '../common/helpers';
 import { ConfigHandler } from '../configHandler';
 import { Status } from './enum/status.enum';
+import { Gender } from 'src/common/genderMapping';
 
 @Injectable()
 export class JuniorService {
@@ -426,7 +427,7 @@ export class JuniorService {
         const last_names = ['Virtanen', 'Ylinen', 'Koivisto', 'Perälä', 'Niittymäki', 'Hautala', 'Arhinmäki', 'Koski', 'Mäkinen', 'Astola', 'Heikkilä', 'Marjamäki'];
         const school_names = ['Kirkkoharjun ala-aste', 'Tuomiola', 'Mustalampaan koulu', 'Määkiälän ala-aste', 'Pikkola', 'Mordor', 'Tykkimäki', 'Ankkalampi'];
         const class_names = ['1A', '1B', '2C', '3D', '6. luokka', '3. luokka', '1. luokka', '5. luokka'];
-        const genders = ['m', 'f', 'o', '-'];
+        const genders = [ Gender.Male, Gender.Female, Gender.Other, Gender.Undisclosed ];
         for (var i = 0; i < num; i++) {
             var date =
                 (Math.floor(Math.random() * 8) + 2005).toString() + '-' +

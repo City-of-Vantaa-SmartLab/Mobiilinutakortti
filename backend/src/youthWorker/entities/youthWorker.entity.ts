@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { IsEmail } from 'class-validator';
 import { lowercase, jsonDataToBoolean } from '../../common/transformers';
-import { NumberTransformer } from 'src/utils/helpers';
+import { NumberTransformer } from 'src/common/helpers';
 
 /**
  * Entity model for youth worker.

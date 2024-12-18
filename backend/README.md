@@ -102,17 +102,19 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
 * `JSON_LOGS`: If evaluates to true, use JSON log format.
 * `JWT`: Secret string used for JWTs. Arbitrary.
+* `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
+* `KOMPASSI_API_URL`: URL to use for Kompassi integration.
 * `RDS_DB_NAME`: Amazon RDS database name.
 * `RDS_HOSTNAME`: Amazon RDS URL host part.
 * `RDS_PASSWORD`: Amazon RDS password.
 * `RDS_PORT`: Amazon RDS port.
 * `RDS_USERNAME`: Amazon RDS user name.
+* `SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
-* `SUPER_ADMIN_FEATURES`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `TELIA_BATCH_ENDPOINT`: Telia SMS service batch endpoint URL. NB: your Telia credentials must have a separate permit to use the end point.
 * `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
 * `TELIA_PASSWORD`: Telia SMS service password.
