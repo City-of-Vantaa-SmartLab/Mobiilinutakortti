@@ -3,9 +3,8 @@ import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 import { ConfigHandler } from '../../configHandler';
-import { NumberTransformer } from 'src/utils/helpers';
-import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
-import { Permit } from 'src/extraEntry/entities/permit.entity';
+import { NumberTransformer } from 'src/common/helpers';
+import { ExtraEntry, Permit } from 'src/extraEntry/entities';
 
 @Entity()
 export class Junior {

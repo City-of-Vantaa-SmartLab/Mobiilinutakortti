@@ -121,7 +121,7 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Get('getChallenge/:phoneNumber')
     async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
-        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        const allow = process.env.SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
         }
@@ -170,7 +170,7 @@ export class JuniorController {
 
     @Post('createTestDataJuniors')
     async createTestDataJuniors(@Body() body: any): Promise<Message> {
-        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        const allow = process.env.SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             const { numberOfCases } = body;
             return new Message(await this.juniorService.createTestDataJuniors(numberOfCases));
@@ -180,7 +180,7 @@ export class JuniorController {
 
     @Post('deleteTestDataJuniors')
     async deleteTestDataJuniors(): Promise<Message> {
-        const allow = process.env.SUPER_ADMIN_FEATURES || "no";
+        const allow = process.env.SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             return new Message(await this.juniorService.deleteTestDataJuniors());
         }

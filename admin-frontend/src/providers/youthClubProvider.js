@@ -47,7 +47,8 @@ export const youthClubProvider = (type, params, httpClient) => {
             const data = {
                 id: params.data.id,
                 active: params.data.active,
-                messages: messages
+                messages: messages,
+                kompassiIntegration: params.data.kompassiIntegration
             };
             const jsonData = JSON.stringify(data);
             url = api.youthClub.edit;

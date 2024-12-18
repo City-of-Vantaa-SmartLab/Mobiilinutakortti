@@ -8,7 +8,9 @@ import {
   TextInput,
   required,
   Toolbar,
-  SaveButton
+  SaveButton,
+  NumberField,
+  NumberInput
 } from 'react-admin';
 
 const CustomToolbar = (props) => (
@@ -22,7 +24,7 @@ export const ExtraEntryTypeList = (props) => {
     <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
         <TextField label="Merkintätyyppi" source="name" />
-        <TextField label="Yläikäraja" source="expiryAge" />
+        <NumberField label="Yläikäraja" source="expiryAge" />
       </Datagrid>
     </List>
   );
@@ -33,7 +35,7 @@ export const ExtraEntryTypeCreate = (props) => {
     <Create title="Lisää merkintätyyppi" {...props}>
       <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
         <TextInput label="Merkintätyyppi" source="name" validate={required()} />
-        <TextInput label="Yläikäraja" source="expiryAge" validate={required()} />
+        <NumberInput label="Yläikäraja" source="expiryAge" validate={required()} />
       </SimpleForm>
     </Create>
   );

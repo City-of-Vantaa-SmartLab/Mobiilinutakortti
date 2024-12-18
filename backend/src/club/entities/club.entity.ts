@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { Messages } from '../classes/messages';
-
+import { KompassiIntegration } from './';
 
 @Entity()
 export class Club {
@@ -18,4 +18,7 @@ export class Club {
 
     @Column(() => Messages)
     messages: Messages;
+
+    @OneToOne(() => KompassiIntegration, kompassiIntegration => kompassiIntegration.club, { cascade: true })
+    kompassiIntegration: KompassiIntegration
 }

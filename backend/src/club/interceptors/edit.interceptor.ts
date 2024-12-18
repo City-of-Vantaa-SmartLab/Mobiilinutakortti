@@ -21,11 +21,19 @@ export class ClubEditInterceptor implements NestInterceptor {
         let dataChanged = false;
         dataChanged = body.active !== clubToEdit.active;
 
-        // Interceptor for messages with languages
         const messageLanguages = ['fi', 'en', 'sv'];
-        dataChanged = dataChanged || messageLanguages.some(language => {
+        dataChanged ||= messageLanguages.some(language => {
             return body.messages[language] !== clubToEdit.messages[language];
         });
+
+        dataChanged ||= !!body.kompassiIntegration !== !!clubToEdit.kompassiIntegration;
+        if (!dataChanged && body.kompassiIntegration) {
+            dataChanged ||= body.kompassiIntegration.enabled !== clubToEdit.kompassiIntegration.enabled;
+            dataChanged ||= body.kompassiIntegration.activityTitle !== clubToEdit.kompassiIntegration.activityTitle;
+            dataChanged ||= body.kompassiIntegration.organisationId !== clubToEdit.kompassiIntegration.organisationId;
+            dataChanged ||= body.kompassiIntegration.groupId !== clubToEdit.kompassiIntegration.groupId;
+            dataChanged ||= body.kompassiIntegration.activityTypeIds !== clubToEdit.kompassiIntegration.activityTypeIds;
+        }
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); };
         return next.handle();

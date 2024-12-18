@@ -56,7 +56,7 @@ export class ClubController {
             check = new Check(false);
             return new CheckInResponseViewModel(check.result, 'Duplicate check-in');
         } else {
-            check = new Check((await this.clubService.checkInJunior(userData)));
+            check = new Check(await this.clubService.checkInJunior(userData));
         }
         return new CheckInResponseViewModel(check.result);
     }
