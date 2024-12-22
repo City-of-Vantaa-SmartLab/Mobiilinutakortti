@@ -32,7 +32,7 @@ export class AuthenticationService {
     private readonly logger = new Logger('Authentication Service');
 
     // Determines the Entra ID (group) role for detecting who should have admin privileges.
-    private readonly adminGroupRole = 'Admin';
+    private readonly adminGroupRole = process.env.ENTRA_ADMIN_ROLE || 'Admin';
 
     constructor(
         @Inject(forwardRef(() => YouthWorkerService))

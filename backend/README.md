@@ -6,7 +6,7 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 
 ## System requirements:
 
-- NodeJS - v20 preferred
+- NodeJS - v22 preferred
 - PostgreSQL - v16 preferred
 - Docker (optional)
 
@@ -94,6 +94,7 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
 * `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
 * `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
+* `ENTRA_ADMIN_ROLE`: Determines the Entra ID (group) role for detecting who should have admin privileges.
 * `ENTRA_APP_KEY_DISCOVERY_URL`: Entra ID key (certificate) discovery URL for the application, if Entra ID is to be used. The format is: `https://login.microsoftonline.com/<TENANT ID>/discovery/keys?appid=<APP ID>`. If given, login and user management based on database data will be disabled.
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
