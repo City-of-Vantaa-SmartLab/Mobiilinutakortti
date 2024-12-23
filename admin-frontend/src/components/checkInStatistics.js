@@ -13,15 +13,24 @@ import {
     VerticalCardPadding,
     StyledDialogTitle
 } from './styledComponents/checkInLog';
+import { Typography } from '@material-ui/core';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
-// Alternative labels for mapping the genders similarly to 3rd party statistics applications.
-const genderLabel = {
-    m: 'Poika',
-    f: 'Tyttö',
-    o: 'Ei binäärinen',
-};
+const labelForGender = (genderSymbol) => {
+    switch (genderSymbol) {
+        case ('m'):
+            return "Pojat";
+        case ('f'):
+            return "Tytöt";
+        case ('o'):
+            return "Muunsukupuoliset";
+        case ('-'):
+            return "Ei halua määritellä";
+        default:
+            throw new Error("Tuntematon sukupuoli");
+    }
+}
 
 // Similar to CheckInLogView, but displays general statistics, not names.
 const CheckInStatisticsView = (props) => {
@@ -71,7 +80,7 @@ const CheckInStatisticsView = (props) => {
                         <CheckInLogCard>
                             <CheckInLogCardHeader title="Valitse päivämäärä" />
                             <CheckInLogCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" />
+                                <DateInput label="Päivämäärä" source="queryDate" defaultValue={new Date().toISOString().split('T')[0]} />
                                 <Button type="submit">Hae</Button>
                             </CheckInLogCardContentSelect>
                         </CheckInLogCard>
@@ -85,18 +94,18 @@ const CheckInStatisticsView = (props) => {
                     <CheckInLogCardContent>
                         {data.map(({ gender, count, ageRanges }) => (
                             <div key={`${gender} container`}>
-                                <StyledDialogTitle>Sukupuoli</StyledDialogTitle>
+                                <StyledDialogTitle>{labelForGender(gender)}</StyledDialogTitle>
                                 <CheckInLogTextFieldContainer>
                                     <CheckInLogTextField
                                         key={gender}
-                                        label={genderLabel[gender]}
+                                        label="Yhteensä"
                                         defaultValue={count}
                                         margin="normal"
                                         variant="filled"
                                         InputProps={{ readOnly: true }}
                                     />
                                 </CheckInLogTextFieldContainer>
-                                <StyledDialogTitle>Ikä</StyledDialogTitle>
+                                <Typography variant="subtitle1">Ikäjakaumat</Typography>
                                 <CheckInLogTextFieldContainer>
                                     {ageRanges.map(({ ageRange, count: countByAgeRange }) => (
                                         <CheckInLogTextField
@@ -109,6 +118,7 @@ const CheckInStatisticsView = (props) => {
                                         />
                                     ))}
                                 </CheckInLogTextFieldContainer>
+                                <hr />
                             </div>
                         ))}
                     </CheckInLogCardContent>

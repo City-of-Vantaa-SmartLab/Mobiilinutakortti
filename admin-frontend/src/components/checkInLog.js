@@ -86,7 +86,7 @@ const CheckInLogView = (props) => {
                         <CheckInLogCard>
                             <CheckInLogCardHeader title="Valitse päivämäärä" />
                             <CheckInLogCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" />
+                                <DateInput label="Päivämäärä" source="queryDate" defaultValue={new Date().toISOString().split('T')[0]} />
                                 <Button type="submit">Hae</Button>
                             </CheckInLogCardContentSelect>
                         </CheckInLogCard>

@@ -108,16 +108,15 @@ export class ClubService {
             }
         });
 
-        // "Not disclosed" and "other" genders are combined for statistics.
         const byGender = {
             [Gender.Female]: [],
             [Gender.Male]: [],
+            [Gender.Undisclosed]: [],
             [Gender.Other]: [],
         };
         uniqueJuniors.forEach(junior => {
             const { gender } = junior;
-            const key = gender === Gender.Undisclosed ? Gender.Other : gender;
-            byGender[key].push(junior);
+            byGender[gender].push(junior);
         });
         const byGenderAndAge = Object.entries(byGender).reduce((result, [gender, juniors]) => ({
             ...result,
