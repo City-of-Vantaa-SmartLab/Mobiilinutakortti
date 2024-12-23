@@ -36,9 +36,9 @@ const apiEndpoints = {
     base: `${appUrl}/club/`,
     list: `${appUrl}/club/list`,
     edit: `${appUrl}/club/edit`,
-    checkIn: `${appUrl}/club/check-in`,
-    logBook: `${appUrl}/club/logbook`,
-    checkIns: `${appUrl}/club/check-ins`
+    checkIn: `${appUrl}/club/checkIn`,
+    checkInStats: `${appUrl}/club/checkInStats`,
+    checkInLog: `${appUrl}/club/checkInLog`
   },
   youthWorker: {
     create: `${appUrl}/youthworker/register`,

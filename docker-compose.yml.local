@@ -16,6 +16,7 @@ services:
       AWS_SES_REGION:
       EMAIL_SOURCE:
       EMAIL_RETURN_PATH:
+      ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
       CERT_SELECTION:
       DETAILED_LOGS: true
@@ -24,18 +25,20 @@ services:
       IDP_ENTITY_ID:
       JSON_LOGS:
       JWT:
+      KOMPASSI_API_KEY:
+      KOMPASSI_API_URL:
       NODE_ENV:
       RDS_DB_NAME:
       RDS_HOSTNAME: db # In case a local postgres exists and env variable is already set.
       RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
       RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
+      SETUP_ENDPOINTS:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:
       SSO_LOGIN_URL:
       SSO_LOGOUT_URL:
-      SUPER_ADMIN_FEATURES:
       TELIA_BATCH_ENDPOINT:
       TELIA_ENDPOINT:
       TELIA_PASSWORD:
@@ -66,6 +69,7 @@ services:
     environment:
       REACT_APP_ADMIN_FRONTEND_URL: /nuorisotyontekijat
       REACT_APP_ENABLE_EXTRA_ENTRIES: true
+      REACT_APP_ENABLE_KOMPASSI_INTEGRATION: true
       REACT_APP_ENDPOINT: http://localhost:3000/api
       REACT_APP_ENTRA_CLIENT_ID:
       REACT_APP_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID

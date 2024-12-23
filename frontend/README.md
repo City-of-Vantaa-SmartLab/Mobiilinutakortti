@@ -6,7 +6,7 @@ Frontend is build using React (running on port 3000 by default).
 
 ## System Requirements:
 
-- NodeJS - v20 preferred
+- NodeJS - v22 preferred
 
 ## Running locally
 

@@ -1,7 +1,7 @@
 import { CheckIn } from '../entities';
 import { formatName } from '../../junior/junior.helper';
 
-export class LogBookCheckInsViewModel {
+export class CheckInLogViewModel {
     clubName: string;
     juniors: JuniorInformation[];
 

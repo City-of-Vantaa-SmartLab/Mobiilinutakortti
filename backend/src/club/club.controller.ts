@@ -17,8 +17,8 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { ClubEditInterceptor } from './interceptors/edit.interceptor';
 import { EditClubDto } from './dto/edit.dto';
-import { ClubViewModel, CheckInResponseViewModel, LogBookViewModel, LogBookCheckInsViewModel } from './vm';
-import { CheckInDto, LogBookDto } from './dto';
+import { ClubViewModel, CheckInResponseViewModel, CheckInStatsViewModel, CheckInLogViewModel } from './vm';
+import { CheckInDto, CheckInStatsSettingsDto } from './dto';
 import { Check, Message } from '../common/vm';
 import { CheckIn } from './entities';
 import * as content from '../content';
@@ -41,14 +41,14 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Get('check-in/:id')
+    @Get('checkIn/:id')
     @ApiBearerAuth('youthWorker')
     async getGetClubCheckins(@Param('id') clubId: number): Promise<CheckIn[]> {
         return await this.clubService.getCheckinsForClub(clubId);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @Post('check-in')
+    @Post('checkIn')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
         const alreadyCheckedIn = await this.clubService.checkIfAlreadyCheckedIn(userData.juniorId, userData.clubId);
         let check = null;
@@ -56,7 +56,7 @@ export class ClubController {
             check = new Check(false);
             return new CheckInResponseViewModel(check.result, 'Duplicate check-in');
         } else {
-            check = new Check((await this.clubService.checkInJunior(userData)));
+            check = new Check(await this.clubService.checkInJunior(userData));
         }
         return new CheckInResponseViewModel(check.result);
     }
@@ -64,12 +64,12 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Post('check-ins')
+    @Post('checkInLog')
     @ApiBearerAuth('youthWorker')
-    async getYouthClubCheckIns(@Body() logBookData: LogBookDto): Promise<LogBookCheckInsViewModel> {
-        return new LogBookCheckInsViewModel(
-            (await this.clubService.getClubById(logBookData.clubId)).name,
-            await this.clubService.getCheckins(logBookData));
+    async getYouthClubCheckIns(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInLogViewModel> {
+        return new CheckInLogViewModel(
+            (await this.clubService.getClubById(settings.clubId)).name,
+            await this.clubService.getCheckins(settings));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -94,9 +94,9 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Post('logbook')
+    @Post('checkInStats')
     @ApiBearerAuth('youthWorker')
-    async getLogBookData(@Body() logBookData: LogBookDto): Promise<LogBookViewModel> {
-        return await this.clubService.generateLogBook(logBookData);
+    async getCheckInStatistics(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInStatsViewModel> {
+        return await this.clubService.generateStats(settings);
     }
 }

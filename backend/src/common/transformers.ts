@@ -1,5 +1,5 @@
 import { ValueTransformer } from 'typeorm';
-import { sanitisePhoneNumber } from '../junior/junior.utility';
+import { sanitisePhoneNumber } from './helpers';
 
 export const lowercase: ValueTransformer = {
     to: (str: string) => str.toLocaleLowerCase(),

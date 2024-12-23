@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsDateString } from 'class-validator';
 
-export class LogBookDto {
+export class CheckInStatsSettingsDto {
 
     @IsNotEmpty()
     clubId: number;

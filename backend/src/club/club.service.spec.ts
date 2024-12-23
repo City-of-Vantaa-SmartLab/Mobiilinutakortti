@@ -11,7 +11,7 @@ import { ClubModule } from './club.module';
 import { Club, CheckIn } from './entities';
 import { RegisterJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
-import { LogBookDto } from './dto';
+import { CheckInStatsDto } from './dto';
 
 describe('ClubService', () => {
   let module: TestingModule;
@@ -131,7 +131,7 @@ describe('ClubService', () => {
 
   describe('getCheckins', () => {
     it('Should return a list of all checkins for the given club on the given date', async () => {
-      const testClubDto = { clubId: testClub.id, date: new Date().toISOString() } as LogBookDto;
+      const testClubDto = { clubId: testClub.id, date: new Date().toISOString() } as CheckInStatsDto;
       const results = await service.getCheckins(testClubDto);
       expect(results.length > 0);
     });

@@ -8,18 +8,19 @@ import {
 } from '@material-ui/core';
 import {
     Container,
-    LogBookCard,
-    LogBookCardHeader,
-    LogBookCardContent,
-    LogBookCardContentSelect,
+    CheckInLogCard,
+    CheckInLogCardHeader,
+    CheckInLogCardContent,
+    CheckInLogCardContentSelect,
     VerticalCardPadding,
-} from './styledComponents/logbook';
+} from './styledComponents/checkInLog';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 
 // "Kirjautumiset"
-// Similar to logbook view (logbook.js), but displays not statistics, but actually the names of people who have checked in.
-let LogBookListView = (props) => {
+// Similar to statistics, but displays the names of people who have checked in.
+// This is why this data is also cleared after a certain time; see "cron" from club service in backend.
+const CheckInLogView = (props) => {
     const [clubName, setClubName] = useState('');
     const [table, setTable] = useState([]);
     const [searchDate, setSearchDate] = useState('');
@@ -53,7 +54,7 @@ let LogBookListView = (props) => {
     const getCheckIns = async values => {
         const date = new Date(values.queryDate);
         if (!isNaN(date.getTime())) {
-            const url = api.youthClub.checkIns;
+            const url = api.youthClub.checkInLog;
             const body = JSON.stringify({
                 clubId: props.match.params.youthClubId,
                 date: date
@@ -82,21 +83,21 @@ let LogBookListView = (props) => {
                 onSubmit={getCheckIns}
                 render={({ handleSubmit }) => (
                     <form onSubmit={handleSubmit}>
-                        <LogBookCard>
-                            <LogBookCardHeader title="Valitse Päivämäärä" />
-                            <LogBookCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" />
+                        <CheckInLogCard>
+                            <CheckInLogCardHeader title="Valitse päivämäärä" />
+                            <CheckInLogCardContentSelect>
+                                <DateInput label="Päivämäärä" source="queryDate" defaultValue={new Date().toISOString().split('T')[0]} />
                                 <Button type="submit">Hae</Button>
-                            </LogBookCardContentSelect>
-                        </LogBookCard>
+                            </CheckInLogCardContentSelect>
+                        </CheckInLogCard>
                     </form>
                 )}
             />
             <VerticalCardPadding />
             {clubName !== '' &&
-                <LogBookCard>
-                    <LogBookCardHeader title={clubName} subheader={searchDate} />
-                    <LogBookCardContent>
+                <CheckInLogCard>
+                    <CheckInLogCardHeader title={clubName} subheader={searchDate} />
+                    <CheckInLogCardContent>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -108,11 +109,11 @@ let LogBookListView = (props) => {
                                 {table}
                             </TableBody>
                         </Table>
-                    </LogBookCardContent>
-                </LogBookCard>
+                    </CheckInLogCardContent>
+                </CheckInLogCard>
             }
         </Container>
     )
 }
 
-export default LogBookListView;
+export default CheckInLogView;

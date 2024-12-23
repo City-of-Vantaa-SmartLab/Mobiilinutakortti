@@ -1,8 +1,7 @@
-import { ExtraEntry } from 'src/extraEntry/entities/extraEntry.entity';
+import { ExtraEntry, Permit } from '../entities';
 import { Junior } from 'src/junior/entities';
 import { formatName } from 'src/junior/junior.helper';
-import { calculateAge } from 'src/utils/helpers';
-import { Permit } from '../entities/permit.entity';
+import { calculateAge } from 'src/common/helpers';
 
 export class JuniorExtraEntriesViewModel {
     age: number;

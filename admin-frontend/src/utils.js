@@ -2,8 +2,8 @@ import { GET_LIST } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 
 export const genderChoices = [
-  { id: 'm', name: 'Mies' },
-  { id: 'f', name: 'Nainen' },
+  { id: 'm', name: 'Poika' },
+  { id: 'f', name: 'Tyttö' },
   { id: 'o', name: 'Muu' },
   { id: '-', name: 'Ei halua määritellä'}
 ];

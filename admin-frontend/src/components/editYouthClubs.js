@@ -10,22 +10,35 @@ import {
   BooleanInput,
   BooleanField,
   Toolbar,
-  SaveButton
+  SaveButton,
+  NumberInput
 } from 'react-admin';
 
 const StatusHelperText = () => (
-  <p>Ei-aktiivista nuorisotilaa ei näytetä rekisteröintilomakkeella.</p>
+  <p>Nuoren rekisteröintilomakkeella näytetään vain aktiiviset nuorisotilat.</p>
 );
 
 const MessageHelperText = () => (
   <p>Tilakohtainen viesti lisätään järjestelmän lähettämien tekstiviestien loppuun. Jos tilakohtaista viestiä ei ole annettu, käytetään tekstiviestien lopussa vakiotervehdystä: Terveisin Vantaan Nuorisopalvelut</p>
 );
 
+
+const KompassiHelperText = () => (<>
+  <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
+</>);
+
 const CustomToolbar = (props) => (
   <Toolbar {...props}>
     <SaveButton disabled={props.pristine && !props.validating} />
   </Toolbar>
 );
+
+const kompassiIntegration = process.env.REACT_APP_ENABLE_KOMPASSI_INTEGRATION;
+
+// Suppress React warnings about props for non-input elements.
+const NonInput = React.memo(function NonInput({ children }) {
+  return children;
+});
 
 export const EditYouthClubsList = (props) => (
   <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
@@ -35,6 +48,7 @@ export const EditYouthClubsList = (props) => (
       <TextField label="Tilakohtainen viesti FI" source="messages.fi" />
       <TextField label="Tilakohtainen viesti EN" source="messages.en" />
       <TextField label="Tilakohtainen viesti SV" source="messages.sv" />
+      {kompassiIntegration && (<BooleanField label="Kompassi-integraatio" source="kompassiIntegration.enabled" looseValue={true} />)}
       <EditButton />
     </Datagrid>
   </List>
@@ -49,6 +63,15 @@ export const EditYouthClubs = (props) => (
       <TextInput label="Tilakohtainen viesti EN" source="messages.en" />
       <TextInput label="Tilakohtainen viesti SV" source="messages.sv" />
       <MessageHelperText />
+
+      {kompassiIntegration && (<>
+        <NonInput><br /><hr /><br /></NonInput>
+        <BooleanInput label="Kompassi-integraatio päällä" source="kompassiIntegration.enabled" defaultValue={false} />
+        <KompassiHelperText />
+        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" />
+        <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} />
+        <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} />
+      </>)}
     </SimpleForm>
   </Edit >
 );
