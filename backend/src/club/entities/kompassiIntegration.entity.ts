@@ -13,10 +13,6 @@ export class KompassiIntegration {
     @Column({ nullable: false, default: false })
     enabled: boolean;
 
-    // Kompassi organisation id. Mandatory if using Kompassi integration.
-    @Column({ nullable: true })
-    organisationId: number;
-
     // Kompassi group id. Mandatory if using Kompassi integration.
     @Column({ nullable: true })
     groupId: number;

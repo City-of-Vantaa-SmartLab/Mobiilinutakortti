@@ -1,7 +1,11 @@
 export { Activity } from './activity';
 export { ActivityType } from './activityType';
+export { AgeGroup } from './ageGroup';
 export { CheckInRequestBody } from './checkInRequestBody';
+export { Group } from './group';
+export { GroupType } from './groupType';
 export { Observation } from './observation';
+export { OnlineChannel } from './onlineChannel';
 export { OnlineParticipantCount } from './onlineParticipantCount';
 export { ParticipantCount } from './participantCount';
 export { Staff } from './staff';

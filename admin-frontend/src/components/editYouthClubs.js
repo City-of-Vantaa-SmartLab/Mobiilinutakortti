@@ -24,7 +24,7 @@ const MessageHelperText = () => (
 
 
 const KompassiHelperText = () => (<>
-  <p>Kompassi-integraatio vaatii myös oikean organisaatio-id:n ja ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
+  <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
 </>);
 
 const CustomToolbar = (props) => (
@@ -68,7 +68,6 @@ export const EditYouthClubs = (props) => (
         <NonInput><br /><hr /><br /></NonInput>
         <BooleanInput label="Kompassi-integraatio päällä" source="kompassiIntegration.enabled" defaultValue={false} />
         <KompassiHelperText />
-        <NumberInput label="Kompassi organisaatio-id" source="kompassiIntegration.organisationId" />
         <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" />
         <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} />
         <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} />

@@ -3,7 +3,7 @@ import { Club } from '../club/entities';
 import { Junior } from '../junior/entities';
 import { HttpService } from '@nestjs/axios';
 import { map, lastValueFrom } from 'rxjs';
-import { Activity, ActivityType, CheckInRequestBody } from './classes';
+import { Activity, CheckInRequestBody, Group } from './classes';
 import { calculateAge, isBetween } from '../common/helpers';
 import statisticsAgeGroups from '../common/statisticsAgeGroups';
 import genderMapping, { Gender } from '../common/genderMapping';
@@ -24,7 +24,6 @@ export class KompassiService {
         if (!KompassiService._kompassiApiUrl ||
             !KompassiService._kompassiApiKey ||
             !club.kompassiIntegration?.enabled ||
-            !club.kompassiIntegration?.organisationId ||
             !club.kompassiIntegration?.groupId) return;
 
         try {
@@ -40,10 +39,15 @@ export class KompassiService {
 
     private async getActivityForToday(club: Club): Promise<Activity> {
         KompassiService._logger.debug("Get activity for club: " + club.name);
+
+        // Get the group to get the organisation id to get the activities.
+        // NB: this could be optimized by caching the organisation id if speed seems sluggish in practice.
+        const group = await this.getGroup(club.kompassiIntegration.groupId);
+        KompassiService._logger.debug("Got group: " + group.groupId + ", organisation: " + group.organisationId);
+
         const now = new Date();
         const dateString = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
-
-        const url = `${KompassiService._kompassiApiUrl}/activities/findByOrganisation?organisationId=${club.kompassiIntegration.organisationId}&startAt=${dateString}`;
+        const url = `${KompassiService._kompassiApiUrl}/activities/findByOrganisation?organisationId=${group.organisationId}&startAt=${dateString}`;
         const headers = {
             'Content-Type': 'application/json',
             'x-api-key': KompassiService._kompassiApiKey
@@ -64,18 +68,16 @@ export class KompassiService {
         return maxId === 0 ? null : matchingActivities.find(ma => ma.activityId === maxId);
     }
 
-    private async getActivity(id: number): Promise<Activity> {
-        const url = `${KompassiService._kompassiApiUrl}/activities/${id}`;
+    private async getGroup(id: number): Promise<Group> {
+        const url = `${KompassiService._kompassiApiUrl}/groups/${id}`;
         const headers = {
             'Content-Type': 'application/json',
             'x-api-key': KompassiService._kompassiApiKey
         };
         const request = this.httpService
             .get(url, { headers })
-            .pipe(map((response) => response.data as Activity));
-        const existingActivity: Activity = await lastValueFrom(request);
-
-        return existingActivity;
+            .pipe(map((response) => response.data as Group));
+        return await lastValueFrom(request);
     }
 
     private async createActivityForToday(club: Club): Promise<number> {
@@ -101,20 +103,6 @@ export class KompassiService {
             .post(url, data, { headers })
             .pipe(map((response) => response.data));
         const { id } = await lastValueFrom(request);
-
-        // At the moment (12/2024) the API doesn't support setting activity types when creating an activity, so we set these here.
-        // NB: the PUT endpoint doesn't work at the moment.
-        // const activityTypes =  KompassiService.parseActivityTypeIds(club).map(id => {
-        //      return { activityTypeId: id } as ActivityType;
-        // });
-        // if (activityTypes.length > 0) {
-        //     const createdActivity = await this.getActivity(id);
-        //     createdActivity.activityTypes = activityTypes;
-        //     const putRequest = this.httpService
-        //         .put(url, createdActivity, { headers })
-        //         .pipe(map((response) => response.data));
-        //     await lastValueFrom(putRequest);
-        // }
 
         return id;
     }

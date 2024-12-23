@@ -30,7 +30,6 @@ export class ClubEditInterceptor implements NestInterceptor {
         if (!dataChanged && body.kompassiIntegration) {
             dataChanged ||= body.kompassiIntegration.enabled !== clubToEdit.kompassiIntegration.enabled;
             dataChanged ||= body.kompassiIntegration.activityTitle !== clubToEdit.kompassiIntegration.activityTitle;
-            dataChanged ||= body.kompassiIntegration.organisationId !== clubToEdit.kompassiIntegration.organisationId;
             dataChanged ||= body.kompassiIntegration.groupId !== clubToEdit.kompassiIntegration.groupId;
             dataChanged ||= body.kompassiIntegration.activityTypeIds !== clubToEdit.kompassiIntegration.activityTypeIds;
         }
