@@ -33,7 +33,7 @@ services:
       RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
       RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
-      SETUP_ENDPOINTS:
+      SETUP_ENDPOINTS: yes
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:

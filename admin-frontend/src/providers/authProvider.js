@@ -12,7 +12,7 @@ export const authProvider = (type, params) => {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
         };
-        return httpClient(url, options)
+        httpClient(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
                     throw new Error(response.message);

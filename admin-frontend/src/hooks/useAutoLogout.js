@@ -14,13 +14,15 @@ function useAutoLogout() {
     const youthWorkerInactiveTime = inactiveMinutes * 60000;
 
     useEffect(() => {
-        console.debug(`Setting auto logout of ${inactiveMinutes} minutes`);
         const isEntraLoginPage =
             process.env.REACT_APP_ENTRA_TENANT_ID &&
             (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI);
         if (isEntraLoginPage) {
             return;
         }
+
+        // NB: during manual logout, this message is shown even though interval is cleared immediately.
+        console.info(`Set auto logout of ${inactiveMinutes} minutes.`);
 
         let logoutUser = setInterval(async () => {
             // The hash may change due to routing, so we check these inside the interval function.

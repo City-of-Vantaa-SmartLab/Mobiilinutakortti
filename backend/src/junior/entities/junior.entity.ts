@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Length } from 'class-validator';
-import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 import { CheckIn } from '../../club/entities';
 import { ConfigHandler } from '../../configHandler';
-import { NumberTransformer } from 'src/common/helpers';
-import { ExtraEntry, Permit } from 'src/extraEntry/entities';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { ExtraEntry, Permit } from '../../extraEntry/entities';
+import { Length } from 'class-validator';
+import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 
 @Entity()
 export class Junior {
@@ -61,8 +60,7 @@ export class Junior {
     @Column({ type: 'date', default: ConfigHandler.isTest() ? new Date().toLocaleDateString() : new Date(), nullable: true })
     birthday: string;
 
-    // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
-    @Column({ type: 'character varying', transformer: new NumberTransformer(), nullable: true  })
+    @Column({ nullable: true  })
     homeYouthClub: number;
 
     @Column({ default: 'fi' })
