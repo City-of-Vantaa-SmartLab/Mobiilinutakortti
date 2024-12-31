@@ -20,6 +20,7 @@ import styled from 'styled-components';
 import { getActiveYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
 import { Container, Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import { dataProvider } from '../providers/dataProvider';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const MsgSection = styled.section`
     display: flex;
@@ -115,6 +116,8 @@ export const AnnouncementCreate = (props) => {
     const notify = useNotify();
     const redirect = useRedirect();
     const classes = useStyles();
+
+    useAutoLogout();
 
     useEffect(() => {
         const addYouthClubsToState = async () => {

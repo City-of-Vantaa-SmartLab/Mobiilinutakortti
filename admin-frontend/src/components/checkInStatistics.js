@@ -16,6 +16,7 @@ import {
 import { Typography } from '@material-ui/core';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const labelForGender = (genderSymbol) => {
     switch (genderSymbol) {
@@ -34,6 +35,8 @@ const labelForGender = (genderSymbol) => {
 
 // Similar to CheckInLogView, but displays general statistics, not names.
 const CheckInStatisticsView = (props) => {
+    useAutoLogout();
+
     const [clubName, setClubName] = useState('');
     const [data, setData] = useState([]);
     const [searchDate, setSearchDate] = useState('');

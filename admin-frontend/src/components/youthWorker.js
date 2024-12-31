@@ -16,6 +16,7 @@ import {
   SelectField
 } from 'react-admin';
 import { getYouthClubs, getActiveYouthClubs } from '../utils';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
 
@@ -28,6 +29,8 @@ export const YouthWorkerList = (props) => {
     };
     addYouthClubsToState();
   }, []);
+
+  useAutoLogout();
 
   if (youthClubs.length === 0) {
     return null
@@ -57,6 +60,8 @@ export const YouthWorkerCreate = (props) => {
     addYouthClubsToState();
   }, []);
 
+  useAutoLogout();
+
   return (
     <Create title="Rekisteröi nuorisotyöntekijä" {...props}>
       <SimpleForm variant="standard" margin="normal" redirect="list">
@@ -81,6 +86,8 @@ export const YouthWorkerEdit = (props) => {
     };
     addYouthClubsToState();
   }, []);
+
+  useAutoLogout();
 
   useEffect(() => {
     const targetNode = document;

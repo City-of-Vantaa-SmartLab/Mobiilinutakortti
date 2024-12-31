@@ -7,6 +7,7 @@ import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import { Status, statusChoices } from '../utils';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const getExpiredJuniors = () =>
   juniorProvider(
@@ -32,6 +33,8 @@ const DeleteExpiredJuniors = () => {
   const onCheckboxChange = (event) => {
     setCheckboxState(!!event.target.checked);
   };
+
+  useAutoLogout();
 
   useEffect(() => {
     const getExpiredUserCount = async () => {

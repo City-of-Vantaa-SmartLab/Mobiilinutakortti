@@ -16,11 +16,14 @@ import {
 } from './styledComponents/checkInLog';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 // "Kirjautumiset"
 // Similar to statistics, but displays the names of people who have checked in.
 // This is why this data is also cleared after a certain time; see "cron" from club service in backend.
 const CheckInLogView = (props) => {
+    useAutoLogout();
+
     const [clubName, setClubName] = useState('');
     const [table, setTable] = useState([]);
     const [searchDate, setSearchDate] = useState('');

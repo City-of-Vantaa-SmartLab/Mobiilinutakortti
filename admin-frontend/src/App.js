@@ -16,7 +16,6 @@ import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 import EntraLogin from './components/entraLoginPage';
-import useAutoLogout from './hooks/useAutoLogout';
 
 const CustomLoginPage = () =>
   !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
@@ -35,7 +34,6 @@ const App = () => {
     const { isAdmin } = useAdminPermission();
     const customRoutes = routes.concat(...isAdmin ? adminRoutes : []);
     const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
-    useAutoLogout();
 
     // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
     // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.

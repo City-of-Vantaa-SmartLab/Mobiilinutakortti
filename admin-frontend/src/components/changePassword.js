@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { SimpleForm, useNotify } from 'react-admin';
-import { TextField, Button, Toolbar } from '@material-ui/core';
+import { SimpleForm, useNotify, TextInput } from 'react-admin';
+import { Button, Toolbar } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
+import useAutoLogout from '../hooks/useAutoLogout';
 
-let ChangePasswordView = () => {
+const ChangePasswordView = () => {
+    useAutoLogout();
+
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -52,10 +55,10 @@ let ChangePasswordView = () => {
     }
 
     return (
-        <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar />} >
-            <TextField value={oldPassword} label="Vanha Salasana" type="password" onChange={(e) => setOldPassword(e.target.value)} required />
-            <TextField value={newPassword} label="Uusi Salasana" type="password" onChange={(e) => setNewPassword(e.target.value)} required />
-            <TextField value={confirmPassword} label="Vahvista uusi salasana" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required />
+        <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar />} {...{ oldpass: null, newpass: null, confirmpass: null }} >
+            <TextInput value={oldPassword} autoComplete="off" label="Vanha salasana" type="password" onChange={(e) => setOldPassword(e.target.value)} required source="oldpass"/>
+            <TextInput value={newPassword} autoComplete="off" label="Uusi salasana" type="password" onChange={(e) => setNewPassword(e.target.value)} required source="newpass"/>
+            <TextInput value={confirmPassword} autoComplete="off" label="Vahvista uusi salasana" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required source="confirmpass"/>
         </SimpleForm>
     );
 };

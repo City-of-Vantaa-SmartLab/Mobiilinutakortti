@@ -8,6 +8,7 @@ import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const NewSeason = () => {
   const notify = useNotify();
@@ -15,6 +16,8 @@ const NewSeason = () => {
   const [state, setState] = useState(STATE.INITIAL);
   const [SMSCount, setSMSCount] = useState('?');
   const [modalVisible, setModalVisible] = useState(false);
+
+  useAutoLogout();
 
   useEffect(() => {
       const querySMSCount = async () => {

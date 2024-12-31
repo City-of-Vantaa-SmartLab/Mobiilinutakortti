@@ -3,6 +3,7 @@ import { useNotify } from 'react-admin';
 import { getYouthClubs, getUserInfo, userToken } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 export const LandingPage = () => {
   const notify = useNotify();
@@ -10,6 +11,8 @@ export const LandingPage = () => {
   const dropdownRef = useRef(null);
   const userInfo = useRef(null);
   const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+
+  useAutoLogout();
 
   useEffect(() => {
     userInfo.current = getUserInfo();

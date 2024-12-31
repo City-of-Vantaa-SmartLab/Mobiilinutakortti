@@ -3,11 +3,18 @@ import { AUTH_LOGOUT } from 'react-admin';
 import { userToken } from '../utils';
 import { authProvider } from '../providers';
 
+// NB:
+// * so that page changes trigger the useEffect use auto logout in each relevant component, not just on App level
+// * useLocation could be used if it worked outside React router, but due to react-admin it's hard
+// * therefore remember to use this hook inside any relevant components.
+
 function useAutoLogout() {
     // This should be kept more or less the same as youthWorkerExpiry authentication const in backend.
-    const youthWorkerInactiveTime = 900000; // 15 minutes
+    const inactiveMinutes = 15;
+    const youthWorkerInactiveTime = inactiveMinutes * 60000;
 
     useEffect(() => {
+        console.debug(`Setting auto logout of ${inactiveMinutes} minutes`);
         const isEntraLoginPage =
             process.env.REACT_APP_ENTRA_TENANT_ID &&
             (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI);
@@ -17,6 +24,7 @@ function useAutoLogout() {
 
         let logoutUser = setInterval(async () => {
             // The hash may change due to routing, so we check these inside the interval function.
+            // We should never end up here outside a component using auto logout, this is just in case.
             const isLoggedOutPage =
                 isEntraLoginPage ||
                 window.location.hash?.includes('login') || // non-Entra ID login page
@@ -34,7 +42,7 @@ function useAutoLogout() {
             clearInterval(logoutUser);
             logoutUser = null;
         }
-    }, []);
+    }, [youthWorkerInactiveTime]);
 }
 
 export default useAutoLogout;

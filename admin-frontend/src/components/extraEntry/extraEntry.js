@@ -30,6 +30,7 @@ import { getExtraEntryTypes, statusChoices } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
+import useAutoLogout from '../../hooks/useAutoLogout';
 
 const useStyles = makeStyles({
     selectInput: {
@@ -41,6 +42,8 @@ const useStyles = makeStyles({
 export const ExtraEntryList = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
     const [permitTypeChoices, setPermitTypeChoices] = useState([]);
+
+    useAutoLogout();
 
     useEffect(() => {
         const addTypesToState = async () => {
@@ -93,6 +96,7 @@ const CustomToolbar = ({cancel, ...others}) => (
 );
 
 export const ExtraEntryEdit = (props) => {
+    useAutoLogout();
     const [newExtraEntryType, setNewExtraEntryType] = useState(-1);
     const [newPermitType, setNewPermitType] = useState(-1);
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);

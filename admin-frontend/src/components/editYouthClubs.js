@@ -13,6 +13,7 @@ import {
   SaveButton,
   NumberInput
 } from 'react-admin';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const StatusHelperText = () => (
   <p>Nuoren rekisteröintilomakkeella näytetään vain aktiiviset nuorisotilat.</p>
@@ -40,7 +41,9 @@ const NonInput = React.memo(function NonInput({ children }) {
   return children;
 });
 
-export const EditYouthClubsList = (props) => (
+export const EditYouthClubsList = (props) => {
+  useAutoLogout();
+  return (
   <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
     <Datagrid>
       <TextField label="Nimi" source="name" />
@@ -52,9 +55,11 @@ export const EditYouthClubsList = (props) => (
       <EditButton />
     </Datagrid>
   </List>
-);
+)};
 
-export const EditYouthClubs = (props) => (
+export const EditYouthClubs = (props) => {
+  useAutoLogout();
+  return (
   <Edit title="Muokkaa nuorisotilan tietoja" {...props} undoable={false}>
     <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
@@ -74,4 +79,4 @@ export const EditYouthClubs = (props) => (
       </>)}
     </SimpleForm>
   </Edit >
-);
+)};

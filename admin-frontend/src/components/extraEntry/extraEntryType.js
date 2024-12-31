@@ -12,6 +12,7 @@ import {
   NumberField,
   NumberInput
 } from 'react-admin';
+import useAutoLogout from '../../hooks/useAutoLogout';
 
 const CustomToolbar = (props) => (
   <Toolbar {...props}>
@@ -20,6 +21,7 @@ const CustomToolbar = (props) => (
 );
 
 export const ExtraEntryTypeList = (props) => {
+  useAutoLogout();
   return (
     <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
@@ -31,6 +33,7 @@ export const ExtraEntryTypeList = (props) => {
 }
 
 export const ExtraEntryTypeCreate = (props) => {
+  useAutoLogout();
   return (
     <Create title="Lisää merkintätyyppi" {...props}>
       <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>

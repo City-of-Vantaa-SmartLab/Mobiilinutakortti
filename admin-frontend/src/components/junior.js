@@ -29,7 +29,7 @@ import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
 import { ExtraEntryLink } from './styledComponents/extraEntry';
 import api from '../api';
-
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
@@ -42,6 +42,7 @@ const SMSwarning = () => (
 export const JuniorList = (props) => {
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
     const notify = useNotify();
+    useAutoLogout();
 
     const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
@@ -159,6 +160,7 @@ const DummyPhoneNumberButton = ({fieldName}) => {
 }
 
 export const JuniorCreate = (props) => {
+    useAutoLogout();
     return (
         <Create title="Rekisteröi nuori" {...props}>
             {JuniorForm('create')}
@@ -167,6 +169,7 @@ export const JuniorCreate = (props) => {
 }
 
 export const JuniorEdit = (props) => {
+    useAutoLogout();
 
     useEffect(() => {
         const targetNode = document;

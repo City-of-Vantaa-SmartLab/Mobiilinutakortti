@@ -11,6 +11,7 @@ import { checkInClubId } from '../utils';
 import ListIcon from '@material-ui/icons/List';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import CropFreeIcon from '@material-ui/icons/CropFree';
+import useAutoLogout from '../hooks/useAutoLogout';
 
 const prepareCheckIn = (id) => {
   successSound.volume = 0;
@@ -49,14 +50,16 @@ const OpenCheckInLogButton = (props) => (
   <Button variant="contained" href={`#/log/${props.record.id}`} ><ListIcon />&nbsp;Kirjautumiset</Button>
 )
 
-export const YouthClubList = (props) => (
-  <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-    <Datagrid>
-      <TextField label="Nimi" source="name" />
-      {/* <TextField label="Postinumero" source="postCode" /> */}
-      <OpenCheckInButton />
-      <OpenCheckInStatsButton />
-      <OpenCheckInLogButton />
-    </Datagrid>
-  </List>
-);
+export const YouthClubList = (props) => {
+  useAutoLogout();
+  return (
+    <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
+      <Datagrid>
+        <TextField label="Nimi" source="name" />
+        {/* <TextField label="Postinumero" source="postCode" /> */}
+        <OpenCheckInButton />
+        <OpenCheckInStatsButton />
+        <OpenCheckInLogButton />
+      </Datagrid>
+    </List>
+)};
