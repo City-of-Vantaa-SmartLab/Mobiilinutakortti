@@ -1,24 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { YouthWorkerService } from '../youthWorker/youthWorker.service';
-import { DataSource } from 'typeorm';
-import { YouthWorker, Lockout } from '../youthWorker/entities';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { repositoryMockFactory } from '../../test/Mock';
+import { AppModule } from '../app.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { JwtModule } from '@nestjs/jwt';
-import { jwt } from '../authentication/authentication.consts';
-import { JwtStrategy } from '../authentication/jwt.strategy';
-import { getTestDB } from '../../test/testdb';
-import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
-import { AppModule } from '../app.module';
-import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../youthWorker/dto';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { JuniorService } from '../junior/junior.service';
-import { JuniorModule } from '../junior/junior.module';
-import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
 import { Challenge, Junior } from '../junior/entities';
+import { DataSource } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { getTestDB } from '../../test/testdb';
+import { JuniorModule } from '../junior/junior.module';
+import { JuniorService } from '../junior/junior.service';
+import { jwt } from '../authentication/authentication.consts';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from '../authentication/jwt.strategy';
+import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../youthWorker/dto';
+import { repositoryMockFactory } from '../../test/Mock';
+import { SessionDBModule } from '../session/sessiondb.module';
 import { SmsModule } from '../sms/sms.module';
+import { Test, TestingModule } from '@nestjs/testing';
+import { YouthWorker, Lockout } from '../youthWorker/entities';
+import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
+import { YouthWorkerService } from '../youthWorker/youthWorker.service';
 
 describe('AuthenticationService', () => {
   let module: TestingModule;
@@ -50,7 +51,7 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
         secret: jwt.secret,
       })],
       providers: [YouthWorkerService, AuthenticationService, JuniorService, {
@@ -71,6 +72,7 @@ describe('AuthenticationService', () => {
     }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
+    await connection.initialize();
 
     service = module.get<AuthenticationService>(AuthenticationService);
     youthWorkerService = module.get<YouthWorkerService>(YouthWorkerService);
@@ -83,8 +85,8 @@ describe('AuthenticationService', () => {
   });
 
   afterAll(async () => {
-    await module.close();
     await connection.destroy();
+    await module.close();
   });
 
   it('should be defined', () => {

@@ -8,23 +8,23 @@ import {
     forwardRef,
     Logger
 } from '@nestjs/common';
-import { YouthWorker } from '../youthWorker/entities';
-import { Junior, Challenge } from './entities';
-import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import * as content from '../content';
+import { AuthenticationService } from '../authentication/authentication.service';
+import { ConfigHandler } from '../configHandler';
+import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
+import { Gender } from '../common/genderMapping';
+import { getFilters, obfuscate } from '../common/helpers';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Junior, Challenge } from './entities';
 import { JuniorUserViewModel, JuniorListViewModel } from './vm';
-import { validate } from 'class-validator';
-import { SmsService } from '../sms/sms.service';
 import { ListControlDto } from '../common/dto';
 import { ParentFormDto } from '../junior/dto/';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { validateParentData } from './junior.helper';
-import { getFilters, obfuscate } from '../common/helpers';
-import { ConfigHandler } from '../configHandler';
+import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
+import { SmsService } from '../sms/sms.service';
 import { Status } from './enum/status.enum';
-import { Gender } from 'src/common/genderMapping';
+import { validate } from 'class-validator';
+import { validateParentData } from './junior.helper';
+import { YouthWorker } from '../youthWorker/entities';
 
 @Injectable()
 export class JuniorService {

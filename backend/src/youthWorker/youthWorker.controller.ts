@@ -89,6 +89,7 @@ export class YouthWorkerController {
   // Do not use AuthGuard('jwt') when the user is being automatically logged out as the token might be expired.
   // Use the ApiUserGuard instead.
   @UseGuards(ApiUserGuard, RolesGuard, SessionGuard)
+  @AllowedRoles(Roles.YOUTHWORKER)
   @Get('autologout')
   @ApiBearerAuth('youthWorker')
   async autologout(@YouthWorker() youthWorkerData: { userId: string, authToken: string }): Promise<Check> {
@@ -98,7 +99,7 @@ export class YouthWorkerController {
   /**
    * A route that validates entraId login. If successful, a JWT access token is returned.
    *
-   * @returns - { access_token }
+   * @returns - JWTToken
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('loginEntraID')
@@ -113,7 +114,7 @@ export class YouthWorkerController {
    * A route that attempts to log a youth worker into the system (generating a JWT).
    *
    * @param userData - LoginYouthWorkerDto
-   * @returns - { access_token }
+   * @returns - JWTToken
    */
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('login')

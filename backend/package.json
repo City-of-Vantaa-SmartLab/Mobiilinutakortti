@@ -11,11 +11,11 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "test": "rm ./test/testdb.sql || true && cross-env NODE_ENV=test jest --runInBand && rm ./test/testdb.sql",
+    "test": "rm ./test/testdb.sql 2>/dev/null || true && cross-env NODE_ENV=test jest --runInBand && rm ./test/testdb.sql 2>/dev/null",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --runInBand && rm ./test/testdb.sql"
+    "test:e2e": "rm ./test/testdb.sql 2>/dev/null || true && cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --runInBand && rm ./test/testdb.sql 2>/dev/null"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.352.0",

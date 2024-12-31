@@ -41,3 +41,5 @@ lerna-debug.log*
 
 # Private keys.
 certs/*.pem
+
+test/testdb.sql

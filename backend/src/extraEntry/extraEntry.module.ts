@@ -5,8 +5,8 @@ import { SessionDBModule } from '../session/sessiondb.module';
 import { ExtraEntryService } from './extraEntry.service';
 import { ExtraEntryController } from './extraEntry.controller';
 import { ExtraEntry, ExtraEntryType } from './entities';
-import { Junior } from 'src/junior/entities';
-import { JuniorModule } from 'src/junior/junior.module';
+import { Junior } from '../junior/entities';
+import { JuniorModule } from '../junior/junior.module';
 import { Permit } from './entities/permit.entity';
 
 @Module({

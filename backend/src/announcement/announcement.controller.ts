@@ -7,13 +7,13 @@ import {
     Body,
     BadRequestException
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { AnnouncementData } from './classes/announcementData';
 import { AnnouncementService } from './announcement.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as content from '../content';
 import { AuthGuard } from '@nestjs/passport';
-import { Message } from 'src/common/vm';
+import { Message } from '../common/vm';
 import { Roles } from '../roles/roles.enum';
 import { RolesGuard } from '../roles/roles.guard';
 import { SessionGuard } from '../session/session.guard';

@@ -1,6 +1,6 @@
-import { Junior } from 'src/junior/entities';
 import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { ExtraEntryType } from './extraEntryType.entity';
+import { Junior } from '../../junior/entities';
 
 @Entity()
 export class ExtraEntry {

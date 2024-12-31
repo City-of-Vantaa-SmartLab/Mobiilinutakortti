@@ -61,13 +61,14 @@ describe('JuniorService', () => {
     }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
+    await connection.initialize();
 
     service = module.get<JuniorService>(JuniorService);
   });
 
   afterAll(async () => {
-    await module.close();
     await connection.destroy();
+    await module.close();
   });
 
   it('should be defined', () => {

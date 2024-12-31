@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { ClubModule } from '../club/club.module';
 import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
 import { SmsService } from './sms.service';
-import { ClubModule } from 'src/club/club.module';
 
 @Module({
   imports: [

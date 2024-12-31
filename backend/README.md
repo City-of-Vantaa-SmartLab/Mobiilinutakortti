@@ -124,11 +124,11 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 
 ## Swagger documentation
 
-Swagger documentation endpoint located at "api/swagger". The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoint only need to mark which tag it belong to and which authentication level it have. Optional comments can be added for context.
+Swagger documentation endpoint located is at `api/swagger`. The documentation is configured so that endpoints are auto generated, along with their comments. Future endpoints should be annotated for authentication level and other tags.
 
-There are 3 authentication level corespond to 3 level of user: admin, youth worker, and junior. Each level of user get access to different endpoint.
+There are 3 authentication level corresponding to 3 levels of users: admin, youth worker, and junior. Certain endpoints are only available to certain levels.
 
-Swagger documentation does not document api response. If desire api response can be documented manually in the future.
+The Swagger documentation does not document API responses.
 
 ## Tests
 

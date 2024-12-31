@@ -1,17 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { AppModule } from '../app.module';
+import { CheckInStatsSettingsDto } from './dto';
+import { Club, CheckIn } from './entities';
+import { ClubModule } from './club.module';
 import { ClubService } from './club.service';
 import { DataSource } from 'typeorm';
-import { getTestDB } from '../../test/testdb';
-import { AppModule } from '../app.module';
-import { JuniorModule } from '../junior/junior.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { repositoryMockFactory } from '../../test/Mock';
+import { getTestDB } from '../../test/testdb';
 import { Junior } from '../junior/entities';
-import { ClubModule } from './club.module';
-import { Club, CheckIn } from './entities';
-import { RegisterJuniorDto } from '../junior/dto';
+import { JuniorModule } from '../junior/junior.module';
 import { JuniorService } from '../junior/junior.service';
-import { CheckInStatsDto } from './dto';
+import { KompassiModule } from '../kompassi/kompassi.module';
+import { RegisterJuniorDto } from '../junior/dto';
+import { repositoryMockFactory } from '../../test/Mock';
+import { Test, TestingModule } from '@nestjs/testing';
 
 describe('ClubService', () => {
   let module: TestingModule;
@@ -24,7 +25,7 @@ describe('ClubService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, ClubModule],
+      imports: [AppModule, JuniorModule, ClubModule, KompassiModule],
       providers: [ClubService, {
         provide: getRepositoryToken(Club),
         useFactory: repositoryMockFactory,
@@ -131,7 +132,7 @@ describe('ClubService', () => {
 
   describe('getCheckins', () => {
     it('Should return a list of all checkins for the given club on the given date', async () => {
-      const testClubDto = { clubId: testClub.id, date: new Date().toISOString() } as CheckInStatsDto;
+      const testClubDto = { clubId: testClub.id, date: new Date().toISOString() } as CheckInStatsSettingsDto;
       const results = await service.getCheckins(testClubDto);
       expect(results.length > 0);
     });

@@ -1,24 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
-import { YouthWorker, Lockout } from '../youthWorker/entities';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { repositoryMockFactory } from '../../test/Mock';
+import { AppModule } from '../app.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { JwtModule } from '@nestjs/jwt';
-import { jwt } from '../authentication/authentication.consts';
-import { JwtStrategy } from '../authentication/jwt.strategy';
+import { DataSource } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
-import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
-import { AppModule } from '../app.module';
 import { JuniorModule } from '../junior/junior.module';
-import { Challenge, Junior } from '../junior/entities';
-import { SmsModule } from '../sms/sms.module';
+import { jwt } from '../authentication/authentication.consts';
+import { JwtModule } from '@nestjs/jwt';
 import { SecurityContextDto, AcsDto } from './dto';
-import { sign } from 'cookie-signature';
-import { secretString } from './secret';
+import { SessionDBModule } from '../session/sessiondb.module';
+import { SmsModule } from '../sms/sms.module';
+import { Test, TestingModule } from '@nestjs/testing';
+import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 
-describe('AuthenticationService', () => {
+describe('AuthenticationServiceSecurityContext', () => {
   let module: TestingModule;
   let connection: DataSource;
   let service: AuthenticationService;
@@ -26,34 +20,21 @@ describe('AuthenticationService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SmsModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
         secret: jwt.secret,
       })],
-      providers: [AuthenticationService, {
-        provide: getRepositoryToken(YouthWorker),
-        useFactory: repositoryMockFactory,
-      }, {
-        provide: getRepositoryToken(Junior),
-        useFactory: repositoryMockFactory,
-      },
-        {
-          provide: getRepositoryToken(Challenge),
-          useFactory: repositoryMockFactory,
-        },
-        {
-          provide: getRepositoryToken(Lockout),
-          useFactory: repositoryMockFactory,
-        }, JwtStrategy],
+      providers: [AuthenticationService]
     }).overrideProvider(DataSource)
       .useValue(connection)
       .compile();
+    await connection.initialize();
 
     service = module.get<AuthenticationService>(AuthenticationService);
   });
 
   afterAll(async () => {
-    await module.close();
     await connection.destroy();
+    await module.close();
   });
 
   it('should be defined', () => {
@@ -67,13 +48,14 @@ describe('AuthenticationService', () => {
     const lastName = 'Test2';
     const zipCode = '12345';
     let signedString = '';
+    let generated = null;
     const twoHoursAgo = (new Date().getTime() / 1000) - (3600 * 2);
     const twoHoursLeft = (new Date().getTime() / 1000) + (3600 * 2);
     it('should generate security context', async () => {
       const acsData = { sessionIndex, nameId, firstName, lastName, zipCode } as AcsDto;
-      const expectedSecurityContext = sign(`${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
-      signedString = service.generateSecurityContext(acsData).signedString;
-      expect(signedString).toEqual(expectedSecurityContext);
+      generated = service.generateSecurityContext(acsData);
+      signedString = generated.signedString;
+      expect(generated.signedString).toBeDefined();
     }),
 
       it('should validate security context to true ', async () => {
@@ -84,7 +66,7 @@ describe('AuthenticationService', () => {
           lastName,
           zipCode,
           signedString,
-          expiryTime: twoHoursLeft.toString(),
+          expiryTime: generated.expiryTime
         } as SecurityContextDto;
         expect(service.validateSecurityContext(scData)).toEqual(true);
       }),

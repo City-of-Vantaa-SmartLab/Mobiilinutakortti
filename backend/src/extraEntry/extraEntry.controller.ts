@@ -17,12 +17,12 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Message } from 'src/common/vm';
+import { Message } from '../common/vm';
 import { ExtraEntryService } from './extraEntry.service';
 import { CreateExtraEntryTypeDto } from './dto/createType.dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
-import { ListControlDto } from 'src/common/dto';
+import { ListControlDto } from '../common/dto';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 import { CreateExtraEntryDto } from './dto/create.dto';
 

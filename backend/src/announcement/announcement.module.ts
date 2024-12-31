@@ -1,14 +1,14 @@
-import { Module } from '@nestjs/common';
-import { AnnouncementService } from './announcement.service';
 import { AnnouncementController } from './announcement.controller';
-import { ClubModule } from 'src/club/club.module';
-import { SmsModule } from 'src/sms/sms.module';
-import { JuniorModule } from 'src/junior/junior.module';
+import { AnnouncementService } from './announcement.service';
+import { ClubModule } from '../club/club.module';
+import { EmailModule } from '../email/email.module';
+import { EmailService } from '../email/email.service';
+import { JuniorModule } from '../junior/junior.module';
+import { Module } from '@nestjs/common';
 import { RolesModule } from '../roles/roles.module';
-import { SessionModule } from '../session/session.module';
 import { SessionDBModule } from '../session/sessiondb.module';
-import { EmailModule } from 'src/email/email.module';
-import { EmailService } from 'src/email/email.service';
+import { SessionModule } from '../session/session.module';
+import { SmsModule } from '../sms/sms.module';
 
 @Module({
   imports: [

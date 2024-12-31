@@ -1,12 +1,12 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { AuthenticationService } from './authentication.service';
-import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
-import { jwt } from './authentication.consts';
-import { JwtStrategy } from './jwt.strategy';
 import { JuniorModule } from '../junior/junior.module';
+import { jwt } from './authentication.consts';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
+import { Module, forwardRef } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { SessionDBModule } from '../session/sessiondb.module';
+import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 
 @Module({
   imports: [

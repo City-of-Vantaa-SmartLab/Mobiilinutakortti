@@ -1,16 +1,16 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { ClubService } from '../club/club.service';
-import { JuniorService } from '../junior/junior.service';
-import * as content from '../content';
 import { AnnouncementData } from './classes/announcementData';
-import { SmsService } from 'src/sms/sms.service';
-import { BatchItem, TeliaBatchMessageRequest } from 'src/sms/models';
-import { SMSConfig } from 'src/sms/smsConfigHandler';
-import { EmailConfig } from 'src/email/emailConfigHandler';
 import { AnnouncementLanguageVersions } from './classes/announcementLanguageVersions';
-import { Junior } from 'src/junior/entities';
-import { EmailService } from 'src/email/email.service';
-import { EmailAnnouncement } from 'src/email/models/emailModels.model';
+import * as content from '../content';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BatchItem, TeliaBatchMessageRequest } from '../sms/models';
+import { ClubService } from '../club/club.service';
+import { EmailAnnouncement } from '../email/models/emailModels.model';
+import { EmailConfig } from '../email/emailConfigHandler';
+import { EmailService } from '../email/email.service';
+import { Junior } from '../junior/entities';
+import { JuniorService } from '../junior/junior.service';
+import { SMSConfig } from '../sms/smsConfigHandler';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class AnnouncementService {
