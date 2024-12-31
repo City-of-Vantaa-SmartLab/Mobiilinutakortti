@@ -84,14 +84,20 @@ export class KompassiService {
         KompassiService._logger.log("Create activity for club: " + club.name);
         const now = new Date();
         const dateString = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
-        const timeString = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':00';
+
+        // Opening hours:
+        // Mon-Thu 14:00-20:30
+        // Fri-Sat 15:00-22:00
+        const isWeekend = now.getDay() >= 5; // 5 == Friday, 6 == Saturday (week starts from Sunday at 0)
+        const startTime = isWeekend ? "15:00:00" : "14:00:00";
+        const endTime = isWeekend ? "22:00:00" : "20:30:00";
 
         const url = KompassiService._kompassiApiUrl + '/activities';
         const data = {
             groupId: club.kompassiIntegration.groupId,
             title: KompassiService.getActivityTitle(club, now),
-            startAt: `${dateString} ${timeString}`,
-            endAt: `${dateString} 23:00:00`,
+            startAt: `${dateString} ${startTime}`,
+            endAt: `${dateString} ${endTime}`,
             activityTypeIds: KompassiService.parseActivityTypeIds(club)
         };
         const headers = {
