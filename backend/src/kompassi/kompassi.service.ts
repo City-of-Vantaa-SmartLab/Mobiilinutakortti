@@ -31,7 +31,7 @@ export class KompassiService {
             const activityId = activity ? activity.activityId : await this.createActivityForToday(club);
             const ageGroupId = KompassiService.getAgeGroupId(junior);
             const genderId = KompassiService.getGenderId(junior);
-            this.checkInForActivity({ activityId, ageGroupId, genderId });
+            await this.checkInForActivity({ activityId, ageGroupId, genderId });
         } catch (e) {
             KompassiService._logger.error('Error during Kompassi integration: ' + e);
         }
@@ -122,7 +122,8 @@ export class KompassiService {
             'x-api-key': KompassiService._kompassiApiKey
         };
 
-        lastValueFrom(this.httpService.post(url, body, { headers }));
+        const request = this.httpService.post(url, body, { headers });
+        return lastValueFrom(request);
     }
 
     private static getGenderId(junior: Junior): number {
