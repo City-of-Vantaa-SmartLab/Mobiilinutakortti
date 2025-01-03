@@ -15,7 +15,7 @@ import {
   Edit,
   SelectField
 } from 'react-admin';
-import { getYouthClubs, getActiveYouthClubs } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
@@ -24,8 +24,8 @@ export const YouthWorkerList = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getYouthClubs();
-      setYouthClubs(parsedYouthClubs);
+      const youthClubOptions = await getYouthClubOptions();
+      setYouthClubs(youthClubOptions);
     };
     addYouthClubsToState();
   }, []);
@@ -50,12 +50,12 @@ export const YouthWorkerList = (props) => {
 }
 
 export const YouthWorkerCreate = (props) => {
-  const [youthClubChoices, setYouthClubChoices] = useState([]);
+  const [youthClubs, setYouthClubs] = useState([]);
 
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const parsedYouthClubs = await getActiveYouthClubs();
-      setYouthClubChoices(parsedYouthClubs);
+      const youthClubOptions = await getActiveYouthClubOptions();
+      setYouthClubs(youthClubOptions);
     };
     addYouthClubsToState();
   }, []);
@@ -69,7 +69,7 @@ export const YouthWorkerCreate = (props) => {
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -77,12 +77,12 @@ export const YouthWorkerCreate = (props) => {
 };
 
 export const YouthWorkerEdit = (props) => {
-  const [youthClubChoices, setYouthClubChoices] = useState([]);
+  const [youthClubs, setYouthClubs] = useState([]);
 
   useEffect(() => {
     const addYouthClubsToState = async () => {
-      const youthClubs = await getYouthClubs();
-      setYouthClubChoices(youthClubs.map(yc => {return {...yc, disabled: !yc.active}}))
+      const youthClubOptions = await getYouthClubOptions();
+      setYouthClubs(youthClubOptions.map(yc => {return {...yc, disabled: !yc.active}}))
     };
     addYouthClubsToState();
   }, []);
@@ -113,7 +113,7 @@ export const YouthWorkerEdit = (props) => {
         <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
         <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />
         {!useEntraID && (<TextInput label="Sukunimi" source="lastName" />)}
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubChoices} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >

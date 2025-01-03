@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from 'react-final-form';
 import Button from '@material-ui/core/Button';
@@ -23,7 +23,7 @@ import {
     Pagination,
     FormDataConsumer
 } from 'react-admin';
-import { getYouthClubs, getActiveYouthClubs, ageValidator, genderChoices, statusChoices, Status } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status } from '../utils';
 import { httpClientWithRefresh } from '../httpClients';
 import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
@@ -42,24 +42,37 @@ const SMSwarning = () => (
 export const JuniorList = (props) => {
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
     const notify = useNotify();
+    const autoFocusSource = useRef(null);
+    const [youthClubs, setYouthClubs] = useState([]);
+
     useAutoLogout();
 
-    const [youthClubs, setYouthClubs] = useState([]);
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const parsedYouthClubs = await getYouthClubs();
-            setYouthClubs(parsedYouthClubs);
+            const youthClubOptions = await getYouthClubOptions();
+            setYouthClubs(youthClubOptions);
         };
         addYouthClubsToState();
     }, []);
 
+    // Since React re-renders after search debounce, the input focus would always be set to the last filter input component with auto focus. Therefore we manually keep track of what was the last input the user typed in to set auto focus correctly. We use useRef and not useState to prevent re-rendering on first keypress.
+    const checkAutoFocus = (source) => {
+        if (!autoFocusSource.current) return true;
+        return autoFocusSource.current === source;
+    }
+
+    const setAutoFocus = (source) => {
+        autoFocusSource.current = source;
+    }
+
+    // The formatter for home youth club prevents unnecessary warnings before data is actually loaded.
     const JuniorFilter = (props) => (
         <Filter {...props}>
-            <TextInput label="Nimi" source="name" autoFocus />
-            <TextInput label="Nuoren puhelinnumero" source="phoneNumber" autoFocus />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" autoFocus />
-            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
-            <SelectInput label="Tila" source="status" choices={statusChoices} />
+            <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
+            <TextInput label="Nuoren puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" autoFocus={checkAutoFocus("parentsPhoneNumber")} onInput={() => setAutoFocus("parentsPhoneNumber")} />
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Tila" source="status" choices={statusChoices} onChange={() => setAutoFocus("none")} />
         </Filter>
     );
 
@@ -198,14 +211,14 @@ export const JuniorEdit = (props) => {
 
 export const JuniorForm = (formType) => {
     const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
-    const [youthClubChoices, setYouthClubChoices] = useState([]);
+    const [youthClubs, setYouthClubs] = useState([]);
     const { isAdmin } = useAdminPermission();
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const parsedYouthClubs = await getActiveYouthClubs();
-            const youthClubsWithCustomOptions = [{id: -1, name: ""}, ...parsedYouthClubs];
-            setYouthClubChoices(youthClubsWithCustomOptions);
+            const youthClubOptions = await getActiveYouthClubOptions();
+            const optionsWithNone = [{id: -1, name: ''}, ...youthClubOptions];
+            setYouthClubs(optionsWithNone);
         };
         addYouthClubsToState();
     }, []);
@@ -234,7 +247,7 @@ export const JuniorForm = (formType) => {
             <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" />
             <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" />
             {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
-            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubChoices} />
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} />
             {formType === 'create' ?
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"

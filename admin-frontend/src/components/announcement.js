@@ -17,7 +17,7 @@ import {
 } from 'react-admin';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import styled from 'styled-components';
-import { getActiveYouthClubs, messageTypeChoices, recipientChoicesForSms } from '../utils';
+import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms } from '../utils';
 import { Container, Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import { dataProvider } from '../providers/dataProvider';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -108,7 +108,7 @@ const NoBasePath = ({basePath, ...props}) => {
 };
 
 export const AnnouncementCreate = (props) => {
-    const [ youthClubChoices, setYouthClubChoices ] = useState([]);
+    const [ youthClubs, setYouthClubs ] = useState([]);
     const [ allSelected, setAllSelected ] = useState(false);
     const [ numberOfRecipients, setNumberOfRecipients ] = useState(0);
     const formDataRef = useRef(null);
@@ -121,8 +121,8 @@ export const AnnouncementCreate = (props) => {
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubs = await getActiveYouthClubs();
-            setYouthClubChoices(youthClubs);
+            const youthClubOptions = await getActiveYouthClubOptions();
+            setYouthClubs(youthClubOptions);
         };
         addYouthClubsToState();
     }, []);
@@ -187,7 +187,7 @@ export const AnnouncementCreate = (props) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
-                <SelectInput className={allSelected ? (classes.selectInput + " " + classes.hiddenInput) : classes.selectInput} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubChoices} validate={!allSelected && required()} onChange={updateRecipientCount} />
+                <SelectInput className={allSelected ? (classes.selectInput + " " + classes.hiddenInput) : classes.selectInput} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
                 <NoBasePath>
                     <div className={classes.contentSeparator}>
                         <Typography variant="caption">

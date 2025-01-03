@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getYouthClubs, getUserInfo, userToken } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, userToken } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -19,8 +19,8 @@ export const LandingPage = () => {
     const noUserToken = !localStorage.getItem(userToken) || localStorage.getItem(userToken) === 'undefined';
     if (!!userInfo.current && !noUserToken) {
       const addYouthClubsToState = async () => {
-        const parsedYouthClubs = await getYouthClubs();
-        setYouthClubs(parsedYouthClubs.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
+        const youthClubOptions = await getActiveYouthClubOptions();
+        setYouthClubs(youthClubOptions.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
 
         dropdownRef.current.value = userInfo.current?.mainYouthClubId || -1;
         setSelectedYouthClub(userInfo.current?.mainYouthClubId || -1);

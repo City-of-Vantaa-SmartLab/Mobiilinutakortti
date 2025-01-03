@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 import { MenuItem, Select } from '@material-ui/core';
@@ -42,6 +42,7 @@ const useStyles = makeStyles({
 export const ExtraEntryList = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
     const [permitTypeChoices, setPermitTypeChoices] = useState([]);
+    const autoFocusSource = useRef(null);
 
     useAutoLogout();
 
@@ -58,12 +59,22 @@ export const ExtraEntryList = (props) => {
 
     const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
 
+    // Since React re-renders after search debounce, the input focus would always be set to the last filter input component with auto focus. Therefore we manually keep track of what was the last input the user typed in to set auto focus correctly. We use useRef and not useState to prevent re-rendering on first keypress.
+    const checkAutoFocus = (source) => {
+        if (!autoFocusSource.current) return true;
+        return autoFocusSource.current === source;
+    }
+
+    const setAutoFocus = (source) => {
+        autoFocusSource.current = source;
+    }
+
     const ExtraEntryFilter = (props) => (
         <Filter {...props}>
-            <TextInput label="Nimi" source="name" autoFocus />
-            <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus />
-            <SelectInput label="Lupatyyppi" source="permitType" choices={permitTypeChoices} />
-            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} />
+            <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
+            <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
+            <SelectInput label="Lupatyyppi" source="permitType" choices={permitTypeChoices} onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} onChange={() => setAutoFocus("none")} />
         </Filter>
     );
 
