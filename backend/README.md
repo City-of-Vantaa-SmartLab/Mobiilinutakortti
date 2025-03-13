@@ -10,13 +10,6 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 - PostgreSQL - v16 preferred
 - Docker (optional)
 
-## Running with Docker
-
-In case you only wish to run the backend + database in docker, a helper script is provided.
-
-1. Run `./build_docker_backend.sh` (make the file executable first)
-2. Once the backend and database containers are up and running navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*
-
 ### Accessing the NestJS/PostgreSQL Docker container
 
 1. `docker ps` : lists docker containers running
@@ -98,13 +91,14 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `ENTRA_APP_KEY_DISCOVERY_URL`: Entra ID key (certificate) discovery URL for the application, if Entra ID is to be used. The format is: `https://login.microsoftonline.com/<TENANT ID>/discovery/keys?appid=<APP ID>`. If given, login and user management based on database data will be disabled.
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
-* `FRONTEND_BASE_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
+* `FRONTEND_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
 * `HTTP_LOG_LEVEL`: Optional. A pino logger level as string. Defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
 * `JSON_LOGS`: If evaluates to true, use JSON log format.
 * `JWT`: Secret string used for JWTs. Arbitrary.
 * `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
 * `KOMPASSI_API_URL`: URL to use for Kompassi integration.
+* `NODE_ENV`: used to check if running tests (value = 'test') or not.
 * `RDS_DB_NAME`: Amazon RDS database name.
 * `RDS_HOSTNAME`: Amazon RDS URL host part.
 * `RDS_PASSWORD`: Amazon RDS password.

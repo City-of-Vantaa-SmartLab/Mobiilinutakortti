@@ -23,4 +23,4 @@ The start script is the same as dev script, but you must set the required enviro
 ## Environment variables / secrets
 
 There's one environment variable:
-* `REACT_APP_ENDPOINT`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api"
+* `REACT_APP_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to '/api' if not set.

@@ -1,7 +1,7 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, clearUserInfo } from '../utils';
+import { userToken, setUserInfo, clearUserInfo, appUrl } from '../utils';
 
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
@@ -65,7 +65,7 @@ export const authProvider = (type, params) => {
             localStorage.removeItem('role');
             window.location.href = useEntraID ?
                 process.env.REACT_APP_ENTRA_REDIRECT_URI :
-                process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
+                appUrl + '#/login';
         };
         httpClient(url, options).then(cleanup, cleanup);
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getActiveYouthClubOptions, getUserInfo, userToken } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, userToken, appUrl } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -27,12 +27,11 @@ export const LandingPage = () => {
       };
       addYouthClubsToState();
     } else {
-      // Since the landing page is at REACT_APP_ADMIN_FRONTEND_URL,
-      // without the '#/login' the app would be in infinite loop between
-      // REACT_APP_ADMIN_FRONTEND_URL and REACT_APP_ADMIN_FRONTEND_URL#
+      // Since the landing page is at appUrl,
+      // without the '#/login', the app would be in infinite loop between appUrl and appUrl#
       //
       // If using Entra for login, the redirect URI page is the login page.
-      window.location.href = useEntraID ? process.env.REACT_APP_ENTRA_REDIRECT_URI : process.env.REACT_APP_ADMIN_FRONTEND_URL + '#/login';
+      window.location.href = useEntraID ? process.env.REACT_APP_ENTRA_REDIRECT_URI : appUrl + '#/login';
     }
   }, [useEntraID]);
 

@@ -9,7 +9,6 @@ import * as content from '../content';
 import { ConfigHandler } from '../configHandler';
 import moment = require('moment');
 
-
 @Injectable()
 export class SmsService {
 
@@ -137,7 +136,7 @@ export class SmsService {
         return content.ExpiredSmsContent[lang](
             this.getSeasonPeriod(),
             moment(expiredDate).format('DD.MM.YYYY'),
-            process.env.FRONTEND_BASE_URL ? `${process.env.FRONTEND_BASE_URL}/hae` : 'https://nutakortti.vantaa.fi/hae'
+            ConfigHandler.getFrontendUrl() + '/hae'
         )
     }
 

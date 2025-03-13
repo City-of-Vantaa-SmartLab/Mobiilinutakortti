@@ -55,7 +55,7 @@ export class ConfigHandler {
     }
 
     static getFrontendUrl(): string {
-        return process.env.FRONTEND_BASE_URL || 'http://localhost:3001';
+        return process.env.FRONTEND_URL || 'http://localhost:3001';
     }
 
     static detailedLogs() {

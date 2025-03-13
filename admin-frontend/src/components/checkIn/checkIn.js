@@ -11,7 +11,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from "../../audio/audio.js"
-import { checkInClubId, userToken } from '../../utils';
+import { checkInClubId, userToken, appUrl } from '../../utils';
 import { Button } from '@material-ui/core';
 import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
@@ -51,7 +51,7 @@ const CheckInView = (props) => {
 
   const goToLogin = () => {
     sessionStorage.removeItem(checkInClubId);
-    document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL || "/";
+    document.location.href = appUrl;
   }
 
   useEffect(() => {

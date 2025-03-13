@@ -1,6 +1,6 @@
 import { httpClient } from './';
 import api from '../api';
-import { userToken } from '../utils';
+import { userToken, appUrl } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
@@ -18,7 +18,7 @@ export const httpClientWithRefresh = async (url, options = {}, disableAuth = fal
         refreshResponse = refreshResponse.json();
         if (refreshResponse.statusCode < 200 || refreshResponse.statusCode >= 300) {
             authProvider(AUTH_LOGOUT, {});
-            document.location.href = process.env.REACT_APP_ADMIN_FRONTEND_URL;
+            document.location.href = appUrl;
             return Promise.resolve();
         } else {
             return refreshResponse;

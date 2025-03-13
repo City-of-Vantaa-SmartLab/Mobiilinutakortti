@@ -1,4 +1,4 @@
-const baseURL = process.env.REACT_APP_ENDPOINT;
+const baseURL = process.env.REACT_APP_API_URL || '/api';
 
 export const get = async (uri: string, token?: string): Promise<any> => {
     const url: string = `${baseURL}${uri}`;

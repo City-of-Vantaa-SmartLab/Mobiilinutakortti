@@ -1,6 +1,8 @@
 import { GET_LIST } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 
+export const appUrl = process.env.REACT_APP_ADMIN_URL || '/nuorisotyontekijat';
+
 export const genderChoices = [
   { id: 'm', name: 'Poika' },
   { id: 'f', name: 'Tyttö' },
