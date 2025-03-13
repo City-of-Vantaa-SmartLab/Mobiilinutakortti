@@ -35,8 +35,13 @@ export class MSALApp {
             console.error('MSALApp not initialized.');
             return;
         }
+        // The "login" prompt attempts to always force asking for credentials when signing in.
+        // This, however, depends ultimately on how Entra ID is configured.
+        // Conditional Access per application is the recommended way to control login behavior.
+        // https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-prompt-behavior
         await MSALApp.instance.loginRedirect({
-            scopes: MSALConfig.loginRequestScopes
+            scopes: MSALConfig.loginRequestScopes,
+            prompt: 'login'
         });
     }
 
