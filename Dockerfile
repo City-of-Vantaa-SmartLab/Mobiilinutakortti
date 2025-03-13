@@ -20,8 +20,10 @@ ADD ./backend /backend
 
 WORKDIR /frontend
 RUN npm ci && npm run build && cp -r ./build ../backend/public
+
 WORKDIR /admin-frontend
 RUN npm ci && npm run build && cp -r ./build ../backend/public-admin
+
 WORKDIR /backend
 RUN npm ci && npm run build
 

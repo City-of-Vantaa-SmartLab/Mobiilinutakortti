@@ -9,6 +9,8 @@ More detailed documentation is found in a README in respective directories of ea
 
 Mobiilinutarkotti by default uses local user management via database. With environment variables, a single-tenant Microsoft Entra ID login is possible. Mobiilinutakortti uses SMS service by Telia, and email service by Amazon.
 
+Note that currently the backend keeps a small "database" in-memory. Therefore it does not support multiple instances. Search for "multiple instances" to find the critical spots.
+
 ## Prerequisites
 
 - NodeJS - v22 preferred
@@ -196,6 +198,13 @@ Configure the EB CLI:
 **Deploy a new version to production:**
 * While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
 * To see how things are progressing, type: `eb events -f`
+* NB: also read the instructions in the next section (updating using a zip package)
+
+### Updating using a zip package
+
+Building Nutakortti from scratch in AWS Elastic Beanstalk sometimes takes more than the maximum limit of 10 minutes. This will result in a failed environment update, which might lead to EB being in an unstable, unusable state. If that happens, the best thing to do is just to wait for a few hours. Re-deploying using CLI only makes things worse. As the command timeout setting in AWS EB doesn't work, an alternative for quickly updating the environment is to build the packages before uploading.
+
+The script `create_eb_package.sh` accomplishes this and creates a zip file you can just upload and deploy to Elastic Beanstalk.
 
 ### Searching logs
 
