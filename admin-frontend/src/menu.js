@@ -10,6 +10,7 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import EditLocationIcon from '@material-ui/icons/EditLocation';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
 import useAdminPermission from './hooks/useAdminPermission';
 
 const MenuContainer = styled.div`
@@ -73,6 +74,12 @@ const Menu = () => {
           to="/deleteExpiredJuniors"
           primaryText="Poista vanhat käyttäjät"
           leftIcon={<DeleteIcon />}
+        />
+      }
+      {isAdmin && <MenuItemLink
+          to="/miscFunctions"
+          primaryText="Muut toiminnot"
+          leftIcon={<SettingsApplicationsIcon />}
         />
       }
     </MenuContainer>

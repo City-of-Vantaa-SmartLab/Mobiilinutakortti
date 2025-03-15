@@ -25,6 +25,8 @@ import { AnnouncementController } from './announcement/announcement.controller';
 import { ExtraEntryModule } from './extraEntry/extraEntry.module';
 import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 import { KompassiModule } from './kompassi/kompassi.module';
+import { SpamGuardModule } from './spamGuard/spamGuard.module';
+import { SpamGuardController } from './spamGuard/spamGuard.controller';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { KompassiModule } from './kompassi/kompassi.module';
     AnnouncementModule,
     ExtraEntryModule,
     KompassiModule,
+    SpamGuardModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     LoggerModule.forRoot({
@@ -50,7 +53,15 @@ import { KompassiModule } from './kompassi/kompassi.module';
     })
   ],
   providers: [AppService],
-  controllers: [AppController, YouthWorkerController, JuniorController, AuthenticationController, AnnouncementController, ExtraEntryController],
+  controllers: [
+    AppController,
+    YouthWorkerController,
+    JuniorController,
+    AuthenticationController,
+    AnnouncementController,
+    ExtraEntryController,
+    SpamGuardController
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

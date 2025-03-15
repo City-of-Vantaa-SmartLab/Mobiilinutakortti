@@ -10,6 +10,12 @@ Server side is built using NestJS (running on port 3000) and PostgreSQL as datab
 - PostgreSQL - v16 preferred
 - Docker (optional)
 
+## Multiple instances
+
+There are some services that rely on an in-memory "database". If the backend was to run as multiple instances, these services might not work correctly. If ever multiple instances are required, these services might need to be refactored to use a real database. The relevant services are:
+* src/session/sessiondb.service.ts
+* src/spamGuard/spamGuard.service.ts
+
 ### Accessing the NestJS/PostgreSQL Docker container
 
 1. `docker ps` : lists docker containers running

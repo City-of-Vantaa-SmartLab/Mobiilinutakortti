@@ -12,7 +12,7 @@ export const translations: Translations = {
     authMessages: {
       authFail: 'Login failed. Enter your phone number to get a new login link',
       linkRequestSuccess: 'A new link was sent to the number you entered',
-      linkRequestFail: 'Link sending failed, please try again',
+      linkRequestFail: 'Sending the link failed, please try again at a later time',
     }
   },
   logout: {

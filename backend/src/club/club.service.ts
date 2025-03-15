@@ -7,7 +7,7 @@ import { ClubViewModel, CheckInStatsViewModel } from './vm';
 import * as content from '../content';
 import { CheckInDto, CheckInStatsSettingsDto } from './dto';
 import { Cron } from '@nestjs/schedule';
-import { differenceInHours, sub } from 'date-fns';
+import { sub } from 'date-fns';
 import { EditClubDto } from './dto/edit.dto';
 import { KompassiService } from '../kompassi/kompassi.service';
 import { statisticsAgeGroups } from '../common/statisticsAgeGroups';
@@ -41,14 +41,6 @@ export class ClubService {
             .leftJoinAndSelect('club.kompassiIntegration', 'kompassiIntegration')
             .getMany())
             .map(club => new ClubViewModel(club));
-    }
-
-    async checkIfAlreadyCheckedIn(juniorId: string, clubId: number): Promise<boolean> {
-        const now = new Date();
-        const checkIns = await this.getCheckinsForClub(clubId);
-        return checkIns.some((checkIn) =>
-            checkIn.junior.id === juniorId && differenceInHours(now, checkIn.checkInTime) < 2
-        );
     }
 
     async getCheckinsForClub(clubId: number): Promise<CheckIn[]> {

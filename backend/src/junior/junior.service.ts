@@ -25,6 +25,7 @@ import { Status } from './enum/status.enum';
 import { validate } from 'class-validator';
 import { validateParentData } from './junior.helper';
 import { YouthWorker } from '../youthWorker/entities';
+import { SpamGuardService } from '../spamGuard/spamGuard.service';
 
 @Injectable()
 export class JuniorService {
@@ -40,6 +41,7 @@ export class JuniorService {
         @Inject(forwardRef(() => AuthenticationService))
         private readonly authenticationService: AuthenticationService,
         private readonly smsService: SmsService,
+        private readonly spamGuardService: SpamGuardService,
     ) { }
 
     public getAllJuniorsQuery(filters?: any, extraEntries?: boolean): SelectQueryBuilder<Junior> {
@@ -207,6 +209,9 @@ export class JuniorService {
     async resetLogin(phoneNumber: string): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
         if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
+            if (!this.spamGuardService.loginLink(junior.id))
+                throw new ForbiddenException(content.JuniorResetLinkThrottled);
+
             const challenge = await this.setChallenge(phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,
@@ -214,10 +219,12 @@ export class JuniorService {
                 phoneNumber: junior.phoneNumber,
                 homeYouthClub: junior.homeYouthClub,
             }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
-            return `${phoneNumber} ${content.Reset}`;
+            if (!messageSent)
+                throw new InternalServerErrorException(content.SmsServiceNotAvailable);
+            return `${phoneNumber} ${content.JuniorResetLinkSent}`;
         }
-        else throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
+        else
+            throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
     async editJunior(details: EditJuniorDto, youthWorkerUserId: string): Promise<string> {
@@ -282,7 +289,6 @@ export class JuniorService {
     }
 
     /**
-     * This method deletes the provided junior.
      * @param id the id of the user to delete.
      */
     async deleteJunior(id: string, userId?: string) {
@@ -295,7 +301,6 @@ export class JuniorService {
         return `${id} ${content.Deleted}`;
     }
 
-    // Modified to return challenge, this will be improved upon SMS intergration.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);

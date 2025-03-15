@@ -49,6 +49,9 @@ const apiEndpoints = {
     password: `${apiUrl}/youthworker/changePassword`,
     base: `${apiUrl}/youthworker/`,
     setMainYouthClub: `${apiUrl}/youthworker/setMainYouthClub`
+  },
+  spamGuard: {
+    reset:`${apiUrl}/spamguard/reset`
   }
 }
 

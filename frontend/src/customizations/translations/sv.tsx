@@ -12,7 +12,7 @@ export const translations: Translations = {
     authMessages: {
       authFail: 'Inloggningen misslyckades. Ange ditt telefonnummer för att få en ny inloggningslänk',
       linkRequestSuccess: 'En ny länk skickades till numret du angav',
-      linkRequestFail: 'Länksändningen misslyckades, försök igen',
+      linkRequestFail: 'Länksändningen misslyckades, försök igen senare',
     }
   },
   logout: {

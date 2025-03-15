@@ -10,6 +10,7 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import { ClubService } from './club.service';
+import { SpamGuardService } from '../spamGuard/spamGuard.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { SessionGuard } from '../session/session.guard';
@@ -29,7 +30,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class ClubController {
 
     constructor(
-        private readonly clubService: ClubService
+        private readonly clubService: ClubService,
+        private readonly spamGuardService: SpamGuardService
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -50,13 +52,13 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('checkIn')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
-        const alreadyCheckedIn = await this.clubService.checkIfAlreadyCheckedIn(userData.juniorId, userData.clubId);
+        const canCheckIn = this.spamGuardService.checkIn(userData.juniorId, userData.clubId);
         let check = null;
-        if (alreadyCheckedIn) {
-            check = new Check(false);
-            return new CheckInResponseViewModel(check.result, 'Duplicate check-in');
-        } else {
+        if (canCheckIn) {
             check = new Check(await this.clubService.checkInJunior(userData));
+        } else {
+            check = new Check(false);
+            return new CheckInResponseViewModel(check.result, 'Check-in not allowed at this time');
         }
         return new CheckInResponseViewModel(check.result);
     }

@@ -9,7 +9,7 @@ More detailed documentation is found in a README in respective directories of ea
 
 Mobiilinutarkotti by default uses local user management via database. With environment variables, a single-tenant Microsoft Entra ID login is possible. Mobiilinutakortti uses SMS service by Telia, and email service by Amazon.
 
-Note that currently the backend keeps a small "database" in-memory. Therefore it does not support multiple instances. Search for "multiple instances" to find the critical spots.
+Note that currently for some services the backend keeps a small in-memory "database". Therefore it does not support multiple instances. See note about multiple instances in ./backend/README.md.
 
 ## Prerequisites
 

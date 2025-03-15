@@ -6,6 +6,7 @@ import CheckInLogView from './components/checkInLog';
 import ChangePasswordView from './components/changePassword';
 import NewSeason from './components/newSeason';
 import DeleteExpiredJuniors from './components/deleteExpiredJuniors';
+import MiscFunctions from './components/miscFunctions';
 
 export const routes = [
     <Route exact path="/checkIn/:youthClubId" component={CheckInView} noLayout />,
@@ -16,5 +17,6 @@ export const routes = [
 
 export const adminRoutes = [
     <Route path="/newSeason" component={NewSeason} />,
-    <Route path="/deleteExpiredJuniors" component={DeleteExpiredJuniors} />
+    <Route path="/deleteExpiredJuniors" component={DeleteExpiredJuniors} />,
+    <Route path="/miscFunctions" component={MiscFunctions} />
 ];

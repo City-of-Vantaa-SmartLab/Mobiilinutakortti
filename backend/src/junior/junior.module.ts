@@ -9,6 +9,7 @@ import { SmsModule } from '../sms/sms.module';
 import { SessionDBModule } from '../session/sessiondb.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { SessionModule } from '../session/session.module';
     SmsModule,
     SessionDBModule,
     RolesModule,
-    SessionModule
+    SessionModule,
+    SpamGuardModule
   ],
   controllers: [JuniorController],
   providers: [JuniorService],

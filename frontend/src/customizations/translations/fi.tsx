@@ -12,7 +12,7 @@ export const translations: Translations = {
     authMessages: {
       authFail: "Kirjautuminen epäonnistui. Syötä puhelinnumerosi saadaksesi uuden kirjautumislinkin",
       linkRequestSuccess: "Uusi linkki lähetettiin syöttämääsi numeroon",
-      linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen",
+      linkRequestFail: "Linkin lähetys epäonnistui, ole hyvä ja yritä uudelleen myöhemmin",
     }
   },
   logout: {

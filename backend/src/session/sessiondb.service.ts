@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
-// NB: as this "database" is now kept only in memory, in case of multiple running backend instances, a user session should always stay on one instance, otherwise session initialized in one instance is not found on the other. So if weird unauthorized errors occur in admin-frontend and multiple instances are needed, check the load balancer configuration or make this service use a real database.
+// NB: as this "database" is now kept only in memory, in case of multiple instances for backend, it might not work as intended.
+// The point of this services is that sometimes the frontend sends multiple requests at the same time, or there might be race conditions. One of the requests might refresh the auth token, in which case the others would fail and result in a re-login. Therefore we must store multiple tokens at a time. The number, maxSessions, is arbitrary in a way: the less the more secure, as long as frontend works correctly.
 
 type Session = {
   ownerId: string
@@ -10,7 +11,6 @@ type Session = {
 
 @Injectable()
 export class SessionDBService {
-  // Sometimes the frontend sends multiple requests at the same time, or there might be race conditions. One of the requests might refresh the auth token, in which case the others would fail and result in re-login. Therefore we must store multiple tokens at a time. The number here is arbitrary in a way, the less the more secure, as long as frontend works correctly.
   private readonly maxSessions = 3;
   private readonly sessions: Session[];
   private readonly logger = new Logger('SessionDB Service');

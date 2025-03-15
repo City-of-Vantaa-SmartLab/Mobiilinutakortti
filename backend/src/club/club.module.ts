@@ -10,6 +10,7 @@ import { SessionDBModule } from '../session/sessiondb.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
 import { KompassiModule } from '../kompassi/kompassi.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { KompassiModule } from '../kompassi/kompassi.module';
     SessionDBModule,
     RolesModule,
     SessionModule,
-    KompassiModule
+    KompassiModule,
+    SpamGuardModule
   ],
   providers: [ClubService],
   controllers: [ClubController],
