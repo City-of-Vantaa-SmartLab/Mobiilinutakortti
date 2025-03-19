@@ -204,7 +204,7 @@ Configure the EB CLI:
 
 Building Nutakortti from scratch in AWS Elastic Beanstalk sometimes takes more than the maximum limit of 10 minutes. This will result in a failed environment update, which might lead to EB being in an unstable, unusable state. If that happens, the best thing to do is just to wait for a few hours. Re-deploying using CLI only makes things worse. As the command timeout setting in AWS EB doesn't work, an alternative for quickly updating the environment is to build the packages before uploading.
 
-The script `create_eb_package.sh` accomplishes this and creates a zip file you can just upload and deploy to Elastic Beanstalk.
+The script `build-and-zip.sh` accomplishes this and creates a zip file you can just upload and deploy to Elastic Beanstalk.
 
 ### Searching logs
 

@@ -1,17 +1,17 @@
 #!/usr/bin/sh
-# Create a zip package for uploading and deploying to AWS Elastic Beanstalk.
+# Build app and create a zip package for deploying, for example to AWS Elastic Beanstalk.
 #
 # Nutakortti consists of three parts: backend, frontend and admin-frontend.
-# Building each (especially admin-frontend) from scratch in AWS EB sometimes takes more than the maximum allowed command timeout.
+# Building each (especially admin-frontend) from scratch in AWS EB sometimes takes more time than the maximum allowed command timeout.
 # This will result in a failed environment update, which might lead to EB being in an unstable, unusable state.
 # If that happens, the best thing to do is to wait for a few hours. Re-deploying using CLI usually only makes things worse.
 #
-# As the command timeout setting in AWS EB doesn't seem to work, an alternative for quickly updating the environment is to build the packages before uploading.
-# The backend uses environment variables only when running, not when compiling. Therefore the backend can easily be pre-built.
-# The frontend only uses a single environment variable when compiling, with a good trivial default value. Hence the frontend can also be easily pre-built.
-# For the admin-frontend you are asked to input the correct environment variable values when running this script.
+# As the command timeout setting in AWS EB doesn't quite work, an alternative for quickly updating the environment is to build the packages before uploading.
+# The backend uses environment variables only when running, not when compiling. It's therefore trivial to pre-build.
+# When compiling, the frontend only uses a single environment variable, with a trivial default value. The frontend can also be thus easily pre-built.
+# For building the admin-frontend you are asked to input the correct environment variable values when running this script.
 #
-# This script builds everything and creates a zip file for dropping to AWS EB so that it can just launch the application with environment variables configured in AWS.
+# The zip file created by this script can be uploaded to AWS EB and it will launch the application with environment variables configured in AWS.
 
 node_version=$(node --version)
 if [ "$node_version" != "v22.12.0" ]
