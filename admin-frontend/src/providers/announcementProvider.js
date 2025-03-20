@@ -1,6 +1,6 @@
 import api from '../api';
-import { CREATE, GET_ONE, GET_LIST, HttpError } from 'react-admin';
-import { parseErrorMessages } from '../utils';
+import { CREATE, GET_ONE, GET_LIST } from 'react-admin';
+import { newHttpErrorFromResponse } from '../utils';
 
 export const announcementProvider = (type, params, httpClient) => {
     let url;
@@ -38,7 +38,7 @@ export const announcementProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     };
                     return { data: response.message }; // React admin expects data as return value
                 });
@@ -80,7 +80,7 @@ export const announcementProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     };
                     return { data: { id: '' } }; // React admin expects data as return value
                 });

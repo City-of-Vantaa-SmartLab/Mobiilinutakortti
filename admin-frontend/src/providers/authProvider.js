@@ -2,6 +2,7 @@ import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS }
 import { httpClient } from '../httpClients';
 import api from '../api';
 import { userToken, setUserInfo, clearUserInfo, appUrl } from '../utils';
+import { newHttpErrorFromResponse } from '../utils';
 
 export const authProvider = (type, params) => {
     if (type === AUTH_LOGIN) {
@@ -12,25 +13,22 @@ export const authProvider = (type, params) => {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
         };
-        httpClient(url, options)
-            .then(response => {
+        return new Promise((_, reject) => {
+            httpClient(url, options).then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
-                    throw new Error(response.message);
+                    return reject(newHttpErrorFromResponse(response));
                 }
-                return response;
+                localStorage.setItem(userToken, response.access_token);
+                httpClient(api.youthWorker.self, { method: 'GET' }).then((response) => {
+                    setUserInfo(response);
+                    // Forces recalculation of custom routes based on user role inside App.js.
+                    // This is made so that if a youth worker was logged in on the same browser that an admin now uses to log in,
+                    // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
+                    // This also works vice versa.
+                    window.location.reload();
+                });
             })
-            .then(({ access_token }) => {
-                localStorage.setItem(userToken, access_token);
-            })
-            .then(() => httpClient(api.youthWorker.self, { method: 'GET' }))
-            .then((response) => {
-                setUserInfo(response);
-                // Forces recalculation of custom routes based on user role inside App.js.
-                // This is made so that if a youth worker was logged in on the same browser that an admin now uses to log in,
-                // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
-                // This also works vice versa.
-                window.location.reload();
-            });
+        });
     }
     if (type === AUTH_ERROR) {
         const status = params.status;

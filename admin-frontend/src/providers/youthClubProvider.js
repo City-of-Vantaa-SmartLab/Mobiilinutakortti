@@ -1,6 +1,6 @@
 import api from '../api';
-import { GET_LIST, GET_ONE, HttpError, UPDATE } from 'react-admin';
-import { parseErrorMessages } from '../utils';
+import { GET_LIST, GET_ONE, UPDATE } from 'react-admin';
+import { newHttpErrorFromResponse } from '../utils';
 
 export const youthClubProvider = (type, params, httpClient) => {
     let url;
@@ -14,7 +14,7 @@ export const youthClubProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data: response.sort((a,b) => a.name.localeCompare(b.name, 'fi', { sensitivity: 'base' })), total: response.length };
                 });
@@ -27,7 +27,7 @@ export const youthClubProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data: response };
                 });
@@ -60,7 +60,7 @@ export const youthClubProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data }; // React admin expects data as return value
                 });

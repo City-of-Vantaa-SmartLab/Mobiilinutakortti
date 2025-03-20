@@ -1,4 +1,4 @@
-import { GET_LIST } from 'react-admin';
+import { GET_LIST, HttpError } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 
 export const appUrl = process.env.REACT_APP_ADMIN_URL || '/nuorisotyontekijat';
@@ -42,12 +42,14 @@ export const checkInClubId = 'checkInClubId';
 export const userToken = 'user-token';
 export const MSALAppLogoutInProgress = 'MSALAppLogoutInProgress';
 
-export const parseErrorMessages = (messageList) => {
-  if (Array.isArray(messageList) && messageList.every((elem) => elem.hasOwnProperty('constraints'))) {
-    return messageList.map(errorObj => Object.values(errorObj.constraints)[0]).join('\n')
+export const newHttpErrorFromResponse = (response) => {
+  let msg = '';
+  if (Array.isArray(response.message) && response.message.every((elem) => elem.hasOwnProperty('constraints'))) {
+    msg = response.message.map(errorObj => Object.values(errorObj.constraints)[0]).join('\n')
   } else {
-    return messageList;
+    msg = response.message;
   }
+  return new HttpError(msg, response.statusCode);
 }
 
 export const ageValidator = (value, _) => {

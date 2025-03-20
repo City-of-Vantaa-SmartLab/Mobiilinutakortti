@@ -1,6 +1,6 @@
 import api from '../api';
-import { CREATE, DELETE, GET_LIST, GET_ONE, HttpError } from 'react-admin';
-import { parseErrorMessages } from '../utils';
+import { CREATE, DELETE, GET_LIST, GET_ONE } from 'react-admin';
+import { newHttpErrorFromResponse } from '../utils';
 
 export const extraEntryProvider = (type, params, httpClient) => {
     let url;
@@ -14,7 +14,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data: response };
             });
@@ -47,7 +47,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return response;
                 });
@@ -67,7 +67,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data: { id: '', message: response.message } } // React admin expects data as return value
                 });
@@ -81,7 +81,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
             return httpClient(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw new HttpError(parseErrorMessages(response.message), response.statusCode);
+                        throw newHttpErrorFromResponse(response);
                     }
                     return { data: { id: params.id } }
                 });
