@@ -86,3 +86,9 @@ export const sanitisePhoneNumber = (phoneNumber: string): string => {
 export const isBetween = (value: number, min: number, max: number): boolean => {
     return value <= max && value >= min;
 }
+
+export const formatName = (firstName: string, lastName: string, nickName: string): string => {
+    let formattedName = `${firstName} `;
+    if (nickName && nickName.trim() !== '') { formattedName += `'${nickName}' `; }
+    return formattedName += lastName;
+}

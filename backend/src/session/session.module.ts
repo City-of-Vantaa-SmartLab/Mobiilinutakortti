@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SessionDBModule } from './sessiondb.module';
+import { SessionDBModule } from './sessionDb.module';
 import { SessionGuard } from './session.guard';
 
 @Module({

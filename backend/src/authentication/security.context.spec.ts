@@ -7,7 +7,7 @@ import { JuniorModule } from '../junior/junior.module';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityContextDto, AcsDto } from './dto';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { SmsModule } from '../sms/sms.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';

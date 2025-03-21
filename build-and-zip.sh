@@ -24,13 +24,9 @@ fi
 tmpdir=$(mktemp -d)
 mkdir $tmpdir/backend
 
-export REACT_APP_API_URL=/api
-cd frontend
-npm ci
-npm run build
-cp -r ./build $tmpdir/backend/public
-cd ..
-
+echo "Is this a <dev> or <prod> package? [dev]"
+read package_env
+[ ! "$package_env" ] && package_env=dev
 echo Enter value for: REACT_APP_ENABLE_EXTRA_ENTRIES
 read REACT_APP_ENABLE_EXTRA_ENTRIES
 export REACT_APP_ENABLE_EXTRA_ENTRIES
@@ -46,6 +42,14 @@ export REACT_APP_ENTRA_CLIENT_ID
 echo Enter value for: REACT_APP_ENTRA_REDIRECT_URI
 read REACT_APP_ENTRA_REDIRECT_URI
 export REACT_APP_ENTRA_REDIRECT_URI
+
+export REACT_APP_API_URL=/api
+cd frontend
+npm ci
+npm run build
+cp -r ./build $tmpdir/backend/public
+cd ..
+
 cd admin-frontend
 npm ci
 npm run build
@@ -61,7 +65,7 @@ cd ..
 cp docker-compose.yml $tmpdir/
 
 githash=$(git describe --always)
-zipfile=$(date +"nutakortti-app-%Y%m%d-%H%M-$githash.zip")
+zipfile=$(date +"nutakortti-app-%Y%m%d-$githash-$package_env.zip")
 
 cat > $tmpdir/Dockerfile << EOF
 FROM node:22.12.0

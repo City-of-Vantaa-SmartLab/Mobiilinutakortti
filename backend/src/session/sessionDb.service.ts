@@ -5,8 +5,8 @@ import { Cron } from '@nestjs/schedule';
 // The point of this services is that sometimes the frontend sends multiple requests at the same time, or there might be race conditions. One of the requests might refresh the auth token, in which case the others would fail and result in a re-login. Therefore we must store multiple tokens at a time. The number, maxSessions, is arbitrary in a way: the less the more secure, as long as frontend works correctly.
 
 type Session = {
-  ownerId: string
-  authTokens: string[],
+  ownerId: string,
+  authTokens: string[]
 }
 
 @Injectable()

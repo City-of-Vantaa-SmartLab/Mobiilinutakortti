@@ -6,7 +6,7 @@ import { JuniorController } from './junior.controller';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { YouthWorker } from '../youthWorker/entities';
 import { SmsModule } from '../sms/sms.module';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
 import { SpamGuardModule } from '../spamGuard/spamGuard.module';

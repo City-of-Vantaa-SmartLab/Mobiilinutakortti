@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { SessionDBService } from './sessiondb.service';
+import { SessionDBService } from './sessionDb.service';
 
 @Injectable()
 export class SessionGuard implements CanActivate {

@@ -1,7 +1,7 @@
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { Module, forwardRef } from '@nestjs/common';
 import { RolesModule } from '../roles/roles.module';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { SessionModule } from '../session/session.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { YouthWorkerController } from './youthWorker.controller';

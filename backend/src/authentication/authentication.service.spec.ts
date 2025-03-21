@@ -14,7 +14,7 @@ import { JwtStrategy } from '../authentication/jwt.strategy';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../youthWorker/dto';
 import { repositoryMockFactory } from '../../test/Mock';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { SmsModule } from '../sms/sms.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { YouthWorker, Lockout } from '../youthWorker/entities';
@@ -94,7 +94,7 @@ describe('AuthenticationService', () => {
   });
 
   describe('Login youth worker', () => {
-    it('should return a access token token if login is succseful', async () => {
+    it('should return a access token token if login is successful', async () => {
       expect((await service.loginYouthWorker(testLoginYouthWorker)).access_token).toBeDefined();
     }),
       it('should throw a Bad Request if the user does not exist', async () => {
@@ -117,7 +117,7 @@ describe('AuthenticationService', () => {
           expect(e.response === error.getResponse());
         }
       }),
-      it('An incorrect login should create a lockout entry; however, loging in succesfully should clear it.', async () => {
+      it('An incorrect login should create a lockout entry; however, logging in succesfully should clear it.', async () => {
         const newTestYouthWorker = {
           email: 'Authentication2@service.test', firstName: 'Forgets',
           lastName: 'Alot', password: 'Password', isAdmin: false,
@@ -157,8 +157,8 @@ describe('AuthenticationService', () => {
       });
   });
 
-  describe('Login Youth', () => {
-    it('should return a access token token if login is succseful', async () => {
+  describe('Login junior', () => {
+    it('should return a access token token if login is successful', async () => {
       expect((await service.loginJunior(testLoginJunior)).access_token).toBeDefined();
     }),
       it('should throw an error if the challenge provided has alread been used', async () => {

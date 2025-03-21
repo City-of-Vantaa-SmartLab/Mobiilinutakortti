@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import Measure from 'react-measure'
 import { useTranslations } from "../translations";
 import { Status } from '../../types/userTypes';
@@ -13,6 +13,11 @@ const QRWrapper = styled.section`
 `
 
 const QRContainer = styled.div<{ active: boolean }>`
+    padding: 3rem 0;
+    transform: translateX(-50%);
+    left: 50%;
+    position: relative;
+    margin-top: 10px;
     width: 100%;
     max-width: 70vh;
     background: ${p => p.theme.pages.qr.qrBorder};
@@ -24,11 +29,6 @@ const QRContainer = styled.div<{ active: boolean }>`
     transition: opacity 0.2s ease-in;
     & > * {
         flex: 1 100%;
-    }
-    &:before {
-        padding-top: 100%;
-        content: "";
-        display: block;
     }
     & > canvas {
 
@@ -42,11 +42,14 @@ const QRContainer = styled.div<{ active: boolean }>`
 `;
 
 const QRStatusContainer = styled.span<{ expired: boolean}>`
+    transform: translateX(-50%);
+    left: 50%;
+    position: relative;
     margin-top: 10px;
     width: 100%;
-    max-width: 70vh; 
-    font-family: sans-serif; 
-    font-size: 2em;  
+    max-width: 70vh;
+    font-family: sans-serif;
+    font-size: 2em;
     text-transform: uppercase;
     color: '#000000';
     background-color: ${(props) => (props.expired ? '#f7423a' : '#6bc24a')};
@@ -74,13 +77,13 @@ const QR: React.FC<QRProps> = (props) => {
             {({ measureRef }) => (
             <QRWrapper>
                 <QRContainer ref={measureRef} active={props.id !== ''}>
-                    <QRCode value={props.id} includeMargin={true} size={size}/>
+                    <QRCodeSVG value={props.id} marginSize={4} size={size}/>
                 </QRContainer>
                 <QRStatusContainer expired={props.status === Status.expired}>
                     {statusMessage}
                 </QRStatusContainer>
             </QRWrapper>
-            )}      
+            )}
         </Measure>
     );
 }

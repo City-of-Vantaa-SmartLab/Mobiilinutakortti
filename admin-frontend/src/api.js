@@ -5,7 +5,7 @@ const apiEndpoints = {
     create: `${apiUrl}/junior/register`,
     edit: `${apiUrl}/junior/edit`,
     list: `${apiUrl}/junior/list`,
-    reset: `${apiUrl}/junior/reset`,
+    loginLink: `${apiUrl}/junior/loginLinkByAdmin`,
     base: `${apiUrl}/junior/`,
     dummynumber: `${apiUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${apiUrl}/junior/newSeason`,

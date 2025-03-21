@@ -13,10 +13,13 @@ import { KompassiModule } from '../kompassi/kompassi.module';
 import { RegisterJuniorDto } from '../junior/dto';
 import { repositoryMockFactory } from '../../test/Mock';
 import { Test, TestingModule } from '@nestjs/testing';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
+import { SpamGuardService } from '../spamGuard/spamGuard.service';
 
 describe('ClubService', () => {
   let module: TestingModule;
   let service: ClubService;
+  let spamGuardService: SpamGuardService;
   let connection: DataSource;
   let juniorService: JuniorService;
   const testJuniors: Junior[] = [];
@@ -25,7 +28,7 @@ describe('ClubService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, ClubModule, KompassiModule],
+      imports: [AppModule, JuniorModule, ClubModule, KompassiModule, SpamGuardModule],
       providers: [ClubService, {
         provide: getRepositoryToken(Club),
         useFactory: repositoryMockFactory,
@@ -79,6 +82,7 @@ describe('ClubService', () => {
 
     juniorService = module.get<JuniorService>(JuniorService);
     service = module.get<ClubService>(ClubService);
+    spamGuardService = module.get<SpamGuardService>(SpamGuardService);
     await juniorService.registerJunior(testRegisterYouth);
     await juniorService.registerJunior(testRegisterYouth2);
     await juniorService.registerJunior(testRegisterYouth3);
@@ -101,28 +105,28 @@ describe('ClubService', () => {
   // If you change junior used in this test, do same to test below, they are chained
   describe('CheckInJunior', () => {
     it('Should return true when successful', async () => {
-      const result = await service.checkInJunior({ juniorId: testJuniors[0].id, clubId: testClub.id });
+      const result = await service.checkInJunior({ juniorId: testJuniors[0].id, clubId: testClub.id, securityCode: null });
       expect(result).toBeTruthy();
     });
   });
 
   describe('CheckInJuniorDuplicate', () => {
-    it('Should return true when trying to check same junior again', async () => {
-      const result = await service.checkIfAlreadyCheckedIn(testJuniors[0].id, testClub.id);
-      expect(result).toBeTruthy();
-    });
-  });
-
-  describe('CheckInJuniorDuplicate', () => {
-    it('Should return false when trying to check new junior', async () => {
-      const result = await service.checkIfAlreadyCheckedIn(testJuniors[1].id, testClub.id);
+    it('Should return false when trying to check same junior again', async () => {
+      const result = spamGuardService.checkIn(testJuniors[0].id, testClub.id);
       expect(result).toBeFalsy();
+    });
+  });
+
+  describe('CheckInJuniorNotDuplicate', () => {
+    it('Should return true when trying to check new junior', async () => {
+      const result = spamGuardService.checkIn(testJuniors[1].id, testClub.id);
+      expect(result).toBeTruthy();
     });
   });
 
   describe('getCheckinsForClub', () => {
     it('Should return a list of all juniors who have checked in at the current club', async () => {
-      await service.checkInJunior({ juniorId: testJuniors[1].id, clubId: testClub.id });
+      await service.checkInJunior({ juniorId: testJuniors[1].id, clubId: testClub.id, securityCode: null });
       const checkIns = await service.getCheckinsForClub(testClub.id);
       const containsJunior1 = checkIns.some(c => c.junior.id === testJuniors[0].id && c.club.id === testClub.id);
       const containsJunior2 = checkIns.some(c => c.junior.id === testJuniors[1].id && c.club.id === testClub.id);

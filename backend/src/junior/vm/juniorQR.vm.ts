@@ -1,5 +1,4 @@
 import { Junior } from '../entities';
-import { formatName } from '../junior.helper';
 
 export class JuniorQRViewModel {
     id: string;
@@ -8,7 +7,7 @@ export class JuniorQRViewModel {
 
     constructor(junior: Junior) {
         this.id = junior.id;
-        this.name = formatName(junior.firstName, junior.lastName, junior.nickName);
+        this.name = junior.nickName ?? junior.firstName;
         this.status = junior.status;
     }
 }

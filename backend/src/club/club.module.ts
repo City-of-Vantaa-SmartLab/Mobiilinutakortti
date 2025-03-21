@@ -6,7 +6,7 @@ import { Club, CheckIn } from './entities';
 import { ClubController } from './club.controller';
 import { jwt } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { RolesModule } from '../roles/roles.module';
 import { SessionModule } from '../session/session.module';
 import { KompassiModule } from '../kompassi/kompassi.module';

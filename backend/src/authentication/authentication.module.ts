@@ -4,7 +4,7 @@ import { jwt } from './authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { Module, forwardRef } from '@nestjs/common';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 
 @Module({

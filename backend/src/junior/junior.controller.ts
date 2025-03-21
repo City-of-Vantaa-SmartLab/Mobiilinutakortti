@@ -71,9 +71,18 @@ export class JuniorController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
-    @Post('reset')
-    async resetLogin(@Body(ResetPhoneNumberValidationPipe) userData: ResetJuniorDto): Promise<Message> {
-        return new Message(await this.juniorService.resetLogin(userData.phoneNumber));
+    @Post('loginLink')
+    async requestLoginLink(@Body(ResetPhoneNumberValidationPipe) userData: ResetJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.requestLoginLink(userData.phoneNumber));
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Post('loginLinkByAdmin')
+    @ApiBearerAuth('youthWorker')
+    async requestLoginLinkByAdmin(@YouthWorker() youthWorker: { userId: string }, @Body(ResetPhoneNumberValidationPipe) userData: ResetJuniorDto): Promise<Message> {
+        return new Message(await this.juniorService.requestLoginLink(userData.phoneNumber, youthWorker.userId, true));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

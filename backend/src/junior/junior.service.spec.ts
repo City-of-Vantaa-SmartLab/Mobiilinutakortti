@@ -13,6 +13,7 @@ import { ConflictException } from '@nestjs/common';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto } from './dto';
 import { Challenge, Junior } from './entities';
 import { SmsModule } from '../sms/sms.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 
 describe('JuniorService', () => {
   let module: TestingModule;
@@ -46,7 +47,7 @@ describe('JuniorService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AppModule, JuniorModule, YouthWorkerModule, AuthenticationModule, SmsModule ],
+      imports: [AppModule, JuniorModule, YouthWorkerModule, AuthenticationModule, SmsModule, SpamGuardModule ],
       providers: [JuniorService, {
         provide: getRepositoryToken(YouthWorker),
         useFactory: repositoryMockFactory,

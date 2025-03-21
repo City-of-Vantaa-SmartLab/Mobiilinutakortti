@@ -1,5 +1,5 @@
 import { Junior } from '../entities';
-import { formatName } from '../junior.helper';
+import { formatName } from '../../common/helpers';
 
 export class JuniorUserViewModel {
     id: string;

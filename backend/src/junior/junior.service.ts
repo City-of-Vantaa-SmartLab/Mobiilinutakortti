@@ -23,7 +23,6 @@ import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
 import { SmsService } from '../sms/sms.service';
 import { Status } from './enum/status.enum';
 import { validate } from 'class-validator';
-import { validateParentData } from './junior.helper';
 import { YouthWorker } from '../youthWorker/entities';
 import { SpamGuardService } from '../spamGuard/spamGuard.service';
 
@@ -104,9 +103,9 @@ export class JuniorService {
 
     async registerByParent(formData: ParentFormDto): Promise<string> {
         const { userData, securityContext } = formData;
-        if (this.authenticationService.validateSecurityContext(securityContext) && validateParentData(userData.parentsName, securityContext)) {
-            return await this.registerJunior(userData);
-        }
+        const nameMatches = userData.parentsName === `${securityContext.firstName} ${securityContext.lastName}`;
+        if (!nameMatches) this.logger.warn(`Parent's name doesn't match for ${obfuscate(userData.parentsName)}`);
+        if (nameMatches && this.authenticationService.validateSecurityContext(securityContext)) return await this.registerJunior(userData);
         throw new InternalServerErrorException(content.SecurityContextNotValid);
     }
 
@@ -206,10 +205,16 @@ export class JuniorService {
         return renew ? content.Renew(registrationData.phoneNumber) : content.Created(registrationData.phoneNumber);
     }
 
-    async resetLogin(phoneNumber: string): Promise<string> {
+    async requestLoginLink(phoneNumber: string, userId?: string, noSpamGuard: boolean = false): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ phoneNumber });
         if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
-            if (!this.spamGuardService.loginLink(junior.id))
+            if (userId && ConfigHandler.detailedLogs()) {
+                this.logger.log({ userId, juniorId: junior.id }, 'Requested SMS login link for junior');
+            } else {
+                this.logger.log('Requested SMS login link for: xxxxxx' + junior.phoneNumber.slice(-4));
+            }
+
+            if (!noSpamGuard && !this.spamGuardService.loginLink(junior.id))
                 throw new ForbiddenException(content.JuniorResetLinkThrottled);
 
             const challenge = await this.setChallenge(phoneNumber);

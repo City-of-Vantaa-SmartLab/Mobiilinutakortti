@@ -55,7 +55,7 @@ function* auth(action: AuthAttempt): Generator<any, any, any> {
 
 function* requestLink(action: LinkRequest) {
     try {
-        yield call(post, '/junior/reset', action.payload);
+        yield call(post, '/junior/loginLink', action.payload);
         yield put({ type: authTypes.LINK_REQUEST_SUCCESS });
     } catch (error) {
         yield put({ type: authTypes.LINK_REQUEST_FAIL });

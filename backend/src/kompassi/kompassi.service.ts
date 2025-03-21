@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { Club } from '../club/entities';
 import { Junior } from '../junior/entities';
 import { HttpService } from '@nestjs/axios';
@@ -8,49 +9,96 @@ import { calculateAge, isBetween } from '../common/helpers';
 import statisticsAgeGroups from '../common/statisticsAgeGroups';
 import genderMapping, { Gender } from '../common/genderMapping';
 
+type KompassiActivity = {
+  clubId: number,
+  kompassiActivityId: number | null,
+  pendingCreation: boolean
+}
+
 @Injectable()
 export class KompassiService {
 
-    private static readonly _kompassiApiKey = process.env.KOMPASSI_API_KEY;
-    private static readonly _kompassiApiUrl = process.env.KOMPASSI_API_URL;
+    private readonly kompassiApiKey = process.env.KOMPASSI_API_KEY;
+    private readonly kompassiApiUrl = process.env.KOMPASSI_API_URL;
+    private readonly logger = new Logger('Kompassi Service');
 
-    private static readonly _logger = new Logger('Kompassi Service');
+    // NB: as this "database" is now kept only in memory, in case of multiple instances for backend, it might not work as intended.
+    // The point of this database is to keep tab on Kompassi activities ("toiminta", such as "Nuorisotilan vapaa toiminta -ilta") so that there would be:
+    // * no race condition when multiple people check-in very quickly and a Kompassi activities needs to be created
+    // * less API traffic to Kompassi
+    // * faster overall performance and less resources used
+    private readonly activities: KompassiActivity[];
 
     constructor(
         private readonly httpService: HttpService
-    ) { }
+    ) {
+        this.activities = [];
+    }
 
-    async updateKompassiData(junior: Junior, club: Club) {
-        if (!KompassiService._kompassiApiUrl ||
-            !KompassiService._kompassiApiKey ||
+    // Clear activities every night at 4 AM.
+    @Cron('0 4 * * *')
+    reset(): void {
+        this.activities.splice(0, this.activities.length);
+        this.logger.log('Cleared activities DB.');
+    }
+
+    async updateKompassiData(junior: Junior, club: Club, numberOfRetries: number = 0) {
+        if (!this.kompassiApiUrl ||
+            !this.kompassiApiKey ||
             !club.kompassiIntegration?.enabled ||
             !club.kompassiIntegration?.groupId) return;
 
         try {
-            const activity = await this.getActivityForToday(club);
-            const activityId = activity ? activity.activityId : await this.createActivityForToday(club);
+            let activityId: number = 0;
+            const activityInDB = this.activities.find(a => a.clubId == club.id);
+            if (!activityInDB) {
+                // This prevents another async call from creating a new activity via API.
+                this.activities.push({clubId: club.id, kompassiActivityId: null, pendingCreation: true});
+
+                const activityFromAPI = await this.getActivityForTodayFromAPI(club);
+                activityId = activityFromAPI ? activityFromAPI.activityId : await this.createActivityForToday(club);
+
+                // Release waiting in possible other parallel async calls.
+                const pendingActivity = this.activities.find(a => a.clubId == club.id);
+                pendingActivity.kompassiActivityId = activityId;
+                pendingActivity.pendingCreation = false;
+            } else if (activityInDB.pendingCreation) {
+                // Wait for the first parallel async call to finish fetching/creating activity via API.
+                // Try 6 times at max, so 6*10 seconds in total until giving up.
+                // The longest delay seen when creating activity, with network and API lagging, is around 30 seconds.
+                if (numberOfRetries == 6) throw new Error('Failed to find activity after waiting.');
+                this.logger.verbose(`Waiting for pending activity for club ${club.id}.`);
+                numberOfRetries++;
+                setTimeout(() => this.updateKompassiData(junior, club, numberOfRetries), 10000);
+                return;
+            } else {
+                if (activityInDB.kompassiActivityId == null) throw new Error('Null activity id.');
+                activityId = activityInDB.kompassiActivityId;
+                this.logger.debug(`Found club ${club.id} activity from in-memory DB` + ((numberOfRetries > 0) ? ` after ${numberOfRetries} retries.` : '.'));
+            }
+
             const ageGroupId = KompassiService.getAgeGroupId(junior);
             const genderId = KompassiService.getGenderId(junior);
             await this.checkInForActivity({ activityId, ageGroupId, genderId });
         } catch (e) {
-            KompassiService._logger.error('Error during Kompassi integration: ' + e);
+            this.logger.error('Error during Kompassi integration: ' + e);
         }
     }
 
-    private async getActivityForToday(club: Club): Promise<Activity> {
-        KompassiService._logger.debug("Get activity for club: " + club.name);
+    private async getActivityForTodayFromAPI(club: Club): Promise<Activity> {
+        this.logger.debug('Get activity for club: ' + club.name);
 
         // Get the group to get the organisation id to get the activities.
         // NB: this could be optimized by caching the organisation id if speed seems sluggish in practice.
         const group = await this.getGroup(club.kompassiIntegration.groupId);
-        KompassiService._logger.debug("Got group: " + group.groupId + ", organisation: " + group.organisationId);
+        this.logger.debug('Got group: ' + group.groupId + ', organisation: ' + group.organisationId);
 
         const now = new Date();
         const dateString = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
-        const url = `${KompassiService._kompassiApiUrl}/activities/findByOrganisation?organisationId=${group.organisationId}&startAt=${dateString}`;
+        const url = `${this.kompassiApiUrl}/activities/findByOrganisation?organisationId=${group.organisationId}&startAt=${dateString}`;
         const headers = {
             'Content-Type': 'application/json',
-            'x-api-key': KompassiService._kompassiApiKey
+            'x-api-key': this.kompassiApiKey
         };
         const request = this.httpService
             .get(url, { headers })
@@ -69,10 +117,10 @@ export class KompassiService {
     }
 
     private async getGroup(id: number): Promise<Group> {
-        const url = `${KompassiService._kompassiApiUrl}/groups/${id}`;
+        const url = `${this.kompassiApiUrl}/groups/${id}`;
         const headers = {
             'Content-Type': 'application/json',
-            'x-api-key': KompassiService._kompassiApiKey
+            'x-api-key': this.kompassiApiKey
         };
         const request = this.httpService
             .get(url, { headers })
@@ -81,7 +129,7 @@ export class KompassiService {
     }
 
     private async createActivityForToday(club: Club): Promise<number> {
-        KompassiService._logger.log("Create activity for club: " + club.name);
+        this.logger.log('Create activity for club: ' + club.name);
         const now = new Date();
         const dateString = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 
@@ -89,10 +137,10 @@ export class KompassiService {
         // Mon-Thu 14:00-20:30
         // Fri-Sat 15:00-22:00
         const isWeekend = now.getDay() >= 5; // 5 == Friday, 6 == Saturday (week starts from Sunday at 0)
-        const startTime = isWeekend ? "15:00:00" : "14:00:00";
-        const endTime = isWeekend ? "22:00:00" : "20:30:00";
+        const startTime = isWeekend ? '15:00:00' : '14:00:00';
+        const endTime = isWeekend ? '22:00:00' : '20:30:00';
 
-        const url = KompassiService._kompassiApiUrl + '/activities';
+        const url = this.kompassiApiUrl + '/activities';
         const data = {
             groupId: club.kompassiIntegration.groupId,
             title: KompassiService.getActivityTitle(club, now),
@@ -102,7 +150,7 @@ export class KompassiService {
         };
         const headers = {
             'Content-Type': 'application/json',
-            'x-api-key': KompassiService._kompassiApiKey
+            'x-api-key': this.kompassiApiKey
         };
 
         const request = this.httpService
@@ -114,12 +162,12 @@ export class KompassiService {
     }
 
     private async checkInForActivity(body: CheckInRequestBody) {
-        KompassiService._logger.log("Check-in for activity: " + body.activityId);
+        this.logger.log('Check-in for activity: ' + body.activityId);
 
-        const url = KompassiService._kompassiApiUrl + '/check-in';
+        const url = this.kompassiApiUrl + '/check-in';
         const headers = {
             'Content-Type': 'application/json',
-            'x-api-key': KompassiService._kompassiApiKey
+            'x-api-key': this.kompassiApiKey
         };
 
         const request = this.httpService.post(url, body, { headers });
@@ -130,7 +178,7 @@ export class KompassiService {
         const gender: Gender = junior.gender as Gender;
         const genderId = genderMapping.find(m => m.nutakortti === gender)?.kompassiGenderId ?? 0;
         if (genderId > 0) return genderId;
-        throw new Error("Unknown gender.");
+        throw new Error('Unknown gender.');
     }
 
     private static getAgeGroupId(junior: Junior): number {
@@ -142,7 +190,7 @@ export class KompassiService {
         });
 
         if (ageGroupId > 0) return ageGroupId;
-        throw new Error("Invalid age: " + age);
+        throw new Error('Invalid age: ' + age);
     }
 
     /*

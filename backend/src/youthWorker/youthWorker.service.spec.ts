@@ -11,7 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { RegisterYouthWorkerDto, EditYouthWorkerDto } from './dto';
 import { repositoryMockFactory } from '../../test/Mock';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { SessionModule } from '../session/session.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -73,8 +73,8 @@ describe('YouthWorkerService', () => {
         response.firstName === testUser.firstName &&
         response.lastName === testUser.lastName).toBeTruthy();
     }),
-      it('Should return undefined if the user does not exist', async () => {
-        expect(await service.getYouthWorkerByEmail('Bob')).toBe(undefined);
+      it('Should return null if the user does not exist', async () => {
+        expect(await service.getYouthWorkerByEmail('Bob')).toBe(null);
       });
   });
 

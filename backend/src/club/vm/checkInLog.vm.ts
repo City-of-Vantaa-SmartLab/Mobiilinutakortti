@@ -1,5 +1,5 @@
 import { CheckIn } from '../entities';
-import { formatName } from '../../junior/junior.helper';
+import { formatName } from '../../common/helpers';
 
 export class CheckInLogViewModel {
     clubName: string;

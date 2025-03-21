@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RolesModule } from '../roles/roles.module';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { ExtraEntryService } from './extraEntry.service';
 import { ExtraEntryController } from './extraEntry.controller';
 import { ExtraEntry, ExtraEntryType } from './entities';

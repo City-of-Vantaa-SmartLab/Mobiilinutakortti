@@ -26,12 +26,11 @@ export class SmsService {
         const checkRegisterJuniorCalls = new Error().stack.split("at ")[2].includes("registerJunior");
 
         if (!settings) {
-            if (checkRegisterJuniorCalls) {
-                throw new InternalServerErrorException(content.SMSNotAvailableButUserCreated);
-            }
-            else {
-                throw new InternalServerErrorException(content.SmsServiceNotAvailable);
-            }
+            throw new InternalServerErrorException(
+                checkRegisterJuniorCalls ?
+                content.SMSNotAvailableButUserCreated :
+                content.SmsServiceNotAvailable
+            );
         }
 
         const message = await this.getRegisteredMessage(recipient.lang, challenge, recipient.homeYouthClub);
@@ -40,6 +39,7 @@ export class SmsService {
             username: settings.username, password: settings.password,
             from: settings.user, to: [recipient.phoneNumber], message,
         } as TeliaMessageRequest;
+
         const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
         if (attemptMessage) {
             return true;

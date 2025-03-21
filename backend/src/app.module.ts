@@ -11,6 +11,7 @@ import { JuniorController } from './junior/junior.controller';
 import { AppService } from './app.service';
 import { RolesModule } from './roles/roles.module';
 import { SessionModule } from './session/session.module';
+import { SessionDBModule } from './session/sessionDb.module';
 import { ClubModule } from './club/club.module';
 import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
@@ -18,15 +19,14 @@ import { ConfigModule } from '@nestjs/config';
 import { SsoModule } from './sso/sso.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ScheduleModule } from '@nestjs/schedule';
-import { SessionDBModule } from './session/sessiondb.module';
 import { AnnouncementModule } from './announcement/announcement.module';
-import pino from 'pino';
 import { AnnouncementController } from './announcement/announcement.controller';
 import { ExtraEntryModule } from './extraEntry/extraEntry.module';
 import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 import { KompassiModule } from './kompassi/kompassi.module';
 import { SpamGuardModule } from './spamGuard/spamGuard.module';
 import { SpamGuardController } from './spamGuard/spamGuard.controller';
+import pino from 'pino';
 
 @Module({
   imports: [
@@ -36,10 +36,10 @@ import { SpamGuardController } from './spamGuard/spamGuard.controller';
     AuthenticationModule,
     RolesModule,
     SessionModule,
+    SessionDBModule,
     ClubModule,
     SmsModule,
     SsoModule,
-    SessionDBModule,
     AnnouncementModule,
     ExtraEntryModule,
     KompassiModule,

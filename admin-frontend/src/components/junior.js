@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useForm } from 'react-final-form';
 import Button from '@material-ui/core/Button';
-import QRCode from 'qrcode.react'
+import { QRCodeSVG } from 'qrcode.react'
 import {
     List,
     Datagrid,
@@ -84,7 +84,7 @@ export const JuniorList = (props) => {
 
     const QRCodeWithStatusMessage = ({ status, id }) => (
         <div style={status === Status.expired ? expiredQrCodeStyle : validQrCodeStyle}>
-            <QRCode value={id} includeMargin={true} size={400} />
+            <QRCodeSVG value={id} marginSize={4} size={400} />
             <span style={qrCodeMessageStyle}>
                 {status === Status.expired ? 'Edellinen kausi' : 'Kuluva kausi'}
             </span>
@@ -116,7 +116,7 @@ export const JuniorList = (props) => {
 
 
     const resendSMS = async (phoneNumber) => {
-        const url = api.junior.reset;
+        const url = api.junior.loginLink;
         const body = JSON.stringify({
             phoneNumber
         });

@@ -6,7 +6,7 @@ import { EmailService } from '../email/email.service';
 import { JuniorModule } from '../junior/junior.module';
 import { Module } from '@nestjs/common';
 import { RolesModule } from '../roles/roles.module';
-import { SessionDBModule } from '../session/sessiondb.module';
+import { SessionDBModule } from '../session/sessionDb.module';
 import { SessionModule } from '../session/session.module';
 import { SmsModule } from '../sms/sms.module';
 

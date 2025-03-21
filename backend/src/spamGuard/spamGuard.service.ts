@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { ConfigHandler } from '../configHandler';
 
 // NB: as this "database" is now kept only in memory, in case of multiple instances for backend, it might not work as intended.
 // The point of a spam guard is to prevent people from flooding check-ins, sending SMSs etc. All the limits set here are arbitrary and should be loose enough not to bother normal usage.
@@ -114,6 +115,11 @@ export class SpamGuardService {
 
   // Checks if code is valid (exists in spam guard code list). Returns true if valid, false if not.
   checkSecurityCode(clubId: number, code: string): boolean {
+    if (ConfigHandler.isTest()) {
+      console.info("Omitted check-in security code for test environment.");
+      return true;
+    }
+
     const found = this.securityCodes.some(sc => sc.id == clubId && sc.code == code);
     if (!found) this.logger.debug('Check security code failed for club: ' + clubId);
     return found;

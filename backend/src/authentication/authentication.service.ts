@@ -20,7 +20,7 @@ import { jwt} from './authentication.consts';
 import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
 import { secretString } from './secret';
-import { SessionDBService } from '../session/sessiondb.service';
+import { SessionDBService } from '../session/sessionDb.service';
 import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
 import { YouthWorker } from 'src/youthWorker/entities/';
 import { EditYouthWorkerDto } from 'src/youthWorker/dto';
