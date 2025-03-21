@@ -9,7 +9,7 @@ import DeleteExpiredJuniors from './components/deleteExpiredJuniors';
 import MiscFunctions from './components/miscFunctions';
 
 export const routes = [
-    <Route exact path="/checkIn/:youthClubId" component={CheckInView} noLayout />,
+    <Route exact path="/checkIn" component={CheckInView} noLayout />,
     <Route exact path="/statistics/:youthClubId" component={CheckInStatisticsView} />,
     <Route exact path="/log/:youthClubId" component={CheckInLogView} />,
     <Route path="/password" component={ChangePasswordView} />

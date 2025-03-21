@@ -1,5 +1,5 @@
 import {
-    Controller, UsePipes, ValidationPipe, Post, UseGuards
+    Controller, UsePipes, ValidationPipe, Post, UseGuards, Body
 } from '@nestjs/common';
 import { SpamGuardService } from './spamGuard.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -28,5 +28,15 @@ export class SpamGuardController {
     async reset(@YouthWorker() youthWorker: { userId: string }): Promise<Message> {
         const count = this.spamGuardService.reset(youthWorker.userId);
         return new Message(count.toString());
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
+    @AllowedRoles(Roles.YOUTHWORKER)
+    @Post('getSecurityCode')
+    @ApiBearerAuth('youthWorker')
+    async getSecurityCode(@Body() body: { clubId: number }): Promise<Message> {
+        const code = this.spamGuardService.getSecurityCode(body.clubId);
+        return new Message(code);
     }
 }

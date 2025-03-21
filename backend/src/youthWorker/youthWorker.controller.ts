@@ -220,7 +220,7 @@ export class YouthWorkerController {
   @Post('setMainYouthClub')
   @ApiBearerAuth('admin')
   @ApiBearerAuth('youthWorker')
-  async setMainYouthClub(@YouthWorker() youthWorker: { userId: string }, @Body() body: { clubId: string }): Promise<Check> {
+  async setMainYouthClub(@YouthWorker() youthWorker: { userId: string }, @Body() body: { clubId: number }): Promise<Check> {
     return new Check(await this.youthWorkerService.setMainYouthClub(body.clubId, youthWorker.userId));
   }
 }

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { AUTH_LOGOUT } from 'react-admin';
-import { userToken } from '../utils';
+import { userTokenKey } from '../utils';
 import { authProvider } from '../providers';
 
 // NB:
@@ -34,10 +34,10 @@ function useAutoLogout() {
 
             if (!isLoggedOutPage) {
                 console.info('Automatically logging out user.');
-                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userToken) });
+                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userTokenKey) });
             } else
                 // Remove the local session token in case the user has somehow reached this logged out page being logged in.
-                localStorage.removeItem(userToken);
+                localStorage.removeItem(userTokenKey);
         }, youthWorkerInactiveTime);
 
         return () => {

@@ -52,14 +52,21 @@ export class ClubController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('checkIn')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
-        const canCheckIn = this.spamGuardService.checkIn(userData.juniorId, userData.clubId);
+        let canCheckIn = this.spamGuardService.checkSecurityCode(userData.clubId, userData.securityCode);
         let check = null;
+        if (!canCheckIn) {
+            check = new Check(false);
+            return new CheckInResponseViewModel(check.result, 'Invalid security code');
+        }
+
+        canCheckIn &&= this.spamGuardService.checkIn(userData.juniorId, userData.clubId);
         if (canCheckIn) {
             check = new Check(await this.clubService.checkInJunior(userData));
         } else {
             check = new Check(false);
             return new CheckInResponseViewModel(check.result, 'Check-in not allowed at this time');
         }
+
         return new CheckInResponseViewModel(check.result);
     }
 

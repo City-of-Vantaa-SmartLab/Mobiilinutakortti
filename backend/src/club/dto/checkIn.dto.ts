@@ -6,4 +6,6 @@ export class CheckInDto {
 
     @IsNotEmpty()
     readonly juniorId: string;
+
+    readonly securityCode: string;
 }

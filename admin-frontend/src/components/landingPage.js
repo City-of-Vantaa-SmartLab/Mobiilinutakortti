@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getActiveYouthClubOptions, getUserInfo, userToken, appUrl } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, userTokenKey, appUrl } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -16,7 +16,7 @@ export const LandingPage = () => {
 
   useEffect(() => {
     userInfo.current = getUserInfo();
-    const noUserToken = !localStorage.getItem(userToken) || localStorage.getItem(userToken) === 'undefined';
+    const noUserToken = !localStorage.getItem(userTokenKey) || localStorage.getItem(userTokenKey) === 'undefined';
     if (!!userInfo.current && !noUserToken) {
       const addYouthClubsToState = async () => {
         const youthClubOptions = await getActiveYouthClubOptions();
@@ -42,8 +42,8 @@ export const LandingPage = () => {
     const response = await httpClientWithRefresh(api.youthWorker.setMainYouthClub, {
       method: 'POST',
       body: JSON.stringify({
-        clubId: selectedYouthClub,
-      }),
+        clubId: selectedYouthClub
+      })
     });
     if (response) {
       notify('Oletusnuorisotila asetettu');
@@ -79,7 +79,7 @@ export const LandingPage = () => {
             <option key={yc.label} value={yc.value}>{yc.label}</option>
           ))}
         </select>
-        {(useEntraID && selectedYouthClub.toString() !== '-1') && (<button style={{
+        {selectedYouthClub.toString() !== '-1' && (<button style={{
           marginLeft: '0.5rem',
           background: 'none',
           border: 'none',

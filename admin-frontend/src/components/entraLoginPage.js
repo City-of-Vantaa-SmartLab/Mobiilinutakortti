@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userToken, setUserInfo, MSALAppLogoutInProgress, appUrl } from '../utils';
+import { userTokenKey, setUserInfo, MSALAppLogoutInProgressKey, appUrl } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -63,13 +63,13 @@ export default function EntraLogin() {
 
       // User has been prompted to log out from MSAL and this is a redirect after that.
       // User should have a valid session token by now. Continue to landingPage.
-      if (localStorage.getItem(MSALAppLogoutInProgress)) {
-          localStorage.removeItem(MSALAppLogoutInProgress);
+      if (localStorage.getItem(MSALAppLogoutInProgressKey)) {
+          localStorage.removeItem(MSALAppLogoutInProgressKey);
           window.location.href = appUrl;
           return;
       } else {
         if (!MSALApp.appUsername) {
-          localStorage.removeItem(MSALAppLogoutInProgress);
+          localStorage.removeItem(MSALAppLogoutInProgressKey);
           setLoginInProgress(false);
           return;
         }
@@ -81,12 +81,12 @@ export default function EntraLogin() {
               api.auth.loginEntraID,
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
             );
-            localStorage.setItem(userToken, access_token);
+            localStorage.setItem(userTokenKey, access_token);
 
             const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
             setUserInfo(userInfo);
 
-            localStorage.setItem(MSALAppLogoutInProgress, true);
+            localStorage.setItem(MSALAppLogoutInProgressKey, true);
             await MSALApp.logout();
 
           } catch (error) {

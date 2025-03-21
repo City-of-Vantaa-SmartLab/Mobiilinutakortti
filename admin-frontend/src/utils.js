@@ -38,9 +38,10 @@ export const messageTypeChoices = [
   { id: 'email', name: 'Sähköposti' },
 ];
 
-export const checkInClubId = 'checkInClubId';
-export const userToken = 'user-token';
-export const MSALAppLogoutInProgress = 'MSALAppLogoutInProgress';
+export const checkInClubIdKey = 'checkInClubId';
+export const checkInSecurityCodeKey = 'checkInSecurityCode';
+export const userTokenKey = 'user-token';
+export const MSALAppLogoutInProgressKey = 'MSALAppLogoutInProgress';
 
 export const newHttpErrorFromResponse = (response) => {
   let msg = '';

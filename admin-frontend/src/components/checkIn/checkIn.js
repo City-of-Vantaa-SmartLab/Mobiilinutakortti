@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
-import NavigationPrompt from "react-router-navigation-prompt";
-import ConfirmNavigationModal from "../ConfirmNavigationModal";
 import QrReader from 'react-qr-reader';
-import QrCheckResultScreen from "./qrCheckResultScreen.js";
-import LoadingMessage from "../loadingMessage";
+import QrCheckResultScreen from './qrCheckResultScreen.js';
+import LoadingMessage from '../loadingMessage';
 import { useNotify } from 'react-admin';
 import styled from 'styled-components';
 import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
-import { successSound, errorSound } from "../../audio/audio.js"
-import { checkInClubId, userToken, appUrl } from '../../utils';
+import { successSound, errorSound } from '../../audio/audio.js'
+import { checkInClubIdKey, userTokenKey, appUrl, checkInSecurityCodeKey } from '../../utils';
 import { Button } from '@material-ui/core';
 import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
@@ -40,31 +38,32 @@ const QrReaderContainer = styled.div`
   box-sizing: border-box;
 `
 
-const CheckInView = (props) => {
+const CheckInView = () => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
   const [showCameraToggle, setShowCameraToggle] = useState(false);
   const [useAlternativeCamera, setUseAlternativeCamera] = useState(false);
+  const [clubId, setClubId] = useState(null);
+  const [securityCode, setSecurityCode] = useState(null);
   const notify = useNotify();
 
-  const goToLogin = () => {
-    sessionStorage.removeItem(checkInClubId);
-    document.location.href = appUrl;
-  }
-
   useEffect(() => {
-    localStorage.removeItem(userToken);
-    const storedCheckInClubId = sessionStorage.getItem(checkInClubId);
-    const path = props.location.pathname;
-    const matchId = path.match(/\d+/);
-    const id = matchId !== null ? matchId.shift() : null;
-    // checkInClubId is set by the youth worker when they click on the log in button for a club.
-    // This prevents the users from manually changing the club id in the browser address bar.
-    if (id !== storedCheckInClubId) {
-      goToLogin();
+    localStorage.removeItem(userTokenKey);
+
+    // Security could be made a bit tighter with rotating codes.
+    // Emptying the session storage would result in need to re-login if refreshing the page.
+    // This might be somewhat inconvenient with current use cases.
+    const storedClubId = sessionStorage.getItem(checkInClubIdKey);
+    const storedSecurityCode = sessionStorage.getItem(checkInSecurityCodeKey);
+
+    if (storedClubId === null || storedSecurityCode === null) {
+      console.debug("Missing required info.");
+      setTimeout(() => { document.location.href = appUrl }, 100);
     }
+    setClubId(storedClubId);
+    setSecurityCode(storedSecurityCode);
 
     let isMounted = true;
     navigator.mediaDevices.enumerateDevices().then(devices => {
@@ -75,7 +74,7 @@ const CheckInView = (props) => {
       }
     })
     return () => isMounted = false;
-  }, [props.location.pathname])
+  }, [])
 
   const tryToPlayAudio = (success) => {
     if (success) {
@@ -108,7 +107,8 @@ const CheckInView = (props) => {
       setLoading(true);
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
-        clubId: props.match.params.youthClubId,
+        clubId,
+        securityCode,
         juniorId: qrData
       });
       const options = {
@@ -137,18 +137,6 @@ const CheckInView = (props) => {
     <Container>
       <Notification />
       <CheckinBackground />
-      <NavigationPrompt
-        afterConfirm={goToLogin}
-        disableNative={true}
-        when={true}
-      >
-        {({ onConfirm, onCancel }) => (
-          <ConfirmNavigationModal
-            onCancel={onCancel}
-            onConfirm={onConfirm}
-          />
-        )}
-      </NavigationPrompt>
       {showQRCode && (
           <QrReaderContainer>
             <QrReader
