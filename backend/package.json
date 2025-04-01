@@ -34,7 +34,7 @@
     "date-fns": "^3.6.0",
     "moment": "^2.24.0",
     "nestjs-pino": "^3.3.0",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-jwt": "^4.0.0",
     "pixl-xml": "^1.0.13",
     "rxjs": "^7.5.5",
