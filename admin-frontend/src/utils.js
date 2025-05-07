@@ -1,5 +1,6 @@
 import { GET_LIST, HttpError } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
+import { Container } from '@material-ui/core';
 
 export const appUrl = process.env.REACT_APP_ADMIN_URL || '/nuorisotyontekijat';
 
@@ -105,3 +106,27 @@ export const getUserInfo = () => {
 export const clearUserInfo = () => {
   localStorage.removeItem('userInfo');
 }
+
+// When using a common alert dialog, create an observer for it and fix the dialog title when dialog appears.
+export const getAlertDialogObserver = (newDialogTitle) => {
+  const targetNode = document;
+  const config = { attributes: true, childList: false, subtree: true };
+
+  const checkTitles = () => {
+    const title = document.getElementById('alert-dialog-title');
+    if (title) {
+      title.getElementsByTagName("h2")[0].innerHTML = newDialogTitle;
+    }
+  };
+  const observer = new MutationObserver(checkTitles);
+  observer.observe(targetNode, config);
+
+  return observer;
+}
+
+// Removes basePath from DOM elements to show notes inside forms without console errors.
+export const NoBasePath = ({basePath, ...props}) => {
+    return (
+        <Container {...props} style={{'paddingLeft': '0px', 'paddingRight': '0px'}}/>
+    )
+};

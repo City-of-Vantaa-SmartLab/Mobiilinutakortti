@@ -129,7 +129,7 @@ export class KompassiService {
     }
 
     private async createActivityForToday(club: Club): Promise<number> {
-        this.logger.log('Create activity for club: ' + club.name);
+        this.logger.log(`Create activity for club ${club.id} (${club.name})`);
         const now = new Date();
         const dateString = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
 

@@ -4,15 +4,13 @@ import { userTokenKey, appUrl } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
-export const httpClientWithRefresh = async (url, options = {}, disableAuth = false) => {
+export const httpClientWithRefresh = async (url, options = {}, justRefresh = false) => {
     const refreshOptions = {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
     };
     const authToken = localStorage.getItem(userTokenKey);
-    if (authToken) {
-        refreshOptions.headers.set('Authorization', `Bearer ${authToken}`);
-    }
+    if (authToken) refreshOptions.headers.set('Authorization', `Bearer ${authToken}`);
 
     return fetch(api.youthWorker.refresh, refreshOptions).then(refreshResponse => {
         refreshResponse = refreshResponse.json();
@@ -24,9 +22,8 @@ export const httpClientWithRefresh = async (url, options = {}, disableAuth = fal
             return refreshResponse;
         }
     }).then(({ access_token }) => {
-        if (!disableAuth) {
-            localStorage.setItem(userTokenKey, access_token);
-        }
+        localStorage.setItem(userTokenKey, access_token);
+        if (justRefresh) return;
         return httpClient(url, options);
     });
 };

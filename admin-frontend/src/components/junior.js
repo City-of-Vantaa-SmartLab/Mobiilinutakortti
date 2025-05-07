@@ -23,13 +23,13 @@ import {
     Pagination,
     FormDataConsumer
 } from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, appUrl } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, appUrl, getAlertDialogObserver, NoBasePath } from '../utils';
 import { httpClientWithRefresh } from '../httpClients';
 import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
 import { ExtraEntryLink } from './styledComponents/extraEntry';
 import api from '../api';
-import useAutoLogout from '../hooks/useAutoLogout';
+import { useAutoLogout, logoutWithId } from '../hooks/useAutoLogout';
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
@@ -173,7 +173,6 @@ const DummyPhoneNumberButton = ({fieldName}) => {
 }
 
 export const JuniorCreate = (props) => {
-    useAutoLogout();
     return (
         <Create title="Rekisteröi nuori" {...props}>
             {JuniorForm('create')}
@@ -182,27 +181,14 @@ export const JuniorCreate = (props) => {
 }
 
 export const JuniorEdit = (props) => {
-    useAutoLogout();
-
     useEffect(() => {
-        const targetNode = document;
-        const config = { attributes: true, childList: false, subtree: true };
-
-        const checkTitles = () => {
-            const title = document.getElementById('alert-dialog-title');
-            if (title) {
-                title.getElementsByTagName("h2")[0].innerHTML = 'Poista Junior';
-            }
-        };
-        const observer = new MutationObserver(checkTitles);
-        observer.observe(targetNode, config);
-
+        const observer = getAlertDialogObserver('Poista nuori');
         return () => {
             observer.disconnect();
         }
     }, []);
     return (
-        <Edit title={<JuniorEditTitle />} {...props} undoable={false}>
+        <Edit title={<JuniorEditTitle />} {...props} mutationMode='pessimistic'>
             {JuniorForm('edit')}
         </Edit>
     );
@@ -214,6 +200,12 @@ export const JuniorForm = (formType) => {
     const [youthClubs, setYouthClubs] = useState([]);
     const { isAdmin } = useAdminPermission();
 
+    // The use case for per-field moving auto logout time window is that a youth worker is talking on the phone (with a parent) while filling out the form.
+    // These phone calls may well last over half an hour, during which the page/form would auto logout, losing all the work done by the youth worker.
+    // The React hook useAutologout is per page, hence we have to use an auto logout defined outside of React here for the per field time window.
+    const [fieldAutoLogoutTimeout, setFieldAutoLogoutTimeout] = useState(null);
+    const [fieldAutoLogoutId, setFieldAutoLogoutId] = useState(null);
+
     useEffect(() => {
         const addYouthClubsToState = async () => {
             const youthClubOptions = await getActiveYouthClubOptions();
@@ -221,44 +213,57 @@ export const JuniorForm = (formType) => {
             setYouthClubs(optionsWithNone);
         };
         addYouthClubsToState();
+        const logoutId = "FieldAutoLogout" + Date.now();
+        setFieldAutoLogoutId(logoutId);
+        setFieldAutoLogoutTimeout(logoutWithId(logoutId));
     }, []);
 
+    const refreshFieldAutoLogout = () => {
+        httpClientWithRefresh('', {}, true);
+        clearTimeout(fieldAutoLogoutTimeout);
+        setFieldAutoLogoutTimeout(logoutWithId(fieldAutoLogoutId));
+    }
+
+    // We use the dummy div field to check whether we still wish to auto logout using the timeouts defined above.
     return (
         <SimpleForm variant="standard" margin="normal">
-            <TextInput label="Etunimi" source="firstName" validate={required()} />
-            <TextInput label="Sukunimi" source="lastName" validate={required()} />
-            {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" />)}
-            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} />
-            <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} />
-            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} />
+            <NoBasePath>
+                <div style={{visibility: 'collapse'}} id={fieldAutoLogoutId}></div>
+            </NoBasePath>
+            <TextInput label="Etunimi" source="firstName" validate={required()} onFocus={refreshFieldAutoLogout} />
+            <TextInput label="Sukunimi" source="lastName" validate={required()} onFocus={refreshFieldAutoLogout} />
+            {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" onFocus={refreshFieldAutoLogout} />)}
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} onFocus={refreshFieldAutoLogout} />
+            <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} onFocus={refreshFieldAutoLogout} />
+            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} onFocus={refreshFieldAutoLogout} />
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="phoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} />
-            {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} />)}
-            {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} />)}
-            {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} />)}
-            <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} onFocus={refreshFieldAutoLogout} />
+            {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} onFocus={refreshFieldAutoLogout} />)}
+            {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} onFocus={refreshFieldAutoLogout} />)}
+            {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} onFocus={refreshFieldAutoLogout} />)}
+            <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} onFocus={refreshFieldAutoLogout} />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} onFocus={refreshFieldAutoLogout} />
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} />
-            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" />
-            <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" />
-            {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" />)}
-            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} onFocus={refreshFieldAutoLogout} />
+            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" onFocus={refreshFieldAutoLogout} />
+            <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" onFocus={refreshFieldAutoLogout} />
+            {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" onFocus={refreshFieldAutoLogout} />)}
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onFocus={refreshFieldAutoLogout} />
             {formType === 'create' ?
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
                     disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
                 />
                 :
-                valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}/>)
+                valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()} onFocus={refreshFieldAutoLogout} />)
             }
-            <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false}/>
+            <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false} onFocus={refreshFieldAutoLogout} />
             <FormDataConsumer>
                 {({ record }) => {
-                    return <SelectInput disabled={(formType === 'edit' && record.status === Status.expired && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} />
+                    return <SelectInput disabled={(formType === 'edit' && record.status === Status.expired && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} onFocus={refreshFieldAutoLogout} />
                 }}
             </FormDataConsumer>
             <FormDataConsumer>

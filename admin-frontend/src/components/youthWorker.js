@@ -15,7 +15,7 @@ import {
   Edit,
   SelectField
 } from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
@@ -90,25 +90,14 @@ export const YouthWorkerEdit = (props) => {
   useAutoLogout();
 
   useEffect(() => {
-    const targetNode = document;
-    const config = { attributes: true, childList: false, subtree: true };
-
-    const checkTitles = () => {
-      const title = document.getElementById('alert-dialog-title');
-      if (title) {
-        title.getElementsByTagName("h2")[0].innerHTML = 'Poista nuorisotyöntekijä';
-      }
-    };
-    const observer = new MutationObserver(checkTitles);
-    observer.observe(targetNode, config);
-
+    const observer = getAlertDialogObserver('Poista nuorisotyöntekijä');
     return () => {
       observer.disconnect();
     }
   }, [])
 
   return (
-    <Edit title="Muokkaa nuorisotyöntekijää" {...props} undoable={false}>
+    <Edit title="Muokkaa nuorisotyöntekijää" {...props} mutationMode="pessimistic">
       <SimpleForm variant="standard" margin="normal" redirect="list">
         <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
         <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />

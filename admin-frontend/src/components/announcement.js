@@ -17,8 +17,8 @@ import {
 } from 'react-admin';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import styled from 'styled-components';
-import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms } from '../utils';
-import { Container, Checkbox, FormControlLabel, Typography } from '@material-ui/core';
+import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms, NoBasePath } from '../utils';
+import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
 import { dataProvider } from '../providers/dataProvider';
 import useAutoLogout from '../hooks/useAutoLogout';
 
@@ -99,13 +99,6 @@ const CustomToolbar = (props) => (
         <SaveButton label="Lähetä" icon={<MailOutlineIcon />} disabled={props.pristine && !props.validating} />
     </Toolbar>
 );
-
-// Removes basePath from DOM elements to show notes inside forms without console errors.
-const NoBasePath = ({basePath, ...props}) => {
-    return (
-        <Container {...props} style={{'paddingLeft': '0px', 'paddingRight': '0px'}}/>
-    )
-};
 
 export const AnnouncementCreate = (props) => {
     const [ youthClubs, setYouthClubs ] = useState([]);
