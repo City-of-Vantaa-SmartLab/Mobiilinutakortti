@@ -7,6 +7,11 @@ export class CheckInLogViewModel {
 
     constructor(clubName: string, checkIns: CheckIn[]) {
         this.clubName = clubName;
+
+        checkIns.sort((a, b) => {
+            return a.checkInTime.getTime() - b.checkInTime.getTime();
+        });
+
         this.juniors = checkIns.map(checkIn => {
             const dateTime = new Date(checkIn.checkInTime);
             let hours = dateTime.getHours().toString();
