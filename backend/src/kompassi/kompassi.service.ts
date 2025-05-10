@@ -108,7 +108,8 @@ export class KompassiService {
         const searchedActivityTitle = KompassiService.getActivityTitle(club, now);
         const matchingActivities = existingActivities.filter(a => {
             return a.groupId === club.kompassiIntegration.groupId &&
-                a.activityTitle === searchedActivityTitle;
+                a.activityTitle === searchedActivityTitle &&
+                a.activityStatus === "Active" // Ignores "Archived" (deleted) activities.
         });
 
         // If multiple found with the same title, use the newest.
