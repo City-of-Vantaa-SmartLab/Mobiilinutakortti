@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "dependencies": {
     "formik": "^2.2.9",
@@ -16,12 +16,12 @@
     "redux": "^4.0.4",
     "redux-saga": "^1.1.1",
     "styled-components": "^5.3.5",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "yup": "^1.4.0"
   },
   "overrides": {
     "react-scripts": {
-      "typescript": "5.8.2"
+      "typescript": "5.8.3"
     }
   },
   "scripts": {
