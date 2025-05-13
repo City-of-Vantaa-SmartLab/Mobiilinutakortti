@@ -47,6 +47,7 @@ const CheckInView = () => {
   const [useAlternativeCamera, setUseAlternativeCamera] = useState(false);
   const [clubId, setClubId] = useState(null);
   const [securityCode, setSecurityCode] = useState(null);
+  const [needsReload, setNeedsReload] = useState(false);
   const notify = useNotify();
 
   useEffect(() => {
@@ -88,16 +89,17 @@ const CheckInView = () => {
     }
   };
 
-  const handleCheckInReturn = (success) => {
+  const handleCheckInReturn = (success, needsNewSecurityCode) => {
     setLoading(false);
     setShowQRCode(false)
     setCheckInSuccess(success)
     setShowQrCheckNotification(true);
     tryToPlayAudio(success).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
     setTimeout(() => {
-      setShowQrCheckNotification(false);
       setCheckInSuccess(null);
-      setShowQRCode(true);
+      setShowQrCheckNotification(false);
+      setShowQRCode(!needsNewSecurityCode);
+      setNeedsReload(needsNewSecurityCode);
     }, success ? 2500 : 3000);
   };
 
@@ -117,12 +119,14 @@ const CheckInView = () => {
       };
       await httpClient(url, options, true)
         .then(response => {
+          // Response is of type CheckInResponseViewModel in backend.
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);
               notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
             setShowQRCode(true)
           } else {
-            handleCheckInReturn(response.success);
+            const needsNewSecurityCode = response.reason === 'CODE';
+            handleCheckInReturn(response.success, needsNewSecurityCode);
           }
         });
     }
@@ -148,7 +152,9 @@ const CheckInView = () => {
             />
           </QrReaderContainer>
       )}
-      {}
+      {needsReload && (
+          <LoadingMessage message={'Nuorisotyöntekijän on avattava kirjautumissivu uudelleen.'}/>
+      )}
       {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>

@@ -20,10 +20,11 @@ import { ClubEditInterceptor } from './interceptors/edit.interceptor';
 import { EditClubDto } from './dto/edit.dto';
 import { ClubViewModel, CheckInResponseViewModel, CheckInStatsViewModel, CheckInLogViewModel } from './vm';
 import { CheckInDto, CheckInStatsSettingsDto } from './dto';
-import { Check, Message } from '../common/vm';
+import { Message } from '../common/vm';
 import { CheckIn } from './entities';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { failReason } from './vm/checkInResponse.vm';
 
 @Controller(`${content.Routes.api}/club`)
 @ApiTags('Club')
@@ -53,21 +54,16 @@ export class ClubController {
     @Post('checkIn')
     async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
         let canCheckIn = this.spamGuardService.checkSecurityCode(userData.clubId, userData.securityCode);
-        let check = null;
-        if (!canCheckIn) {
-            check = new Check(false);
-            return new CheckInResponseViewModel(check.result, 'Invalid security code');
-        }
+        if (!canCheckIn) return new CheckInResponseViewModel(false, failReason.CODE);
 
         canCheckIn &&= this.spamGuardService.checkIn(userData.juniorId, userData.clubId);
         if (canCheckIn) {
-            check = new Check(await this.clubService.checkInJunior(userData));
+            canCheckIn &&= await this.clubService.checkInJunior(userData);
         } else {
-            check = new Check(false);
-            return new CheckInResponseViewModel(check.result, 'Check-in not allowed at this time');
+            return new CheckInResponseViewModel(false, failReason.SPAM);
         }
 
-        return new CheckInResponseViewModel(check.result);
+        return new CheckInResponseViewModel(canCheckIn);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
