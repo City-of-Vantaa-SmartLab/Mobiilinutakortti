@@ -24,6 +24,7 @@ import { AnnouncementController } from './announcement/announcement.controller';
 import { ExtraEntryModule } from './extraEntry/extraEntry.module';
 import { ExtraEntryController } from './extraEntry/extraEntry.controller';
 import { KompassiModule } from './kompassi/kompassi.module';
+import { KompassiController } from './kompassi/kompassi.controller';
 import { SpamGuardModule } from './spamGuard/spamGuard.module';
 import { SpamGuardController } from './spamGuard/spamGuard.controller';
 import pino from 'pino';
@@ -60,7 +61,8 @@ import pino from 'pino';
     AuthenticationController,
     AnnouncementController,
     ExtraEntryController,
-    SpamGuardController
+    SpamGuardController,
+    KompassiController
   ],
 })
 export class AppModule implements NestModule {

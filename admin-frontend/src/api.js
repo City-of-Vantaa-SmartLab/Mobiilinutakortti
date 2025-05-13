@@ -53,6 +53,9 @@ const apiEndpoints = {
   spamGuard: {
     reset:`${apiUrl}/spamguard/reset`,
     getSecurityCode:`${apiUrl}/spamguard/getSecurityCode`
+  },
+  kompassi: {
+    reset:`${apiUrl}/kompassi/reset`,
   }
 }
 

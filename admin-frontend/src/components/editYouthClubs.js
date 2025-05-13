@@ -57,10 +57,14 @@ export const EditYouthClubsList = (props) => {
   </List>
 )};
 
+const YouthClubEditTitle = ({ record }) => (
+  <span>{`Muokkaa tietoja: ${record.name}`}</span>
+);
+
 export const EditYouthClubs = (props) => {
   useAutoLogout();
   return (
-  <Edit title="Muokkaa nuorisotilan tietoja" {...props} mutationMode="pessimistic">
+  <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic">
     <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />

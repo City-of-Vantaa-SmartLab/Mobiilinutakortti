@@ -96,7 +96,7 @@ export class SsoService {
   getLogoutRequestUrl(req: Request, res: Response) {
     let sc_token = {};
     const token = req.headers['authorization'];
-    if (token.startsWith('Bearer ')) {
+    if (token && token.startsWith('Bearer ')) {
       const b64sc = token.slice(7, token.length);
       const binsc = Buffer.from(b64sc, 'base64').toString();
       sc_token = JSON.parse(binsc);

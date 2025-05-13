@@ -37,9 +37,9 @@ export class KompassiService {
 
     // Clear activities every night at 4 AM.
     @Cron('0 4 * * *')
-    reset(): void {
+    reset(userId: string | null): void {
         this.activities.splice(0, this.activities.length);
-        this.logger.log('Cleared activities DB.');
+        this.logger.log((userId ? `User ${userId} cleared` : 'Cleared') + ' activities cache.');
     }
 
     async updateKompassiData(junior: Junior, club: Club, numberOfRetries: number = 0) {
