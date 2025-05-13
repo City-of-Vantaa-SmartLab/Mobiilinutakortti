@@ -10,9 +10,9 @@ import statisticsAgeGroups from '../common/statisticsAgeGroups';
 import genderMapping, { Gender } from '../common/genderMapping';
 
 type KompassiActivity = {
-  clubId: number,
-  kompassiActivityId: number | null,
-  pendingCreation: boolean
+    clubId: number,
+    kompassiActivityId: number | null,
+    pendingCreation: boolean
 }
 
 @Injectable()
@@ -48,6 +48,7 @@ export class KompassiService {
             !club.kompassiIntegration?.enabled ||
             !club.kompassiIntegration?.groupId) return;
 
+        let shouldCancelPending = false;
         try {
             let activityId: number = 0;
             const activityInDB = this.activities.find(a => a.clubId == club.id);
@@ -55,8 +56,11 @@ export class KompassiService {
                 // This prevents another async call from creating a new activity via API.
                 this.activities.push({clubId: club.id, kompassiActivityId: null, pendingCreation: true});
 
+                shouldCancelPending = true;
                 const activityFromAPI = await this.getActivityForTodayFromAPI(club);
                 activityId = activityFromAPI ? activityFromAPI.activityId : await this.createActivityForToday(club);
+                this.logger.verbose(`ActivityId: ${activityId}.`);
+                shouldCancelPending = false;
 
                 // Release waiting in possible other parallel async calls.
                 const pendingActivity = this.activities.find(a => a.clubId == club.id);
@@ -82,6 +86,12 @@ export class KompassiService {
             await this.checkInForActivity({ activityId, ageGroupId, genderId });
         } catch (e) {
             this.logger.error('Error during Kompassi integration: ' + e);
+
+            // If there was an error creating an activity, remove the pending one so that later requests aren't blocked.
+            if (shouldCancelPending) {
+                const removeIndex = this.activities.findIndex(a => a.clubId == club.id && a.pendingCreation);
+                if (removeIndex > -1) this.activities.splice(removeIndex, 1);
+            }
         }
     }
 
@@ -142,13 +152,18 @@ export class KompassiService {
         const endTime = isWeekend ? '22:00:00' : '20:30:00';
 
         const url = this.kompassiApiUrl + '/activities';
-        const data = {
+        const mandatoryData = {
             groupId: club.kompassiIntegration.groupId,
             title: KompassiService.getActivityTitle(club, now),
             startAt: `${dateString} ${startTime}`,
-            endAt: `${dateString} ${endTime}`,
-            activityTypeIds: KompassiService.parseActivityTypeIds(club)
+            endAt: `${dateString} ${endTime}`
         };
+
+        // The activityTypeIds must be non-empty, non-null if it exists.
+        const optionalData = { activityTypeIds: KompassiService.parseActivityTypeIds(club) };
+        const data = optionalData.activityTypeIds.length > 0 ?
+            { ...mandatoryData, ...optionalData } : mandatoryData;
+
         const headers = {
             'Content-Type': 'application/json',
             'x-api-key': this.kompassiApiKey
