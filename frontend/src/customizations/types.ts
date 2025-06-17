@@ -163,7 +163,7 @@ export interface Translations {
           notOk: string,
         },
       },
-      
+
       youthClubHeading: string,
       youthClubDefault: string,
       youthClubDescription: string,
@@ -195,7 +195,8 @@ export interface Translations {
       message: (logoutLink: (text: ReactNode) => ReactNode, startOverLink: (text: ReactNode) => ReactNode) => ReactNode,
     }
     error: {
-      message: ReactNode
+      message: ReactNode,
+      alternativeMessage: ReactNode
       back: ReactNode
     }
   },

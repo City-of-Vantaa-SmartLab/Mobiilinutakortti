@@ -22,5 +22,6 @@ The start script is the same as dev script, but you must set the required enviro
 
 ## Environment variables / secrets
 
-There's one environment variable:
+There are two environment variables:
 * `REACT_APP_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to '/api' if not set.
+* `REACT_APP_ALT_ERR_MSG`: if evaluates to true: in parent's junior registration form, use alternative error message. This is e.g. for summertime contact information.
