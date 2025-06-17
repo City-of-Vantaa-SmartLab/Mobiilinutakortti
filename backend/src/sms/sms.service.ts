@@ -81,6 +81,10 @@ export class SmsService {
      * 100 000 individual messages per batch.
      */
     async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
+        if (messageRequest.batch.length === 0) {
+            this.logger.log('SMS batch size is zero, not sending anything.');
+            return true;
+        }
         this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
 
         try {

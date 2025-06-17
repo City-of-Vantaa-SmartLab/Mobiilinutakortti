@@ -147,13 +147,13 @@ export class JuniorService {
                 throw new ConflictException(content.JuniorAlreadyExists);
             }
 
-            // Only allow account renewal if existing junior's status is expired or pending.
-            if ([Status.expired, Status.pending].includes(existingJunior.status as Status)) {
+            // Only allow account renewal if junior has certain status.
+            if ([Status.expired, Status.pending, Status.extraEntriesOnly].includes(existingJunior.status as Status)) {
                 this.logger.log(`Overwriting junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}`);
                 junior = existingJunior;
                 renew = true;
             } else {
-                this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}, because status is not expired or pending.`);
+                this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}: status is not allowed.`);
                 throw new ConflictException(content.JuniorNotExpiredOrPending);
             }
         } else {
@@ -264,13 +264,13 @@ export class JuniorService {
         if (errors.length > 0) {
             throw new BadRequestException(errors);
         }
-        // Only admins (not regular youth workers) can manually update status from expired state.
-        if (prevStatus === Status.expired && details.status !== prevStatus) {
+        // Only admins (not regular youth workers) can manually update status from expired or extra entries only state.
+        if ((prevStatus === Status.expired || prevStatus === Status.extraEntriesOnly) && details.status !== prevStatus) {
             const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
             if (!youthWorker?.isAdmin) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
                 // automatic logout in the frontend.
-                throw new BadRequestException(content.ForbiddenToChangeExpiredStatus)
+                throw new BadRequestException(content.ForbiddenToChangeStatus)
             }
         }
         await this.juniorRepo.save(user);

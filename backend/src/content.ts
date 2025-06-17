@@ -44,7 +44,7 @@ export const JuniorAccountNotConfirmedOrFound = "Käyttäjätiliä ei ole tai si
 export const NewSeasonCreated = (count: number) => `Uusi kausi aloitettu. ${count} käyttäjää asetettu tilaan "tunnus vanhentunut"`
 export const ExpiredUsersDeleted = (countRemoved: number) => `${countRemoved} vanhentunutta tunnusta poistettu`
 export const ExpiredUsersDeletedWithExtraEntries = (countRemoved: number, countExtraEntries: number) => `${countRemoved} vanhentunutta tunnusta poistettu, ${countExtraEntries} asetettu merkintärekisteriin`
-export const ForbiddenToChangeExpiredStatus = "Tilaa \"tunnus vanhentunut\" ei voi muokata ilman pääkäyttäjän oikeuksia."
+export const ForbiddenToChangeStatus = "Nuoren nykyistä tilaa ei voi vaihtaa ilman pääkäyttäjän oikeuksia."
 export const RegisteredSmsContent = {
   fi: (link: string, clubSpecificMessage: string) => `Hei! Sinulle on luotu oma Nutakortti. Voit kirjautua palveluun kertakäyttöisen kirjautumislinkin avulla: ${link}\n\n${clubSpecificMessage || 'Terveisin Vantaan nuorisopalvelut'}`,
   sv: (link: string, clubSpecificMessage: string) => `Hej! Ett Nutakort har skapats åt dig. Du kan logga in på tjänsten via denna engångsinloggningslänk: ${link}\n\n${clubSpecificMessage || 'Vänliga hälsningar, Vanda ungdomstjänster'}`,

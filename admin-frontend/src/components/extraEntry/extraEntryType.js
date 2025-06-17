@@ -12,6 +12,7 @@ import {
   NumberField,
   NumberInput
 } from 'react-admin';
+import { Card, CardContent } from '@material-ui/core';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
 const CustomToolbar = (props) => (
@@ -22,14 +23,19 @@ const CustomToolbar = (props) => (
 
 export const ExtraEntryTypeList = (props) => {
   useAutoLogout();
-  return (
+  return (<>
+    <Card>
+      <CardContent>
+        <p>Huomaa, että luotuja merkintätyyppejä ei toistaiseksi voi muokata eikä poistaa.</p>
+      </CardContent>
+    </Card>
     <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
         <TextField label="Merkintätyyppi" source="name" />
         <NumberField label="Yläikäraja" source="expiryAge" />
       </Datagrid>
     </List>
-  );
+  </>);
 }
 
 export const ExtraEntryTypeCreate = (props) => {

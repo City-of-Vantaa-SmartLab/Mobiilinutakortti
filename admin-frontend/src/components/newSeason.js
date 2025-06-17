@@ -8,7 +8,10 @@ import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';
+import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
+
+const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
 
 const NewSeason = () => {
   const notify = useNotify();
@@ -54,11 +57,14 @@ const NewSeason = () => {
       <Title title="Aloita uusi kausi"></Title>
       <CardContent>
         <p>
-          Uuden kauden aloittaminen muuttaa nykyisten käyttäjien tilan tilaan
-          "tunnus vanhentunut" ja lähettää kaikille huoltajille tekstiviestinä
+          Uuden kauden aloittaminen muuttaa nuorten tilaksi
+          "{statusChoices.find(s => s.id === Status.expired).name}" ja lähettää kaikille huoltajille tekstiviestinä
           linkin kortin uusintahakemukseen. Jos käyttäjiä on esimerkiksi yli 2000,
           maksaa tekstiviestien lähettäminen jo yli 80 euroa.
         </p>
+        {showExtraEntries && <p>
+          Tämä toiminto ei vaikuta nuoriin, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}".
+        </p>}
         <p>
           Järjestelmä tulee lähettämään {SMSCount} tekstiviestiä.
         </p>

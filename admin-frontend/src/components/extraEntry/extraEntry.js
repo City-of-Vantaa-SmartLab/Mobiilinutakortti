@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
-import { MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select, Card, CardContent } from '@material-ui/core';
 import { Add, CancelOutlined } from '@material-ui/icons';
 import {
     List,
@@ -26,7 +26,7 @@ import {
     CREATE
 } from 'react-admin';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getExtraEntryTypes, statusChoices, appUrl } from '../../utils';
+import { getExtraEntryTypes, statusChoices, appUrl, Status } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
@@ -78,7 +78,14 @@ export const ExtraEntryList = (props) => {
         </Filter>
     );
 
-    return (
+    return (<>
+        <Card>
+          <CardContent>
+            <p>Nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" ja joilla ei ole ainuttakaan lisämerkintää (tai lupaa), poistuvat järjestelmästä automaattisesti joka yö tehtävässä ylläpitosiivouksessa. Samalla tarkistetaan myös onko lisämerkinnän ikäraja tullut vastaan, ja merkintä poistetaan automaattisesti jos on.</p>
+            <p>Huomaa myös, että toiminto "Poista vanhat käyttäjät" siirtää "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" -tilaan nuoret, joilla on lisämerkintöjä.</p>
+            <p>Nuorille, jotka ovat tilassa "{statusChoices.find(s => s.id === Status.expired).name}", ei voi lisätä merkintöjä.</p>
+          </CardContent>
+        </Card>
         <List title="Lisämerkinnät" pagination={<CustomPagination />} debounce={1000} filters={<ExtraEntryFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
@@ -97,7 +104,7 @@ export const ExtraEntryList = (props) => {
                 <EditButton />
             </Datagrid>
         </List>
-    )
+    </>)
 };
 
 const CustomToolbar = ({cancel, ...others}) => (
@@ -217,7 +224,7 @@ export const ExtraEntryEdit = (props) => {
                                         return <tr key={ee.id}>
                                             <td>{ee.extraEntryType.name}</td>
                                             <td>
-                                                <ExtraEntryButton value={ee.id} onClick={() => handleDelete(ee.id)} type="button">
+                                                <ExtraEntryButton value={ee.id} onClick={() => handleDelete(ee.id, false)} type="button">
                                                     Poista <CancelOutlined />
                                                 </ExtraEntryButton>
                                             </td>
@@ -229,7 +236,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            {availableEeChoices.length > 0 ? <Select
+                                            {availableEeChoices.length > 0 && status.id !== Status.expired ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handleExtraEntryChange}
                                                 value={newExtraEntryType}
@@ -238,10 +245,11 @@ export const ExtraEntryEdit = (props) => {
                                                 {availableEeChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select> : <EmptyChoicesText>Ei valittavia lisämerkintöjä</EmptyChoicesText>}
+                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei valittavia lisämerkintöjä'}</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id)} type="button" disabled={newExtraEntryType === -1 || availableEeChoices.length === 0}>
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, false)} type="button"
+                                                disabled={newExtraEntryType === -1 || availableEeChoices.length === 0 || status.id === Status.expired}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>
@@ -269,7 +277,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            {availablePermitChoices.length > 0 ? <Select
+                                            {availablePermitChoices.length > 0 && status.id !== Status.expired ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handlePermitChange}
                                                 value={newPermitType}
@@ -278,10 +286,11 @@ export const ExtraEntryEdit = (props) => {
                                                 {availablePermitChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select> : <EmptyChoicesText>Ei valittavia lupia</EmptyChoicesText>}
+                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei valittavia lupia'}</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button" disabled={newPermitType === -1 || availablePermitChoices.length === 0}>
+                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button"
+                                                disabled={newPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>

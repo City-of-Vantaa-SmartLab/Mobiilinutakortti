@@ -263,7 +263,7 @@ export const JuniorForm = (formType) => {
             <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false} onFocus={refreshFieldAutoLogout} />
             <FormDataConsumer>
                 {({ record }) => {
-                    return <SelectInput disabled={(formType === 'edit' && record.status === Status.expired && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} onFocus={refreshFieldAutoLogout} />
+                    return <SelectInput disabled={(formType === 'edit' && (record.status === Status.expired || record.status === Status.extraEntriesOnly) && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} onFocus={refreshFieldAutoLogout} />
                 }}
             </FormDataConsumer>
             <FormDataConsumer>
