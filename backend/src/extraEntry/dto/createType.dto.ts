@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateExtraEntryTypeDto {
+export class CreateEntryTypeDto {
 
     @IsNotEmpty()
     name: string;

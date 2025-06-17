@@ -1,5 +1,5 @@
 import { calculateAge, formatName } from '../../common/helpers';
-import { ExtraEntry, Permit } from '../entities';
+import { ExtraEntry, EntryPermit } from '../entities';
 import { Junior } from '../../junior/entities';
 
 export class JuniorExtraEntriesViewModel {
@@ -8,7 +8,7 @@ export class JuniorExtraEntriesViewModel {
     id: string;
     displayName: string;
     extraEntries: ExtraEntry[];
-    permits: Permit[];
+    entryPermits: EntryPermit[];
     phoneNumber: string;
     status: string;
 
@@ -17,7 +17,7 @@ export class JuniorExtraEntriesViewModel {
         this.birthday = entity.birthday;
         this.displayName = formatName(entity.firstName, entity.lastName, entity.nickName);
         this.extraEntries = entity.extraEntries;
-        this.permits = entity.permits;
+        this.entryPermits = entity.entryPermits;
         this.id = entity.id;
         this.phoneNumber = entity.phoneNumber;
         this.status = entity.status;

@@ -5,5 +5,5 @@ export class FilterDto {
     phoneNumber: string;
     parentsPhoneNumber: string;
     extraEntryType: number;
-    permitType: number;
+    entryPermitType: number;
 }

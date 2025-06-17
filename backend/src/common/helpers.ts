@@ -20,6 +20,7 @@ export class NumberTransformer implements ValueTransformer {
     };
 };
 
+// NB: will not return filters for extra entry types or entry permits, by design.
 export const getFilters = (controls?: ListControlDto) => {
     let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
     if (controls) {
@@ -45,7 +46,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
         } else if (property === 'parentsPhoneNumber') {
             queryParams.push('junior.parentsPhoneNumber ILIKE :parentsPhoneNumber')
             filterValues['parentsPhoneNumber'] = `%${filterOptions.parentsPhoneNumber}%`
-        } else if ((property === 'extraEntryType' || property === 'permitType')) {
+        } else if ((property === 'extraEntryType' || property === 'entryPermitType')) {
             // This filtering is done after database query.
         } else {
             queryParams.push(`junior.${property} = :${property}`)
@@ -59,7 +60,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
 export const applySort = (sortOptions: SortDto) => {
     const order = {};
     if (sortOptions.field.toLowerCase() === 'displayname') { sortOptions.field = 'firstName'; }
-    if (sortOptions.field.toLowerCase() === 'extraentries' || sortOptions.field.toLowerCase() === 'permits') { sortOptions.field = ''; }
+    if (sortOptions.field.toLowerCase() === 'extraentries' || sortOptions.field.toLowerCase() === 'entrypermits') { sortOptions.field = ''; }
     if (sortOptions.field) { order[`junior.${sortOptions.field}`] = sortOptions.order; }
     return order;
 }

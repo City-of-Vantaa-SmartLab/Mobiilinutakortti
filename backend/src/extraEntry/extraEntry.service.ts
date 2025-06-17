@@ -3,9 +3,9 @@ import { Repository, DeleteResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as content from '../content';
 import { ExtraEntry } from './entities';
-import { ExtraEntryType } from './entities';
-import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
-import { CreateExtraEntryTypeDto } from './dto/createType.dto';
+import { EntryType } from './entities';
+import { EntryTypeViewModel } from './vm/entryType.vm';
+import { CreateEntryTypeDto } from './dto/createType.dto';
 import { CreateExtraEntryDto } from './dto/create.dto';
 import { ConfigHandler } from '../configHandler';
 import { Junior } from '../junior/entities';
@@ -15,48 +15,48 @@ import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { JuniorExtraEntriesViewModel } from './vm/juniorExtraEntries.vm';
 import { JuniorService } from '../junior/junior.service';
 import { Cron } from '@nestjs/schedule';
-import { Permit } from './entities/permit.entity';
+import { EntryPermit } from './entities/entryPermit.entity';
 
 @Injectable()
 export class ExtraEntryService {
     private readonly logger = new Logger('Extra entry Service');
 
     constructor(
-        @InjectRepository(ExtraEntryType)
-        private readonly extraEntryTypeRepo: Repository<ExtraEntryType>,
+        @InjectRepository(EntryType)
+        private readonly entryTypeRepo: Repository<EntryType>,
         @InjectRepository(ExtraEntry)
         private readonly extraEntryRepo: Repository<ExtraEntry>,
-        @InjectRepository(Permit)
-        private readonly permitRepo: Repository<Permit>,
+        @InjectRepository(EntryPermit)
+        private readonly entryPermitRepo: Repository<EntryPermit>,
         @InjectRepository(Junior)
         private readonly juniorRepo: Repository<Junior>,
         private readonly juniorService: JuniorService,
         ) { }
 
-    async getExtraEntryType(id: number): Promise<ExtraEntryTypeViewModel> {
-        return (await this.extraEntryTypeRepo.findOneBy({ id }));
+    async getEntryType(id: number): Promise<EntryTypeViewModel> {
+        return (await this.entryTypeRepo.findOneBy({ id }));
     };
 
-    async getAllExtraEntryTypes(): Promise<ExtraEntryTypeViewModel[]> {
-        return (await this.extraEntryTypeRepo.find()).map(extraEntryType => new ExtraEntryTypeViewModel(extraEntryType));
+    async getAllEntryTypes(): Promise<EntryTypeViewModel[]> {
+        return (await this.entryTypeRepo.find()).map(entryType => new EntryTypeViewModel(entryType));
     };
 
-    async createExtraEntryType(extraEntryData: CreateExtraEntryTypeDto): Promise<string> {
-        const extraEntryType = {
-            name: extraEntryData.name,
-            expiryAge: extraEntryData.expiryAge,
+    async createEntryType(entryTypeData: CreateEntryTypeDto): Promise<string> {
+        const entryType = {
+            name: entryTypeData.name,
+            expiryAge: entryTypeData.expiryAge,
         };
-        await this.extraEntryTypeRepo.save(extraEntryType);
-        return content.ExtraEntryTypeSaved;
+        await this.entryTypeRepo.save(entryType);
+        return content.EntryTypeSaved;
     };
 
     // Similar function can be made for juniors checkIns when needed: simply replace extraEntries with checkIns
     async getExtraEntriesForJunior(id: string): Promise<JuniorExtraEntriesViewModel> {
         const junior = await this.juniorRepo.createQueryBuilder('user')
             .leftJoinAndSelect('user.extraEntries', 'extraEntry')
-            .leftJoinAndSelect('extraEntry.extraEntryType', 'extraEntryType')
-            .leftJoinAndSelect('user.permits', 'permit')
-            .leftJoinAndSelect('permit.permitType', 'permitType')
+            .leftJoinAndSelect('extraEntry.entryType', 'extraEntryType')
+            .leftJoinAndSelect('user.entryPermits', 'entryPermit')
+            .leftJoinAndSelect('entryPermit.entryType', 'entryPermitType')
             .where('user.id = :id', { id: id })
             .getOne();
 
@@ -65,10 +65,10 @@ export class ExtraEntryService {
 
     async getAllExtraEntries(controls?: ListControlDto): Promise<ExtraEntryListViewModel> {
         const sortField = controls?.sort?.field;
+        // Sorting and filtering of extra entries is easier done here than in database, therefore getFilters does not return the filters here. We filter manually below.
         const filters = getFilters(controls);
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
-        // Sorting and filtering of extra entries is easier done here than in database
         if (controls?.filters?.extraEntryType) {
             // -1 = no extra entries
             if (controls?.filters?.extraEntryType === -1) {
@@ -77,23 +77,23 @@ export class ExtraEntryService {
             } else if (controls?.filters?.extraEntryType === -2) {
                 juniorEntities = juniorEntities.filter(j => Array.isArray(j.extraEntries) && j.extraEntries.length > 0);
             } else {
-                juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.extraEntryType.id === controls.filters.extraEntryType));
+                juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.entryType.id === controls.filters.extraEntryType));
             }
         }
 
-        if (controls?.filters?.permitType) {
+        if (controls?.filters?.entryPermitType) {
             // -1 = no permits
-            if (controls?.filters?.permitType === -1) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.permits) && j.permits.length === 0);
+            if (controls?.filters?.entryPermitType === -1) {
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.entryPermits) && j.entryPermits.length === 0);
             // -2 = any permit
-            } else if (controls?.filters?.permitType === -2) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.permits) && j.permits.length > 0);
+            } else if (controls?.filters?.entryPermitType === -2) {
+                juniorEntities = juniorEntities.filter(j => Array.isArray(j.entryPermits) && j.entryPermits.length > 0);
             } else {
-                juniorEntities = juniorEntities.filter(j => j.permits.find(ee => ee.permitType.id === controls.filters.permitType));
+                juniorEntities = juniorEntities.filter(j => j.entryPermits.find(ee => ee.entryType.id === controls.filters.entryPermitType));
             }
         }
 
-        if (sortField === "extraEntries" || sortField === "permits") {
+        if (sortField === "extraEntries" || sortField === "entryPermits") {
             if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a[sortField].length - b[sortField].length);
             if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b[sortField].length - a[sortField].length);
         }
@@ -105,8 +105,8 @@ export class ExtraEntryService {
 
     async deletePermitIfAddedAsEntry(juniorId: string, deletableType: number, userId?: string): Promise<boolean> {
         const juniorWithPermits = await this.getExtraEntriesForJunior(juniorId);
-        const deletablePermit = juniorWithPermits.permits.find((permit) => {
-            return permit.permitType.id === deletableType;
+        const deletablePermit = juniorWithPermits.entryPermits.find((permit) => {
+            return permit.entryType.id === deletableType;
         });
         if (deletablePermit) {
             this.deleteEntry(deletablePermit.id, userId, true);
@@ -120,22 +120,22 @@ export class ExtraEntryService {
         const isPermit = details.isPermit;
 
         if (userId && ConfigHandler.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: details.juniorId, entryTypeId: details.entryTypeId }, `User created ${isPermit ? "a permit" : "an extra entry"} for junior.`);
+            this.logger.log({ userId: userId, juniorId: details.juniorId, entryTypeId: details.entryTypeId }, `User created an ${isPermit ? "entry permit" : "extra entry"} for junior.`);
         };
 
         const junior = await this.juniorRepo.findOneBy({ id: details.juniorId });
         if (!junior) throw new BadRequestException(content.UserNotFound);
 
-        const eeType = await this.extraEntryTypeRepo.findOneBy({ id: details.entryTypeId });
+        const eeType = await this.entryTypeRepo.findOneBy({ id: details.entryTypeId });
         if (!eeType) throw new BadRequestException(content.TypeNotFound);
 
         let message = content.ExtraEntryAdded;
 
         if (isPermit) {
-            const newPermit = {junior: junior, permitType: eeType};
-            this.permitRepo.save(newPermit);
+            const newPermit = {junior: junior, entryType: eeType};
+            this.entryPermitRepo.save(newPermit);
         } else {
-            const newExtraEntry = {junior: junior, extraEntryType: eeType};
+            const newExtraEntry = {junior: junior, entryType: eeType};
             this.extraEntryRepo.save(newExtraEntry);
             const permitDeleted = await this.deletePermitIfAddedAsEntry(details.juniorId, details.entryTypeId, userId);
             if (permitDeleted) message += " - lisämerkintää vastaava lupa poistettu";
@@ -146,7 +146,7 @@ export class ExtraEntryService {
 
     async deleteEntry(deletableId: number, userId?: string, isPermit?: boolean): Promise<string> {
         const entry = isPermit ?
-            await this.permitRepo.createQueryBuilder('permit')
+            await this.entryPermitRepo.createQueryBuilder('permit')
                 .leftJoinAndSelect('permit.junior', 'junior')
                 .where('permit.id = :id', { id: deletableId })
                 .getOne() :
@@ -163,9 +163,9 @@ export class ExtraEntryService {
         };
 
         if (isPermit) {
-            const permit = await this.permitRepo.findOneBy({ id: deletableId });
+            const permit = await this.entryPermitRepo.findOneBy({ id: deletableId });
             if (!permit) throw new BadRequestException(content.ExtraEntryNotFound);
-            await this.permitRepo.remove(permit);
+            await this.entryPermitRepo.remove(permit);
         } else {
             const extraEntry = await this.extraEntryRepo.findOneBy({ id: deletableId });
             if (!extraEntry) throw new BadRequestException(content.ExtraEntryNotFound);
@@ -181,17 +181,17 @@ export class ExtraEntryService {
         this.logger.log("Cleaning up extra entry and permit registry.");
         const juniorEntries = (await this.getAllExtraEntries()).data;
         const expiredExtraEntries = [];
-        const expiredPermits = [];
+        const expiredEntryPermits = [];
 
         for (const junior of juniorEntries) {
             for (const ee of junior.extraEntries) {
-                if (junior.age >= ee.extraEntryType.expiryAge) {
+                if (junior.age >= ee.entryType.expiryAge) {
                     expiredExtraEntries.push(ee.id);
                 }
             }
-            for (const p of junior.permits) {
-                if (junior.age >= p.permitType.expiryAge) {
-                    expiredPermits.push(p.id);
+            for (const p of junior.entryPermits) {
+                if (junior.age >= p.entryType.expiryAge) {
+                    expiredEntryPermits.push(p.id);
                 }
             }
         }
@@ -204,12 +204,12 @@ export class ExtraEntryService {
             this.logger.log({ count: deleted.affected, ids: expiredExtraEntries }, "Deleted expired extra entries.");
         }
 
-        if (expiredPermits.length > 0) {
-            const deleted: DeleteResult = await this.permitRepo.createQueryBuilder()
-                .where('permit.id IN (:...expiredIds)', { expiredIds: expiredPermits })
+        if (expiredEntryPermits.length > 0) {
+            const deleted: DeleteResult = await this.entryPermitRepo.createQueryBuilder()
+                .where('entry_permit.id IN (:...expiredIds)', { expiredIds: expiredEntryPermits })
                 .delete()
                 .execute();
-            this.logger.log({ count: deleted.affected, ids: expiredPermits }, "Deleted expired permits.");
+            this.logger.log({ count: deleted.affected, ids: expiredEntryPermits }, "Deleted expired entry permits.");
         }
 
         await this.juniorService.cleanUpExtraEntryJuniors();

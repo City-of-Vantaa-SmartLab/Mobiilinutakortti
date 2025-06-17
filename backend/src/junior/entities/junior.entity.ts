@@ -1,7 +1,7 @@
 import { CheckIn } from '../../club/entities';
 import { ConfigHandler } from '../../configHandler';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { ExtraEntry, Permit } from '../../extraEntry/entities';
+import { ExtraEntry, EntryPermit } from '../../extraEntry/entities';
 import { Length } from 'class-validator';
 import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
 
@@ -79,9 +79,11 @@ export class Junior {
     @OneToMany(() => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
 
+    // Extra entries are an optional feature to use the same registry of juniors for extra activities outside youth clubs, such as a permission to use a youth gym. See the environment variable REACT_APP_ENABLE_EXTRA_ENTRIES in the admin frontend.
     @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
     extraEntries: ExtraEntry[];
 
-    @OneToMany(() => Permit, permit => permit.junior)
-    permits: Permit[];
+    // The permits are meant to work as an intermediate step towards an extra entry. For example, a junior could have a parent's permit to participate in an introductory gym course. After the course, they would have the extra entry itself, indicating they have permission to use the gym.
+    @OneToMany(() => EntryPermit, permit => permit.junior)
+    entryPermits: EntryPermit[];
 }

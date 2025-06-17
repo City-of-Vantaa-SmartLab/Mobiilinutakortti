@@ -27,7 +27,7 @@ export const extraEntryProvider = (type, params, httpClient) => {
                     name: params.filter.name,
                     phoneNumber: params.filter.phoneNumber,
                     extraEntryType: params.filter.extraEntryType,
-                    permitType: params.filter.permitType,
+                    entryPermitType: params.filter.entryPermitType,
                 },
                 pagination: {
                     page: params.pagination.page,

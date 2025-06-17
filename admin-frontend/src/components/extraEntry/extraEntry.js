@@ -26,7 +26,7 @@ import {
     CREATE
 } from 'react-admin';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getExtraEntryTypes, statusChoices, appUrl, Status } from '../../utils';
+import { getEntryTypes, statusChoices, appUrl, Status } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
@@ -41,18 +41,18 @@ const useStyles = makeStyles({
 
 export const ExtraEntryList = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
-    const [permitTypeChoices, setPermitTypeChoices] = useState([]);
+    const [entryPermitTypeChoices, setEntryPermitTypeChoices] = useState([]);
     const autoFocusSource = useRef(null);
 
     useAutoLogout();
 
     useEffect(() => {
         const addTypesToState = async () => {
-            const extraEntryTypes = await getExtraEntryTypes();
-            const eeTypesWithCustomOptions = [...extraEntryTypes, {id: -1, name: "Ei lisämerkintöjä"}, {id: -2, name: "Mikä tahansa lisämerkintä"}];
-            const permitTypesWithCustomOptions = [...extraEntryTypes, {id: -1, name: "Ei lupia"}, {id: -2, name: "Mikä tahansa lupa"}];
+            const entryTypes = await getEntryTypes();
+            const eeTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lisämerkintöjä"}, {id: -2, name: "Mikä tahansa lisämerkintä"}];
+            const permitTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lupia"}, {id: -2, name: "Mikä tahansa lupa"}];
             setExtraEntryTypeChoices(eeTypesWithCustomOptions);
-            setPermitTypeChoices(permitTypesWithCustomOptions);
+            setEntryPermitTypeChoices(permitTypesWithCustomOptions);
         };
         addTypesToState();
     }, []);
@@ -73,7 +73,7 @@ export const ExtraEntryList = (props) => {
         <Filter {...props}>
             <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
             <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
-            <SelectInput label="Lupatyyppi" source="permitType" choices={permitTypeChoices} onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} onChange={() => setAutoFocus("none")} />
             <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} onChange={() => setAutoFocus("none")} />
         </Filter>
     );
@@ -93,12 +93,12 @@ export const ExtraEntryList = (props) => {
                 <TextField label="Puhelinnumero" source="phoneNumber" />
                 <ArrayField label="Lisämerkinnät" source="extraEntries">
                     <SingleFieldList linkType={false} >
-                        <ChipField source="extraEntryType.name" size="small" />
+                        <ChipField source="entryType.name" size="small" />
                     </SingleFieldList>
                 </ArrayField>
-                <ArrayField label="Luvat" source="permits">
+                <ArrayField label="Luvat" source="entryPermits">
                     <SingleFieldList linkType={false} >
-                        <ChipField source="permitType.name" size="small" />
+                        <ChipField source="entryType.name" size="small" />
                     </SingleFieldList>
                 </ArrayField>
                 <EditButton />
@@ -116,8 +116,8 @@ const CustomToolbar = ({cancel, ...others}) => (
 export const ExtraEntryEdit = (props) => {
     useAutoLogout();
     const [newExtraEntryType, setNewExtraEntryType] = useState(-1);
-    const [newPermitType, setNewPermitType] = useState(-1);
-    const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
+    const [newEntryPermitType, setNewEntryPermitType] = useState(-1);
+    const [entryTypeChoices, setEntryTypeChoices] = useState([]);
 
     const notify = useNotify();
     const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
@@ -127,8 +127,8 @@ export const ExtraEntryEdit = (props) => {
 
     useEffect(() => {
         const addExtraEntryTypesToState = async () => {
-            const extraEntryTypes = await getExtraEntryTypes();
-            setExtraEntryTypeChoices(extraEntryTypes);
+            const entryTypes = await getEntryTypes();
+            setEntryTypeChoices(entryTypes);
         };
         addExtraEntryTypesToState();
     }, []);
@@ -153,16 +153,16 @@ export const ExtraEntryEdit = (props) => {
     };
 
     const handlePermitChange = (e) => {
-        setNewPermitType(e.target.value);
+        setNewEntryPermitType(e.target.value);
     };
 
     const handleAdd = async (juniorId, isPermit) => {
-        const newType = isPermit ? newPermitType : newExtraEntryType;
+        const newType = isPermit ? newEntryPermitType : newExtraEntryType;
         const response = await extraEntryProvider(CREATE, {data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}}, httpClientWithRefresh);
          if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän lisäämisessä');
         } else {
-            isPermit ? setNewPermitType(-1) : setNewExtraEntryType(-1);
+            isPermit ? setNewEntryPermitType(-1) : setNewExtraEntryType(-1);
             const message = response.data.message || 'Merkintä lisätty';
             notify(message, 'success');
             refresh();
@@ -178,14 +178,14 @@ export const ExtraEntryEdit = (props) => {
                         const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI");
 
                         const selectedEeTypes = formData.extraEntries.map((entry) => {
-                            return entry.extraEntryType?.id;
+                            return entry.entryType?.id;
                         });
-                        const availableEeChoices = extraEntryTypeChoices.filter(item => !selectedEeTypes.includes(item.id));
+                        const availableEeChoices = entryTypeChoices.filter(item => !selectedEeTypes.includes(item.id));
 
-                        const selectedPermitTypes = formData.permits.map((entry) => {
-                            return entry.permitType?.id;
+                        const selectedPermitTypes = formData.entryPermits.map((entry) => {
+                            return entry.entryType?.id;
                         });
-                        const availablePermitChoices = extraEntryTypeChoices.filter(item => (!selectedEeTypes.includes(item.id) && !selectedPermitTypes.includes(item.id)));
+                        const availablePermitChoices = entryTypeChoices.filter(item => (!selectedEeTypes.includes(item.id) && !selectedPermitTypes.includes(item.id)));
 
                         return <>
                             <ExtraEntryTable>
@@ -215,6 +215,7 @@ export const ExtraEntryEdit = (props) => {
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>
+
                             <ExtraEntryTable>
                                 <thead>
                                     <tr><th>Lisämerkinnät</th></tr>
@@ -222,7 +223,7 @@ export const ExtraEntryEdit = (props) => {
                                 <tbody>
                                     {formData.extraEntries.map((ee) => {
                                         return <tr key={ee.id}>
-                                            <td>{ee.extraEntryType.name}</td>
+                                            <td>{ee.entryType.name}</td>
                                             <td>
                                                 <ExtraEntryButton value={ee.id} onClick={() => handleDelete(ee.id, false)} type="button">
                                                     Poista <CancelOutlined />
@@ -256,14 +257,15 @@ export const ExtraEntryEdit = (props) => {
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>
+
                             <ExtraEntryTable>
                                 <thead>
                                     <tr><th>Luvat</th></tr>
                                 </thead>
                                 <tbody>
-                                    {formData.permits.map((permit) => {
+                                    {formData.entryPermits.map((permit) => {
                                         return <tr key={permit.id}>
-                                            <td>{permit.permitType.name}</td>
+                                            <td>{permit.entryType.name}</td>
                                             <td>
                                                 <ExtraEntryButton value={permit.id} onClick={() => handleDelete(permit.id, true)} type="button">
                                                     Poista <CancelOutlined />
@@ -280,7 +282,7 @@ export const ExtraEntryEdit = (props) => {
                                             {availablePermitChoices.length > 0 && status.id !== Status.expired ? <Select
                                                 className={classes.selectInput}
                                                 onChange={handlePermitChange}
-                                                value={newPermitType}
+                                                value={newEntryPermitType}
                                             >
                                                 <MenuItem value={-1}></MenuItem>
                                                 {availablePermitChoices.map(ac => (
@@ -290,7 +292,7 @@ export const ExtraEntryEdit = (props) => {
                                         </td>
                                         <td>
                                             <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button"
-                                                disabled={newPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}>
+                                                disabled={newEntryPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}>
                                                 Lisää <Add />
                                             </ExtraEntryButton>
                                         </td>

@@ -78,7 +78,7 @@ export const getActiveYouthClubOptions = async () => {
 
 export const isSubstring = (mainString, subString) => mainString.includes(subString);
 
-export const getExtraEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);
+export const getEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType').then(response => response.data);
 
 export const setUserInfo = (userInfo) => {
   if (!userInfo || !userInfo.firstName) {

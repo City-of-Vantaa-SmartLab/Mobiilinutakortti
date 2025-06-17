@@ -19,9 +19,9 @@ import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Message } from '../common/vm';
 import { ExtraEntryService } from './extraEntry.service';
-import { CreateExtraEntryTypeDto } from './dto/createType.dto';
+import { CreateEntryTypeDto } from './dto/createType.dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
-import { ExtraEntryTypeViewModel } from './vm/extraEntryType.vm';
+import { EntryTypeViewModel } from './vm/entryType.vm';
 import { ListControlDto } from '../common/dto';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 import { CreateExtraEntryDto } from './dto/create.dto';
@@ -65,7 +65,7 @@ export class ExtraEntryController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
-    @Delete('deletepermit/:permitId')
+    @Delete('deletePermit/:permitId')
     @ApiBearerAuth('youthWorker')
     async deletePermit(@YouthWorker() youthWorker: { userId: string }, @Param('permitId') permitId: number): Promise<Message>  {
         return new Message(await this.extraEntryService.deleteEntry(permitId, youthWorker.userId, true));
@@ -85,8 +85,8 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('type/list')
     @ApiBearerAuth('youthWorker')
-    async getAllExtraEntryTypes(): Promise<ExtraEntryTypeViewModel[]> {
-        return await this.extraEntryService.getAllExtraEntryTypes();
+    async getAllEntryTypes(): Promise<EntryTypeViewModel[]> {
+        return await this.extraEntryService.getAllEntryTypes();
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -94,8 +94,8 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.ADMIN)
     @Post('type/create')
     @ApiBearerAuth('admin')
-    async createExtraEntryType(@Body() extraEntryTypeData: CreateExtraEntryTypeDto): Promise<Message> {
-        return new Message(await this.extraEntryService.createExtraEntryType(extraEntryTypeData));
+    async createEntryType(@Body() entryTypeData: CreateEntryTypeDto): Promise<Message> {
+        return new Message(await this.extraEntryService.createEntryType(entryTypeData));
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -103,7 +103,7 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Get('type/:id')
     @ApiBearerAuth('youthWorker')
-    async getExtraEntryType(@Param('id') id: number): Promise<ExtraEntryTypeViewModel> {
-        return await this.extraEntryService.getExtraEntryType(id);
+    async getEntryType(@Param('id') id: number): Promise<EntryTypeViewModel> {
+        return await this.extraEntryService.getEntryType(id);
     }
 }

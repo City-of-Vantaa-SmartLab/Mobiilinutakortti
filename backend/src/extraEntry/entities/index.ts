@@ -1,3 +1,3 @@
-export { Permit } from './permit.entity';
+export { EntryPermit } from './entryPermit.entity';
 export { ExtraEntry } from './extraEntry.entity';
-export { ExtraEntryType } from './extraEntryType.entity';
+export { EntryType } from './entryType.entity';
