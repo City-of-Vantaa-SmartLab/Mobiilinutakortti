@@ -73,8 +73,8 @@ export const ExtraEntryList = (props) => {
         <Filter {...props}>
             <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
             <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
-            <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} onChange={() => setAutoFocus("none")} />
-            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} />
         </Filter>
     );
 
@@ -84,9 +84,11 @@ export const ExtraEntryList = (props) => {
             <p>Nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" ja joilla ei ole ainuttakaan lisämerkintää (tai lupaa), poistuvat järjestelmästä automaattisesti joka yö tehtävässä ylläpitosiivouksessa. Samalla tarkistetaan myös onko lisämerkinnän ikäraja tullut vastaan, ja merkintä poistetaan automaattisesti jos on.</p>
             <p>Huomaa myös, että toiminto "Poista vanhat käyttäjät" siirtää "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" -tilaan nuoret, joilla on lisämerkintöjä.</p>
             <p>Nuorille, jotka ovat tilassa "{statusChoices.find(s => s.id === Status.expired).name}", ei voi lisätä merkintöjä.</p>
+            <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
           </CardContent>
         </Card>
-        <List title="Lisämerkinnät" pagination={<CustomPagination />} debounce={1000} filters={<ExtraEntryFilter />} bulkActionButtons={false} exporter={false} {...props}>
+        <List title="Lisämerkinnät" pagination={<CustomPagination />} debounce={1000} filters={<ExtraEntryFilter />} bulkActionButtons={false} exporter={false} {...props}
+            filterDefaultValues={{ entryPermitType: -2, extraEntryType: -2 }}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <TextField source="age" label="Ikä" />

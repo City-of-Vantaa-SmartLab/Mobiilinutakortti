@@ -64,34 +64,41 @@ export class ExtraEntryService {
     }
 
     async getAllExtraEntries(controls?: ListControlDto): Promise<ExtraEntryListViewModel> {
-        const sortField = controls?.sort?.field;
+
         // Sorting and filtering of extra entries is easier done here than in database, therefore getFilters does not return the filters here. We filter manually below.
+        // Note: normally the filters are of AND type, but here they are OR type as otherwise it wouldn't make any sense.
+
+        const sortField = controls?.sort?.field;
         const filters = getFilters(controls);
         let juniorEntities = await (this.juniorService.getAllJuniorsQuery(filters, true)).getMany();
 
-        if (controls?.filters?.extraEntryType) {
-            // -1 = no extra entries
-            if (controls?.filters?.extraEntryType === -1) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.extraEntries) && j.extraEntries.length === 0);
-            // -2 = any extra entry
-            } else if (controls?.filters?.extraEntryType === -2) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.extraEntries) && j.extraEntries.length > 0);
-            } else {
-                juniorEntities = juniorEntities.filter(j => j.extraEntries.find(ee => ee.entryType.id === controls.filters.extraEntryType));
-            }
-        }
+        const extraEntryType = controls?.filters?.extraEntryType;
+        const entryPermitType = controls?.filters?.entryPermitType;
 
-        if (controls?.filters?.entryPermitType) {
-            // -1 = no permits
-            if (controls?.filters?.entryPermitType === -1) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.entryPermits) && j.entryPermits.length === 0);
-            // -2 = any permit
-            } else if (controls?.filters?.entryPermitType === -2) {
-                juniorEntities = juniorEntities.filter(j => Array.isArray(j.entryPermits) && j.entryPermits.length > 0);
+        const juniorsWithEEs = extraEntryType ? juniorEntities.filter(j => {
+            if (extraEntryType === -1) { // no extra entries
+                return Array.isArray(j.extraEntries) && j.extraEntries.length === 0;
+            } else if (extraEntryType === -2) { // any extra entry
+                return Array.isArray(j.extraEntries) && j.extraEntries.length > 0;
             } else {
-                juniorEntities = juniorEntities.filter(j => j.entryPermits.find(ee => ee.entryType.id === controls.filters.entryPermitType));
+                return j.extraEntries?.find(ee => ee.entryType.id === extraEntryType);
             }
-        }
+        }) : [];
+
+        const juniorsWithEPs = entryPermitType !== undefined ? juniorEntities.filter(j => {
+            if (entryPermitType === -1) { // no entry permits
+                return Array.isArray(j.entryPermits) && j.entryPermits.length === 0;
+            } else if (entryPermitType === -2) { // any entry permit
+                return Array.isArray(j.entryPermits) && j.entryPermits.length > 0;
+            } else {
+                return j.entryPermits?.find(ep => ep.entryType.id === entryPermitType);
+            }
+        }) : [];
+
+        const combined = [...juniorsWithEEs, ...juniorsWithEPs];
+        const idsUnion = Array.from(new Set(combined.map(j => j.id)));
+
+        if (extraEntryType || entryPermitType) juniorEntities = juniorEntities.filter(j => idsUnion.includes(j.id));
 
         if (sortField === "extraEntries" || sortField === "entryPermits") {
             if (controls?.sort?.order === "DESC") juniorEntities = juniorEntities.sort((a,b) => a[sortField].length - b[sortField].length);
