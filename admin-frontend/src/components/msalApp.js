@@ -5,14 +5,17 @@ export class MSALApp {
     static instance;
     static appUsername;
 
-    static async logout() {
-        // Despite the code having hints suggesting so, it is not possible to select the account to be logged out
-        // using parameters here due to DDOS threat. The user will be shown a prompt, asking which account they
-        // would like to log out of.
+    // NOTE: to use the logout_hint parameter, you the login_hint optional claim must be configured according to:
+    // https://learn.microsoft.com/en-gb/entra/identity-platform/v2-protocols-oidc#send-a-sign-out-request
+    // Using the logout_hint parameter also seems to fix a bug where post_logout_redirect_uri was not redirecting the user:
+    // https://github.com/AzureAD/microsoft-authentication-library-for-js/issues/5783
+    static async logout(logoutHintValue) {
         console.debug('Calling MSAL logout redirect.');
-        await MSALApp.instance.logoutRedirect({
+        const options = {
             postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
-        });
+        };
+        if (logoutHintValue) options.logoutHint = logoutHintValue;
+        await MSALApp.instance.logoutRedirect(options);
     }
 
     static async initNew() {

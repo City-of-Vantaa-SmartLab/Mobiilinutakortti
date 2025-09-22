@@ -38,7 +38,10 @@ const authConfig = {
   }
 }
 
-const loginRequestScopes = ['User.Read']
+// For logout_hint to work during logout, 'openid' and 'profile' scopes are required according to documentation:
+// https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/app-integration/sign-out-of-openid-connect-oauth2-applications-without-user-selection-prompt
+// For the login, scopes 'openid' and 'profile' were automatically included but we'll define them here anyway.
+const loginRequestScopes = ['User.Read', 'openid', 'profile']
 
 const tokenRequestScopes = [`api://${process.env.REACT_APP_ENTRA_CLIENT_ID}/user_login`]
 

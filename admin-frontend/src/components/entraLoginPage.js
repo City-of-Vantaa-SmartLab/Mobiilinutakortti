@@ -77,6 +77,7 @@ export default function EntraLogin() {
         const token = await MSALApp.getAuthorizationBearerToken();
         if (token?.accessToken) {
           try {
+            const logoutHintValue = token?.idTokenClaims?.login_hint;
             const { access_token } = await httpClient(
               api.auth.loginEntraID,
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
@@ -87,7 +88,7 @@ export default function EntraLogin() {
             setUserInfo(userInfo);
 
             localStorage.setItem(MSALAppLogoutInProgressKey, true);
-            await MSALApp.logout();
+            await MSALApp.logout(logoutHintValue);
 
           } catch (error) {
             setErrorState(true);
