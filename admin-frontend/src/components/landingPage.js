@@ -16,7 +16,7 @@ export const LandingPage = () => {
 
   useEffect(() => {
     userInfo.current = getUserInfo();
-    const noUserToken = !localStorage.getItem(userTokenKey) || localStorage.getItem(userTokenKey) === 'undefined';
+    const noUserToken = !sessionStorage.getItem(userTokenKey) || sessionStorage.getItem(userTokenKey) === 'undefined';
     if (!!userInfo.current && !noUserToken) {
       const addYouthClubsToState = async () => {
         const youthClubOptions = await getActiveYouthClubOptions();

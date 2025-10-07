@@ -9,7 +9,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from '../../audio/audio.js'
-import { checkInClubIdKey, userTokenKey, appUrl, checkInSecurityCodeKey } from '../../utils';
+import { checkInClubIdKey, userTokenKey, appUrl, checkInSecurityCodeKey, clearUserInfo } from '../../utils';
 import { Button } from '@material-ui/core';
 import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
@@ -51,7 +51,8 @@ const CheckInView = () => {
   const notify = useNotify();
 
   useEffect(() => {
-    localStorage.removeItem(userTokenKey);
+    sessionStorage.removeItem(userTokenKey);
+    clearUserInfo();
 
     // Security could be made a bit tighter with rotating codes.
     // Emptying the session storage would result in need to re-login if refreshing the page.

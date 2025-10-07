@@ -2,7 +2,7 @@ import { userTokenKey } from '../utils';
 
 export const httpClient = async (url, options = {}) => {
   options.headers = new Headers({ 'Content-Type': 'application/json' });
-  const authToken = localStorage.getItem(userTokenKey);
+  const authToken = sessionStorage.getItem(userTokenKey);
   if (authToken) {
     options.headers.set('Authorization', `Bearer ${authToken}`);
   }

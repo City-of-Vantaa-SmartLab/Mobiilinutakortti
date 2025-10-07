@@ -63,13 +63,13 @@ export default function EntraLogin() {
 
       // User has been prompted to log out from MSAL and this is a redirect after that.
       // User should have a valid session token by now. Continue to landingPage.
-      if (localStorage.getItem(MSALAppLogoutInProgressKey)) {
-          localStorage.removeItem(MSALAppLogoutInProgressKey);
+      if (sessionStorage.getItem(MSALAppLogoutInProgressKey)) {
+          sessionStorage.removeItem(MSALAppLogoutInProgressKey);
           window.location.href = appUrl;
           return;
       } else {
         if (!MSALApp.appUsername) {
-          localStorage.removeItem(MSALAppLogoutInProgressKey);
+          sessionStorage.removeItem(MSALAppLogoutInProgressKey);
           setLoginInProgress(false);
           return;
         }
@@ -82,12 +82,12 @@ export default function EntraLogin() {
               api.auth.loginEntraID,
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
             );
-            localStorage.setItem(userTokenKey, access_token);
+            sessionStorage.setItem(userTokenKey, access_token);
 
             const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
             setUserInfo(userInfo);
 
-            localStorage.setItem(MSALAppLogoutInProgressKey, true);
+            sessionStorage.setItem(MSALAppLogoutInProgressKey, true);
             await MSALApp.logout(logoutHintValue);
 
           } catch (error) {
@@ -145,7 +145,7 @@ export default function EntraLogin() {
                 Kirjaudu Nutakorttiin
               </Button>
               <Typography variant="body2" align="center">
-                Entra ID -tilillä sisäänkirjautumisen yhteydessä sinulta kysytään miltä tililtä uloskirjautuminen tapahtuu. Sinun tulee valita sama tili, jolla kirjauduit sisään.
+                Entra ID -tilillä kirjautuessasi sinut myös kirjataan ulos kyseiseltä tililtä. Tämä on normaali osa sisäänkirjautumisprosessia.
               </Typography>
             </Box>) :
             (<Typography variant="body2" align="center">

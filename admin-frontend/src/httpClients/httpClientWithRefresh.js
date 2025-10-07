@@ -9,7 +9,7 @@ export const httpClientWithRefresh = async (url, options = {}, justRefresh = fal
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
     };
-    const authToken = localStorage.getItem(userTokenKey);
+    const authToken = sessionStorage.getItem(userTokenKey);
     if (authToken) refreshOptions.headers.set('Authorization', `Bearer ${authToken}`);
 
     return fetch(api.youthWorker.refresh, refreshOptions).then(refreshResponse => {
@@ -22,7 +22,7 @@ export const httpClientWithRefresh = async (url, options = {}, justRefresh = fal
             return refreshResponse;
         }
     }).then(({ access_token }) => {
-        localStorage.setItem(userTokenKey, access_token);
+        sessionStorage.setItem(userTokenKey, access_token);
         if (justRefresh) return;
         return httpClient(url, options);
     });

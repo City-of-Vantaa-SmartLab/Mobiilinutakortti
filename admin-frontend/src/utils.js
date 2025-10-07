@@ -86,25 +86,25 @@ export const setUserInfo = (userInfo) => {
     return;
   }
 
-  localStorage.setItem('userInfo', JSON.stringify({
+  sessionStorage.setItem('userInfo', JSON.stringify({
     firstName: userInfo.firstName,
     mainYouthClubId: userInfo.mainYouthClub || -1,
     passwordLastChanged: userInfo.passwordLastChanged
   }));
 
   if (userInfo.isAdmin) {
-    localStorage.setItem('role', 'ADMIN');
+    sessionStorage.setItem('role', 'ADMIN');
   } else {
-    localStorage.setItem('role', 'YOUTHWORKER');
+    sessionStorage.setItem('role', 'YOUTHWORKER');
   }
 }
 
 export const getUserInfo = () => {
-  return JSON.parse(localStorage.getItem('userInfo'));
+  return JSON.parse(sessionStorage.getItem('userInfo'));
 }
 
 export const clearUserInfo = () => {
-  localStorage.removeItem('userInfo');
+  sessionStorage.removeItem('userInfo');
 }
 
 // When using a common alert dialog, create an observer for it and fix the dialog title when dialog appears.

@@ -33,10 +33,10 @@ function useAutoLogout() {
 
             if (!isLoggedOutPage) {
                 console.info('Automatically logging out user.');
-                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userTokenKey) });
+                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
             } else
                 // Remove the local session token in case the user has somehow reached this logged out page being logged in.
-                localStorage.removeItem(userTokenKey);
+                sessionStorage.removeItem(userTokenKey);
         }, inactiveMinutesLimit * 60000);
 
         return () => {
@@ -53,7 +53,7 @@ const logoutWithId = (elementIdToCheck) => {
     const timeoutId = setTimeout(async () => {
         if (!document.getElementById(elementIdToCheck)) return;
         console.info('Automatically logging out user.');
-        authProvider(AUTH_LOGOUT, { automatic: true, auth_token: localStorage.getItem(userTokenKey) });
+        authProvider(AUTH_LOGOUT, { automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
     }, inactiveMinutesLimit * 60000);
     console.info(`Set id-based auto logout of ${inactiveMinutesLimit} minutes.`);
     return timeoutId;

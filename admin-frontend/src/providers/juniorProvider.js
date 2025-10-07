@@ -119,8 +119,8 @@ export const juniorProvider = (type, params, httpClient) => {
         case GET_ONE: {
             // A fix to react-admins delete -> get_one bug:
             // Edit-page is refreshed after delete when id is already undefined, causing an unnecessary error
-            const deletedItem = localStorage.getItem("deletedItem");
-            localStorage.removeItem("deletedItem");
+            const deletedItem = sessionStorage.getItem("deletedItem");
+            sessionStorage.removeItem("deletedItem");
             if (params.id === deletedItem) {
                 return Promise.reject();
             };
@@ -146,7 +146,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw newHttpErrorFromResponse(response);
                     }
-                    localStorage.setItem("deletedItem", params.id)
+                    sessionStorage.setItem("deletedItem", params.id)
                     return { data: { id: params.id } }
                 });
         }
