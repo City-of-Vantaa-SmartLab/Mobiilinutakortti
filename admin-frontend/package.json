@@ -1,6 +1,6 @@
 {
   "name": "admin-frontend",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "private": true,
   "dependencies": {
     "@azure/msal-browser": "^4.21.1",

@@ -22,14 +22,20 @@ export class NumberTransformer implements ValueTransformer {
 
 // NB: will not return filters for extra entry types or entry permits, by design.
 export const getFilters = (controls?: ListControlDto) => {
-    let order = {}, filterValues = {}, query = '', take = 0, skip = 0;
-    if (controls) {
-        order = controls.sort ? applySort(controls.sort) : {};
-        ({ query, filterValues } = controls.filters ? applyFilters(controls.filters) : { query: '', filterValues: [] });
-        take = controls.pagination ? controls.pagination.perPage : 0;
-        skip = controls.pagination ? controls.pagination.perPage * (controls.pagination.page - 1) : 0;
+    let filterValues = {}, query = '';
+    const filters: any = {filterValues, query};
+    if (!controls) return filters;
+
+    if (controls.sort) filters.order = applySort(controls.sort);
+    if (controls.filters) ({ query, filterValues } = applyFilters(controls.filters));
+    if (query) filters.query = query;
+    if (filterValues) filters.filterValues = filterValues;
+    if (controls.pagination) {
+        filters.take = controls.pagination.perPage;
+        filters.skip = controls.pagination.perPage * (controls.pagination.page - 1);
     }
-    return {order, filterValues, query, take, skip}
+
+    return filters;
 }
 
 export const applyFilters = (filterOptions: FilterDto) => {
