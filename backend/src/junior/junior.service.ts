@@ -376,7 +376,7 @@ export class JuniorService {
         // When the extra entries or permits expire, the juniors are automatically removed by nightly cleanup routines.
         const expiredJuniors = await this.juniorRepo.createQueryBuilder('junior')
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
-            .leftJoinAndSelect('junior.permits', 'permit')
+            .leftJoinAndSelect('junior.entryPermits', 'entryPermit')
             .where('junior.status = :expiredStatus', { expiredStatus: Status.expired })
             .getMany();
 
