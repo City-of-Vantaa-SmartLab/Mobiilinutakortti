@@ -136,7 +136,7 @@ export const JuniorList = (props) => {
     }
 
     return (
-        <List title="Nuoret" pagination={<CustomPagination />} debounce={1000} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
+        <List title="Nuoret" pagination={<CustomPagination />} debounce={500} filters={<JuniorFilter />} bulkActionButtons={false} exporter={false} {...props}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />

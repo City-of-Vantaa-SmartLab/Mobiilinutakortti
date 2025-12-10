@@ -42,6 +42,7 @@ const useStyles = makeStyles({
 export const ExtraEntryList = (props) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
     const [entryPermitTypeChoices, setEntryPermitTypeChoices] = useState([]);
+    const [choicesLoaded, setChoicesLoaded] = useState(false);
     const autoFocusSource = useRef(null);
 
     useAutoLogout();
@@ -53,6 +54,7 @@ export const ExtraEntryList = (props) => {
             const permitTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lupia"}, {id: -2, name: "Mikä tahansa lupa"}];
             setExtraEntryTypeChoices(eeTypesWithCustomOptions);
             setEntryPermitTypeChoices(permitTypesWithCustomOptions);
+            setChoicesLoaded(true);
         };
         addTypesToState();
     }, []);
@@ -87,7 +89,7 @@ export const ExtraEntryList = (props) => {
             <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
           </CardContent>
         </Card>
-        <List title="Lisämerkinnät" pagination={<CustomPagination />} debounce={1000} filters={<ExtraEntryFilter />} bulkActionButtons={false} exporter={false} {...props}
+        <List title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} bulkActionButtons={false} exporter={false} {...props}
             filterDefaultValues={{ entryPermitType: -2, extraEntryType: -2 }}>
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
