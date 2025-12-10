@@ -2,21 +2,20 @@
 
 The admin-frontend directory includes the admin side code for Mobiilinutakortti app. The users are youth workers.
 
-Admin-frontend is build using `react-admin` (running on port 3002).
-
 ## System Requirements:
 
 - NodeJS - v22 preferred
 
 ## Running locally
 
-1. Run `npm install` to get all admin-frontend pacakges needed
-2. Before running the admin-frontend:
-    *  ../backend should running *(see ../backend/README.md on how to get backend running)*
-    * since the default port react app runs locally *(3000)* is taken by backend, you can set a new port for admin-frontend to run in package.json. `"start": " PORT=3002 react-scripts start"`
-3. Run `npm run start` or `npm run dev` - and you'll see admin-frontend running at [http://localhost:3002](http://localhost:3002)
+You need to have the backend running before starting the admin-frontend; see `../backend/README.md` for info.
 
-The start script is the same as dev script, but you must set the required environment variables yourself with start.
+1. Run `npm install`
+2. Run `npm run start`
+    * if the ports 3000-3001 are taken by the backend and frontend already, you are suggested another port automatically
+    * if you choose port 3002, you can see admin-frontend running at [http://localhost:3002](http://localhost:3002)
+
+Note that if you are not using Docker, you need to set the `REACT_APP_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
 
 ## Creating a youth worker user
 
@@ -35,18 +34,8 @@ There are following environment variables:
 
 ## Entra ID login flow
 
-If using Entra ID to login we would like to require password each time a user wishes to log in. That causes trouble.
+If using Entra ID to login we require password each time a user wishes to log in. Once the youth worker logs in to Entra ID, an access token is requested from the backend, and then the user's Entra ID account is signed out automatically. The user is then accessing Nutakortti with the access token from the backend.
 
-Ideally, we would just empty MSAL cache in the browser. That data, however, is under microsoft.com domain and hence unreachable.
+There are three ways the user can logout: manually from the menu, automatically after a certain idle time, or when going to a club check in page (QR reader). If the user was not logged out from Entra ID, the last one would be a hassle and a security risk.
 
-Another option would be to configure in Entra ID to ask for password each time credentials are prompted for, but this is possible only for Azure cloud-native apps.
-
-A third option we considered was to rely on a 10 minute access token lifetime - after that time, MSAL would be effectively logged out. However, in practice this didn't seem to work reliably and we had to resort to explicitly asking the user to log out. This is because as part of login flow, normally [acquireTokenSilent](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-acquire-token) would be called. It uses the refresh token if access token lifetime has been reached. The refresh token's lifetime is always 24 hours for SPA apps. And even if acquireTokenSilent weren't called and refresh tokens never used, if a user just closed the browser after signing in, there would be 10 minutes available for attackers to re-login without a password.
-
-There are three ways the user can logout: manually from the menu, automatically after idle time (15 minutes), or when going to a club check in page (QR reader). The last one is not only a hassle, but the automatic logout is a security risk: if we wouldn't log out the user explicitly, they might still be logged in to Entra ID unbeknownst to the user. Then again if we do ask the user to log out explicitly, the auto-logout would end up in the "choose which account to log out from" dialog.
-
-Because of these problems it was decided to explicitly log out the user immediately after logging in. The last commit before this change in case the other type of login flow (without explicit log out prompt after logging in) is considered:
-
-    commit:  1eff0f24825c236753379dd207e739f1b594cfd4
-    Date:    Thu Jan 25 18:04:31 2024 +0200
-    Message: chore: Entra ID cleanup, better error handling
+When opening a club check in page, before logout a random check in code is requested from the backend. That code is then required for the check in to work. This is a security measure because the check in API is not protected otherwise.

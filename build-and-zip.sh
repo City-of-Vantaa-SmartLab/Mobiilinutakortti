@@ -13,10 +13,11 @@
 #
 # The zip file created by this script can be uploaded to AWS EB and it will launch the application with environment variables configured in AWS.
 
+required_version="v24.11.0"
 node_version=$(node --version)
-if [ "$node_version" != "v22.12.0" ]
+if [ "$node_version" != "$required_version" ]
 then
-    echo Warning: Node.js version does not match the one in Dockerfile.
+    echo "Warning: Node.js version ($node_version) does not match the one in use ($required_version)"
     echo Press return to still continue, Ctrl-C to abort.
     read tmp
 fi

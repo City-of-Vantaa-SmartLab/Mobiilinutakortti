@@ -1,8 +1,6 @@
 # Mobiilinutakortti frontend
 
-The frontend directory includes the frontend side code for Mobiilinutakortti app.
-
-Frontend is build using React (running on port 3000 by default).
+The frontend for Mobiilinutakortti app. This is the part used by the juniors and their guardians.
 
 ## System Requirements:
 
@@ -13,12 +11,11 @@ Frontend is build using React (running on port 3000 by default).
 You need to have the backend running before starting the frontend; see `../backend/README.md` for info.
 
 1. Run `npm install`
-2. Run `npm run start` or `npm run dev`
-    * since the default port 3000 is taken by backend already, if you wish you can set a new port for frontend to run in package.json: `"start": " PORT=3001 react-scripts start"`
-    * npm will anyway suggest another port automatically, so modifying package.json is not required in any case
-    * if you chose port 3001, you can see frontend running at [http://localhost:3001](http://localhost:3001)
+2. Run `npm run start`
+    * if the default port 3000 is taken by the backend already, you are suggested another port automatically
+    * if you choose port 3001, you can see frontend running at [http://localhost:3001](http://localhost:3001)
 
-The start script is the same as dev script, but you must set the required environment variable yourself with start.
+Note that if you are not using Docker, you need to set the `REACT_APP_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
 
 ## Environment variables / secrets
 
