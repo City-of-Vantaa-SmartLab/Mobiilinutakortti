@@ -55,7 +55,7 @@ export const LandingPage = () => {
   const listSelectedClubJuniors = () => {
     window.location = (selectedYouthClub.toString() === '-1') ?
       '#/junior' :
-      `#/junior?displayedFilters=%7B%22homeYouthClub%22%3Atrue%7D&filter=%7B%22homeYouthClub%22%3A%22${selectedYouthClub}%22%7D`;
+      `#/junior?displayedFilters=%7B%22homeYouthClub%22%3Atrue%7D&filter=%7B%22homeYouthClub%22%3A${selectedYouthClub}%7D`;
   }
 
   return (
