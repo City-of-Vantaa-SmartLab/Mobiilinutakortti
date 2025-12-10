@@ -1,7 +1,7 @@
-const baseURL = process.env.REACT_APP_API_URL || '/api';
+const apiUrl = process.env.REACT_APP_API_URL || '/api';
 
 export const get = async (uri: string, token?: string): Promise<any> => {
-    const url: string = `${baseURL}${uri}`;
+    const url: string = `${apiUrl}${uri}`;
     const init: RequestInit = {
         method: 'GET',
         headers: {
@@ -18,7 +18,7 @@ export const get = async (uri: string, token?: string): Promise<any> => {
 }
 
 export const post = async (uri: string, params?: object): Promise<any> => {
-    const url: string = `${baseURL}${uri}`;
+    const url: string = `${apiUrl}${uri}`;
     const init: RequestInit = {
         method: 'POST',
         headers: {

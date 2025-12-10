@@ -1,8 +1,8 @@
 # Mobiilinutakortti backend
 
-The backend directory includes the server side code for running Mobiilinutakortti app.
+The backend directory includes the server side code of the Mobiilinutakortti app.
 
-Server side is built using NestJS (running on port 3000) and PostgreSQL as database (running on port 5432).
+The backend uses NestJS. The database is PostgreSQL.
 
 ## System requirements:
 
@@ -46,14 +46,14 @@ To change password for a PostgreSQL user, use the psql command `\password <user>
 
 **Backend**
 
-1. Run `npm install` to get all backend packages needed
-2. Before running the backend, set environment variables or update the file ./src/configHandler.ts to match your system configuration for these parameters: host, username, password.
-    * For example: `export RDS_HOSTNAME=localhost` would use a PostgreSQL install on localhost without editing the file.
+1. Run `npm install`
+2. Before running the backend, set database-related environment variables to match your system configuration (the variables beginning with `RDS_`):
+    * For example: `export RDS_HOSTNAME=localhost` would use a PostgreSQL install on localhost
     * The username and password are for PostgreSQL
-    * PostgreSQL roles can be checked with psql using the command `\du`.
-3. Run the backend locally via `npm run start:dev`
+    * PostgreSQL roles can be checked with psql using the command `\du`
+3. Run `npm run start:dev`
 
-Once the backend and database are up and running locally, to make sure the everything is working fine - navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
+Once the backend and database are up and running locally  navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
 
 **Network configuration**
 
@@ -82,7 +82,7 @@ If you are using Microsoft Entra ID to login users, admin privileges are added o
 
 ## Testing SMS functionality
 
-To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
+To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user variables with right values.
 
 ## Environment variables / secrets
 

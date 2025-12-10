@@ -1,4 +1,4 @@
-FROM node:22.12.0
+FROM node:24.11.0-alpine
 WORKDIR /frontend
 COPY package*.json ./
 ARG BUILD_ID
