@@ -20,7 +20,7 @@ export const deleteToken = async () => {
 }
 
 export const validatePhone = (number: string) => {
-    if (number.match(/(^(\+358|0)\d{6,10})/)) {
+    if (number.match(/(^(\+?358|0)\d{6,10})/)) {
         return true;
     }
     return false;

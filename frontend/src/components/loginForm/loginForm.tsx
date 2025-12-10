@@ -53,8 +53,7 @@ const LoginForm: React.FC<LoginFormI> = (props) => {
     const handleSubmit = () => {
         if (validatePhone(phone)) {
             props.onSubmit(phone, false)
-        }
-        else {
+        } else {
             props.onSubmit('', true)
         }
         setPhone('');

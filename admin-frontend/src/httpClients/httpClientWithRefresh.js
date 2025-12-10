@@ -4,7 +4,8 @@ import { userTokenKey, appUrl } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
-export const httpClientWithRefresh = async (url, options = {}, justRefresh = false) => {
+// If url parameter evaluates to false, there will be a token refresh but no other data fetch.
+export const httpClientWithRefresh = async (url, options = {}) => {
     const refreshOptions = {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -23,7 +24,7 @@ export const httpClientWithRefresh = async (url, options = {}, justRefresh = fal
         }
     }).then(({ access_token }) => {
         sessionStorage.setItem(userTokenKey, access_token);
-        if (justRefresh) return;
+        if (!url) return;
         return httpClient(url, options);
     });
 };
