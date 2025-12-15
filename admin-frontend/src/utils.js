@@ -2,7 +2,11 @@ import { GET_LIST, HttpError } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
 import { Container } from '@material-ui/core';
 
-export const appUrl = process.env.REACT_APP_ADMIN_URL || '/nuorisotyontekijat';
+// This should match the backend's middleware's admin route.
+export const adminUiBasePath = '/nuorisotyontekijat';
+export const loginFragment = '#/login';
+export const hrefFragmentToJunior = (id) => { return `#/junior/${id ?? ''}` };
+export const hrefFragmentToExtraEntry = (id) => { return `#/extraEntry/${id ?? ''}` };
 
 export const genderChoices = [
   { id: 'm', name: 'Poika' },

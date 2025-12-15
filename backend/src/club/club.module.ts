@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Club, CheckIn } from './entities';
 import { ClubController } from './club.controller';
-import { jwt } from '../authentication/authentication.consts';
+import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessionDb.module';
 import { RolesModule } from '../roles/roles.module';
@@ -16,7 +16,7 @@ import { SpamGuardModule } from '../spamGuard/spamGuard.module';
   imports: [
     TypeOrmModule.forFeature([Junior, Club, CheckIn]),
     JwtModule.register({
-      secret: jwt.secret,
+      secret: jwtSecret,
     }),
     SessionDBModule,
     RolesModule,

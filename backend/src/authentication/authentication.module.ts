@@ -1,6 +1,6 @@
 import { AuthenticationService } from './authentication.service';
 import { JuniorModule } from '../junior/junior.module';
-import { jwt } from './authentication.consts';
+import { jwtSecret } from './authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { Module, forwardRef } from '@nestjs/common';
@@ -13,7 +13,7 @@ import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
     forwardRef(() => JuniorModule),
     SessionDBModule,
     JwtModule.register({
-      secret: jwt.secret,
+      secret: jwtSecret,
     })
   ],
   providers: [AuthenticationService, JwtStrategy],

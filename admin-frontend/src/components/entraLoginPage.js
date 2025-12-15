@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userTokenKey, setUserInfo, MSALAppLogoutInProgressKey, appUrl } from '../utils';
+import { userTokenKey, setUserInfo, MSALAppLogoutInProgressKey, adminUiBasePath } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -65,7 +65,7 @@ export default function EntraLogin() {
       // User should have a valid session token by now. Continue to landingPage.
       if (sessionStorage.getItem(MSALAppLogoutInProgressKey)) {
           sessionStorage.removeItem(MSALAppLogoutInProgressKey);
-          window.location.href = appUrl;
+          window.location.href = adminUiBasePath;
           return;
       } else {
         if (!MSALApp.appUsername) {

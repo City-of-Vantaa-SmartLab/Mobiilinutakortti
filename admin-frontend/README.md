@@ -24,7 +24,6 @@ If you are not using Microsoft Entra ID to login users (as is by default; see th
 ## Environment variables / secrets
 
 There are following environment variables:
-* `REACT_APP_ADMIN_URL`: base URL for admin. Defaults to "/nuorisotyontekijat" if not set.
 * `REACT_APP_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to "/api" if not set.
 * `REACT_APP_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
 * `REACT_APP_ENABLE_KOMPASSI_INTEGRATION`: if evaluates to true, show Kompassi (a statistics system) related settings in the admin frontend's club views.

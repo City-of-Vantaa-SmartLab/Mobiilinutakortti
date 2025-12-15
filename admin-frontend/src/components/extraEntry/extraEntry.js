@@ -26,7 +26,7 @@ import {
     CREATE
 } from 'react-admin';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getEntryTypes, statusChoices, appUrl, Status } from '../../utils';
+import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
@@ -215,7 +215,7 @@ export const ExtraEntryEdit = (props) => {
                                         <td>{status.name}</td>
                                     </tr>
                                     <tr>
-                                        <th><a href={`${appUrl}#/junior/${formData.id}`}>Muokkaa nuoren tietoja</a></th>
+                                        <th><a href={hrefFragmentToJunior(formData.id)}>Muokkaa nuoren tietoja</a></th>
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>

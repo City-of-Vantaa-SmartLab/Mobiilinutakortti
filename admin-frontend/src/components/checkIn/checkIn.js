@@ -9,7 +9,7 @@ import { httpClient } from '../../httpClients';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from '../../audio/audio.js'
-import { checkInClubIdKey, userTokenKey, appUrl, checkInSecurityCodeKey, clearUserInfo } from '../../utils';
+import { checkInClubIdKey, userTokenKey, adminUiBasePath, checkInSecurityCodeKey, clearUserInfo } from '../../utils';
 import { Button } from '@material-ui/core';
 import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
 
@@ -62,7 +62,7 @@ const CheckInView = () => {
 
     if (storedClubId === null || storedSecurityCode === null) {
       console.debug("Missing required info.");
-      setTimeout(() => { document.location.href = appUrl }, 100);
+      setTimeout(() => { document.location.href = adminUiBasePath }, 100);
     }
     setClubId(storedClubId);
     setSecurityCode(storedSecurityCode);

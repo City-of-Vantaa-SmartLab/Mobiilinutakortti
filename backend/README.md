@@ -88,7 +88,6 @@ To test SMS functionality locally, rename `.env.template` file to `.env` and upd
 
 In the following list the terms "IdP metadata XML" and "metadata XML" are used. The latter refers to service provider metadata, i.e. for this application. The metadata XML refers to the XML file used to register the service to Suomi.fi. Similarly, IdP metadata XML is the identity provider's (Suomi.fi) metadata file.
 
-* `AUTH_SIGNKEY`: Secret string used to sign and validate the auth tokens. Arbitrary.
 * `AWS_SES_KEY_ID`: Key ID for Amazon SES.
 * `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
 * `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
@@ -99,10 +98,10 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
 * `FRONTEND_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
-* `HTTP_LOG_LEVEL`: Optional. A pino logger level as string. Defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
+* `HTTP_LOG_LEVEL`: A pino logger level as string. Optional, defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
 * `JSON_LOGS`: If evaluates to true, use JSON log format.
-* `JWT`: Secret string used for JWTs. Arbitrary.
+* `JWT_SECRET`: Secret string used for JWTs. Arbitrary. Optional if only single backend instance is in use.
 * `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
 * `KOMPASSI_API_URL`: URL to use for Kompassi integration.
 * `NODE_ENV`: used to check if running tests (value = 'test') or not.
@@ -112,6 +111,7 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `RDS_PORT`: Amazon RDS port.
 * `RDS_USERNAME`: Amazon RDS user name.
 * `SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
+* `SC_SECRET`: Secret string used to sign and validate security context tokens. Arbitrary. Optional if only single backend instance is in use.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.

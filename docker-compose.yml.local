@@ -10,7 +10,6 @@ services:
     ports:
       - 3000:3000
     environment:
-      AUTH_SIGNKEY:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
@@ -24,7 +23,7 @@ services:
       HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
       JSON_LOGS:
-      JWT:
+      JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
       NODE_ENV:
@@ -34,6 +33,7 @@ services:
       RDS_PORT:
       RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
       SETUP_ENDPOINTS: yes
+      SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:

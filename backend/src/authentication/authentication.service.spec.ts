@@ -8,7 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { getTestDB } from '../../test/testdb';
 import { JuniorModule } from '../junior/junior.module';
 import { JuniorService } from '../junior/junior.service';
-import { jwt } from '../authentication/authentication.consts';
+import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { RegisterJuniorDto, LoginJuniorDto } from '../junior/dto';
@@ -52,7 +52,7 @@ describe('AuthenticationService', () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
       imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
-        secret: jwt.secret,
+        secret: jwtSecret,
       })],
       providers: [YouthWorkerService, AuthenticationService, JuniorService, {
         provide: getRepositoryToken(YouthWorker),

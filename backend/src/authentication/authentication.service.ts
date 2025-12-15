@@ -16,10 +16,9 @@ import * as content from '../content';
 import { LoginJuniorDto } from '../junior/dto';
 import { JuniorService } from '../junior/junior.service';
 import { JWTToken } from './jwt.model';
-import { jwt} from './authentication.consts';
+import { jwtExpiryForYouthWorker, jwtExpiryForJunior, scSecret } from './authentication.consts';
 import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
-import { secretString } from './secret';
 import { SessionDBService } from '../session/sessionDb.service';
 import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
 import { YouthWorker } from 'src/youthWorker/entities/';
@@ -85,7 +84,7 @@ export class AuthenticationService {
                 await this.youthWorkerService.editYouthWorker(user as EditYouthWorkerDto, null);
             }
 
-            const token = this.signToken(user.id, true);
+            const token = this.signToken(user.id);
             this.sessionDBService.addSession(user.id, token.access_token);
             this.logger.log(`User login: ${user.id} (${user.email})`);
             return token;
@@ -109,7 +108,7 @@ export class AuthenticationService {
 
         await this.validateYouthWorker({ provided: loginData.password, expected: user.password }, user.id);
 
-        const token = this.signToken(user.id, true);
+        const token = this.signToken(user.id);
         this.sessionDBService.addSession(user.id, token.access_token);
         this.logger.log(`User login: ${user.id} (${user.email})`);
         return token;
@@ -134,13 +133,13 @@ export class AuthenticationService {
         await this.youthWorkerService.deleteLockoutRecord(userId);
     }
 
-    signToken(userId: string, isYouthWorker = false): JWTToken {
-        const expiry = isYouthWorker ? jwt.youthWorkerExpiry : jwt.juniorExpiry;
+    private signToken(userId: string, forJunior = false): JWTToken {
+        const expiry = forJunior ? jwtExpiryForJunior : jwtExpiryForYouthWorker;
         return { access_token: this.jwtService.sign({ sub: userId }, { expiresIn: expiry }) };
     }
 
     updateAuthToken(youthWorkerData: { userId: string, authToken: string }): JWTToken {
-        const newToken = this.signToken(youthWorkerData.userId, true);
+        const newToken = this.signToken(youthWorkerData.userId);
         this.sessionDBService.addSession(youthWorkerData.userId, newToken.access_token);
         return newToken;
     }
@@ -149,7 +148,7 @@ export class AuthenticationService {
         // Note: there might be multiple first names but it doesn't matter here.
         const { sessionIndex, nameId, firstName, lastName, zipCode } = acsData;
         const expiryTime = ((new Date().getTime() / 1000) + 3600).toString(); // 1 h validity time
-        const signed = sign(`${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, secretString);
+        const signed = sign(`${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`, scSecret);
         return {
             sessionIndex,
             nameId,
@@ -169,7 +168,7 @@ export class AuthenticationService {
             this.logger.warn(`Invalid timestamp`);
         }
 
-        const unsigned = unsign(signedString || "", secretString);
+        const unsigned = unsign(signedString || "", scSecret);
         const expected = `${expiryTime} ${sessionIndex} ${nameId} ${firstName} ${lastName} ${zipCode}`;
         const signatureValid = unsigned === expected;
         if (!unsigned) {

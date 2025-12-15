@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getActiveYouthClubOptions, getUserInfo, userTokenKey, appUrl } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -16,8 +16,8 @@ export const LandingPage = () => {
 
   useEffect(() => {
     userInfo.current = getUserInfo();
-    const noUserToken = !sessionStorage.getItem(userTokenKey) || sessionStorage.getItem(userTokenKey) === 'undefined';
-    if (!!userInfo.current && !noUserToken) {
+    const hasUserToken = sessionStorage.getItem(userTokenKey) && sessionStorage.getItem(userTokenKey) !== 'undefined';
+    if (!!userInfo.current && hasUserToken) {
       const addYouthClubsToState = async () => {
         const youthClubOptions = await getActiveYouthClubOptions();
         setYouthClubs(youthClubOptions.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
@@ -27,11 +27,9 @@ export const LandingPage = () => {
       };
       addYouthClubsToState();
     } else {
-      // Since the landing page is at appUrl,
-      // without the '#/login', the app would be in infinite loop between appUrl and appUrl#
-      //
+      // Since this landing page is at the base URL, without the fragment the app would be in infinite loop here.
       // If using Entra for login, the redirect URI page is the login page.
-      window.location.href = useEntraID ? process.env.REACT_APP_ENTRA_REDIRECT_URI : appUrl + '#/login';
+      window.location.href = useEntraID ? process.env.REACT_APP_ENTRA_REDIRECT_URI : loginFragment;
     }
   }, [useEntraID]);
 
@@ -53,9 +51,8 @@ export const LandingPage = () => {
   };
 
   const listSelectedClubJuniors = () => {
-    window.location = (selectedYouthClub.toString() === '-1') ?
-      '#/junior' :
-      `#/junior?displayedFilters=%7B%22homeYouthClub%22%3Atrue%7D&filter=%7B%22homeYouthClub%22%3A${selectedYouthClub}%7D`;
+    const queryParams = (selectedYouthClub.toString() === '-1') ? '' : `?displayedFilters=%7B%22homeYouthClub%22%3Atrue%7D&filter=%7B%22homeYouthClub%22%3A${selectedYouthClub}%7D`;
+    window.location = hrefFragmentToJunior() + queryParams;
   }
 
   return (
@@ -92,7 +89,7 @@ export const LandingPage = () => {
           (aseta valittu oletukseksi)
         </button>)}
       </div>
-      <p>tai listaa <a href='#/junior'>kaikki nuoret</a>.</p>
+      <p>tai listaa <a href={hrefFragmentToJunior()}>kaikki nuoret</a>.</p>
       {(useEntraID || userInfo.current?.passwordLastChanged) ? null : (<div style={{marginTop: '3em'}}>
         <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
       </div>)}

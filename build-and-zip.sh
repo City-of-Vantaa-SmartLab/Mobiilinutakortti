@@ -28,15 +28,26 @@ mkdir $tmpdir/backend
 echo "Is this a <dev> or <prod> package? [dev]"
 read package_env
 [ ! "$package_env" ] && package_env=dev
-echo Enter value for: REACT_APP_ENABLE_EXTRA_ENTRIES
-read REACT_APP_ENABLE_EXTRA_ENTRIES
-export REACT_APP_ENABLE_EXTRA_ENTRIES
-echo Enter value for: REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-read REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-export REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-echo Enter value for: REACT_APP_ALT_ERR_MSG
-read REACT_APP_ALT_ERR_MSG
-export REACT_APP_ALT_ERR_MSG
+if [ "$1" ]
+then
+    echo Enter value for: REACT_APP_ENABLE_EXTRA_ENTRIES
+    read REACT_APP_ENABLE_EXTRA_ENTRIES
+    export REACT_APP_ENABLE_EXTRA_ENTRIES
+    echo Enter value for: REACT_APP_ENABLE_KOMPASSI_INTEGRATION
+    read REACT_APP_ENABLE_KOMPASSI_INTEGRATION
+    export REACT_APP_ENABLE_KOMPASSI_INTEGRATION
+    echo Enter value for: REACT_APP_ALT_ERR_MSG
+    read REACT_APP_ALT_ERR_MSG
+    export REACT_APP_ALT_ERR_MSG
+else
+    echo Run the script with any parameter to use other than these values:
+    echo "   export REACT_APP_ENABLE_EXTRA_ENTRIES=true"
+    echo "   export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true"
+    echo "   export REACT_APP_ALT_ERR_MSG="
+    export REACT_APP_ENABLE_EXTRA_ENTRIES=true
+    export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true
+    export REACT_APP_ALT_ERR_MSG=
+fi
 echo Enter value for: REACT_APP_ENTRA_TENANT_ID
 read REACT_APP_ENTRA_TENANT_ID
 export REACT_APP_ENTRA_TENANT_ID

@@ -4,7 +4,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { DataSource } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { JuniorModule } from '../junior/junior.module';
-import { jwt } from '../authentication/authentication.consts';
+import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SecurityContextDto, AcsDto } from './dto';
 import { SessionDBModule } from '../session/sessionDb.module';
@@ -21,7 +21,7 @@ describe('AuthenticationServiceSecurityContext', () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
       imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
-        secret: jwt.secret,
+        secret: jwtSecret,
       })],
       providers: [AuthenticationService]
     }).overrideProvider(DataSource)

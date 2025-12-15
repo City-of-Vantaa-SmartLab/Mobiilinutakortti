@@ -55,15 +55,6 @@ export class JuniorController {
         return new JuniorQRViewModel(await this.juniorService.getJunior(juniorData.userId));
     }
 
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @AllowedRoles(Roles.JUNIOR)
-    @Get('login')
-    @ApiBearerAuth('junior')
-    async autoLogin(): Promise<Check> {
-        // This is a simple route the frontend can hit to verify a valid JWT.
-        return new Check(true);
-    }
-
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('login')
     async login(@Body() userData: LoginJuniorDto): Promise<JWTToken> {

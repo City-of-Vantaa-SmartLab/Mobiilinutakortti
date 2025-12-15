@@ -17,10 +17,12 @@ import {
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { hrefFragmentToJunior } from '../utils';
 
 // "Kirjautumiset"
 // Similar to statistics, but displays the names of people who have checked in.
-// This is why this data is also cleared after a certain time; see "cron" from club service in backend.
+// This is why this data is also cleared after a certain time (so as not to keep a personal information register);
+// see "cron" from club service in backend.
 const CheckInLogView = (props) => {
     useAutoLogout();
 
@@ -42,7 +44,7 @@ const CheckInLogView = (props) => {
             UI.push(
                 <TableRow key={key}>
                     <TableCell>
-                        <Link href={`#/junior/${junior.id}`} color="inherit">
+                        <Link href={hrefFragmentToJunior(junior.id)} color="inherit">
                             {junior.name}
                         </Link>
                     </TableCell>

@@ -1,6 +1,6 @@
 import { httpClient } from './';
 import api from '../api';
-import { userTokenKey, appUrl } from '../utils';
+import { userTokenKey, adminUiBasePath } from '../utils';
 import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
@@ -17,7 +17,7 @@ export const httpClientWithRefresh = async (url, options = {}) => {
         refreshResponse = refreshResponse.json();
         if (refreshResponse.statusCode < 200 || refreshResponse.statusCode >= 300) {
             authProvider(AUTH_LOGOUT, {});
-            document.location.href = appUrl;
+            document.location.href = adminUiBasePath;
             return Promise.resolve();
         } else {
             return refreshResponse;

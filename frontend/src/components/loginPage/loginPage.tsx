@@ -85,7 +85,7 @@ interface LoginProps {
     loggedIn: boolean
 }
 
-const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, authMessage , loggingIn, loggedIn }) => {
+const LoginPage: React.FC<LoginProps> = ({ auth, authLinkRequest, authError, authMessage, loggingIn, loggedIn }) => {
     const location = useLocation()
     const navigate = useNavigate()
     const t = useTranslations()

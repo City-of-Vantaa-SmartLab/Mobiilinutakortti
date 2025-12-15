@@ -99,3 +99,7 @@ export const formatName = (firstName: string, lastName: string, nickName: string
     if (nickName && nickName.trim() !== '') { formattedName += `'${nickName}' `; }
     return formattedName += lastName;
 }
+
+export const toBase64UrlString = (inputBuffer: Buffer): string => {
+    return inputBuffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}

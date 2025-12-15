@@ -24,7 +24,7 @@ import {
     PaginationActions,
     FormDataConsumer
 } from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, appUrl, getAlertDialogObserver } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, hrefFragmentToExtraEntry, getAlertDialogObserver } from '../utils';
 import { httpClientWithRefresh } from '../httpClients';
 import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
@@ -257,7 +257,7 @@ export const JuniorForm = (formType) => {
             </FormDataConsumer>
             {(formType === 'edit' && showExtraEntries) &&<FormDataConsumer>
                 {({ formData }) => {
-                    return <ExtraEntryLink href={`${appUrl}#/extraEntry/${formData.id}`}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
+                    return <ExtraEntryLink href={hrefFragmentToExtraEntry(formData.id)}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
 
                 }}
             </FormDataConsumer>}

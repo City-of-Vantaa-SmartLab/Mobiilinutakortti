@@ -14,7 +14,6 @@ services:
         REACT_APP_ENTRA_TENANT_ID: ${REACT_APP_ENTRA_TENANT_ID}
     image: nutakortti/latest
     environment:
-      AUTH_SIGNKEY:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
@@ -28,7 +27,7 @@ services:
       HTTP_LOG_LEVEL:
       IDP_ENTITY_ID:
       JSON_LOGS:
-      JWT:
+      JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
       NODE_ENV:
@@ -37,7 +36,6 @@ services:
       RDS_PASSWORD:
       RDS_PORT:
       RDS_USERNAME:
-      REACT_APP_ADMIN_URL:
       REACT_APP_API_URL:
       REACT_APP_ALT_ERR_MSG:
       REACT_APP_ENABLE_EXTRA_ENTRIES:
@@ -46,6 +44,7 @@ services:
       REACT_APP_ENTRA_REDIRECT_URI:
       REACT_APP_ENTRA_TENANT_ID:
       SETUP_ENDPOINTS:
+      SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:

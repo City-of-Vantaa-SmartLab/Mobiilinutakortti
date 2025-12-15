@@ -7,6 +7,7 @@ import { SAMLHelper } from './samlhelper';
 import { AcsDto, SecurityContextDto } from '../authentication/dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { ConfigHandler } from '../configHandler';
+import { toBase64UrlString } from '../common/helpers';
 
 @Injectable()
 export class SsoService {
@@ -87,7 +88,7 @@ export class SsoService {
       } as AcsDto;
 
       const sc = this.authenticationService.generateSecurityContext(acs_data);
-      const querystr = Buffer.from(JSON.stringify(sc)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+      const querystr = toBase64UrlString(Buffer.from(JSON.stringify(sc)));
       const url = `${ConfigHandler.getFrontendUrl()}/hakemus?sc=${querystr}`
       res.redirect(url);
     });

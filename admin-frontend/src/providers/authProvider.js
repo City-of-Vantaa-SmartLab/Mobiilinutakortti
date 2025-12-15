@@ -1,7 +1,7 @@
 import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userTokenKey, setUserInfo, clearUserInfo, appUrl } from '../utils';
+import { userTokenKey, setUserInfo, clearUserInfo, loginFragment } from '../utils';
 import { newHttpErrorFromResponse } from '../utils';
 
 export const authProvider = (type, params) => {
@@ -63,7 +63,7 @@ export const authProvider = (type, params) => {
             sessionStorage.removeItem('role');
             window.location.href = useEntraID ?
                 process.env.REACT_APP_ENTRA_REDIRECT_URI :
-                appUrl + '#/login';
+                loginFragment;
         }
         httpClient(url, options).then(cleanup, cleanup);
     }

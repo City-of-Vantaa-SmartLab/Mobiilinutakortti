@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { verify, decode, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
-import { jwt } from '../authentication/authentication.consts';
+import { jwtSecret } from '../authentication/authentication.consts';
 
 // This is a guard that accepts slightly expired JWTs.
 // It's meant to mainly extract the userId from the auth token.
@@ -19,7 +19,7 @@ export class ApiUserGuard implements CanActivate {
     if (!token) return false;
 
     try {
-      verify(token, jwt.secret);
+      verify(token, jwtSecret);
     } catch (error) {
       if (!(error instanceof TokenExpiredError)) return false;
     }

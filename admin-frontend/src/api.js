@@ -2,11 +2,11 @@ const apiUrl = process.env.REACT_APP_API_URL || '/api';
 
 const apiEndpoints = {
   junior: {
+    base: `${apiUrl}/junior/`,
     create: `${apiUrl}/junior/register`,
     edit: `${apiUrl}/junior/edit`,
     list: `${apiUrl}/junior/list`,
     loginLink: `${apiUrl}/junior/loginLinkByAdmin`,
-    base: `${apiUrl}/junior/`,
     dummynumber: `${apiUrl}/junior/nextAvailableDummyPhoneNumber`,
     newSeason: `${apiUrl}/junior/newSeason`,
     newSeasonSMSCount: `${apiUrl}/junior/newSeason/SMSCount`,

@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { getTestDB } from '../../test/testdb';
 import { JuniorModule } from '../junior/junior.module';
-import { jwt } from '../authentication/authentication.consts';
+import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../authentication/jwt.strategy';
 import { RegisterYouthWorkerDto, EditYouthWorkerDto } from './dto';
@@ -39,7 +39,7 @@ describe('YouthWorkerService', () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
       imports: [TypeOrmModule.forFeature([YouthWorker, Lockout]), AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SessionModule, SessionDBModule, JwtModule.register({
-        secret: jwt.secret,
+        secret: jwtSecret,
       })],
       providers: [YouthWorkerService, AuthenticationService, {
         provide: getRepositoryToken(YouthWorker),
