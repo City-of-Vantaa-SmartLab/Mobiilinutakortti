@@ -85,11 +85,6 @@ export const calculateAge = (birthday: string): number => {
     return age;
 }
 
-export const sanitisePhoneNumber = (phoneNumber: string): string => {
-    phoneNumber = phoneNumber.replace(/[^$0-9]/g, '');
-    return phoneNumber;
-}
-
 export const isBetween = (value: number, min: number, max: number): boolean => {
     return value <= max && value >= min;
 }

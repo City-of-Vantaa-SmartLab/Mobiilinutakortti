@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { validatePhone } from '../../utils';
+import { validPhoneNumber } from '../../utils';
 import { useTranslations } from '../translations';
-
 
 const Form = styled.form`
     display: flex;
@@ -51,7 +50,7 @@ const LoginForm: React.FC<LoginFormI> = (props) => {
     const [phone, setPhone] = useState('');
 
     const handleSubmit = () => {
-        if (validatePhone(phone)) {
+        if (phone.match(validPhoneNumber)) {
             props.onSubmit(phone, false)
         } else {
             props.onSubmit('', true)

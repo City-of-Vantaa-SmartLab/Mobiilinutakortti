@@ -33,7 +33,7 @@ export class JuniorEditInterceptor implements NestInterceptor {
         dataChanged = dataChanged || nullableFields.some(field => {
             return body[field] !== userToEdit[field];
         });
-        
+
         // Some dates include timestamp which makes it seem like birthday has changed even when it hasn't
         // ISO date(time) format begins with YYYY-MM-DD
         dataChanged ||= body.birthday?.substring(0, 10) !== userToEdit.birthday.substring(0, 10);

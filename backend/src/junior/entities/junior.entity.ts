@@ -3,7 +3,7 @@ import { ConfigHandler } from '../../configHandler';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ExtraEntry, EntryPermit } from '../../extraEntry/entities';
 import { Length } from 'class-validator';
-import { makePhoneNumberInternational, lowercase, trimString } from '../../common/transformers';
+import { standardizePhoneNumber, lowercase, trimString } from '../../common/transformers';
 
 @Entity()
 export class Junior {
@@ -19,7 +19,7 @@ export class Junior {
     @Column({ default: '', transformer: trimString })
     nickName: string;
 
-    @Column({ unique: true, transformer: makePhoneNumberInternational })
+    @Column({ unique: true, transformer: standardizePhoneNumber })
     phoneNumber: string;
 
     @Column({ default: false })
@@ -37,7 +37,7 @@ export class Junior {
     @Column()
     parentsName: string;
 
-    @Column({ transformer: makePhoneNumberInternational })
+    @Column({ transformer: standardizePhoneNumber })
     parentsPhoneNumber: string;
 
     @Column({ default: false })

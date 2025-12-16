@@ -25,6 +25,7 @@ import { Status } from './enum/status.enum';
 import { validate } from 'class-validator';
 import { YouthWorker } from '../youthWorker/entities';
 import { SpamGuardService } from '../spamGuard/spamGuard.service';
+import { standardizePhoneNumber } from '../common/transformers';
 
 @Injectable()
 export class JuniorService {
@@ -76,8 +77,9 @@ export class JuniorService {
         return await this.juniorRepo.findOneBy({ id });
     }
 
+    // Phone number parameter need not be standardized.
     async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior> {
-        return await this.juniorRepo.findOneBy({ phoneNumber });
+        return await this.juniorRepo.findOneBy({ phoneNumber: standardizePhoneNumber.to(phoneNumber) });
     }
 
     async getJuniorsByHomeYouthClub(homeYouthClub: number): Promise<Junior[]> {
@@ -85,9 +87,9 @@ export class JuniorService {
     }
 
     async getUniqueJunior(phoneNumber: string, birthday?: string, firstName?: string, lastName?: string): Promise<Junior> {
-        if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber, firstName, lastName } });
-        if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber, birthday } });
-        return await this.juniorRepo.findOne({ where: { phoneNumber, birthday, firstName, lastName } });
+        if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), firstName, lastName } });
+        if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday } });
+        return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday, firstName, lastName } });
     }
 
     async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
@@ -165,11 +167,14 @@ export class JuniorService {
         }
 
         Object.keys(registrationData).map((key: string) => { junior[key] = registrationData[key] });
+        junior.phoneNumber = standardizePhoneNumber.to(junior.phoneNumber);
+        junior.parentsPhoneNumber = standardizePhoneNumber.to(junior.parentsPhoneNumber);
+
         // Make sure hidden fields have some data in them.
         content.hiddenJuniorFields.forEach((key) => { junior[key] = junior[key] ?? '' });
         // Junior communicationsLanguage might be a hidden field but it is still required.
         if (!junior.communicationsLanguage) junior.communicationsLanguage = 'fi';
-        junior.creationDate = new Date(Date.now()).toISOString()
+        junior.creationDate = new Date(Date.now()).toISOString();
 
         const errors = await validate(junior);
         if (errors.length > 0) {
@@ -206,7 +211,7 @@ export class JuniorService {
     }
 
     async requestLoginLink(phoneNumber: string, userId?: string, noSpamGuard: boolean = false): Promise<string> {
-        const junior = await this.juniorRepo.findOneBy({ phoneNumber });
+        const junior = await this.juniorRepo.findOneBy({ phoneNumber: standardizePhoneNumber.to(phoneNumber) });
         if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
             if (userId && ConfigHandler.detailedLogs()) {
                 this.logger.log({ userId, juniorId: junior.id }, 'Requested SMS login link for junior');
@@ -217,7 +222,7 @@ export class JuniorService {
             if (!noSpamGuard && !this.spamGuardService.loginLink(junior.id))
                 throw new ForbiddenException(content.JuniorResetLinkThrottled);
 
-            const challenge = await this.setChallenge(phoneNumber);
+            const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,
                 name: junior.firstName,
@@ -226,41 +231,43 @@ export class JuniorService {
             }, challenge);
             if (!messageSent)
                 throw new InternalServerErrorException(content.SmsServiceNotAvailable);
-            return `${phoneNumber} ${content.JuniorResetLinkSent}`;
+            return `${junior.phoneNumber} ${content.JuniorResetLinkSent}`;
         }
         else
             throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
     async editJunior(details: EditJuniorDto, youthWorkerUserId: string): Promise<string> {
-        const user = await this.juniorRepo.findOneBy({ id: details.id });
-        const prevStatus = user.status;
-        if (!user) { throw new BadRequestException(content.UserNotFound); }
-        if (user.phoneNumber !== details.phoneNumber) {
-            const phoneNumberInUse = await this.getJuniorByPhoneNumber(details.phoneNumber);
-            if (phoneNumberInUse) { throw new ConflictException(content.JuniorAlreadyExists); }
+        const junior = await this.juniorRepo.findOneBy({ id: details.id });
+        const prevStatus = junior.status;
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        if (junior.phoneNumber !== standardizePhoneNumber.to(details.phoneNumber)) {
+            const phoneNumberReserver = await this.getJuniorByPhoneNumber(details.phoneNumber);
+            if (phoneNumberReserver && phoneNumberReserver.id !== details.id) {
+                throw new ConflictException(content.JuniorAlreadyExists);
+            }
         }
-        user.phoneNumber = details.phoneNumber;
-        user.smsPermissionJunior = details.smsPermissionJunior;
-        user.firstName = details.firstName;
-        user.lastName = details.lastName;
-        user.birthday = details.birthday;
-        user.parentsName = details.parentsName;
-        user.parentsPhoneNumber = details.parentsPhoneNumber;
-        user.smsPermissionParent = details.smsPermissionParent;
-        user.parentsEmail = details.parentsEmail;
-        user.emailPermissionParent = details.emailPermissionParent;
-        user.additionalContactInformation = details.additionalContactInformation;
-        user.school = details.school;
-        user.class = details.class;
-        user.postCode = details.postCode;
-        user.homeYouthClub = details.homeYouthClub;
-        user.communicationsLanguage = details.communicationsLanguage;
-        user.gender = details.gender;
-        user.nickName = details.nickName;
-        user.status = details.status;
-        user.photoPermission = details.photoPermission;
-        const errors = await validate(user);
+        junior.phoneNumber = standardizePhoneNumber.to(details.phoneNumber);
+        junior.smsPermissionJunior = details.smsPermissionJunior;
+        junior.firstName = details.firstName;
+        junior.lastName = details.lastName;
+        junior.birthday = details.birthday;
+        junior.parentsName = details.parentsName;
+        junior.parentsPhoneNumber = standardizePhoneNumber.to(details.parentsPhoneNumber);
+        junior.smsPermissionParent = details.smsPermissionParent;
+        junior.parentsEmail = details.parentsEmail;
+        junior.emailPermissionParent = details.emailPermissionParent;
+        junior.additionalContactInformation = details.additionalContactInformation;
+        junior.school = details.school;
+        junior.class = details.class;
+        junior.postCode = details.postCode;
+        junior.homeYouthClub = details.homeYouthClub;
+        junior.communicationsLanguage = details.communicationsLanguage;
+        junior.gender = details.gender;
+        junior.nickName = details.nickName;
+        junior.status = details.status;
+        junior.photoPermission = details.photoPermission;
+        const errors = await validate(junior);
         if (errors.length > 0) {
             throw new BadRequestException(errors);
         }
@@ -273,14 +280,15 @@ export class JuniorService {
                 throw new BadRequestException(content.ForbiddenToChangeStatus)
             }
         }
-        await this.juniorRepo.save(user);
+        await this.juniorRepo.save(junior);
 
         if (ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
         }
-        //typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
+
+        // typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
         if ((prevStatus === Status.expired || prevStatus === Status.pending || prevStatus === Status.failedCall) && details.status === Status.accepted) {
-            const updatedJunior = await this.getJuniorByPhoneNumber(user.phoneNumber);
+            const updatedJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: updatedJunior.communicationsLanguage as content.Language,
@@ -306,6 +314,7 @@ export class JuniorService {
         return `${id} ${content.Deleted}`;
     }
 
+    // Phone number parameter need not be standardized.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
@@ -316,14 +325,14 @@ export class JuniorService {
         return await this.challengeRepo.findOneBy({ junior });
     }
 
-    // Dummy phone numbers start with 999.
+    // Dummy phone numbers start with +999.
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 6) === "358999").map(j => j.phoneNumber);
-        const parentsPhoneNumbers = juniors.data.filter(j => j.parentsPhoneNumber.substring(0, 6) === "358999").map(j => j.parentsPhoneNumber);
+        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358999").map(j => j.phoneNumber);
+        const parentsPhoneNumbers = juniors.data.filter(j => j.parentsPhoneNumber.substring(0, 7) === "+358999").map(j => j.parentsPhoneNumber);
         let next = "";
         for (var i = 0; i < 1000000; i++) {
-            next = "358999" + i.toString().padStart(6, '0');
+            next = "+358999" + i.toString().padStart(6, '0');
             if (!phoneNumbers.includes(next) && !parentsPhoneNumbers.includes(next)) {
                 break;
             }
@@ -337,8 +346,8 @@ export class JuniorService {
             .getMany());
 
         const recipients = juniors
-            .filter(j => j.parentsPhoneNumber.substring(0, 6) !== "358777") // Skip test data numbers.
-            .filter(j => j.parentsPhoneNumber.substring(0, 6) !== "358999"); // Skip dummy phone numbers.
+            .filter(j => j.parentsPhoneNumber.substring(0, 7) !== "+358777") // Skip test data numbers.
+            .filter(j => j.parentsPhoneNumber.substring(0, 7) !== "+358999"); // Skip dummy phone numbers.
 
         return recipients.length.toString();
     }
@@ -362,8 +371,8 @@ export class JuniorService {
             name: `${junior.firstName} ${junior.lastName}`,
             phoneNumber: junior.parentsPhoneNumber,
         }))
-        .filter(r => r.phoneNumber.substring(0, 6) !== "358777") // Skip test data numbers.
-        .filter(r => r.phoneNumber.substring(0, 6) !== "358999"); // Skip dummy phone numbers.
+        .filter(r => r.phoneNumber.substring(0, 7) !== "+358777") // Skip test data numbers.
+        .filter(r => r.phoneNumber.substring(0, 7) !== "+358999"); // Skip dummy phone numbers.
 
         // NB: if SMS sending fails, the junior statuses have still been set.
         await this.smsService.sendNewSeasonSMS(recipients, expireDate);
@@ -444,14 +453,14 @@ export class JuniorService {
                 (Math.floor(Math.random() * 12) + 1).toString().padStart(2, '0') + '-' +
                 (Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0') + 'T00:00:00.000Z';
             var data = {
-                phoneNumber: "358777" + i.toString().padStart(6, '0'),
+                phoneNumber: "+358777" + i.toString().padStart(6, '0'),
                 firstName: first_names[Math.floor(Math.random() * first_names.length)],
                 lastName: last_names[Math.floor(Math.random() * last_names.length)],
                 postCode: "0" + Math.floor(Math.random() * 1000).toString().padStart(3, '0') + "0",
                 school: school_names[Math.floor(Math.random() * school_names.length)],
                 class: class_names[Math.floor(Math.random() * class_names.length)],
                 parentsName: first_names[Math.floor(Math.random() * first_names.length)] + " " + last_names[Math.floor(Math.random() * last_names.length)],
-                parentsPhoneNumber: "358777" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
+                parentsPhoneNumber: "+358777" + Math.floor(Math.random() * 1000000).toString().padStart(6, '0'),
                 communicationsLanguage: 'fi',
                 gender: genders[Math.floor(Math.random() * genders.length)],
                 birthday: date,
@@ -469,7 +478,7 @@ export class JuniorService {
      */
     async deleteTestDataJuniors(): Promise<string> {
         const juniors = await this.listAllJuniors();
-        const ids = juniors.data.filter(j => j.phoneNumber.substring(0, 6) === "358777").map(j => j.id);
+        const ids = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358777").map(j => j.id);
         for (var i = 0; i < ids.length; i++) {
             await this.deleteJunior(ids[i]);
         }

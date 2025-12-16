@@ -1,33 +1,33 @@
 import { ValueTransformer } from 'typeorm';
-import { sanitisePhoneNumber } from './helpers';
 
 export const lowercase: ValueTransformer = {
     to: (str: string) => str.toLocaleLowerCase(),
-    from: (str: string) => str,
+    from: (str: string) => str
 };
 
 export const jsonDataToBoolean: ValueTransformer = {
     to: (str: string | boolean) => typeof str === 'string' ? str.toLocaleLowerCase() === 'true' : str,
-    from: (bool: boolean) => bool,
+    from: (bool: boolean) => bool
 };
 
 export const jsonDataToNumber: ValueTransformer = {
     to: (str: string | number) => typeof str === 'string' ? +str : str,
-    from: (num: number) => num,
+    from: (num: number) => num
 };
 
 export const trimString: ValueTransformer = {
     to: (str: string) => typeof str === 'string' ? str.trim() : str,
-    from: (str: string) => str,
+    from: (str: string) => str
 };
 
 /**
- * A transformer to be used on databases so that all numbers are stored in an international format.
+ * Make phone numbers E.164 format: leading '+' + country code + national number as digit-only. Default to Finnish country code.
  */
-export const makePhoneNumberInternational: ValueTransformer = {
+export const standardizePhoneNumber: ValueTransformer = {
     to: (str: string) => {
-        const sanitisedPhoneNumber = sanitisePhoneNumber(str);
-        return sanitisedPhoneNumber.charAt(0) === '0' ? sanitisedPhoneNumber.replace('0', '358') : sanitisedPhoneNumber;
+        let digitsOnly = str.replace(/[^0-9]/g, '');
+        if (digitsOnly.charAt(0) === '0') digitsOnly = digitsOnly.replace('0', '358');
+        return '+' + digitsOnly;
     },
-    from: (str: string) => str,
+    from: (str: string) => str
 };

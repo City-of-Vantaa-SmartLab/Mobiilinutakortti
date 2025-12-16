@@ -75,8 +75,8 @@ export class AnnouncementService {
 
         const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionParent)
-            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 6) !== "358777")
-            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 6) !== "358999")
+            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 7) !== "+358777")
+            .filter((recipient: Junior) => recipient.parentsPhoneNumber.substring(0, 7) !== "+358999")
             .map((recipient: Junior) => ({
                 t: recipient.parentsPhoneNumber,
                 m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
@@ -85,8 +85,8 @@ export class AnnouncementService {
 
         const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionJunior)
-                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 6) !== "358777")
-                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 6) !== "358999")
+                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 7) !== "+358777")
+                .filter((recipient: Junior) => recipient.phoneNumber.substring(0, 7) !== "+358999")
                 .map((recipient: Junior) => ({
                     t: recipient.phoneNumber,
                     m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),

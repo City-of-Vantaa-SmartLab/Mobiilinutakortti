@@ -54,30 +54,31 @@ export const YouthClubList = (props) => {
     return (
       <Button
         onClick={() => goToCheckIn(props.record.id)}
+        size="small"
         variant="contained"
         disabled={!props.record.active || state === STATE.LOADING}
       >
         <CropFreeIcon />
-        &nbsp;Kirjautuminen
+        &nbsp;QR-lukija
       </Button>
     )
   }
 
   const OpenCheckInStatsButton = (props) => (
-    <Button variant="contained" href={`#/statistics/${props.record.id}`} ><PieChartIcon />&nbsp;Tilastot</Button>
+    <Button variant="contained" size="small" href={`#/statistics/${props.record.id}`} ><PieChartIcon />&nbsp;Näytä</Button>
   )
 
   const OpenCheckInLogButton = (props) => (
-    <Button variant="contained" href={`#/log/${props.record.id}`} ><ListIcon />&nbsp;Kirjautumiset</Button>
+    <Button variant="contained" size="small" href={`#/log/${props.record.id}`} ><ListIcon />&nbsp;Listaa</Button>
   )
 
   return (
     <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
       <Datagrid>
         <TextField label="Nimi" source="name" />
-        <OpenCheckInButton />
-        <OpenCheckInStatsButton />
-        <OpenCheckInLogButton />
+        <OpenCheckInButton label="Kirjautuminen" />
+        <OpenCheckInStatsButton label="Tilastot" />
+        <OpenCheckInLogButton label="Kirjautumiset" />
       </Datagrid>
     </List>
 )};

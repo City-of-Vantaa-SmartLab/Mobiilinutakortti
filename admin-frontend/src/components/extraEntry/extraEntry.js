@@ -30,6 +30,7 @@ import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../.
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
+import { PhoneNumberField } from '../phoneNumberField';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
 const useStyles = makeStyles({
@@ -94,7 +95,7 @@ export const ExtraEntryList = (props) => {
             <Datagrid>
                 <TextField label="Nimi" source="displayName" />
                 <TextField source="age" label="Ikä" />
-                <TextField label="Puhelinnumero" source="phoneNumber" />
+                <PhoneNumberField label="Puhelinnumero" source="phoneNumber" />
                 <ArrayField label="Lisämerkinnät" source="extraEntries">
                     <SingleFieldList linkType={false} >
                         <ChipField source="entryType.name" size="small" />

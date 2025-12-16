@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { Button } from '@material-ui/core';
 import { useForm } from 'react-final-form';
-import Button from '@material-ui/core/Button';
 import { QRCodeSVG } from 'qrcode.react'
 import {
     List,
@@ -22,15 +22,17 @@ import {
     useNotify,
     Pagination,
     PaginationActions,
-    FormDataConsumer
+    FormDataConsumer,
+    FunctionField
 } from 'react-admin';
 import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, hrefFragmentToExtraEntry, getAlertDialogObserver } from '../utils';
 import { httpClientWithRefresh } from '../httpClients';
-import useAdminPermission from '../hooks/useAdminPermission';
 import { hiddenFormFields } from '../customizations';
 import { ExtraEntryLink } from './styledComponents/extraEntry';
-import api from '../api';
 import { useSmartAutoLogout } from '../hooks/useSmartAutoLogout';
+import { PhoneNumberField } from './phoneNumberField';
+import useAdminPermission from '../hooks/useAdminPermission';
+import api from '../api';
 
 const JuniorEditTitle = ({ record }) => (
     <span>{`Muokkaa ${record.firstName} ${record.lastName}`}</span>
@@ -77,11 +79,17 @@ export const JuniorList = (props) => {
         </Filter>
     );
 
-    const ResendSMSButton = (data) => (
-        (data.record.status === Status.accepted || data.record.status === Status.expired)
-            ? <Button size="small" variant="contained" onClick={() => resendSMS(data.record.phoneNumber)} >Lähetä SMS uudestaan</Button>
-            : <Button disabled>Kotisoitto tekemättä</Button>
-    )
+    const ResendSMSButton = () => (
+        <FunctionField
+            render={(record) => (
+                <span style={{ display: 'inline-flex', width: '100%', justifyContent: 'center' }}>
+                    {(record?.status === Status.accepted || record?.status === Status.expired)
+                        ? <Button size="small" variant="contained" onClick={() => resendSMS(record.phoneNumber)}>📨&nbsp;SMS</Button>
+                        : <Button size="small" disabled style={{ padding: 0 }}>Kotisoitto tekemättä</Button>}
+                </span>
+            )}
+        />
+    );
 
     const QRCodeWithStatusMessage = ({ status, id }) => (
         <div style={status === Status.expired ? expiredQrCodeStyle : validQrCodeStyle}>
@@ -110,11 +118,9 @@ export const JuniorList = (props) => {
         }
     }
 
-
     const PrintQrCodeButton = (data) => (
-      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, data.record.status, `${data.record.firstName} ${data.record.lastName}`)} >🔍QR</Button>
+      <Button size="small" variant="contained" onClick={() => generateQRAndOpen(data.record.id, data.record.status, `${data.record.firstName} ${data.record.lastName}`)} >🔍&nbsp;QR</Button>
     )
-
 
     const resendSMS = async (phoneNumber) => {
         const url = api.junior.loginLink;
@@ -141,15 +147,15 @@ export const JuniorList = (props) => {
                 <TextField label="Nimi" source="displayName" />
                 <SelectField label="Sukupuoli" source="gender" choices={genderChoices} />
                 <DateField label="Syntymäaika" source="birthday" locales={['fi']} />
-                <TextField label="Puhelinnumero" source="phoneNumber" />
+                <PhoneNumberField label="Puhelinnumero" source="phoneNumber" />
                 <TextField label="Postinumero" source="postCode" />
                 <SelectField label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} />
                 <TextField label="Huoltajan nimi" source="parentsName" />
-                <TextField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
+                <PhoneNumberField label="Huoltajan puhelinnumero" source="parentsPhoneNumber" />
                 <DateField label="Päiväys" source="creationDate" locales={['fi']} />
                 <SelectField label="Tila" source="status" choices={statusChoices} />
-                <PrintQrCodeButton></PrintQrCodeButton>
-                <ResendSMSButton />
+                <PrintQrCodeButton label="Näytä QR-koodi" />
+                <ResendSMSButton label="Lähetä SMS uudelleen" />
                 <EditButton />
             </Datagrid>
         </List>

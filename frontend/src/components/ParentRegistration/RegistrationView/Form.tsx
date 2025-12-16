@@ -2,7 +2,6 @@ import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
 import { string, object, boolean, Schema, number } from 'yup';
 import { post } from '../../../apis';
-
 import { InputField, DropdownField, SelectGroup } from './FormFields';
 import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage, FieldInfoText } from '../StyledComponents';
 import { useTranslations } from '../../translations'
@@ -10,6 +9,7 @@ import { CustomizableFormField, Translations } from "../../../customizations/typ
 import { hiddenFormFields, languages } from '../../../customizations'
 import styled, { useTheme } from 'styled-components'
 import { Status } from '../../../types/userTypes';
+import { validPhoneNumber } from '../../../utils';
 
 export interface Club {
     id: number
@@ -274,7 +274,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         juniorLastName: string().required('required'),
         juniorNickName: string(),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
-        juniorPhoneNumber: string().matches(/(^(\+358|0)\d{6,10}$)/, 'phoneNumberFormat').required('required'),
+        juniorPhoneNumber: string().matches(validPhoneNumber, 'phoneNumberFormat').required('required'),
         smsPermissionJunior: string().oneOf(['smsJuniorOk', 'smsJuniorNotOk']).required('required'),
         postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
         school: valueOr('school', string().required('required'), string()),
@@ -283,7 +283,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         photoPermission: string().required('required'),
         parentFirstName: string().required('required'),
         parentLastName: string().required('required'),
-        parentPhoneNumber: string().matches(/(^(\+358|0)\d{6,10})/, 'phoneNumberFormat').required('required'),
+        parentPhoneNumber: string().matches(validPhoneNumber, 'phoneNumberFormat').required('required'),
         smsPermissionParent: string().oneOf(['smsParentOk', 'smsParentNotOk']).required('required'),
         parentsEmail: string().matches(/^\S+@\S+\.\S+$/, 'emailFormat'),
         emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),

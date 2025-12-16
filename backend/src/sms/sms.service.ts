@@ -7,6 +7,7 @@ import { SMSConfig } from './smsConfigHandler';
 import { ClubService } from '../club/club.service';
 import * as content from '../content';
 import { ConfigHandler } from '../configHandler';
+import { standardizePhoneNumber } from '../common/transformers';
 import moment = require('moment');
 
 @Injectable()
@@ -117,11 +118,12 @@ export class SmsService {
 
         try {
             const response = await lastValueFrom(this.httpService.post(teliaEndPoint, messageRequest));
-            if (response.data.accepted[0].to === messageRequest.to[0]) {
+            // The accepted list of phone numbers does not seem to include the '+' sign, so standardize before comparison.
+            if (standardizePhoneNumber.to(response.data.accepted[0].to) === messageRequest.to[0]) {
                 this.logger.log(`SMS send to xxxxxx${messageRequest.to[0].slice(-4)}`);
                 return true;
             } else {
-                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response}.`);
+                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response?.statusText}.`);
                 return false;
             }
         } catch {

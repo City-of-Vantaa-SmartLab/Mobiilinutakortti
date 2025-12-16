@@ -9,15 +9,10 @@ export class ResetPhoneNumberValidationPipe implements PipeTransform {
   transform(value: any) {
     const { phoneNumber } = value;
 
-    if(!this.isPhoneNumberValid(phoneNumber)) {
+    if(!allowedPhoneNumber.test(phoneNumber)) {
       throw new BadRequestException(content.PhoneNumberNotValid);
     }
 
     return value;
-  }
-
-  private isPhoneNumberValid(phoneNumber: any) {
-    const isValid = this.allowedPhoneNumber.test(phoneNumber);
-    return isValid;
   }
 }

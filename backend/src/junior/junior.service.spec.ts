@@ -21,13 +21,13 @@ describe('JuniorService', () => {
   let connection: DataSource;
 
   const testRegisterYouth = {
-    phoneNumber: '04122345000',
+    phoneNumber: '+3587772345000',
     smsPermissionJunior: false,
     firstName: 'Auth jr',
     lastName: 'Senior',
     postCode: '02130',
     parentsName: 'Auth Senior',
-    parentsPhoneNumber: '0411234567',
+    parentsPhoneNumber: '+358777234567',
     smsPermissionParent: true,
     parentsEmail: undefined,
     emailPermissionParent: false,
@@ -41,8 +41,6 @@ describe('JuniorService', () => {
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
   let juniorToEdit: EditJuniorDto;
-
-  const phoneNumberTransformer = (str: string) => str.charAt(0) === '0' ? str.replace('0', '358') : str;
 
   beforeAll(async () => {
     connection = getTestDB();
@@ -89,7 +87,7 @@ describe('JuniorService', () => {
       }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
-        expect(response.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber.toLowerCase()) &&
+        expect(response.phoneNumber === testRegisterYouth.phoneNumber &&
           response.firstName === testRegisterYouth.firstName &&
           response.lastName === testRegisterYouth.lastName).toBeTruthy();
       }),
@@ -108,7 +106,7 @@ describe('JuniorService', () => {
     it('Should return an array containing all juniors', async () => {
       const response = await service.listAllJuniors();
       const isAnArray = Array.isArray(response);
-      const containsJuniors = response.data.some(e => e.phoneNumber === phoneNumberTransformer(testRegisterYouth.phoneNumber));
+      const containsJuniors = response.data.some(e => e.phoneNumber === testRegisterYouth.phoneNumber);
       expect(isAnArray && containsJuniors).toBeTruthy();
     });
   });
@@ -125,8 +123,8 @@ describe('JuniorService', () => {
         await service.editJunior(dto, '');
         const updatedJunior = await service.getJuniorByPhoneNumber(dto.phoneNumber);
         const updatedList = await service.listAllJuniors();
-        expect(updatedJunior.phoneNumber === phoneNumberTransformer(dto.phoneNumber)
-          && (!updatedList.data.some(e => e.phoneNumber === phoneNumberTransformer(juniorToEdit.phoneNumber.toLowerCase())))).toBeTruthy();
+        expect(updatedJunior.phoneNumber === dto.phoneNumber
+          && (!updatedList.data.some(e => e.phoneNumber === juniorToEdit.phoneNumber))).toBeTruthy();
       });
   });
 

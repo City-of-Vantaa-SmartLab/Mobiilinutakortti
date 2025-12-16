@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "2.2.4",
+  "version": "2.3.0",
   "private": true,
   "dependencies": {
     "formik": "^2.2.9",
