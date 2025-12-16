@@ -43,23 +43,20 @@ const useStyles = makeStyles({
         display: "none"
     },
     note: {
-        width: "100%"
+        width: "100%",
+        fontSize: "small"
     },
-    smallMargin: {
+    noTopMargin: {
         marginTop: "0px"
     },
     contentSeparator: {
         marginTop: "8px",
         marginBottom: "8px"
-    },
-    noHorizontalPadding: {
-        paddingLeft: "0px",
-        paddingRight: "0px"
     }
 });
 
 const SectionTitle = ({title}) => (
-    <span>{title}</span>
+    <span style={{fontSize: "small"}}>{title}</span>
 );
 
 const MessageSectionForLanguage = (props) => {
@@ -91,7 +88,7 @@ const AnnouncementCreateTitle = () => (
 );
 
 const AnnouncementCreateHelperText = ({msgType}) => (
-    <p style={{'marginTop': '0px'}}>{msgType === "email" ? "Viesti lähetetään vanhemmille, jotka ovat sallineet infosähköpostien lähettämisen." : "Viesti lähetetään henkilöille, jotka ovat sallineet infotekstiviestien lähettämisen."}</p>
+    <p style={{'marginTop': '0px', 'fontSize': 'small'}}>{msgType === "email" ? "Viesti lähetetään vanhemmille, jotka ovat sallineet infosähköpostien lähettämisen." : "Viesti lähetetään henkilöille, jotka ovat sallineet infotekstiviestien lähettämisen."}</p>
 );
 
 const CustomToolbar = (props) => (
@@ -159,8 +156,8 @@ export const AnnouncementCreate = (props) => {
                 <FormDataConsumer>
                     {({ formData }) => { formDataRef.current = formData }}
                 </FormDataConsumer>
-                <RadioButtonGroupInput source="msgType" choices={messageTypeChoices} label="Valitse lähetettävän viestin tyyppi" validate={required()} defaultValue={"sms"} onChange={updateRecipientCount} />
-                <FormDataConsumer>
+                <RadioButtonGroupInput source="msgType" choices={messageTypeChoices} label="Valitse lähetettävän viestin tyyppi" validate={required()} defaultValue={"sms"} onChange={updateRecipientCount} helperText={false}/>
+                <FormDataConsumer className={classes.noTopMargin}>
                     {({ formData }) => {
                         return <AnnouncementCreateHelperText msgType={formData.msgType} />
                     }}
@@ -171,7 +168,7 @@ export const AnnouncementCreate = (props) => {
                     }}
                 </FormDataConsumer>
                 <NoBasePath>
-                    <Typography variant="body1" className={classes.note}>
+                    <Typography className={classes.note}>
                         Viestien vastaanottajat katsotaan nuoren kotinuorisotilan tai kuluneen kahden viikon aikana vierailemansa nuorisotilan perusteella.
                     </Typography>
                 </NoBasePath>
@@ -180,10 +177,10 @@ export const AnnouncementCreate = (props) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
-                <SelectInput className={allSelected ? (classes.selectInput + " " + classes.hiddenInput) : classes.selectInput} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
+                <SelectInput className={classes.selectInput + " " + classes.noTopMargin + (allSelected ? (" " + classes.hiddenInput) : '')} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
                 <NoBasePath>
                     <div className={classes.contentSeparator}>
-                        <Typography variant="caption">
+                        <Typography variant="subtitle1">
                             Viestin sisältö
                         </Typography>
                     </div>
@@ -192,7 +189,7 @@ export const AnnouncementCreate = (props) => {
                 <MessageSectionForLanguage langCode="en" />
                 <MessageSectionForLanguage langCode="sv" />
                 <NoBasePath>
-                    <Typography variant="body1" className={classes.note}>
+                    <Typography variant="body1">
                         Tietojen perusteella laskettu viestin vastaanottajien määrä: {numberOfRecipients}
                     </Typography>
                 </NoBasePath>

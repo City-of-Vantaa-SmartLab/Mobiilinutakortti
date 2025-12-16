@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Button } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { STATE } from '../state';
+import NewSeasonIcon from '@material-ui/icons/Autorenew';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -70,6 +72,7 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
             variant="contained"
             color="primary"
             className={'modal-button'}
+            startIcon={<NewSeasonIcon />}
           >
             {disabled ? 'Odota' : 'Aloita uusi kausi'}
           </Button>
@@ -78,6 +81,7 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
             disabled={disabled}
             variant="contained"
             className={'modal-button'}
+            startIcon={<CancelIcon />}
           >
             Peruuta
           </Button>

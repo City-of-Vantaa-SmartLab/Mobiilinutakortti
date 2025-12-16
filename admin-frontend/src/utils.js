@@ -129,11 +129,9 @@ export const getAlertDialogObserver = (newDialogTitle) => {
 }
 
 // Removes basePath from DOM elements to show notes inside forms without console errors.
-export const NoBasePath = ({basePath, ...props}) => {
-    return (
-        <Container {...props} style={{'paddingLeft': '0px', 'paddingRight': '0px'}}/>
-    )
-};
+export const NoBasePath = ({basePath, ...props}) => (
+  <Container {...props} style={{'marginLeft': '0px', 'marginRight': '0px', 'paddingLeft': '0px', 'paddingRight': '0px', 'width': '100%'}}/>
+);
 
 // How many minutes to wait for inactivity before auto logout functions trigger.
 // This should be kept more or less the same as youthWorkerExpiry authentication const in backend.

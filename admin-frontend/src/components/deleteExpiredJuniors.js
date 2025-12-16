@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Title, useNotify, GET_LIST } from 'react-admin';
 import { Redirect } from 'react-router-dom';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@material-ui/core';
 import { juniorProvider } from '../providers/juniorProvider';
 import { httpClient } from '../httpClients';
@@ -96,10 +97,11 @@ const DeleteExpiredJuniors = () => {
           variant="contained"
           disabled={state !== STATE.INITIAL || !checkboxState}
           color="primary"
+          startIcon={<DeleteIcon />}
           label="Poista vanhat käyttäjät"
           size="large"
         >
-          {state === STATE.INITIAL ? 'Poista vanhat käyttäjät' : 'Odota'}
+          {state === STATE.INITIAL ? 'Suorita poisto' : 'Odota'}
         </Button>
       </CardContent>
     </Card>

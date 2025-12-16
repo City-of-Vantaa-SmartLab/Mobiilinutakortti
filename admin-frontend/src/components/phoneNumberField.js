@@ -11,7 +11,7 @@ export const PhoneNumberField = ({source}) => (
             const rest = (m ? m[2] : val);
             return (
                 <span>
-                    {prefix && <Box component="span" sx={{ color: 'gray', mr: 0.5 }}>{prefix}</Box>}
+                    {prefix && <Box component="span" sx={{ mr: 0.5 }}>{prefix}</Box>}
                     <span>{rest}</span>
                 </span>
             );

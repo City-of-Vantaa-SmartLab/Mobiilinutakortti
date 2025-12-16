@@ -10,6 +10,7 @@ import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';
 import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
+import ForwardIcon from '@material-ui/icons/Forward';
 
 const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
 
@@ -57,25 +58,23 @@ const NewSeason = () => {
       <Title title="Aloita uusi kausi"></Title>
       <CardContent>
         <p>
-          Uuden kauden aloittaminen muuttaa nuorten tilaksi
-          "{statusChoices.find(s => s.id === Status.expired).name}" ja lähettää kaikille huoltajille tekstiviestinä
-          linkin kortin uusintahakemukseen. Jos käyttäjiä on esimerkiksi yli 2000,
-          maksaa tekstiviestien lähettäminen jo yli 80 euroa.
+          Uuden kauden aloittaminen muuttaa nuorten tilaksi "{statusChoices.find(s => s.id === Status.expired).name}"
+          ja lähettää kaikille huoltajille tekstiviestinä linkin kortin uusintahakemukseen.
         </p>
         {showExtraEntries && <p>
           Tämä toiminto ei vaikuta nuoriin, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}".
         </p>}
         <p>
-          Järjestelmä tulee lähettämään {SMSCount} tekstiviestiä.
+          Uuden kauden aloittaminen lähettää {SMSCount} tekstiviestiä. Niiden lähettämisestä syntyy kustannuksia.
         </p>
-        <p>Oletko varma, että haluat jatkaa?</p>
         <Button
           onClick={() => setModalVisible(true)}
           variant="contained"
           color="primary"
           size="large"
+          startIcon={<ForwardIcon />}
         >
-          Kyllä
+          Jatka
         </Button>
       </CardContent>
       {modalVisible && (

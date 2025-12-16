@@ -6,6 +6,8 @@ import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
+import ResetIcon from '@material-ui/icons/Autorenew';
+import EmptyIcon from '@material-ui/icons/Cached';
 
 const MiscFunctions = () => {
   const notify = useNotify();
@@ -38,7 +40,7 @@ const MiscFunctions = () => {
       notifyError('Virhe tyhjentäessä Kompassi-välimuistia');
       setState(STATE.INITIAL);
     } else {
-      notify('Kompassi-aktiviteettivälimuisti tyhjennetty', 'success');
+      notify('Kompassi-välimuisti tyhjennetty', 'success');
       setState(STATE.DONE);
     }
   };
@@ -62,6 +64,7 @@ const MiscFunctions = () => {
           color="primary"
           label="Alusta spam-estolistat"
           size="large"
+          startIcon={<ResetIcon />}
         >
           {state === STATE.INITIAL ? 'Alusta spam-estolistat' : 'Odota'}
         </Button>
@@ -73,10 +76,11 @@ const MiscFunctions = () => {
           variant="contained"
           disabled={state !== STATE.INITIAL}
           color="primary"
-          label="Tyhjennä Kompassi-aktiviteettivälimuisti"
+          label="Tyhjennä Kompassi-välimuisti"
           size="large"
+          startIcon={<EmptyIcon />}
         >
-          {state === STATE.INITIAL ? 'Tyhjennä Kompassi-aktiviteettivälimuisti' : 'Odota'}
+          {state === STATE.INITIAL ? 'Tyhjennä Kompassi-välimuisti' : 'Odota'}
         </Button>
       </CardContent>)}
     </Card>
