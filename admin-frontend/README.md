@@ -4,7 +4,7 @@ The admin-frontend directory includes the admin side code for Mobiilinutakortti 
 
 ## System Requirements:
 
-- NodeJS - v22 preferred
+- Node.js: v24.11.0 preferred
 
 ## Running locally
 

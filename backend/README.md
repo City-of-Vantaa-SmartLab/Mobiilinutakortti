@@ -6,9 +6,9 @@ The backend uses NestJS. The database is PostgreSQL.
 
 ## System requirements:
 
-- NodeJS - v22 preferred
-- PostgreSQL - v16 preferred
-- Docker (optional)
+- Node.js: v24.11.0 preferred
+- PostgreSQL: v16 preferred
+- Docker: optional
 
 ## Multiple instances
 
@@ -16,6 +16,8 @@ There are some services that rely on an in-memory "database". If the backend was
 * src/kompassi/kompassi.service.ts
 * src/session/sessionDb.service.ts
 * src/spamGuard/spamGuard.service.ts
+
+Also note that the environment variables `SC_SECRET` and `JWT_SECRET` are required if multiple instances are used.
 
 ### Accessing the NestJS/PostgreSQL Docker container
 
@@ -82,7 +84,7 @@ If you are using Microsoft Entra ID to login users, admin privileges are added o
 
 ## Testing SMS functionality
 
-To test SMS functionality locally, rename `.env.template` file to `.env` and update the Telia username/password/user variables with right values.
+To test SMS functionality locally, copy `.env.template` file to `.env` and set the Telia username/password/user variables.
 
 ## Environment variables / secrets
 
@@ -133,5 +135,6 @@ The Swagger documentation does not document API responses.
 
 ## Tests
 
-Due to historical reasons, some/most of the tests fail. Feel free to fix and document them.
-Also, even though PostgreSQL is used, the tests use SQLite. As it doesn't have a date data type, in some places of the code there are special cases for the tests to work.
+Even though PostgreSQL is used, the tests use SQLite. As it doesn't have a date data type, in some places of the code there are special cases for the tests to work.
+
+The tests do not currently work correctly due to historical reasons.

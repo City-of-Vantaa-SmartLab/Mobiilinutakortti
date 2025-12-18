@@ -4,7 +4,7 @@ The frontend for Mobiilinutakortti app. This is the part used by the juniors and
 
 ## System Requirements:
 
-- NodeJS - v22 preferred
+- Node.js: v24.11.0 preferred
 
 ## Running locally
 
