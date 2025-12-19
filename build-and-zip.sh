@@ -36,17 +36,17 @@ then
     echo Enter value for: REACT_APP_ENABLE_KOMPASSI_INTEGRATION
     read REACT_APP_ENABLE_KOMPASSI_INTEGRATION
     export REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-    echo Enter value for: REACT_APP_ALT_ERR_MSG
-    read REACT_APP_ALT_ERR_MSG
-    export REACT_APP_ALT_ERR_MSG
+    echo Enter value for: VITE_USE_ALT_ERR_MSG
+    read VITE_USE_ALT_ERR_MSG
+    export VITE_USE_ALT_ERR_MSG
 else
     echo Run the script with any parameter to use other than these values:
     echo "   export REACT_APP_ENABLE_EXTRA_ENTRIES=true"
     echo "   export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true"
-    echo "   export REACT_APP_ALT_ERR_MSG="
+    echo "   export VITE_USE_ALT_ERR_MSG="
     export REACT_APP_ENABLE_EXTRA_ENTRIES=true
     export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true
-    export REACT_APP_ALT_ERR_MSG=
+    export VITE_USE_ALT_ERR_MSG=
 fi
 echo Enter value for: REACT_APP_ENTRA_TENANT_ID
 read REACT_APP_ENTRA_TENANT_ID
@@ -58,13 +58,14 @@ echo Enter value for: REACT_APP_ENTRA_REDIRECT_URI
 read REACT_APP_ENTRA_REDIRECT_URI
 export REACT_APP_ENTRA_REDIRECT_URI
 
-export REACT_APP_API_URL=/api
+export VITE_API_URL=/api
 cd frontend
 npm ci
 npm run build
 cp -r ./build $tmpdir/backend/public
 cd ..
 
+export REACT_APP_API_URL=/api
 cd admin-frontend
 npm ci
 npm run build

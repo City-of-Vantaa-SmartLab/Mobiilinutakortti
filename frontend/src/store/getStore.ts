@@ -1,4 +1,5 @@
-import { createStore, Store, applyMiddleware, compose } from 'redux';
+import type { Store } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { createBrowserHistory } from 'history';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { AppState } from '../reducers';
@@ -25,13 +26,15 @@ const persistedState = {
     }
 }
 
-export function configureStore(): Store<AppState> {
-    const sagaMiddleware = createSagaMiddleware();
-    const store = createStore(
-        rootReducer(),
-        persistedState,
-        compose(applyMiddleware(sagaMiddleware))
-    );
+export function getStore(): Store<AppState> {
+  const sagaMiddleware = createSagaMiddleware();
+  const store = configureStore({
+    reducer: rootReducer(),
+    preloadedState: persistedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ thunk: false, serializableCheck: false, immutableCheck: false }).concat(sagaMiddleware),
+    devTools: import.meta.env.DEV
+  });
 
     sagaMiddleware.run(rootSaga);
     store.dispatch({ type: LangTypes.SET_LANG, lang: lang as Language ?? 'fi' })

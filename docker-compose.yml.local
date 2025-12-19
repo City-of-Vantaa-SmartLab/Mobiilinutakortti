@@ -55,9 +55,9 @@ services:
     ports:
       - 3001:3000
     environment:
-      REACT_APP_API_URL: http://localhost:3000/api
-      REACT_APP_ALT_ERR_MSG:
-      WDS_SOCKET_PORT: 3001
+      VITE_API_URL: http://localhost:3000/api
+      VITE_USE_ALT_ERR_MSG:
+      VITE_HMR_CLIENT_PORT: 3001
     volumes:
       - ./frontend/src:/frontend/src
 
