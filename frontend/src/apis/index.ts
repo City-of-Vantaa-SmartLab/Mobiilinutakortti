@@ -1,4 +1,4 @@
-const apiUrl = process.env.REACT_APP_API_URL || '/api';
+const apiUrl = import.meta.env.VITE_API_URL || '/api';
 
 export const get = async (uri: string, token?: string): Promise<any> => {
     const url: string = `${apiUrl}${uri}`;

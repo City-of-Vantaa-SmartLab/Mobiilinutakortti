@@ -127,7 +127,7 @@ const RegistrationView: React.FC = () => {
              {error &&
              <Error>
                  <div>
-                   <p>{process.env.REACT_APP_ALT_ERR_MSG ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
+                   <p>{import.meta.env.VITE_ALT_ERR_MSG ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
                     <ErrorButton onClick={() => {
                         //cleans query string if error happened during query string parsing
                         navigate('/hakemus', { replace: true })

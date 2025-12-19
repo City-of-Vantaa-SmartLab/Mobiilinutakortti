@@ -7,4 +7,4 @@ RUN echo "BUILD_ID $BUILD_ID"
 RUN npm i
 COPY . .
 VOLUME ["/frontend/src"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
