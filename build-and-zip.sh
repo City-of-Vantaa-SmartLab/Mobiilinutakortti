@@ -30,33 +30,33 @@ read package_env
 [ ! "$package_env" ] && package_env=dev
 if [ "$1" ]
 then
-    echo Enter value for: REACT_APP_ENABLE_EXTRA_ENTRIES
-    read REACT_APP_ENABLE_EXTRA_ENTRIES
-    export REACT_APP_ENABLE_EXTRA_ENTRIES
-    echo Enter value for: REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-    read REACT_APP_ENABLE_KOMPASSI_INTEGRATION
-    export REACT_APP_ENABLE_KOMPASSI_INTEGRATION
+    echo Enter value for: VITE_ENABLE_EXTRA_ENTRIES
+    read VITE_ENABLE_EXTRA_ENTRIES
+    export VITE_ENABLE_EXTRA_ENTRIES
+    echo Enter value for: VITE_ENABLE_KOMPASSI_INTEGRATION
+    read VITE_ENABLE_KOMPASSI_INTEGRATION
+    export VITE_ENABLE_KOMPASSI_INTEGRATION
     echo Enter value for: VITE_USE_ALT_ERR_MSG
     read VITE_USE_ALT_ERR_MSG
     export VITE_USE_ALT_ERR_MSG
 else
     echo Run the script with any parameter to use other than these values:
-    echo "   export REACT_APP_ENABLE_EXTRA_ENTRIES=true"
-    echo "   export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true"
+    echo "   export VITE_ENABLE_EXTRA_ENTRIES=true"
+    echo "   export VITE_ENABLE_KOMPASSI_INTEGRATION=true"
     echo "   export VITE_USE_ALT_ERR_MSG="
-    export REACT_APP_ENABLE_EXTRA_ENTRIES=true
-    export REACT_APP_ENABLE_KOMPASSI_INTEGRATION=true
+    export VITE_ENABLE_EXTRA_ENTRIES=true
+    export VITE_ENABLE_KOMPASSI_INTEGRATION=true
     export VITE_USE_ALT_ERR_MSG=
 fi
-echo Enter value for: REACT_APP_ENTRA_TENANT_ID
-read REACT_APP_ENTRA_TENANT_ID
-export REACT_APP_ENTRA_TENANT_ID
-echo Enter value for: REACT_APP_ENTRA_CLIENT_ID
-read REACT_APP_ENTRA_CLIENT_ID
-export REACT_APP_ENTRA_CLIENT_ID
-echo Enter value for: REACT_APP_ENTRA_REDIRECT_URI
-read REACT_APP_ENTRA_REDIRECT_URI
-export REACT_APP_ENTRA_REDIRECT_URI
+echo Enter value for: VITE_ENTRA_TENANT_ID
+read VITE_ENTRA_TENANT_ID
+export VITE_ENTRA_TENANT_ID
+echo Enter value for: VITE_ENTRA_CLIENT_ID
+read VITE_ENTRA_CLIENT_ID
+export VITE_ENTRA_CLIENT_ID
+echo Enter value for: VITE_ENTRA_REDIRECT_URI
+read VITE_ENTRA_REDIRECT_URI
+export VITE_ENTRA_REDIRECT_URI
 
 export VITE_API_URL=/api
 cd frontend
@@ -65,7 +65,7 @@ npm run build
 cp -r ./build $tmpdir/backend/public
 cd ..
 
-export REACT_APP_API_URL=/api
+export VITE_API_URL=/api
 cd admin-frontend
 npm ci
 npm run build

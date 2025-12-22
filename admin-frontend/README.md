@@ -15,7 +15,7 @@ You need to have the backend running before starting the admin-frontend; see `..
     * if the ports 3000-3001 are taken by the backend and frontend already, you are suggested another port automatically
     * if you choose port 3002, you can see admin-frontend running at [http://localhost:3002](http://localhost:3002)
 
-Note that if you are not using Docker, you need to set the `REACT_APP_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
+Note that if you are not using Docker, you need to set the `VITE_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
 
 ## Creating a youth worker user
 
@@ -24,12 +24,12 @@ If you are not using Microsoft Entra ID to login users (as is by default; see th
 ## Environment variables / secrets
 
 There are following environment variables:
-* `REACT_APP_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to "/api" if not set.
-* `REACT_APP_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
-* `REACT_APP_ENABLE_KOMPASSI_INTEGRATION`: if evaluates to true, show Kompassi (a statistics system) related settings in the admin frontend's club views.
-* `REACT_APP_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.
-* `REACT_APP_ENTRA_REDIRECT_URI`: If using Entra ID for login, the redirect URI configured in the login scope, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/loginEntraID". Note that the page must reside outside react-admin router, as MSAL returns the code as an URL fragment (after a # sign), which also marks a route so there would be a conflict.
-* `REACT_APP_ENTRA_TENANT_ID`: Microsoft Entra tenant ID. If given, Microsoft Entra ID will be used for login. Login and user management based on database data will be disabled. A different login page will be used to initiate Entra ID login.
+* `VITE_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to "/api" if not set.
+* `VITE_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
+* `VITE_ENABLE_KOMPASSI_INTEGRATION`: if evaluates to true, show Kompassi (a statistics system) related settings in the admin frontend's club views.
+* `VITE_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.
+* `VITE_ENTRA_REDIRECT_URI`: If using Entra ID for login, the redirect URI configured in the login scope, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/loginEntraID". Note that the page must reside outside react-admin router, as MSAL returns the code as an URL fragment (after a # sign), which also marks a route so there would be a conflict.
+* `VITE_ENTRA_TENANT_ID`: Microsoft Entra tenant ID. If given, Microsoft Entra ID will be used for login. Login and user management based on database data will be disabled. A different login page will be used to initiate Entra ID login.
 
 ## Entra ID login flow
 

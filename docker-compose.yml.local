@@ -69,13 +69,13 @@ services:
     depends_on:
       - backend
     environment:
-      REACT_APP_API_URL: http://localhost:3000/api
-      REACT_APP_ENABLE_EXTRA_ENTRIES: true
-      REACT_APP_ENABLE_KOMPASSI_INTEGRATION: true
-      REACT_APP_ENTRA_CLIENT_ID:
-      REACT_APP_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
-      REACT_APP_ENTRA_TENANT_ID:
-      WDS_SOCKET_PORT: 3002
+      VITE_API_URL: http://localhost:3000/api
+      VITE_ENABLE_EXTRA_ENTRIES: true
+      VITE_ENABLE_KOMPASSI_INTEGRATION: true
+      VITE_ENTRA_CLIENT_ID:
+      VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
+      VITE_ENTRA_TENANT_ID:
+      VITE_HMR_CLIENT_PORT: 3002
     volumes:
       - ./admin-frontend/src:/admin-frontend/src
 

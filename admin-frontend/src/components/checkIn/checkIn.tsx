@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
-import QrReader from 'react-qr-reader';
+import { Scanner } from '@yudiel/react-qr-scanner';
 import QrCheckResultScreen from './qrCheckResultScreen.js';
 import LoadingMessage from '../loadingMessage';
 import { useNotify } from 'react-admin';
@@ -104,15 +104,16 @@ const CheckInView = () => {
     }, success ? 2500 : 3000);
   };
 
-  const handleScan = async (qrData) => {
-    if (qrData) {
+  const handleScan = async (detectedCodes) => {
+    if (detectedCodes) {
       setShowQRCode(false);
       setLoading(true);
+
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
         clubId,
         securityCode,
-        juniorId: qrData
+        juniorId: detectedCodes[0].rawValue
       });
       const options = {
         method: 'POST',
@@ -144,12 +145,15 @@ const CheckInView = () => {
       <CheckinBackground />
       {showQRCode && (
           <QrReaderContainer>
-            <QrReader
-                delay={300}
+            <Scanner
+                scanDelay={500}
                 onScan={handleScan}
                 onError={handleError}
-                facingMode={useAlternativeCamera ? 'environment' : 'user'}
-                style={{ width: {cameraSize}, height: {cameraSize} }}
+                formats={['qr_code']}
+                constraints={{
+                  aspectRatio: 1,
+                  facingMode: useAlternativeCamera ? 'environment' : 'user'
+                }}
             />
           </QrReaderContainer>
       )}
@@ -172,7 +176,7 @@ const CheckInView = () => {
         </Button>
       )}
     </Container>
-  )
+  );
 };
 
 export default CheckInView;

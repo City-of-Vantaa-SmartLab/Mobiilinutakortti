@@ -21,7 +21,7 @@ const getExpiredJuniors = () =>
     httpClient,
   );
 
-const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+const showExtraEntries = process.env.VITE_ENABLE_EXTRA_ENTRIES;
 
 const DeleteExpiredJuniors = () => {
   const notify = useNotify();

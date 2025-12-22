@@ -203,7 +203,7 @@ export const JuniorEdit = (props) => {
 
 
 export const JuniorForm = (formType) => {
-    const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+    const showExtraEntries = process.env.VITE_ENABLE_EXTRA_ENTRIES;
     const [youthClubs, setYouthClubs] = useState([]);
     const { isAdmin } = useAdminPermission();
     const smartRefresh = useSmartAutoLogout();

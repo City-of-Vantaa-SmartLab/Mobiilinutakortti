@@ -79,7 +79,7 @@ export class Junior {
     @OneToMany(() => CheckIn, checkIn => checkIn.junior)
     checkIns: CheckIn[];
 
-    // Extra entries are an optional feature to use the same registry of juniors for extra activities outside youth clubs, such as a permission to use a youth gym. See the environment variable REACT_APP_ENABLE_EXTRA_ENTRIES in the admin frontend.
+    // Extra entries are an optional feature to use the same registry of juniors for extra activities outside youth clubs, such as a permission to use a youth gym. See the environment variable VITE_ENABLE_EXTRA_ENTRIES in the admin frontend.
     @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
     extraEntries: ExtraEntry[];
 
