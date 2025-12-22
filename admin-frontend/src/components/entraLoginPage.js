@@ -6,9 +6,9 @@ import {
   Container,
   Typography,
   createTheme,
-} from '@material-ui/core';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { ThemeProvider } from '@material-ui/styles';
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { ThemeProvider } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';

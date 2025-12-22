@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
-import { makeStyles } from '@material-ui/core/styles';
-import { MenuItem, Select, Card, CardContent } from '@material-ui/core';
-import { Add, CancelOutlined } from '@material-ui/icons';
+import { makeStyles } from '@mui/material/styles';
+import { MenuItem, Select, Card, CardContent } from '@mui/material';
+import { Add, CancelOutlined } from '@mui/icons-material';
 import {
     List,
     Datagrid,
@@ -25,7 +25,7 @@ import {
     DELETE,
     CREATE
 } from 'react-admin';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
 import { extraEntryProvider } from '../../providers';

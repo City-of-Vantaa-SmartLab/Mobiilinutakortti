@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
+import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
 import { STATE } from '../state';
-import NewSeasonIcon from '@material-ui/icons/Autorenew';
-import CancelIcon from '@material-ui/icons/Cancel';
+import NewSeasonIcon from '@mui/icons-material/Autorenew';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const ModalContainer = styled.div`
   position: fixed;

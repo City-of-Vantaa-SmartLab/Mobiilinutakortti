@@ -9,7 +9,7 @@ import { ExtraEntryTypeList, ExtraEntryTypeCreate} from './components/extraEntry
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, adminRoutes } from './customRoutes';
-import ChildCareIcon from '@material-ui/icons/ChildCare';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';

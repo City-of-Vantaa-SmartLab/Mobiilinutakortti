@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, AppBar, UserMenu, MenuItemLink, Notification } from 'react-admin';
-import LockIcon from '@material-ui/icons/Lock';
+import LockIcon from '@mui/icons-material/Lock';
 import styled from 'styled-components';
 import Menu from './menu';
 

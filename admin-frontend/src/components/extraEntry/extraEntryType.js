@@ -12,7 +12,7 @@ import {
   NumberField,
   NumberInput
 } from 'react-admin';
-import { Card, CardContent } from '@material-ui/core';
+import { Card, CardContent } from '@mui/material';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
 const CustomToolbar = (props) => (

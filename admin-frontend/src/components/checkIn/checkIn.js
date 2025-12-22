@@ -10,8 +10,8 @@ import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from '../../audio/audio.js'
 import { checkInClubIdKey, userTokenKey, adminUiBasePath, checkInSecurityCodeKey, clearUserInfo } from '../../utils';
-import { Button } from '@material-ui/core';
-import SwitchCameraIcon from '@material-ui/icons/SwitchCamera';
+import { Button } from '@mui/material';
+import SwitchCameraIcon from '@mui/icons-material/SwitchCamera';
 
 const Container = styled.div`
   height: 100%;

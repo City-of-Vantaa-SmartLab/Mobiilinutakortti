@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { Title, useNotify } from 'react-admin';
-import { Redirect } from 'react-router-dom';
-import { Button, Card, CardContent } from '@material-ui/core';
+import { Navigate } from 'react-router-dom';
+import { Button, Card, CardContent } from '@mui/material';
 import { httpClient } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
-import ResetIcon from '@material-ui/icons/Autorenew';
-import EmptyIcon from '@material-ui/icons/Cached';
+import ResetIcon from '@mui/icons-material/Autorenew';
+import EmptyIcon from '@mui/icons-material/Cached';
 
 const MiscFunctions = () => {
   const notify = useNotify();
@@ -46,7 +46,7 @@ const MiscFunctions = () => {
   };
 
   if (state === STATE.DONE) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;

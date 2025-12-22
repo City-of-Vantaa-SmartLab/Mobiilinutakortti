@@ -5,12 +5,12 @@ import {
   TextField,
   useNotify
 } from 'react-admin';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
 import { checkInClubIdKey, checkInSecurityCodeKey } from '../utils';
-import ListIcon from '@material-ui/icons/List';
-import PieChartIcon from '@material-ui/icons/PieChart';
-import CropFreeIcon from '@material-ui/icons/CropFree';
+import ListIcon from '@mui/icons-material/List';
+import PieChartIcon from '@mui/icons-material/PieChart';
+import CropFreeIcon from '@mui/icons-material/CropFree';
 import useAutoLogout from '../hooks/useAutoLogout';
 import { httpClient } from '../httpClients/httpClient.js';
 import api from '../api.js';

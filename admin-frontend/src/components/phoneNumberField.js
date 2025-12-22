@@ -1,6 +1,6 @@
 import React from 'react';
 import { FunctionField } from 'react-admin';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 
 export const PhoneNumberField = ({source}) => (
     <FunctionField

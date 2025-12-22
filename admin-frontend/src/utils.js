@@ -1,6 +1,6 @@
 import { GET_LIST, HttpError } from 'react-admin';
 import { dataProvider } from './providers/dataProvider';
-import { Container } from '@material-ui/core';
+import { Container } from '@mui/material';
 
 // This should match the backend's middleware's admin route.
 export const adminUiBasePath = '/nuorisotyontekijat';

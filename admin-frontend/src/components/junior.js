@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import { useForm } from 'react-final-form';
 import { QRCodeSVG } from 'qrcode.react'
 import {

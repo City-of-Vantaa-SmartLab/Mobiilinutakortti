@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Title, useNotify, GET_LIST } from 'react-admin';
-import { Redirect } from 'react-router-dom';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
-import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Navigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
+import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material';
 import { juniorProvider } from '../providers/juniorProvider';
 import { httpClient } from '../httpClients';
 import { STATE } from '../state';
@@ -74,7 +74,7 @@ const DeleteExpiredJuniors = () => {
   };
 
   if (state === STATE.DONE) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return (

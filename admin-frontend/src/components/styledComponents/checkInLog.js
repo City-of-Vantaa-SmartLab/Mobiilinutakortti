@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, TextField, DialogTitle } from '@material-ui/core';
+import { Card, CardContent, CardHeader, TextField, DialogTitle } from '@mui/material';
 import styled from 'styled-components';
 
 export const Container = styled.div`

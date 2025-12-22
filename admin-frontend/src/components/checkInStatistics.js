@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DateInput, useNotify } from 'react-admin';
 import { Form } from 'react-final-form';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import {
     Container,
     CheckInLogCard,
@@ -13,7 +13,7 @@ import {
     VerticalCardPadding,
     StyledDialogTitle
 } from './styledComponents/checkInLog';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/material/styles';
 import {
     SimpleForm,
     SelectInput,
@@ -15,10 +15,10 @@ import {
     FormDataConsumer,
     GET_LIST
 } from 'react-admin';
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import styled from 'styled-components';
 import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms, NoBasePath } from '../utils';
-import { Checkbox, FormControlLabel, Typography } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { dataProvider } from '../providers/dataProvider';
 import useAutoLogout from '../hooks/useAutoLogout';
 
