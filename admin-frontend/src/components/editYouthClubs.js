@@ -34,7 +34,7 @@ const CustomToolbar = (props) => (
   </Toolbar>
 );
 
-const kompassiIntegration = process.env.REACT_APP_ENABLE_KOMPASSI_INTEGRATION;
+const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
 // Suppress React warnings about props for non-input elements.
 const NonInput = React.memo(function NonInput({ children }) {

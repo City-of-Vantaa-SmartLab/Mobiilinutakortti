@@ -49,7 +49,7 @@ const MiscFunctions = () => {
     return <Redirect to="/" />;
   }
 
-  const kompassiIntegration = process.env.REACT_APP_ENABLE_KOMPASSI_INTEGRATION;
+  const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
   return (
     <Card>

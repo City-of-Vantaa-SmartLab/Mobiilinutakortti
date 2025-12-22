@@ -28,7 +28,7 @@ export const statusChoices = [
   { id: Status.pending, name: 'Kotisoitto tekemättä' },
   { id: Status.expired, name: 'Tunnus vanhentunut' },
   { id: Status.failedCall, name: 'Kotisoittoa yritetty' }
-].concat( process.env.REACT_APP_ENABLE_EXTRA_ENTRIES ?
+].concat( import.meta.env.VITE_ENABLE_EXTRA_ENTRIES ?
   [ { id: Status.extraEntriesOnly, name: 'Vain merkintärekisteri' } ] :
   []
 );

@@ -2,9 +2,9 @@ import { LogLevel } from '@azure/msal-browser'
 
 const authConfig = {
   auth: {
-    clientId: process.env.REACT_APP_ENTRA_CLIENT_ID,
-    authority: `https://login.microsoftonline.com/${process.env.REACT_APP_ENTRA_TENANT_ID}`,
-    redirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
+    clientId: import.meta.env.VITE_ENTRA_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_ENTRA_TENANT_ID}`,
+    redirectUri: import.meta.env.VITE_ENTRA_REDIRECT_URI
   },
   cache: {
     cacheLocation: 'sessionStorage',
@@ -43,7 +43,7 @@ const authConfig = {
 // For the login, scopes 'openid' and 'profile' were automatically included but we'll define them here anyway.
 const loginRequestScopes = ['User.Read', 'openid', 'profile']
 
-const tokenRequestScopes = [`api://${process.env.REACT_APP_ENTRA_CLIENT_ID}/user_login`]
+const tokenRequestScopes = [`api://${import.meta.env.VITE_ENTRA_CLIENT_ID}/user_login`]
 
 export {
   authConfig,

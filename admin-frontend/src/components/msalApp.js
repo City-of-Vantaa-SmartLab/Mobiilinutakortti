@@ -12,7 +12,7 @@ export class MSALApp {
     static async logout(logoutHintValue) {
         console.debug('Calling MSAL logout redirect.');
         const options = {
-            postLogoutRedirectUri: process.env.REACT_APP_ENTRA_REDIRECT_URI
+            postLogoutRedirectUri: import.meta.env.VITE_ENTRA_REDIRECT_URI
         };
         if (logoutHintValue) options.logoutHint = logoutHintValue;
         await MSALApp.instance.logoutRedirect(options);

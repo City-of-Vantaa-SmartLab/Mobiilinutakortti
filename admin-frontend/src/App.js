@@ -18,7 +18,7 @@ import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEnt
 import EntraLogin from './components/entraLoginPage';
 
 const CustomLoginPage = () =>
-  !!process.env.REACT_APP_ENTRA_TENANT_ID ? (
+  !!import.meta.env.VITE_ENTRA_TENANT_ID ? (
     <EntraLogin />
   ) : (
     <Login backgroundImage="/nuta-admin-bg.jpg" />
@@ -33,11 +33,11 @@ const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 const App = () => {
     const { isAdmin } = useAdminPermission();
     const customRoutes = routes.concat(...isAdmin ? adminRoutes : []);
-    const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+    const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
     // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
     // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
-    if (process.env.REACT_APP_ENTRA_TENANT_ID && (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI)) {
+    if (import.meta.env.VITE_ENTRA_TENANT_ID && (window.location.href + '/').includes(import.meta.env.VITE_ENTRA_REDIRECT_URI)) {
         return (<EntraLogin />)
     }
 

@@ -12,7 +12,7 @@ import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 import ForwardIcon from '@material-ui/icons/Forward';
 
-const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
 const NewSeason = () => {
   const notify = useNotify();

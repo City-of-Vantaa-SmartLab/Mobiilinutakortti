@@ -11,8 +11,8 @@ import { authProvider } from '../providers';
 export const useAutoLogout = () => {
     useEffect(() => {
         const isEntraLoginPage =
-            process.env.REACT_APP_ENTRA_TENANT_ID &&
-            (window.location.href + '/').includes(process.env.REACT_APP_ENTRA_REDIRECT_URI);
+            import.meta.env.VITE_ENTRA_TENANT_ID &&
+            (window.location.href + '/').includes(import.meta.env.VITE_ENTRA_REDIRECT_URI);
         if (isEntraLoginPage) {
             return;
         }

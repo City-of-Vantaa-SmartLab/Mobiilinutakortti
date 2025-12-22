@@ -6,7 +6,7 @@ import Menu from './menu';
 
 const CustomUserMenu = props => (
     <UserMenu {...props}>
-        {!process.env.REACT_APP_ENTRA_TENANT_ID ? (
+        {!import.meta.env.VITE_ENTRA_TENANT_ID ? (
             <MenuItemLink
                 to="/password"
                 primaryText="Salasana"

@@ -18,7 +18,7 @@ import {
 import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 
-const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
 export const YouthWorkerList = (props) => {
   const [youthClubs, setYouthClubs] = useState([]);

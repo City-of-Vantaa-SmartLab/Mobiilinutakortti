@@ -19,7 +19,7 @@ const MenuContainer = styled.div`
 
 const Menu = () => {
   const { isAdmin } = useAdminPermission();
-  const showExtraEntries = process.env.REACT_APP_ENABLE_EXTRA_ENTRIES;
+  const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
   return (
     <MenuContainer>

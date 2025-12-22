@@ -57,12 +57,12 @@ export const authProvider = (type, params) => {
             method: 'GET'
         }
 
-        const useEntraID = !!process.env.REACT_APP_ENTRA_TENANT_ID;
+        const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
         const cleanup = () => {
             sessionStorage.removeItem(userTokenKey);
             sessionStorage.removeItem('role');
             window.location.href = useEntraID ?
-                process.env.REACT_APP_ENTRA_REDIRECT_URI :
+                import.meta.env.VITE_ENTRA_REDIRECT_URI :
                 loginFragment;
         }
         httpClient(url, options).then(cleanup, cleanup);
