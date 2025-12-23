@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Title, useNotify } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import { Button, Card, CardContent } from '@mui/material';
@@ -11,7 +11,7 @@ import EmptyIcon from '@mui/icons-material/Cached';
 
 const MiscFunctions = () => {
   const notify = useNotify();
-  const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
+  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
 
   const [state, setState] = useState(STATE.INITIAL);
 
@@ -26,7 +26,7 @@ const MiscFunctions = () => {
       notifyError('Virhe alustaessa spam-estoa');
       setState(STATE.INITIAL);
     } else {
-      notify(`Estolistalta poistettiin ${response.message} merkintää.`, 'success');
+      notify(`Estolistalta poistettiin ${response.message} merkintää.`, { type: 'success' });
       setState(STATE.DONE);
     }
   };
@@ -40,7 +40,7 @@ const MiscFunctions = () => {
       notifyError('Virhe tyhjentäessä Kompassi-välimuistia');
       setState(STATE.INITIAL);
     } else {
-      notify('Kompassi-välimuisti tyhjennetty', 'success');
+      notify('Kompassi-välimuisti tyhjennetty', { type: 'success' });
       setState(STATE.DONE);
     }
   };

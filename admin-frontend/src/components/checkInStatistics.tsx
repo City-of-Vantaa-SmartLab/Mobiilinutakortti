@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { DateInput, useNotify } from 'react-admin';
-import { Form } from 'react-final-form';
-import { Button } from '@mui/material';
+import { useState } from 'react';
+import { useNotify } from 'react-admin';
+import { useParams } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
+import { Button, TextField } from '@mui/material';
 import {
     Container,
     CheckInLogCard,
@@ -18,7 +19,7 @@ import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 
-const labelForGender = (genderSymbol) => {
+const labelForGender = (genderSymbol: string): string => {
     switch (genderSymbol) {
         case ('m'):
             return "Pojat";
@@ -33,9 +34,24 @@ const labelForGender = (genderSymbol) => {
     }
 }
 
+interface CheckInStatsViewModel {
+  clubName: string;
+  statistics: CheckInStatistics[];
+}
+
+interface CheckInStatistics {
+  gender: string;
+  count: number;
+  ageRanges: {
+    ageRange: string;
+    count: number;
+  }[];
+}
+
 // Similar to CheckInLogView, but displays general statistics, not names.
-const CheckInStatisticsView = (props) => {
+const CheckInStatisticsView = () => {
     useAutoLogout();
+    const { youthClubId } = useParams<{ youthClubId: string }>();
 
     const [clubName, setClubName] = useState('');
     const [data, setData] = useState([]);
@@ -48,12 +64,12 @@ const CheckInStatisticsView = (props) => {
         setSearchDate('');
     }
 
-    const getCheckInStats = async values => {
-        const date = new Date(values.queryDate);
+    const getCheckInStats = async (data: { queryDate: string }) => {
+        const date = new Date(data.queryDate);
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInStats;
             const body = JSON.stringify({
-                clubId: props.match.params.youthClubId,
+                clubId: youthClubId,
                 date: date
             });
             const options = {
@@ -62,9 +78,9 @@ const CheckInStatisticsView = (props) => {
             };
             resetState();
             await httpClientWithRefresh(url, options)
-                .then(response => {
-                    if (response.statistics.map(s => s.count).reduce((x,y) => x + y, 0) === 0) {
-                        notify("Ei kirjautumisia valitulla aikavälillä", "warning");
+                .then((response: CheckInStatsViewModel) => {
+                    if (response.statistics.map((s: CheckInStatistics) => s.count).reduce((x,y) => x + y, 0) === 0) {
+                        notify("Ei kirjautumisia valitulla aikavälillä", { type: 'warning' });
                         return;
                     }
                     setSearchDate(date.toLocaleDateString());
@@ -83,7 +99,17 @@ const CheckInStatisticsView = (props) => {
                         <CheckInLogCard>
                             <CheckInLogCardHeader title="Valitse päivämäärä" />
                             <CheckInLogCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" defaultValue={new Date().toISOString().split('T')[0]} />
+                                <Field name="queryDate" defaultValue={new Date().toISOString().split('T')[0]}>
+                                    {({ input }) => (
+                                        <TextField
+                                            {...input}
+                                            label="Päivämäärä"
+                                            type="date"
+                                            slotProps={{ inputLabel: { shrink: true } }}
+                                            sx={{ width: 'fit-content' }}
+                                        />
+                                    )}
+                                </Field>
                                 <Button type="submit">Hae</Button>
                             </CheckInLogCardContentSelect>
                         </CheckInLogCard>
@@ -105,7 +131,7 @@ const CheckInStatisticsView = (props) => {
                                         defaultValue={count}
                                         margin="normal"
                                         variant="filled"
-                                        InputProps={{ readOnly: true }}
+                                        slotProps={{ input: { readOnly: true } }}
                                     />
                                 </CheckInLogTextFieldContainer>
                                 <Typography variant="subtitle1">Ikäjakaumat</Typography>
@@ -117,7 +143,7 @@ const CheckInStatisticsView = (props) => {
                                             defaultValue={countByAgeRange}
                                             margin="normal"
                                             variant="filled"
-                                            InputProps={{ readOnly: true }}
+                                            slotProps={{ input: { readOnly: true } }}
                                         />
                                     ))}
                                 </CheckInLogTextFieldContainer>

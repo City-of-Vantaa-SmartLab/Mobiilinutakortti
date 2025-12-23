@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, AppBar, UserMenu, MenuItemLink, Notification } from 'react-admin';
+import { Layout, AppBar, UserMenu, MenuItemLink, Notification, Logout } from 'react-admin';
 import LockIcon from '@mui/icons-material/Lock';
 import styled from 'styled-components';
 import Menu from './menu';
@@ -12,6 +12,7 @@ const CustomUserMenu = props => (
                 primaryText="Salasana"
                 leftIcon={<LockIcon />}
             />) : null}
+        <Logout />
     </UserMenu>
 );
 const CustomNotification = styled(Notification)`

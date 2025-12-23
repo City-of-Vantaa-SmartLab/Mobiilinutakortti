@@ -40,7 +40,7 @@ const NewSeason = () => {
       }),
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      notify(response.message, 'warning');
+      notify(response.message, { type: 'warning' });
       setState(STATE.INITIAL);
     } else {
       notify(response.message);

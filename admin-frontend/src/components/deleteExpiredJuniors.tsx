@@ -21,11 +21,11 @@ const getExpiredJuniors = () =>
     httpClient,
   );
 
-const showExtraEntries = process.env.VITE_ENABLE_EXTRA_ENTRIES;
+const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
 const DeleteExpiredJuniors = () => {
   const notify = useNotify();
-  const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
+  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
 
   const [state, setState] = useState(STATE.INITIAL);
   const [expiredUserCount, setExpiredUserCount] = useState(0);
@@ -63,7 +63,7 @@ const DeleteExpiredJuniors = () => {
       notifyError('Virhe poistettaessa käyttäjiä');
       setState(STATE.INITIAL);
     } else {
-      notify(response.message, 'success');
+      notify(response.message, { type: 'success' });
       setState(STATE.DONE);
     }
   };

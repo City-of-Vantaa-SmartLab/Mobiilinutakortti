@@ -11,11 +11,11 @@ The admin-frontend directory includes the admin side code for Mobiilinutakortti 
 You need to have the backend running before starting the admin-frontend; see `../backend/README.md` for info.
 
 1. Run `npm install`
-2. Run `npm run start`
+2. Run `npm run dev`
     * if the ports 3000-3001 are taken by the backend and frontend already, you are suggested another port automatically
     * if you choose port 3002, you can see admin-frontend running at [http://localhost:3002](http://localhost:3002)
 
-Note that if you are not using Docker, you need to set the `VITE_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
+Note that if you are not using Docker, you need to either set the `VITE_API_URL` variable correctly to include the backend port (e.g. http://localhost:3000/api), or make sure backend is running in port 3000 locally. The Vite dev server proxy is configured to use that for /api calls.
 
 ## Creating a youth worker user
 

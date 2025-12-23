@@ -9,14 +9,14 @@ import DeleteExpiredJuniors from './components/deleteExpiredJuniors';
 import MiscFunctions from './components/miscFunctions';
 
 export const routes = [
-    <Route exact path="/checkIn" component={CheckInView} noLayout />,
-    <Route exact path="/statistics/:youthClubId" component={CheckInStatisticsView} />,
-    <Route exact path="/log/:youthClubId" component={CheckInLogView} />,
-    <Route path="/password" component={ChangePasswordView} />
+    <Route path="/checkIn" element={<CheckInView />} />,
+    <Route path="/statistics/:youthClubId" element={<CheckInStatisticsView />} />,
+    <Route path="/log/:youthClubId" element={<CheckInLogView />} />,
+    <Route path="/password" element={<ChangePasswordView />} />
 ];
 
 export const adminRoutes = [
-    <Route path="/newSeason" component={NewSeason} />,
-    <Route path="/deleteExpiredJuniors" component={DeleteExpiredJuniors} />,
-    <Route path="/miscFunctions" component={MiscFunctions} />
+    <Route path="/newSeason" element={<NewSeason />} />,
+    <Route path="/deleteExpiredJuniors" element={<DeleteExpiredJuniors />} />,
+    <Route path="/miscFunctions" element={<MiscFunctions />} />
 ];

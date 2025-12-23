@@ -95,7 +95,7 @@ const CheckInView = () => {
     setShowQRCode(false)
     setCheckInSuccess(success)
     setShowQrCheckNotification(true);
-    tryToPlayAudio(success).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', 'warning'));
+    tryToPlayAudio(success).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', { type: 'warning' }));
     setTimeout(() => {
       setCheckInSuccess(null);
       setShowQrCheckNotification(false);
@@ -124,7 +124,7 @@ const CheckInView = () => {
           // Response is of type CheckInResponseViewModel in backend.
           if (response.statusCode < 200 || response.statusCode >= 300) {
               setLoading(false);
-              notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+              notify('Jokin meni pieleen! Kokeile uudestaan.', { type: 'warning' })
             setShowQRCode(true)
           } else {
             const needsNewSecurityCode = response.reason === 'CODE';

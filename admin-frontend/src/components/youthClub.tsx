@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   List,
   Datagrid,
   TextField,
-  useNotify
+  useNotify,
+  ListProps,
+  useRecordContext
 } from 'react-admin';
 import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
@@ -16,14 +18,25 @@ import { httpClient } from '../httpClients/httpClient.js';
 import api from '../api.js';
 import { STATE } from '../state';
 
-export const YouthClubList = (props) => {
+interface YouthClubRecord {
+  id: number;
+  name: string;
+  active: boolean;
+}
+
+// Custom button components in Datagrid need to accept label prop for column headers.
+interface ButtonProps {
+  label?: string;
+}
+
+export const YouthClubList = (props: ListProps) => {
 
   const notify = useNotify();
-  const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
+  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
   const [state, setState] = useState(STATE.INITIAL);
   useAutoLogout();
 
-  const goToCheckIn = async (id) => {
+  const goToCheckIn = async (id: number) => {
     setState(STATE.LOADING);
     successSound.volume = 0;
     successSound.play();
@@ -35,7 +48,7 @@ export const YouthClubList = (props) => {
     errorSound.currentTime = 0;
     successSound.volume = 1;
     errorSound.volume = 1;
-    sessionStorage.setItem(checkInClubIdKey, id);
+    sessionStorage.setItem(checkInClubIdKey, id.toString());
     const response = await httpClient(api.spamGuard.getSecurityCode, {
       method: 'POST',
       body: JSON.stringify({
@@ -50,13 +63,15 @@ export const YouthClubList = (props) => {
     }
   }
 
-  const OpenCheckInButton = (props) => {
+  const OpenCheckInButton = (_props: ButtonProps) => {
+    const record = useRecordContext<YouthClubRecord>();
+    if (!record) return null;
     return (
       <Button
-        onClick={() => goToCheckIn(props.record.id)}
+        onClick={() => goToCheckIn(record.id)}
         size="small"
         variant="contained"
-        disabled={!props.record.active || state === STATE.LOADING}
+        disabled={!record.active || state === STATE.LOADING}
       >
         <CropFreeIcon />
         &nbsp;QR-lukija
@@ -64,17 +79,25 @@ export const YouthClubList = (props) => {
     )
   }
 
-  const OpenCheckInStatsButton = (props) => (
-    <Button variant="contained" size="small" href={`#/statistics/${props.record.id}`} ><PieChartIcon />&nbsp;Näytä</Button>
-  )
+  const OpenCheckInStatsButton = (_props: ButtonProps) => {
+    const record = useRecordContext<YouthClubRecord>();
+    if (!record) return null;
+    return (
+      <Button variant="contained" size="small" href={`#/statistics/${record.id}`} ><PieChartIcon />&nbsp;Näytä</Button>
+    );
+  }
 
-  const OpenCheckInLogButton = (props) => (
-    <Button variant="contained" size="small" href={`#/log/${props.record.id}`} ><ListIcon />&nbsp;Listaa</Button>
-  )
+  const OpenCheckInLogButton = (_props: ButtonProps) => {
+    const record = useRecordContext<YouthClubRecord>();
+    if (!record) return null;
+    return (
+      <Button variant="contained" size="small" href={`#/log/${record.id}`} ><ListIcon />&nbsp;Listaa</Button>
+    );
+  }
 
   return (
-    <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-      <Datagrid>
+    <List title="Nuorisotilat" exporter={false} pagination={false} {...props}>
+      <Datagrid bulkActionButtons={false}>
         <TextField label="Nimi" source="name" />
         <OpenCheckInButton label="Kirjautuminen" />
         <OpenCheckInStatsButton label="Tilastot" />

@@ -23,16 +23,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'build',
-      chunkSizeWarningLimit: 1000,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('/src/components/ParentRegistration/')) {
-              return 'parent-registration';
-            }
-          }
-        }
-      }
+      chunkSizeWarningLimit: 1000
     }
   }
 });

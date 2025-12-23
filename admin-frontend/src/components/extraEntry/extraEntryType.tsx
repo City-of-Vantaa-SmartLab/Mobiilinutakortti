@@ -21,7 +21,7 @@ const CustomToolbar = (props) => (
   </Toolbar>
 );
 
-export const ExtraEntryTypeList = (props) => {
+export const ExtraEntryTypeList = (props: ListProps) => {
   useAutoLogout();
   return (<>
     <Card>
@@ -29,8 +29,8 @@ export const ExtraEntryTypeList = (props) => {
         <p>Huomaa, että luotuja merkintätyyppejä ei toistaiseksi voi muokata eikä poistaa.</p>
       </CardContent>
     </Card>
-    <List title="Merkintätyypit" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-      <Datagrid>
+    <List title="Merkintätyypit" exporter={false} pagination={false} {...props}>
+      <Datagrid bulkActionButtons={false}>
         <TextField label="Merkintätyyppi" source="name" />
         <NumberField label="Yläikäraja" source="expiryAge" />
       </Datagrid>
@@ -38,7 +38,7 @@ export const ExtraEntryTypeList = (props) => {
   </>);
 }
 
-export const ExtraEntryTypeCreate = (props) => {
+export const ExtraEntryTypeCreate = (props: CreateProps) => {
   useAutoLogout();
   return (
     <Create title="Lisää merkintätyyppi" {...props}>

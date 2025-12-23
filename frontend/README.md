@@ -15,7 +15,7 @@ You need to have the backend running before starting the frontend; see `../backe
     * the default dev server port is 3000; if it is taken, Vite will fall back to the next free port (e.g., 3001)
     * open the URL (typically http://localhost:3000 or http://localhost:3001)
 
-Note that if you are not using Docker, you need to set the `VITE_API_URL` variable correctly, including the port (e.g. http://localhost:3000/api).
+Note that if you are not using Docker, you need to either set the `VITE_API_URL` variable correctly to include the backend port (e.g. http://localhost:3000/api), or make sure backend is running in port 3000 locally. The Vite dev server proxy is configured to use that for /api calls.
 
 ## Environment variables / secrets
 

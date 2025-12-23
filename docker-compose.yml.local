@@ -56,8 +56,8 @@ services:
       - 3001:3000
     environment:
       VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3001
       VITE_USE_ALT_ERR_MSG:
-      VITE_HMR_CLIENT_PORT: 3001
     volumes:
       - ./frontend/src:/frontend/src
 
@@ -70,12 +70,12 @@ services:
       - backend
     environment:
       VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3002
       VITE_ENABLE_EXTRA_ENTRIES: true
       VITE_ENABLE_KOMPASSI_INTEGRATION: true
       VITE_ENTRA_CLIENT_ID:
       VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
       VITE_ENTRA_TENANT_ID:
-      VITE_HMR_CLIENT_PORT: 3002
     volumes:
       - ./admin-frontend/src:/admin-frontend/src
 

@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
-import { makeStyles } from '@mui/material/styles';
 import { MenuItem, Select, Card, CardContent } from '@mui/material';
 import { Add, CancelOutlined } from '@mui/icons-material';
 import {
@@ -23,7 +22,9 @@ import {
     Toolbar,
     useNotify,
     DELETE,
-    CREATE
+    CREATE,
+    ListProps,
+    EditProps
 } from 'react-admin';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
@@ -33,14 +34,7 @@ import { httpClientWithRefresh } from '../../httpClients';
 import { PhoneNumberField } from '../phoneNumberField';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
-const useStyles = makeStyles({
-    selectInput: {
-        width: "fit-content",
-        minWidth: "200px"
-    }
-});
-
-export const ExtraEntryList = (props) => {
+export const ExtraEntryList = (props: ListProps) => {
     const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
     const [entryPermitTypeChoices, setEntryPermitTypeChoices] = useState([]);
     const [choicesLoaded, setChoicesLoaded] = useState(false);
@@ -76,8 +70,8 @@ export const ExtraEntryList = (props) => {
         <Filter {...props}>
             <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
             <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
-            <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} />
-            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} />
+            <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} sx={{ minWidth: 250 }} />
+            <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} sx={{ minWidth: 250 }} />
         </Filter>
     );
 
@@ -90,9 +84,9 @@ export const ExtraEntryList = (props) => {
             <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
           </CardContent>
         </Card>
-        <List title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} bulkActionButtons={false} exporter={false} {...props}
+        <List title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} exporter={false} {...props}
             filterDefaultValues={{ entryPermitType: -2, extraEntryType: -2 }}>
-            <Datagrid>
+            <Datagrid bulkActionButtons={false} rowClick={false}>
                 <TextField label="Nimi" source="displayName" />
                 <TextField source="age" label="Ikä" />
                 <PhoneNumberField label="Puhelinnumero" source="phoneNumber" />
@@ -118,17 +112,16 @@ const CustomToolbar = ({cancel, ...others}) => (
     </Toolbar>
 );
 
-export const ExtraEntryEdit = (props) => {
+export const ExtraEntryEdit = (props: EditProps) => {
     useAutoLogout();
     const [newExtraEntryType, setNewExtraEntryType] = useState(-1);
     const [newEntryPermitType, setNewEntryPermitType] = useState(-1);
     const [entryTypeChoices, setEntryTypeChoices] = useState([]);
 
     const notify = useNotify();
-    const notifyError = useCallback((msg) => notify(msg, 'error'), [notify]);
+    const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
     const refresh = useRefresh();
     const redirect = useRedirect();
-    const classes = useStyles();
 
     useEffect(() => {
         const addExtraEntryTypesToState = async () => {
@@ -148,7 +141,7 @@ export const ExtraEntryEdit = (props) => {
             notifyError('Virhe merkinnän poistamisessa');
         } else {
             const message = response.data.message || 'Merkintä poistettu';
-            notify(message, 'success');
+            notify(message, { type: 'success' });
             refresh();
         }
     };
@@ -169,7 +162,7 @@ export const ExtraEntryEdit = (props) => {
         } else {
             isPermit ? setNewEntryPermitType(-1) : setNewExtraEntryType(-1);
             const message = response.data.message || 'Merkintä lisätty';
-            notify(message, 'success');
+            notify(message, { type: 'success' });
             refresh();
         }
     };
@@ -243,7 +236,7 @@ export const ExtraEntryEdit = (props) => {
                                     <tr>
                                         <td>
                                             {availableEeChoices.length > 0 && status.id !== Status.expired ? <Select
-                                                className={classes.selectInput}
+                                                sx={{ width: 'fit-content', minWidth: '200px' }}
                                                 onChange={handleExtraEntryChange}
                                                 value={newExtraEntryType}
                                             >
@@ -285,7 +278,7 @@ export const ExtraEntryEdit = (props) => {
                                     <tr>
                                         <td>
                                             {availablePermitChoices.length > 0 && status.id !== Status.expired ? <Select
-                                                className={classes.selectInput}
+                                                sx={{ width: 'fit-content', minWidth: '200px' }}
                                                 onChange={handlePermitChange}
                                                 value={newEntryPermitType}
                                             >

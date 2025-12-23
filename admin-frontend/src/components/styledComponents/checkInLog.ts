@@ -6,8 +6,9 @@ export const Container = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
+    padding-top: 40px;
 `;
 
 export const VerticalCardPadding = styled.div`
@@ -25,7 +26,8 @@ export const CheckInLogTextFieldContainer = styled.div`
 `;
 
 export const CheckInLogCard = styled(Card)`
-    width: 800px;
+    width: 100%;
+    max-width: 800px;
 `;
 
 export const CheckInLogCardHeader = styled(CardHeader)`

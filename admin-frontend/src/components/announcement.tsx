@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { makeStyles } from '@mui/material/styles';
+import { useState, useEffect, useRef } from 'react';
 import {
     SimpleForm,
     SelectInput,
@@ -34,26 +33,6 @@ const MsgSection = styled.section`
         max-width: 90%;
     }
 `;
-
-const useStyles = makeStyles({
-    selectInput: {
-        minWidth: "300px"
-    },
-    hiddenInput: {
-        display: "none"
-    },
-    note: {
-        width: "100%",
-        fontSize: "small"
-    },
-    noTopMargin: {
-        marginTop: "0px"
-    },
-    contentSeparator: {
-        marginTop: "8px",
-        marginBottom: "8px"
-    }
-});
 
 const SectionTitle = ({title}) => (
     <span style={{fontSize: "small"}}>{title}</span>
@@ -97,7 +76,7 @@ const CustomToolbar = (props) => (
     </Toolbar>
 );
 
-export const AnnouncementCreate = (props) => {
+export const AnnouncementCreate = (props: CreateProps) => {
     const [ youthClubs, setYouthClubs ] = useState([]);
     const [ allSelected, setAllSelected ] = useState(false);
     const [ numberOfRecipients, setNumberOfRecipients ] = useState(0);
@@ -105,7 +84,6 @@ export const AnnouncementCreate = (props) => {
     const updateTimeout = useRef(null);
     const notify = useNotify();
     const redirect = useRedirect();
-    const classes = useStyles();
 
     useAutoLogout();
 
@@ -151,13 +129,13 @@ export const AnnouncementCreate = (props) => {
     }
 
     return (
-        <Create title={<AnnouncementCreateTitle />} onSuccess={onSuccess} {...props}>
+        <Create title={<AnnouncementCreateTitle />} mutationOptions={{ onSuccess }} {...props}>
             <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar/>}>
                 <FormDataConsumer>
                     {({ formData }) => { formDataRef.current = formData }}
                 </FormDataConsumer>
                 <RadioButtonGroupInput source="msgType" choices={messageTypeChoices} label="Valitse lähetettävän viestin tyyppi" validate={required()} defaultValue={"sms"} onChange={updateRecipientCount} helperText={false}/>
-                <FormDataConsumer className={classes.noTopMargin}>
+                <FormDataConsumer sx={{ marginTop: 0 }}>
                     {({ formData }) => {
                         return <AnnouncementCreateHelperText msgType={formData.msgType} />
                     }}
@@ -168,7 +146,7 @@ export const AnnouncementCreate = (props) => {
                     }}
                 </FormDataConsumer>
                 <NoBasePath>
-                    <Typography className={classes.note}>
+                    <Typography sx={{ width: '100%', fontSize: 'small' }}>
                         Viestien vastaanottajat katsotaan nuoren kotinuorisotilan tai kuluneen kahden viikon aikana vierailemansa nuorisotilan perusteella.
                     </Typography>
                 </NoBasePath>
@@ -177,9 +155,9 @@ export const AnnouncementCreate = (props) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
-                <SelectInput className={classes.selectInput + " " + classes.noTopMargin + (allSelected ? (" " + classes.hiddenInput) : '')} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
+                <SelectInput sx={{ minWidth: '300px', marginTop: 0, display: allSelected ? 'none' : undefined }} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
                 <NoBasePath>
-                    <div className={classes.contentSeparator}>
+                    <div style={{ marginTop: '8px', marginBottom: '8px' }}>
                         <Typography variant="subtitle1">
                             Viestin sisältö
                         </Typography>

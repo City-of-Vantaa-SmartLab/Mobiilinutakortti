@@ -31,9 +31,9 @@ const ChangePasswordView = () => {
             await httpClientWithRefresh(url, options)
                 .then(response => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
-                        notify(response.message, "warning");
+                        notify(response.message, { type: 'warning' });
                     } else {
-                        notify(response.message, "success");
+                        notify(response.message, { type: 'success' });
                     }
                 })
         }

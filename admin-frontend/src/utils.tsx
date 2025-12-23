@@ -5,8 +5,8 @@ import { Container } from '@mui/material';
 // This should match the backend's middleware's admin route.
 export const adminUiBasePath = '/nuorisotyontekijat';
 export const loginFragment = '#/login';
-export const hrefFragmentToJunior = (id) => { return `#/junior/${id ?? ''}` };
-export const hrefFragmentToExtraEntry = (id) => { return `#/extraEntry/${id ?? ''}` };
+export const hrefFragmentToJunior = (id: string) => { return `#/junior/${id ?? ''}` };
+export const hrefFragmentToExtraEntry = (id: string) => { return `#/extraEntry/${id ?? ''}` };
 
 export const genderChoices = [
   { id: 'm', name: 'Poika' },

@@ -11,7 +11,10 @@ import {
   BooleanField,
   Toolbar,
   SaveButton,
-  NumberInput
+  NumberInput,
+  ListProps,
+  EditProps,
+  useRecordContext
 } from 'react-admin';
 import useAutoLogout from '../hooks/useAutoLogout';
 
@@ -28,7 +31,7 @@ const KompassiHelperText = () => (<>
   <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
 </>);
 
-const CustomToolbar = (props) => (
+const CustomToolbar = (props: any) => (
   <Toolbar {...props}>
     <SaveButton disabled={props.pristine && !props.validating} />
   </Toolbar>
@@ -41,11 +44,11 @@ const NonInput = React.memo(function NonInput({ children }) {
   return children;
 });
 
-export const EditYouthClubsList = (props) => {
+export const EditYouthClubsList = (props: ListProps) => {
   useAutoLogout();
   return (
-  <List title="Nuorisotilat" bulkActionButtons={false} exporter={false} pagination={false} {...props}>
-    <Datagrid>
+  <List title="Nuorisotilat" exporter={false} pagination={false} {...props}>
+    <Datagrid bulkActionButtons={false} rowClick={false}>
       <TextField label="Nimi" source="name" />
       <BooleanField label="Aktiivinen" source="active" defaultValue={false} />
       <TextField label="Tilakohtainen viesti FI" source="messages.fi" />
@@ -57,15 +60,17 @@ export const EditYouthClubsList = (props) => {
   </List>
 )};
 
-const YouthClubEditTitle = ({ record }) => (
-  <span>{`Muokkaa tietoja: ${record.name}`}</span>
-);
+const YouthClubEditTitle = () => {
+  const record = useRecordContext();
+  if (!record) return null;
+  return <span>{`Muokkaa tietoja: ${record.name}`}</span>;
+};
 
-export const EditYouthClubs = (props) => {
+export const EditYouthClubs = (props: EditProps) => {
   useAutoLogout();
   return (
   <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic">
-    <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
+    <SimpleForm redirect="list" toolbar={<CustomToolbar />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />
       <TextInput label="Tilakohtainen viesti FI" source="messages.fi" />

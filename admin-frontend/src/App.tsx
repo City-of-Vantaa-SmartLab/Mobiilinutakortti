@@ -1,5 +1,4 @@
-import React from 'react';
-import { Admin, Resource, Login } from 'react-admin';
+import { Admin, Resource, Login, CustomRoutes } from 'react-admin';
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
@@ -42,7 +41,7 @@ const App = () => {
     }
 
     return (
-        <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} customRoutes={customRoutes} disableTelemetry >
+        <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} disableTelemetry >
             {permissions => [
                 <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
                 <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,
@@ -60,6 +59,9 @@ const App = () => {
                     ? <Resource name="extraEntryType" options={{ label: 'Merkintätyypit' }} list={ExtraEntryTypeList} create={ExtraEntryTypeCreate} />
                     : null
             ]}
+            <CustomRoutes>
+                {customRoutes}
+            </CustomRoutes>
         </Admin>
     )
 }

@@ -20,7 +20,7 @@ import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
-export const YouthWorkerList = (props) => {
+export const YouthWorkerList = (props: ListProps) => {
   const [youthClubs, setYouthClubs] = useState([]);
   useEffect(() => {
     const addYouthClubsToState = async () => {
@@ -37,8 +37,8 @@ export const YouthWorkerList = (props) => {
   }
 
   return (
-    <List title="Nuorisotyöntekijät" bulkActionButtons={false} exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
-      <Datagrid>
+    <List title="Nuorisotyöntekijät" exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
+      <Datagrid bulkActionButtons={false} rowClick={false}>
         <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
         <TextField label="Sähköposti" source="email" />
         <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
@@ -49,7 +49,7 @@ export const YouthWorkerList = (props) => {
   );
 }
 
-export const YouthWorkerCreate = (props) => {
+export const YouthWorkerCreate = (props: CreateProps) => {
   const [youthClubs, setYouthClubs] = useState([]);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export const YouthWorkerCreate = (props) => {
   );
 };
 
-export const YouthWorkerEdit = (props) => {
+export const YouthWorkerEdit = (props: EditProps) => {
   const [youthClubs, setYouthClubs] = useState([]);
 
   useEffect(() => {

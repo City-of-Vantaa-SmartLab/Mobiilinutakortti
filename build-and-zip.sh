@@ -65,7 +65,6 @@ npm run build
 cp -r ./build $tmpdir/backend/public
 cd ..
 
-export VITE_API_URL=/api
 cd admin-frontend
 npm ci
 npm run build

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { DateInput, useNotify } from 'react-admin';
-import { Form } from 'react-final-form';
+import { useState } from 'react';
+import { useNotify } from 'react-admin';
+import { useParams } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
 import {
     Button, Table, TableHead,
     TableRow, TableCell, TableBody,
-    Link
+    Link, TextField
 } from '@mui/material';
 import {
     Container,
@@ -19,29 +20,41 @@ import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 import { hrefFragmentToJunior } from '../utils';
 
+interface CheckInLogViewModel {
+    clubName: string;
+    juniors: JuniorInformation[];
+}
+
+interface JuniorInformation {
+    id: string;
+    name: string;
+    time: string;
+}
+
 // "Kirjautumiset"
 // Similar to statistics, but displays the names of people who have checked in.
 // This is why this data is also cleared after a certain time (so as not to keep a personal information register);
 // see "cron" from club service in backend.
-const CheckInLogView = (props) => {
+const CheckInLogView = () => {
     useAutoLogout();
+    const { youthClubId } = useParams<{ youthClubId: string }>();
 
     const [clubName, setClubName] = useState('');
-    const [table, setTable] = useState([]);
+    const [tableRowData, setTableRowData] = useState([]);
     const [searchDate, setSearchDate] = useState('');
     const notify = useNotify();
 
     const resetState = () => {
         setClubName('');
         setSearchDate('');
-        setTable([]);
+        setTableRowData([]);
     }
 
-    const mapJuniorsToUI = (juniorArray) => {
-        const UI = [];
+    const populateTableRowData = (juniors: JuniorInformation[]) => {
+        const rowData = [];
         let key = 0;
-        juniorArray.forEach(junior => {
-            UI.push(
+        juniors.forEach(junior => {
+            rowData.push(
                 <TableRow key={key}>
                     <TableCell>
                         <Link href={hrefFragmentToJunior(junior.id)} color="inherit">
@@ -53,15 +66,15 @@ const CheckInLogView = (props) => {
             )
             key++;
         });
-        return UI;
+        setTableRowData(rowData);
     }
 
-    const getCheckIns = async values => {
-        const date = new Date(values.queryDate);
+    const getCheckIns = async (data: { queryDate: string }) => {
+        const date = new Date(data.queryDate);
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInLog;
             const body = JSON.stringify({
-                clubId: props.match.params.youthClubId,
+                clubId: youthClubId,
                 date: date
             });
             const options = {
@@ -70,14 +83,14 @@ const CheckInLogView = (props) => {
             };
             resetState();
             await httpClientWithRefresh(url, options)
-                .then(response => {
+                .then((response: CheckInLogViewModel) => {
                     if (response.juniors.length === 0) {
-                        notify("Ei kirjautumisia valitulla aikavälillä", "warning");
+                        notify("Ei kirjautumisia valitulla aikavälillä", { type: 'warning' });
                         return;
                     }
                     setSearchDate(date.toLocaleDateString());
                     setClubName(response.clubName);
-                    setTable(mapJuniorsToUI(response.juniors))
+                    populateTableRowData(response.juniors);
                 });
         }
     }
@@ -91,7 +104,17 @@ const CheckInLogView = (props) => {
                         <CheckInLogCard>
                             <CheckInLogCardHeader title="Valitse päivämäärä" />
                             <CheckInLogCardContentSelect>
-                                <DateInput label="Päivämäärä" source="queryDate" defaultValue={new Date().toISOString().split('T')[0]} />
+                                <Field name="queryDate" defaultValue={new Date().toISOString().split('T')[0]}>
+                                    {({ input }) => (
+                                        <TextField
+                                            {...input}
+                                            label="Päivämäärä"
+                                            type="date"
+                                            slotProps={{ inputLabel: { shrink: true } }}
+                                            sx={{ width: 'fit-content' }}
+                                        />
+                                    )}
+                                </Field>
                                 <Button type="submit">Hae</Button>
                             </CheckInLogCardContentSelect>
                         </CheckInLogCard>
@@ -111,7 +134,7 @@ const CheckInLogView = (props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {table}
+                                {tableRowData}
                             </TableBody>
                         </Table>
                     </CheckInLogCardContent>

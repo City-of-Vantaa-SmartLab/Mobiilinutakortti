@@ -10,7 +10,7 @@ export const LandingPage = () => {
   const [youthClubs, setYouthClubs] = useState([]);
   const dropdownRef = useRef(null);
   const userInfo = useRef(null);
-  const useEntraID = !!process.env.VITE_ENTRA_TENANT_ID;
+  const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
   useAutoLogout();
 
@@ -29,7 +29,7 @@ export const LandingPage = () => {
     } else {
       // Since this landing page is at the base URL, without the fragment the app would be in infinite loop here.
       // If using Entra for login, the redirect URI page is the login page.
-      window.location.href = useEntraID ? process.env.VITE_ENTRA_REDIRECT_URI : loginFragment;
+      window.location.href = useEntraID ? import.meta.env.VITE_ENTRA_REDIRECT_URI : loginFragment;
     }
   }, [useEntraID]);
 

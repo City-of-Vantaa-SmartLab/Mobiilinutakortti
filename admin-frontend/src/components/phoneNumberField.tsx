@@ -2,7 +2,7 @@ import React from 'react';
 import { FunctionField } from 'react-admin';
 import { Box } from '@mui/material';
 
-export const PhoneNumberField = ({source}) => (
+export const PhoneNumberField = ({ source, label }: { source: string; label?: string }) => (
     <FunctionField
         render={(record) => {
             const val = (record && record[source]) ?? '';
