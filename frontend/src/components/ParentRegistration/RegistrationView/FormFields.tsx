@@ -1,6 +1,5 @@
 import React from 'react';
 import { FieldProps, Field, FormikErrors } from 'formik';
-import { get } from 'lodash';
 import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLabel, Radio, Dropdown } from '../StyledComponents'
 import { useTranslations } from '../../translations'
 import { Translations } from '../../../customizations/types'
@@ -39,7 +38,7 @@ export const InputField: React.FC<FieldProps<string, FormValues> & InputProps> =
         }
         handleBlur(e)
     }
-    const isTouched = get(touched, field.name);
+    const isTouched = touched?.[field.name];
     const error = getFieldError(t, errors, field.name as keyof FormValues);
     return (
         <div>
@@ -128,7 +127,7 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     ...props
 }) => {
     const t = useTranslations()
-    const isTouched = get(touched, field.name);
+    const isTouched = touched?.[field.name];
     const error = getFieldError(t, errors, field.name as keyof FormValues);
     const inputs = options.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>

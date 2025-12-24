@@ -1,10 +1,10 @@
 import { Admin, Resource, Login, CustomRoutes } from 'react-admin';
+import { lazy } from 'react';
 import finnishMessages from 'ra-language-finnish';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
 import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
-import { ExtraEntryTypeList, ExtraEntryTypeCreate} from './components/extraEntry/extraEntryType';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { routes, adminRoutes } from './customRoutes';
@@ -13,8 +13,13 @@ import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
-import { ExtraEntryEdit, ExtraEntryList } from './components/extraEntry/extraEntry';
 import EntraLogin from './components/entraLoginPage';
+
+// Lazy-load extra entry features (separate chunk)
+const ExtraEntryTypeList = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeList })));
+const ExtraEntryTypeCreate = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeCreate })));
+const ExtraEntryEdit = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryEdit })));
+const ExtraEntryList = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryList })));
 
 const CustomLoginPage = () =>
   !!import.meta.env.VITE_ENTRA_TENANT_ID ? (
@@ -24,7 +29,14 @@ const CustomLoginPage = () =>
   );
 
 const messages = {
-    'fi': finnishMessages,
+    'fi': {
+        ...finnishMessages,
+        resources: {
+            youthWorker: {
+                name: 'nuorisotyöntekijä |||| nuorisotyöntekijät',
+            }
+        }
+    },
 };
 
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
@@ -49,7 +61,7 @@ const App = () => {
                     ? <Resource name="editYouthClubs" options={{ label: 'Nuorisotilojen muokkaus' }} list={EditYouthClubsList} edit={EditYouthClubs} />
                     : null,
                 permissions === 'ADMIN'
-                    ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
+                    ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} recordRepresentation={(record) => `${record.email}`} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
                     : null,
                 permissions === 'ADMIN'
                     ? <Resource name="announcement" options={{ label: 'Tiedotus' }} create={AnnouncementCreate} />

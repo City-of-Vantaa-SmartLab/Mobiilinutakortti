@@ -13,7 +13,7 @@ import {
     CheckInLogCardContentSelect,
     VerticalCardPadding,
     StyledDialogTitle
-} from './styledComponents/checkInLog';
+} from './checkInStyledComponents';
 import { Typography } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';

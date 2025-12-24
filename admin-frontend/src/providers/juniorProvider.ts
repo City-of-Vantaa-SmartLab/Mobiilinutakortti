@@ -74,7 +74,7 @@ export const juniorProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw newHttpErrorFromResponse(response);
                     }
-                    return { data: { id: '' } } //React-admin expects this format from from CREATE. Hacky and ugly, but works.
+                    return { data: response }
                 });
         }
         case UPDATE: {

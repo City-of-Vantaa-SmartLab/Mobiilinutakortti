@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   List,
   Datagrid,
@@ -13,12 +13,24 @@ import {
   required,
   EditButton,
   Edit,
-  SelectField
+  SelectField,
+  ListProps,
+  CreateProps,
+  EditProps,
+  TopToolbar,
+  CreateButton
 } from 'react-admin';
 import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
+
+// If using EntraID, adding youth workers is done automatically when they sign in.
+const YouthWorkerListActions = () => (
+  <TopToolbar>
+    {!useEntraID && <CreateButton />}
+  </TopToolbar>
+);
 
 export const YouthWorkerList = (props: ListProps) => {
   const [youthClubs, setYouthClubs] = useState([]);
@@ -37,7 +49,7 @@ export const YouthWorkerList = (props: ListProps) => {
   }
 
   return (
-    <List title="Nuorisotyöntekijät" exporter={false} pagination={false} {...props} hasCreate={!useEntraID}>
+    <List title="Nuorisotyöntekijät" exporter={false} pagination={false} actions={<YouthWorkerListActions />} {...props}>
       <Datagrid bulkActionButtons={false} rowClick={false}>
         <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
         <TextField label="Sähköposti" source="email" />
@@ -63,13 +75,13 @@ export const YouthWorkerCreate = (props: CreateProps) => {
   useAutoLogout();
 
   return (
-    <Create title="Rekisteröi nuorisotyöntekijä" {...props}>
-      <SimpleForm variant="standard" margin="normal" redirect="list">
+    <Create title="Rekisteröi nuorisotyöntekijä" redirect="list" {...props}>
+      <SimpleForm>
         <TextInput label="Sähköposti" source="email" type="email" validate={required()} />
         <TextInput label="Salasana" source="password" type="password" validate={required()} />
         <TextInput label="Etunimi" source="firstName" validate={required()} />
         <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -78,11 +90,13 @@ export const YouthWorkerCreate = (props: CreateProps) => {
 
 export const YouthWorkerEdit = (props: EditProps) => {
   const [youthClubs, setYouthClubs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const addYouthClubsToState = async () => {
       const youthClubOptions = await getYouthClubOptions();
-      setYouthClubs(youthClubOptions.map(yc => {return {...yc, disabled: !yc.active}}))
+      setYouthClubs(youthClubOptions.map((yc: any) => {return {...yc, disabled: !yc.active}}))
+      setLoading(false);
     };
     addYouthClubsToState();
   }, []);
@@ -96,13 +110,17 @@ export const YouthWorkerEdit = (props: EditProps) => {
     }
   }, [])
 
+  if (loading) {
+    return null;
+  }
+
   return (
-    <Edit title="Muokkaa nuorisotyöntekijää" {...props} mutationMode="pessimistic">
-      <SimpleForm variant="standard" margin="normal" redirect="list">
+    <Edit title="Muokkaa nuorisotyöntekijää" redirect="list" {...props} mutationMode="pessimistic">
+      <SimpleForm>
         <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
         <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />
         {!useEntraID && (<TextInput label="Sukunimi" source="lastName" />)}
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" allowEmpty choices={youthClubs} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >

@@ -28,7 +28,7 @@ import {
 } from 'react-admin';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
-import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from '../styledComponents/extraEntry';
+import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from './extraEntryStyledComponents';
 import { extraEntryProvider } from '../../providers';
 import { httpClientWithRefresh } from '../../httpClients';
 import { PhoneNumberField } from '../phoneNumberField';

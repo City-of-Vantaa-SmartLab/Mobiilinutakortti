@@ -51,9 +51,10 @@ export class YouthWorkerService {
 
     /**
      * @param details - the youth worker data to add.
+     * @returns the created youth worker.
      */
-    async createYouthWorker(details: YouthWorker) {
-        await this.youthWorkerRepo.save(details);
+    async createYouthWorker(details: YouthWorker): Promise<YouthWorker> {
+        return await this.youthWorkerRepo.save(details);
     }
 
     /**
@@ -73,9 +74,9 @@ export class YouthWorkerService {
 
     /**
      * @param registrationData - the details to register.
-     * @returns Promise<string> - a success message.
+     * @returns Promise<YouthWorker> - the created youth worker.
      */
-    async registerYouthWorker(registrationData: RegisterYouthWorkerDto, adminId?: string): Promise<string> {
+    async registerYouthWorker(registrationData: RegisterYouthWorkerDto, adminId?: string): Promise<YouthWorker> {
         const userExists = await this.getYouthWorkerByEmail(registrationData.email);
         if (userExists) { throw new ConflictException(content.YouthWorkerAlreadyExists); }
         const hashedPassword = await hash(registrationData.password, saltRounds);
@@ -84,12 +85,12 @@ export class YouthWorkerService {
             email: registrationData.email, password: hashedPassword, isAdmin: registrationData.isAdmin,
             mainYouthClub: registrationData.mainYouthClub,
         } as YouthWorker;
-        await this.createYouthWorker(youthWorker);
+        const createdUser = await this.createYouthWorker(youthWorker);
 
         if (adminId) {
             this.logger.log({ adminId: adminId, youthWorkerEmail: registrationData.email }, registrationData.isAdmin ? ' Admin created new admin user.' : 'Admin created new youth worker.');
         }
-        return content.Created(registrationData.email);
+        return createdUser;
     }
 
     async changePassword(youthWorkerId: string, changePasswordDto: ChangePasswordDto): Promise<string> {

@@ -103,7 +103,7 @@ export class JuniorService {
         return user.id;
     }
 
-    async registerByParent(formData: ParentFormDto): Promise<string> {
+    async registerByParent(formData: ParentFormDto): Promise<Junior> {
         const { userData, securityContext } = formData;
         const nameMatches = userData.parentsName === `${securityContext.firstName} ${securityContext.lastName}`;
         if (!nameMatches) this.logger.warn(`Parent's name doesn't match for ${obfuscate(userData.parentsName)}`);
@@ -114,7 +114,7 @@ export class JuniorService {
     // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by a youth worker, the status will be pending. In both cases a parent might re-register the junior.
     // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club youth workers, and sometimes this results in a contact to maintenance, i.e. developers.
     // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
-    async registerJunior(registrationData: RegisterJuniorDto, userId?: string, noSMS: boolean = false): Promise<string> {
+    async registerJunior(registrationData: RegisterJuniorDto, userId?: string, noSMS: boolean = false): Promise<Junior> {
         this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} xxxxxx${registrationData.phoneNumber.slice(-4)} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
 
         let existingJunior = await this.getUniqueJunior(
@@ -207,7 +207,7 @@ export class JuniorService {
         }
 
         this.logger.log(`Saved junior ${junior.id}`);
-        return renew ? content.Renew(registrationData.phoneNumber) : content.Created(registrationData.phoneNumber);
+        return junior;
     }
 
     async requestLoginLink(phoneNumber: string, userId?: string, noSpamGuard: boolean = false): Promise<string> {

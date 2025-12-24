@@ -1,22 +1,28 @@
-import React from 'react';
 import { Route } from 'react-router-dom';
-import CheckInView from './components/checkIn/checkIn';
-import CheckInStatisticsView from './components/checkInStatistics';
-import CheckInLogView from './components/checkInLog';
+import { lazy, Suspense } from 'react';
 import ChangePasswordView from './components/changePassword';
-import NewSeason from './components/newSeason';
-import DeleteExpiredJuniors from './components/deleteExpiredJuniors';
-import MiscFunctions from './components/miscFunctions';
+
+// Lazy-load check-in features (separate chunk)
+const CheckInView = lazy(() => import('./components/checkIn/checkIn'));
+const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'));
+const CheckInLogView = lazy(() => import('./components/checkInLog'));
+
+// Lazy-load admin features (separate chunk)
+const NewSeason = lazy(() => import('./components/newSeason'));
+const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'));
+const MiscFunctions = lazy(() => import('./components/miscFunctions'));
+
+const Loading = () => <div>Ladataan...</div>;
 
 export const routes = [
-    <Route path="/checkIn" element={<CheckInView />} />,
-    <Route path="/statistics/:youthClubId" element={<CheckInStatisticsView />} />,
-    <Route path="/log/:youthClubId" element={<CheckInLogView />} />,
+    <Route path="/checkIn" element={<Suspense fallback={<Loading />}><CheckInView /></Suspense>} />,
+    <Route path="/statistics/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInStatisticsView /></Suspense>} />,
+    <Route path="/log/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInLogView /></Suspense>} />,
     <Route path="/password" element={<ChangePasswordView />} />
 ];
 
 export const adminRoutes = [
-    <Route path="/newSeason" element={<NewSeason />} />,
-    <Route path="/deleteExpiredJuniors" element={<DeleteExpiredJuniors />} />,
-    <Route path="/miscFunctions" element={<MiscFunctions />} />
+    <Route path="/newSeason" element={<Suspense fallback={<Loading />}><NewSeason /></Suspense>} />,
+    <Route path="/deleteExpiredJuniors" element={<Suspense fallback={<Loading />}><DeleteExpiredJuniors /></Suspense>} />,
+    <Route path="/miscFunctions" element={<Suspense fallback={<Loading />}><MiscFunctions /></Suspense>} />
 ];

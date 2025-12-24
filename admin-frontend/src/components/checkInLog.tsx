@@ -14,7 +14,7 @@ import {
     CheckInLogCardContent,
     CheckInLogCardContentSelect,
     VerticalCardPadding,
-} from './styledComponents/checkInLog';
+} from './checkInStyledComponents';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';

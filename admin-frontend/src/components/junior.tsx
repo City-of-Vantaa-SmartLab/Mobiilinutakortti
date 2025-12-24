@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, CSSProperties } from 'react';
+import React, { useState, useEffect, useRef, CSSProperties, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
@@ -29,14 +29,16 @@ import {
     EditProps,
     useRecordContext
 } from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, hrefFragmentToExtraEntry, getAlertDialogObserver } from '../utils';
+import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, getAlertDialogObserver } from '../utils';
 import { httpClientWithRefresh } from '../httpClients';
 import { hiddenFormFields } from '../customizations';
-import { ExtraEntryLink } from './styledComponents/extraEntry';
 import { useSmartAutoLogout } from '../hooks/useSmartAutoLogout';
 import { PhoneNumberField } from './phoneNumberField';
 import useAdminPermission from '../hooks/useAdminPermission';
 import api from '../api';
+
+// Lazy-load extra entry related code to keep it in a separate chunk
+const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/ExtraEntryLinkWrapper'));
 
 interface JuniorRecord {
   id: string;
@@ -201,7 +203,7 @@ const getDummyPhoneNumber = async (cb: (value: string) => void) => {
 const DummyPhoneNumberButton = ({fieldName}: {fieldName: string}) => {
     const { setValue } = useFormContext();
     return (
-        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value))}>
+        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
             Käytä korvikepuhelinnumeroa
         </Button>
     )
@@ -210,7 +212,7 @@ const DummyPhoneNumberButton = ({fieldName}: {fieldName: string}) => {
 export const JuniorCreate = (props: CreateProps) => {
     return (
         <Create title="Rekisteröi nuori" {...props}>
-            {JuniorForm('create')}
+            <JuniorForm formType="create" />
         </Create>
     );
 }
@@ -222,17 +224,19 @@ export const JuniorEdit = (props: EditProps) => {
             observer.disconnect();
         }
     }, []);
+
     return (
         <Edit title={<JuniorEditTitle />} {...props} mutationMode='pessimistic'>
-            {JuniorForm('edit')}
+            <JuniorForm formType="edit" />
         </Edit>
     );
 };
 
 
-export const JuniorForm = (formType: string) => {
+export const JuniorForm = ({ formType }: { formType: string }) => {
     const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
     const [youthClubs, setYouthClubs] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { isAdmin } = useAdminPermission();
     const smartRefresh = useSmartAutoLogout();
 
@@ -241,6 +245,7 @@ export const JuniorForm = (formType: string) => {
             const youthClubOptions = await getActiveYouthClubOptions();
             const optionsWithNone = [{id: -1, name: ''}, ...youthClubOptions];
             setYouthClubs(optionsWithNone);
+            setLoading(false);
         };
         addYouthClubsToState();
     }, []);
@@ -248,6 +253,7 @@ export const JuniorForm = (formType: string) => {
     // We use the dummy div field to check whether we still wish to auto logout using the timeouts defined above.
     return (
         <SimpleForm>
+            {loading ? null : (<>
             <div style={{ display: 'none' }}></div>
             <TextInput label="Etunimi" source="firstName" validate={required()} onFocus={smartRefresh} />
             <TextInput label="Sukunimi" source="lastName" validate={required()} onFocus={smartRefresh} />
@@ -292,10 +298,14 @@ export const JuniorForm = (formType: string) => {
             </FormDataConsumer>
             {(formType === 'edit' && showExtraEntries) &&<FormDataConsumer>
                 {({ formData }: { formData: any }) => {
-                    return <ExtraEntryLink href={hrefFragmentToExtraEntry(formData.id)}>Muokkaa nuoren lisämerkintöjä</ExtraEntryLink>
-
+                    return (
+                        <Suspense fallback={<div>Ladataan...</div>}>
+                            <ExtraEntryLinkComponent juniorId={formData.id} />
+                        </Suspense>
+                    )
                 }}
             </FormDataConsumer>}
+            </>)}
         </SimpleForm>
     );
 }

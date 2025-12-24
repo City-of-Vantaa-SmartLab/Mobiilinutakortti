@@ -39,7 +39,8 @@ export const youthWorkerProvider = (type, params, httpClient) => {
                     if (response.statusCode < 200 || response.statusCode >= 300) {
                         throw newHttpErrorFromResponse(response);
                     }
-                    return { data: { id: '' } } //React-admin expects this format from from CREATE. Hacky and ugly, but works.
+                    // Backend now returns the created user with id
+                    return { data: response }
                 });
         }
         case UPDATE: {

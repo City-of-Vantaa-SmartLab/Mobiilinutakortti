@@ -23,7 +23,31 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'build',
-      chunkSizeWarningLimit: 1000
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            // Check-in related features
+            if (id.includes('/components/checkIn/') ||
+                id.includes('/components/checkInLog') ||
+                id.includes('/components/checkInStatistics') ||
+                id.includes('/checkInStyledComponents')) {
+              return 'check-in';
+            }
+            // Extra entries feature
+            if (id.includes('/components/extraEntry/')) {
+              return 'extra-entries';
+            }
+            // Admin-only features
+            if (id.includes('/components/newSeason') ||
+                id.includes('/components/newSeasonModal') ||
+                id.includes('/components/miscFunctions') ||
+                id.includes('/components/deleteExpiredJuniors')) {
+              return 'admin-features';
+            }
+          }
+        }
+      }
     }
   }
 });
