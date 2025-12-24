@@ -62,7 +62,6 @@ const MiscFunctions = () => {
           variant="contained"
           disabled={state !== STATE.INITIAL}
           color="primary"
-          label="Alusta spam-estolistat"
           size="large"
           startIcon={<ResetIcon />}
         >
@@ -76,7 +75,6 @@ const MiscFunctions = () => {
           variant="contained"
           disabled={state !== STATE.INITIAL}
           color="primary"
-          label="Tyhjennä Kompassi-välimuisti"
           size="large"
           startIcon={<EmptyIcon />}
         >

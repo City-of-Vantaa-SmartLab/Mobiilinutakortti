@@ -12,7 +12,9 @@ import {
     useNotify,
     useRedirect,
     FormDataConsumer,
-    GET_LIST
+    GET_LIST,
+    CreateProps,
+    FormDataConsumerRenderParams
 } from 'react-admin';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import styled from 'styled-components';
@@ -34,11 +36,11 @@ const MsgSection = styled.section`
     }
 `;
 
-const SectionTitle = ({title}) => (
+const SectionTitle = ({title}: {title: string}) => (
     <span style={{fontSize: "small"}}>{title}</span>
 );
 
-const MessageSectionForLanguage = (props) => {
+const MessageSectionForLanguage = (props: { langCode: string }) => {
     let title = ""
     switch (props.langCode) {
         case "en":
@@ -70,7 +72,7 @@ const AnnouncementCreateHelperText = ({msgType}) => (
     <p style={{'marginTop': '0px', 'fontSize': 'small'}}>{msgType === "email" ? "Viesti lähetetään vanhemmille, jotka ovat sallineet infosähköpostien lähettämisen." : "Viesti lähetetään henkilöille, jotka ovat sallineet infotekstiviestien lähettämisen."}</p>
 );
 
-const CustomToolbar = (props) => (
+const CustomToolbar = (props: any) => (
     <Toolbar {...props}>
         <SaveButton label="Lähetä" icon={<MailOutlineIcon />} disabled={props.pristine && !props.validating} />
     </Toolbar>
@@ -100,7 +102,7 @@ export const AnnouncementCreate = (props: CreateProps) => {
         redirect("/");
     };
 
-    const onCheckboxChange = (event, formData) => {
+    const onCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>, formData: any) => {
         setAllSelected(!!event.target.checked);
         formData.sendToAllYouthClubs = !!event.target.checked;
         updateRecipientCount();
@@ -119,7 +121,7 @@ export const AnnouncementCreate = (props: CreateProps) => {
             } else if (fd && fd.msgType && (!!fd.youthClub || fd.sendToAllYouthClubs)) {
                 console.debug("Updating recipient count");
                 dataProvider(GET_LIST, 'announcement', { data: fd }).then(
-                    (response) => { setNumberOfRecipients(response.data) }
+                    (response: any) => { setNumberOfRecipients(response.data) }
                 )
             } else {
                 // Case: Some mandatory data is missing.
@@ -130,9 +132,9 @@ export const AnnouncementCreate = (props: CreateProps) => {
 
     return (
         <Create title={<AnnouncementCreateTitle />} mutationOptions={{ onSuccess }} {...props}>
-            <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar/>}>
+            <SimpleForm toolbar={<CustomToolbar/>}>
                 <FormDataConsumer>
-                    {({ formData }) => { formDataRef.current = formData }}
+                    {({ formData }: FormDataConsumerRenderParams) => { formDataRef.current = formData; return null; }}
                 </FormDataConsumer>
                 <RadioButtonGroupInput source="msgType" choices={messageTypeChoices} label="Valitse lähetettävän viestin tyyppi" validate={required()} defaultValue={"sms"} onChange={updateRecipientCount} helperText={false}/>
                 <FormDataConsumer sx={{ marginTop: 0 }}>

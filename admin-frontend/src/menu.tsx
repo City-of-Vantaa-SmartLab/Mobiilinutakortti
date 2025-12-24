@@ -1,4 +1,3 @@
-import React from 'react';
 import { MenuItemLink } from 'react-admin';
 import styled from 'styled-components';
 import ChildCareIcon from '@mui/icons-material/ChildCare';

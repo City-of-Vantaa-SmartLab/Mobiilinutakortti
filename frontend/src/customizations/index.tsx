@@ -1,4 +1,3 @@
-import React from 'react'
 import { CustomizableFormField, Language, Theme } from './types'
 import styled from 'styled-components'
 

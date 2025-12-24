@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Title, useNotify } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
@@ -31,7 +31,7 @@ const NewSeason = () => {
       querySMSCount();
   }, []);
 
-  const createNewSeason = async (expireDate) => {
+  const createNewSeason = async (expireDate: string) => {
     setState(STATE.LOADING);
     const response = await httpClientWithRefresh(api.junior.newSeason, {
       method: 'POST',
@@ -80,7 +80,7 @@ const NewSeason = () => {
       {modalVisible && (
         <NewSeasonModal
           onCancel={() => setModalVisible(false)}
-          onConfirm={(date) => createNewSeason(new Date(date).toISOString())}
+          onConfirm={(date: any) => createNewSeason(new Date(date).toISOString())}
           loadingState={state}
         />
       )}

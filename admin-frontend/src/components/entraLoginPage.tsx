@@ -29,9 +29,9 @@ const theme = createTheme({
       color: 'red'
     }
   },
-  overrides: {
+  components: {
     MuiCssBaseline: {
-      '@global': {
+      styleOverrides: {
         body: {
           backgroundImage: 'url("/nuta-admin-bg.jpg")',
           backgroundRepeat: 'no-repeat',
@@ -87,7 +87,7 @@ export default function EntraLogin() {
             const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
             setUserInfo(userInfo);
 
-            sessionStorage.setItem(MSALAppLogoutInProgressKey, true);
+            sessionStorage.setItem(MSALAppLogoutInProgressKey, 'true');
             await MSALApp.logout(logoutHintValue);
 
           } catch (error) {
@@ -101,7 +101,7 @@ export default function EntraLogin() {
     tryLogin();
   }, []);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setLoginInProgress(true);
     event.preventDefault();
     await MSALApp.login();

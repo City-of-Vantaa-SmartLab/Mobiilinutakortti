@@ -1,10 +1,9 @@
-import React from 'react';
 import { Layout, AppBar, UserMenu, MenuItemLink, Notification, Logout } from 'react-admin';
 import LockIcon from '@mui/icons-material/Lock';
 import styled from 'styled-components';
 import Menu from './menu';
 
-const CustomUserMenu = props => (
+const CustomUserMenu = (props: any) => (
     <UserMenu {...props}>
         {!import.meta.env.VITE_ENTRA_TENANT_ID ? (
             <MenuItemLink
@@ -27,8 +26,8 @@ const CustomNotification = styled(Notification)`
     padding-top: 20px !important;
 `
 
-const CustomAppBar = props => <AppBar {...props} userMenu={<CustomUserMenu />} />;
+const CustomAppBar = (props: any) => <AppBar {...props} userMenu={<CustomUserMenu />} />;
 
-const CustomLayout = props => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} menu={Menu} />;
+const CustomLayout = (props: any) => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} menu={Menu} />;
 
 export default CustomLayout;

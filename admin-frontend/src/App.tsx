@@ -7,7 +7,7 @@ import { YouthClubList } from './components/youthClub';
 import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
-import { routes, adminRoutes } from './customRoutes';
+import { routes, adminRoutes, checkInRoute } from './customRoutes';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import CustomLayout from './customLayout';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
@@ -73,6 +73,9 @@ const App = () => {
             ]}
             <CustomRoutes>
                 {customRoutes}
+            </CustomRoutes>
+            <CustomRoutes noLayout>
+                {checkInRoute}
             </CustomRoutes>
         </Admin>
     )

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   List,
   Datagrid,
@@ -10,12 +9,14 @@ import {
   Toolbar,
   SaveButton,
   NumberField,
-  NumberInput
+  NumberInput,
+  ListProps,
+  CreateProps
 } from 'react-admin';
 import { Card, CardContent } from '@mui/material';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
-const CustomToolbar = (props) => (
+const CustomToolbar = (props: any) => (
   <Toolbar {...props}>
     <SaveButton disabled={props.pristine && !props.validating} />
   </Toolbar>
@@ -41,8 +42,8 @@ export const ExtraEntryTypeList = (props: ListProps) => {
 export const ExtraEntryTypeCreate = (props: CreateProps) => {
   useAutoLogout();
   return (
-    <Create title="Lisää merkintätyyppi" {...props}>
-      <SimpleForm variant="standard" margin="normal" redirect="list" toolbar={<CustomToolbar />}>
+    <Create title="Lisää merkintätyyppi" {...props} redirect="list">
+      <SimpleForm toolbar={<CustomToolbar />}>
         <TextInput label="Merkintätyyppi" source="name" validate={required()} />
         <NumberInput label="Yläikäraja" source="expiryAge" validate={required()} />
       </SimpleForm>

@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const LoadingMessageContainer = styled.div`
@@ -14,4 +13,3 @@ const LoadingMessage = ({message}) => {
 };
 
 export default LoadingMessage;
-

@@ -27,6 +27,17 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
+            // Vendor chunks for large libraries
+            if (id.includes('node_modules/react-admin')) {
+              return 'vendor-react-admin';
+            }
+            if (id.includes('node_modules/@mui')) {
+              return 'vendor-mui';
+            }
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+              return 'vendor-react';
+            }
+
             // Check-in related features
             if (id.includes('/components/checkIn/') ||
                 id.includes('/components/checkInLog') ||

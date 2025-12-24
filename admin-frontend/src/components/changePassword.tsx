@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SimpleForm, useNotify, TextInput } from 'react-admin';
 import { Button, Toolbar } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
@@ -55,10 +55,10 @@ const ChangePasswordView = () => {
     }
 
     return (
-        <SimpleForm variant="standard" margin="normal" toolbar={<CustomToolbar />} {...{ oldpass: null, newpass: null, confirmpass: null }} >
-            <TextInput value={oldPassword} autoComplete="off" label="Vanha salasana" type="password" onChange={(e) => setOldPassword(e.target.value)} required source="oldpass"/>
-            <TextInput value={newPassword} autoComplete="off" label="Uusi salasana" type="password" onChange={(e) => setNewPassword(e.target.value)} required source="newpass"/>
-            <TextInput value={confirmPassword} autoComplete="off" label="Vahvista uusi salasana" type="password" onChange={(e) => setConfirmPassword(e.target.value)} required source="confirmpass"/>
+        <SimpleForm toolbar={<CustomToolbar />}>
+            <TextInput value={oldPassword} autoComplete="off" label="Vanha salasana" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOldPassword(e.target.value)} required source="oldpass"/>
+            <TextInput value={newPassword} autoComplete="off" label="Uusi salasana" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)} required source="newpass"/>
+            <TextInput value={confirmPassword} autoComplete="off" label="Vahvista uusi salasana" type="password" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)} required source="confirmpass"/>
         </SimpleForm>
     );
 };

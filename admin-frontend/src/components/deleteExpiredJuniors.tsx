@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Title, useNotify, GET_LIST } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
@@ -31,7 +31,7 @@ const DeleteExpiredJuniors = () => {
   const [expiredUserCount, setExpiredUserCount] = useState(0);
   const [checkboxState, setCheckboxState] = useState(false);
 
-  const onCheckboxChange = (event) => {
+  const onCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckboxState(!!event.target.checked);
   };
 
@@ -98,7 +98,6 @@ const DeleteExpiredJuniors = () => {
           disabled={state !== STATE.INITIAL || !checkboxState}
           color="primary"
           startIcon={<DeleteIcon />}
-          label="Poista vanhat käyttäjät"
           size="large"
         >
           {state === STATE.INITIAL ? 'Suorita poisto' : 'Odota'}

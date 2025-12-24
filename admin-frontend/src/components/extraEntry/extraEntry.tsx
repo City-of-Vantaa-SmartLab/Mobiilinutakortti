@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
-import { MenuItem, Select, Card, CardContent } from '@mui/material';
+import { MenuItem, Select, Card, CardContent, SelectChangeEvent } from '@mui/material';
 import { Add, CancelOutlined } from '@mui/icons-material';
 import {
     List,
@@ -54,19 +54,19 @@ export const ExtraEntryList = (props: ListProps) => {
         addTypesToState();
     }, []);
 
-    const CustomPagination = props => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
+    const CustomPagination = (props: any) => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
 
     // Since React re-renders after search debounce, the input focus would always be set to the last filter input component with auto focus. Therefore we manually keep track of what was the last input the user typed in to set auto focus correctly. We use useRef and not useState to prevent re-rendering on first keypress.
-    const checkAutoFocus = (source) => {
+    const checkAutoFocus = (source: string) => {
         if (!autoFocusSource.current) return true;
         return autoFocusSource.current === source;
     }
 
-    const setAutoFocus = (source) => {
+    const setAutoFocus = (source: string) => {
         autoFocusSource.current = source;
     }
 
-    const ExtraEntryFilter = (props) => (
+    const ExtraEntryFilter = (props: any) => (
         <Filter {...props}>
             <TextInput label="Nimi" source="name" autoFocus={checkAutoFocus("name")} onInput={() => setAutoFocus("name")} />
             <TextInput label="Puhelinnumero" source="phoneNumber" autoFocus={checkAutoFocus("phoneNumber")} onInput={() => setAutoFocus("phoneNumber")} />
@@ -106,7 +106,7 @@ export const ExtraEntryList = (props: ListProps) => {
     </>)
 };
 
-const CustomToolbar = ({cancel, ...others}) => (
+const CustomToolbar = ({cancel, ...others}: {cancel: () => void, [key: string]: any}) => (
     <Toolbar {...others}>
         <Button label="Takaisin" onClick={cancel} alignIcon="left"><ArrowBackIcon /></Button>
     </Toolbar>
@@ -135,7 +135,7 @@ export const ExtraEntryEdit = (props: EditProps) => {
         redirect("/extraEntry");
     };
 
-    const handleDelete = async (eeId, isPermit) => {
+    const handleDelete = async (eeId: string, isPermit: boolean) => {
         const response = await extraEntryProvider(DELETE, {data: {deletableId: eeId, isPermit: isPermit}}, httpClientWithRefresh);
         if (response.statusCode < 200 || response.statusCode >= 300) {
             notifyError('Virhe merkinnän poistamisessa');
@@ -146,15 +146,15 @@ export const ExtraEntryEdit = (props: EditProps) => {
         }
     };
 
-    const handleExtraEntryChange = (e) => {
-        setNewExtraEntryType(e.target.value);
+    const handleExtraEntryChange = (e: SelectChangeEvent<number>) => {
+        setNewExtraEntryType(Number(e.target.value));
     };
 
-    const handlePermitChange = (e) => {
-        setNewEntryPermitType(e.target.value);
+    const handlePermitChange = (e: SelectChangeEvent<number>) => {
+        setNewEntryPermitType(Number(e.target.value));
     };
 
-    const handleAdd = async (juniorId, isPermit) => {
+    const handleAdd = async (juniorId: string, isPermit: boolean) => {
         const newType = isPermit ? newEntryPermitType : newExtraEntryType;
         const response = await extraEntryProvider(CREATE, {data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}}, httpClientWithRefresh);
          if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -175,12 +175,12 @@ export const ExtraEntryEdit = (props: EditProps) => {
                         const status = statusChoices.find((item) => item.id === formData.status);
                         const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI");
 
-                        const selectedEeTypes = formData.extraEntries.map((entry) => {
+                        const selectedEeTypes = formData.extraEntries.map((entry: any) => {
                             return entry.entryType?.id;
                         });
                         const availableEeChoices = entryTypeChoices.filter(item => !selectedEeTypes.includes(item.id));
 
-                        const selectedPermitTypes = formData.entryPermits.map((entry) => {
+                        const selectedPermitTypes = formData.entryPermits.map((entry: any) => {
                             return entry.entryType?.id;
                         });
                         const availablePermitChoices = entryTypeChoices.filter(item => (!selectedEeTypes.includes(item.id) && !selectedPermitTypes.includes(item.id)));
@@ -219,7 +219,7 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                     <tr><th>Lisämerkinnät</th></tr>
                                 </thead>
                                 <tbody>
-                                    {formData.extraEntries.map((ee) => {
+                                    {formData.extraEntries.map((ee: any) => {
                                         return <tr key={ee.id}>
                                             <td>{ee.entryType.name}</td>
                                             <td>
@@ -261,7 +261,7 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                     <tr><th>Luvat</th></tr>
                                 </thead>
                                 <tbody>
-                                    {formData.entryPermits.map((permit) => {
+                                    {formData.entryPermits.map((permit: any) => {
                                         return <tr key={permit.id}>
                                             <td>{permit.entryType.name}</td>
                                             <td>

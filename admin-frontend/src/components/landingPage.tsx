@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
 import { getActiveYouthClubOptions, getUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
@@ -20,7 +20,7 @@ export const LandingPage = () => {
     if (!!userInfo.current && hasUserToken) {
       const addYouthClubsToState = async () => {
         const youthClubOptions = await getActiveYouthClubOptions();
-        setYouthClubs(youthClubOptions.map(yc => { return { 'label': yc.name, 'value': yc.id } }));
+        setYouthClubs(youthClubOptions.map((yc: any) => { return { 'label': yc.name, 'value': yc.id } }));
 
         dropdownRef.current.value = userInfo.current?.mainYouthClubId || -1;
         setSelectedYouthClub(userInfo.current?.mainYouthClubId || -1);
@@ -34,7 +34,7 @@ export const LandingPage = () => {
   }, [useEntraID]);
 
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
-  const handleYouthClubChange = (e) => { setSelectedYouthClub(e.target.value) };
+  const handleYouthClubChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedYouthClub(Number(e.target.value)) };
 
   const setDefaultYouthClub = async () => {
     const response = await httpClientWithRefresh(api.youthWorker.setMainYouthClub, {
@@ -52,7 +52,7 @@ export const LandingPage = () => {
 
   const listSelectedClubJuniors = () => {
     const queryParams = (selectedYouthClub.toString() === '-1') ? '' : `?displayedFilters=%7B%22homeYouthClub%22%3Atrue%7D&filter=%7B%22homeYouthClub%22%3A${selectedYouthClub}%7D`;
-    window.location = hrefFragmentToJunior() + queryParams;
+    window.location.href = hrefFragmentToJunior() + queryParams;
   }
 
   return (

@@ -31,7 +31,7 @@ const StyledText = styled.span`
     font-size: 32px;
 `
 
-const QrCheckResultScreen = (props) => (
+const QrCheckResultScreen = (props: { successful: boolean }) => (
     <Wrapper>
         {props.successful && (
           <div className={"mark-container"}>

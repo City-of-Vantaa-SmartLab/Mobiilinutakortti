@@ -40,7 +40,7 @@ const CustomToolbar = (props: any) => (
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
 // Suppress React warnings about props for non-input elements.
-const NonInput = React.memo(function NonInput({ children }) {
+const NonInput = React.memo(function NonInput({ children }: { children: React.ReactNode }) {
   return children;
 });
 
@@ -50,11 +50,11 @@ export const EditYouthClubsList = (props: ListProps) => {
   <List title="Nuorisotilat" exporter={false} pagination={false} {...props}>
     <Datagrid bulkActionButtons={false} rowClick={false}>
       <TextField label="Nimi" source="name" />
-      <BooleanField label="Aktiivinen" source="active" defaultValue={false} />
+      <BooleanField label="Aktiivinen" source="active" />
       <TextField label="Tilakohtainen viesti FI" source="messages.fi" />
       <TextField label="Tilakohtainen viesti EN" source="messages.en" />
       <TextField label="Tilakohtainen viesti SV" source="messages.sv" />
-      {kompassiIntegration && (<BooleanField label="Kompassi-integraatio" source="kompassiIntegration.enabled" looseValue={true} />)}
+      {kompassiIntegration && (<BooleanField label="Kompassi-integraatio" source="kompassiIntegration.enabled" looseValue />)}
       <EditButton />
     </Datagrid>
   </List>
@@ -69,8 +69,8 @@ const YouthClubEditTitle = () => {
 export const EditYouthClubs = (props: EditProps) => {
   useAutoLogout();
   return (
-  <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic">
-    <SimpleForm redirect="list" toolbar={<CustomToolbar />}>
+  <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic" redirect="list">
+    <SimpleForm toolbar={<CustomToolbar />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />
       <TextInput label="Tilakohtainen viesti FI" source="messages.fi" />

@@ -13,7 +13,7 @@ const authConfig = {
   system: {
     loggerOptions: {
       logLevel: LogLevel.Info,
-      loggerCallback: (level, message, containsPii) => {
+      loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
         if (containsPii) {
           return;
         }

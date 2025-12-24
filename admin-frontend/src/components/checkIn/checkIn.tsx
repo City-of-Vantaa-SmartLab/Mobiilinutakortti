@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Notification } from 'react-admin';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import QrCheckResultScreen from './qrCheckResultScreen.js';
@@ -75,10 +75,10 @@ const CheckInView = () => {
         console.debug(cameras);
       }
     })
-    return () => isMounted = false;
+    return () => { isMounted = false; };
   }, [])
 
-  const tryToPlayAudio = (success) => {
+  const tryToPlayAudio = (success: boolean) => {
     if (success) {
       successSound.currentTime = 0;
       successSound.volume = 1;
@@ -90,7 +90,7 @@ const CheckInView = () => {
     }
   };
 
-  const handleCheckInReturn = (success, needsNewSecurityCode) => {
+  const handleCheckInReturn = (success: boolean, needsNewSecurityCode: boolean) => {
     setLoading(false);
     setShowQRCode(false)
     setCheckInSuccess(success)
@@ -104,7 +104,7 @@ const CheckInView = () => {
     }, success ? 2500 : 3000);
   };
 
-  const handleScan = async (detectedCodes) => {
+  const handleScan = async (detectedCodes: any[]) => {
     if (detectedCodes) {
       setShowQRCode(false);
       setLoading(true);
@@ -119,7 +119,7 @@ const CheckInView = () => {
         method: 'POST',
         body
       };
-      await httpClient(url, options, true)
+      await httpClient(url, options)
         .then(response => {
           // Response is of type CheckInResponseViewModel in backend.
           if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -134,9 +134,9 @@ const CheckInView = () => {
     }
   };
 
-  const handleError = (e) => {
+  const handleError = (e: any) => {
     console.error(e);
-    notify('Jokin meni pieleen! Kokeile uudestaan.', 'warning')
+    notify('Jokin meni pieleen! Kokeile uudestaan.', { type: 'warning' })
   };
 
   return (
