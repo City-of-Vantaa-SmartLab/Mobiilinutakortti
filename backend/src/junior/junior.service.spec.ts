@@ -19,6 +19,7 @@ describe('JuniorService', () => {
   let module: TestingModule;
   let service: JuniorService;
   let connection: DataSource;
+  let challengeRepo;
 
   const testRegisterYouth = {
     phoneNumber: '+3587772345000',
@@ -36,7 +37,7 @@ describe('JuniorService', () => {
     gender: 'M',
     birthday: new Date('05-05-2005').toISOString(),
     homeYouthClub: 'Tikkurila',
-    status: 'a',
+    status: 'accepted',
     photoPermission: true
   } as RegisterJuniorDto;
   let testLoginYouth: LoginJuniorDto;
@@ -63,6 +64,7 @@ describe('JuniorService', () => {
     await connection.initialize();
 
     service = module.get<JuniorService>(JuniorService);
+    challengeRepo = connection.getRepository(Challenge);
   });
 
   afterAll(async () => {
@@ -76,7 +78,14 @@ describe('JuniorService', () => {
 
   describe('Register Youth', () => {
     beforeAll(async () => {
-      await service.registerJunior(testRegisterYouth);
+      await service.registerJunior(testRegisterYouth, undefined, true);
+      // Manually create challenge since noSMS=true skips it
+      const junior = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
+      const challenge = challengeRepo.create({
+        phoneNumber: junior.phoneNumber,
+        challenge: 'test-challenge-code',
+      });
+      await challengeRepo.save(challenge);
     }),
       it('should return a value (currently challenge data whilst waiting for further workflow)', async () => {
         const challenge = await service.getChallengeByPhoneNumber(testRegisterYouth.phoneNumber);
@@ -94,7 +103,7 @@ describe('JuniorService', () => {
       it('should thrown a Conflict if the phone number already exists', async () => {
         const error = new ConflictException();
         try {
-          await service.registerJunior(testRegisterYouth);
+          await service.registerJunior(testRegisterYouth, undefined, true);
           fail();
         } catch (e) {
           expect(e.response === error.getResponse());

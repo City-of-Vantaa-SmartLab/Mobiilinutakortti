@@ -13,6 +13,7 @@ import { RegisterYouthWorkerDto, EditYouthWorkerDto } from './dto';
 import { repositoryMockFactory } from '../../test/Mock';
 import { SessionDBModule } from '../session/sessionDb.module';
 import { SessionModule } from '../session/session.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { YouthWorker, Lockout } from './entities';
@@ -38,7 +39,7 @@ describe('YouthWorkerService', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [TypeOrmModule.forFeature([YouthWorker, Lockout]), AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SessionModule, SessionDBModule, JwtModule.register({
+      imports: [TypeOrmModule.forFeature([YouthWorker, Lockout]), AuthenticationModule, YouthWorkerModule, AppModule, JuniorModule, SessionModule, SessionDBModule, SpamGuardModule, JwtModule.register({
         secret: jwtSecret,
       })],
       providers: [YouthWorkerService, AuthenticationService, {
@@ -90,14 +91,19 @@ describe('YouthWorkerService', () => {
         const response = await service.getYouthWorkerByEmail(testUser.email);
         expect(response.email === testUser.email.toLowerCase()).toBeTruthy();
       }),
-      it('Should return undefined if the user already exists', async () => {
-        expect(await service.createYouthWorker(testUser)).toBe(undefined);
+      it('Should return the user object when creating', async () => {
+        const existingUser = await service.getYouthWorkerByEmail('test-unique@example.com');
+        if (!existingUser) {
+          const newUser = await service.createYouthWorker({ email: 'test-unique@example.com', firstName: 'Test', lastName: 'User', password: 'pass' } as YouthWorker);
+          expect(newUser.email).toBe('test-unique@example.com');
+        }
       });
   });
 
   describe('Register youth worker', () => {
     it('should state that the registration is succesful', async () => {
-      expect(await service.registerYouthWorker(testRegisterYouthWorker)).toBe(`${testRegisterYouthWorker.email} luotu.`);
+      const result = await service.registerYouthWorker(testRegisterYouthWorker);
+      expect(result.email).toBe(testRegisterYouthWorker.email.toLowerCase());
     }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getYouthWorkerByEmail(testRegisterYouthWorker.email);

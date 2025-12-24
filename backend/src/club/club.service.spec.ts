@@ -54,6 +54,10 @@ describe('ClubService', () => {
       gender: 'M',
       birthday: new Date('05-05-2012').toISOString(),
       homeYouthClub: 'Tikkurila',
+      school: 'Test School',
+      class: '5A',
+      status: 'accepted',
+      photoPermission: true,
     } as RegisterJuniorDto;
 
     const testRegisterYouth2 = {
@@ -66,6 +70,10 @@ describe('ClubService', () => {
       gender: 'M',
       birthday: new Date('05-05-2005').toISOString(),
       homeYouthClub: 'Tikkurila',
+      school: 'Test School',
+      class: '5A',
+      status: 'accepted',
+      photoPermission: true,
     } as RegisterJuniorDto;
 
     const testRegisterYouth3 = {
@@ -78,14 +86,18 @@ describe('ClubService', () => {
       gender: 'F',
       birthday: new Date('05-05-2005').toISOString(),
       homeYouthClub: 'Tikkurila',
+      school: 'Test School',
+      class: '5A',
+      status: 'accepted',
+      photoPermission: true,
     } as RegisterJuniorDto;
 
     juniorService = module.get<JuniorService>(JuniorService);
     service = module.get<ClubService>(ClubService);
     spamGuardService = module.get<SpamGuardService>(SpamGuardService);
-    await juniorService.registerJunior(testRegisterYouth);
-    await juniorService.registerJunior(testRegisterYouth2);
-    await juniorService.registerJunior(testRegisterYouth3);
+    await juniorService.registerJunior(testRegisterYouth, undefined, true);
+    await juniorService.registerJunior(testRegisterYouth2, undefined, true);
+    await juniorService.registerJunior(testRegisterYouth3, undefined, true);
     testJuniors.push(await juniorService.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber));
     testJuniors.push(await juniorService.getJuniorByPhoneNumber(testRegisterYouth2.phoneNumber));
     testJuniors.push(await juniorService.getJuniorByPhoneNumber(testRegisterYouth3.phoneNumber));

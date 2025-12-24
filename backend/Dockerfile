@@ -10,4 +10,4 @@ RUN echo "BUILD_ID $BUILD_ID"
 RUN npm i
 COPY . .
 VOLUME ["/backend/src"]
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "dev"]

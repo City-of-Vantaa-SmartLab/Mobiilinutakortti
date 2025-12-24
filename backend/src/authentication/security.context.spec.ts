@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SecurityContextDto, AcsDto } from './dto';
 import { SessionDBModule } from '../session/sessionDb.module';
 import { SmsModule } from '../sms/sms.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
 
@@ -20,7 +21,7 @@ describe('AuthenticationServiceSecurityContext', () => {
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, SpamGuardModule, JwtModule.register({
         secret: jwtSecret,
       })],
       providers: [AuthenticationService]

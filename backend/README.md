@@ -53,7 +53,7 @@ To change password for a PostgreSQL user, use the psql command `\password <user>
     * For example: `export RDS_HOSTNAME=localhost` would use a PostgreSQL install on localhost
     * The username and password are for PostgreSQL
     * PostgreSQL roles can be checked with psql using the command `\du`
-3. Run `npm run start:dev`
+3. Run `npm run dev`
 
 Once the backend and database are up and running locally  navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
 
@@ -138,3 +138,27 @@ The Swagger documentation does not document API responses.
 Even though PostgreSQL is used, the tests use SQLite. As it doesn't have a date data type, in some places of the code there are special cases for the tests to work.
 
 The tests do not currently work correctly due to historical reasons.
+
+## Maintenance
+
+### Dependency version constraints
+
+Some dependencies have specific version constraints documented in `package.json` for compatibility or security reasons:
+
+**TypeScript (`~5.5.0`)**
+- Locked to 5.5.x due to breaking type changes in TypeScript 5.6+
+- TypeScript 5.9.3 introduced stricter type checking that causes compilation errors in `@oozcitak/util` (a dependency of xmlbuilder2)
+- The affected types are `SetIterator` missing `[Symbol.dispose]` property required by TypeScript 5.9+
+- Upgrading to 5.6+ would require upstream fixes in xmlbuilder2's dependencies
+
+**js-yaml (via `overrides` section)**
+- Forced to `^4.1.0` for all dependencies to patch security vulnerabilities
+- The vulnerable version `js-yaml@3.14.0` was a nested dependency via: `saml2-js` → `xmlbuilder2` → `js-yaml@3.14.0`
+- This is safe because our code only uses xmlbuilder2 with JavaScript objects, not YAML parsing
+- The YAMLReader class in xmlbuilder2 (which uses js-yaml) is never invoked by our SSO/SAML code
+- Verification tests exist in `src/sso/sso.service.spec.ts` to ensure XML building continues to work
+
+**node-gyp and test-exclude (via `overrides` section)**
+- `node-gyp` forced to `^12.0.0` to eliminate deprecation warnings from older versions (8.x)
+- `test-exclude` forced to `^7.0.0` to eliminate glob@7.x deprecation warnings
+- These overrides affect test-time dependencies only (sqlite3 uses node-gyp for native compilation)
