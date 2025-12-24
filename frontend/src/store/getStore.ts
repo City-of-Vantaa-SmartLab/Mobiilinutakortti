@@ -1,13 +1,12 @@
-import type { Store } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { createBrowserHistory } from 'history';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { AppState } from '../reducers';
 import { rootSaga } from '../actions'
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { authActions, authTypes } from "../types/authTypes";
-import { LangActions, LangTypes} from "../types/langTypes";
-import { userActions, userTypes } from "../types/userTypes";
+import { authTypes } from "../types/authTypes";
+import { LangTypes} from "../types/langTypes";
+import { userTypes } from "../types/userTypes";
 import { Language } from "../customizations/types";
 
 export const history = createBrowserHistory();
@@ -16,7 +15,7 @@ const token: string = localStorage.getItem('token') ?? '';
 const lang: string | null  = localStorage.getItem('lang');
 const loggedIn: boolean = (token !== null);
 
-const persistedState = {
+const persistedState: Partial<AppState> = {
     auth: {
         loggedIn,
         token,
@@ -26,11 +25,11 @@ const persistedState = {
     }
 }
 
-export function getStore(): Store<AppState> {
+export function getStore() {
   const sagaMiddleware = createSagaMiddleware();
   const store = configureStore({
-    reducer: rootReducer(),
-    preloadedState: persistedState,
+    reducer: rootReducer,
+    preloadedState: persistedState as any,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ thunk: false, serializableCheck: false, immutableCheck: false }).concat(sagaMiddleware),
     devTools: import.meta.env.DEV
@@ -48,6 +47,8 @@ export function getStore(): Store<AppState> {
     return store;
 }
 
-export type AppDispatch = (action: authActions | LangActions | userActions) => void
-export const useAppDispatch: () => AppDispatch = useDispatch
+export type RootState = ReturnType<typeof rootReducer>
+export type AppStore = ReturnType<typeof getStore>
+export type AppDispatch = AppStore['dispatch']
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector

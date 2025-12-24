@@ -6,7 +6,7 @@ import { userState } from '../types/userTypes';
 import langReducer from './langReducer';
 import { LangState } from '../types/langTypes';
 
-const rootReducer = () => combineReducers({
+const rootReducer = combineReducers({
     auth: authReducer,
     lang: langReducer,
     user: userReducer

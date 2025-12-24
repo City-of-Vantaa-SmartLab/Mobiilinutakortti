@@ -38,7 +38,7 @@ export const InputField: React.FC<FieldProps<string, FormValues> & InputProps> =
         }
         handleBlur(e)
     }
-    const isTouched = touched?.[field.name];
+    const isTouched = touched?.[field.name as keyof FormValues];
     const error = getFieldError(t, errors, field.name as keyof FormValues);
     return (
         <div>
@@ -149,7 +149,3 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
         </div>
     )
 }
-
-
-
-

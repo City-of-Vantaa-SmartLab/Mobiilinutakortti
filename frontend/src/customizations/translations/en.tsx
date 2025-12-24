@@ -1,4 +1,3 @@
-import React from 'react'
 import { Translations } from '../types'
 
 export const translations: Translations = {
