@@ -46,7 +46,7 @@ If you have PostgreSQL running locally, it is probably using port 5432 and will 
 
 NB: this section only applies if you are _not_ using Microsoft Entra ID to login users. By default, Entra ID is not used. It can be enabled via environment variables.
 
-The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SETUP_ENDPOINTS` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
+The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `ENABLE_SETUP_ENDPOINTS` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
 
 Run the following `curl` command to create a youth worker with admin rights:
 
@@ -83,7 +83,7 @@ Now you can login to admin-frontend with given credentials.
 
 ### Note about production
 
-When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `SETUP_ENDPOINTS`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
+When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `ENABLE_SETUP_ENDPOINTS`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
 
 ## Creating youth clubs
 
@@ -113,7 +113,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` in */ba
 
 ## Creating test data
 
-With the `SETUP_ENDPOINTS` enabled and the backend running, use these two to create and remove test youth data:
+With the `ENABLE_SETUP_ENDPOINTS` enabled and the backend running, use these two to create and remove test youth data:
 * Create 100 test cases: `curl --location --request POST 'http://localhost:3000/api/junior/createTestDataJuniors' --header 'Content-Type: application/json' --data-raw '{ "numberOfCases": "100" }'`
 * Delete all created test cases: `curl --location --request POST 'http://localhost:3000/api/junior/deleteTestDataJuniors' --header 'Content-Type: application/json'`
 

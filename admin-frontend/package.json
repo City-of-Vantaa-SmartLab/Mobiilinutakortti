@@ -1,6 +1,7 @@
 {
-  "name": "admin-frontend",
+  "name": "nutakortti-admin-frontend",
   "version": "3.0.0",
+  "description": "Admin frontend for Nutakortti application",
   "private": true,
   "type": "module",
   "dependencies": {

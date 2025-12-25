@@ -7,7 +7,7 @@ const useAdminPermission = () => {
 
   const getPermissions = async () => {
     try {
-      const permissions = await authProvider(AUTH_GET_PERMISSIONS);
+      const permissions = await authProvider(AUTH_GET_PERMISSIONS, {});
       setIsAdmin(permissions === 'ADMIN');
     } catch {
       // It's fine if there's no permission info yet (user hasn't logged in).

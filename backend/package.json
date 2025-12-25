@@ -1,9 +1,8 @@
 {
-  "name": "backend",
+  "name": "nutakortti-backend",
   "version": "3.0.0",
-  "description": "",
-  "author": "",
-  "license": "MIT",
+  "description": "Backend for Nutakortti application",
+  "private": true,
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",

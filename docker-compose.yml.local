@@ -13,16 +13,15 @@ services:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
+      CERT_SELECTION:
       EMAIL_SOURCE:
       EMAIL_RETURN_PATH:
+      ENABLE_SETUP_ENDPOINTS: yes
       ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
-      CERT_SELECTION:
-      DETAILED_LOGS: true
       FRONTEND_URL:
       HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
-      JSON_LOGS:
       JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
@@ -32,7 +31,6 @@ services:
       RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
       RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
-      SETUP_ENDPOINTS: yes
       SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
@@ -44,6 +42,8 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
+      USE_DETAILED_LOGS: true
+      USE_JSON_LOGS:
     volumes:
       - ./backend/src:/backend/src
 

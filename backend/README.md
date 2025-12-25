@@ -93,16 +93,15 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `AWS_SES_KEY_ID`: Key ID for Amazon SES.
 * `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
 * `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
+* `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
 * `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
 * `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
+* `ENABLE_SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `ENTRA_ADMIN_ROLE`: Determines the Entra ID (group) role for detecting who should have admin privileges.
 * `ENTRA_APP_KEY_DISCOVERY_URL`: Entra ID key (certificate) discovery URL for the application, if Entra ID is to be used. The format is: `https://login.microsoftonline.com/<TENANT ID>/discovery/keys?appid=<APP ID>`. If given, login and user management based on database data will be disabled.
-* `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
-* `DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
 * `FRONTEND_URL`: Base URL for frontend. Used e.g. in redirecting the user during SSO process.
 * `HTTP_LOG_LEVEL`: A pino logger level as string. Optional, defaults to 'info'. Use 'debug' or 'silent' to hide HTTP access logs.
 * `IDP_ENTITY_ID`: Entity ID of the identity provider, Suomi.fi in this case. Defined in the IdP metadata XML.
-* `JSON_LOGS`: If evaluates to true, use JSON log format.
 * `JWT_SECRET`: Secret string used for JWTs. Arbitrary. Optional if only single backend instance is in use.
 * `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
 * `KOMPASSI_API_URL`: URL to use for Kompassi integration.
@@ -112,7 +111,6 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `RDS_PASSWORD`: Amazon RDS password.
 * `RDS_PORT`: Amazon RDS port.
 * `RDS_USERNAME`: Amazon RDS user name.
-* `SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
 * `SC_SECRET`: Secret string used to sign and validate security context tokens. Arbitrary. Optional if only single backend instance is in use.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
@@ -124,6 +122,8 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `TELIA_PASSWORD`: Telia SMS service password.
 * `TELIA_USER`: The name of the sender as it appears on SMS messages.
 * `TELIA_USERNAME`: Telia SMS service user name.
+* `USE_DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
+* `USE_JSON_LOGS`: If evaluates to true, use JSON log format.
 
 ## Swagger documentation
 

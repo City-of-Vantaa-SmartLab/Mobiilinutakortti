@@ -18,7 +18,7 @@ export const checkInRoute = [
     <Route path="/checkIn" element={<Suspense fallback={<Loading />}><CheckInView /></Suspense>} />
 ];
 
-export const routes = [
+export const normalRoutes = [
     <Route path="/statistics/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInStatisticsView /></Suspense>} />,
     <Route path="/log/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInLogView /></Suspense>} />,
     <Route path="/password" element={<ChangePasswordView />} />

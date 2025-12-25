@@ -31,7 +31,7 @@ async function bootstrap() {
   const app = httpsOptions ?
     await NestFactory.create<NestExpressApplication>(AppModule, { ...httpsOptions, bufferLogs: true }) :
     await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
-  if (process.env.JSON_LOGS) {
+  if (process.env.USE_JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
   app.enableCors();

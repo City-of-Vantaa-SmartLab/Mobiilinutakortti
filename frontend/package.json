@@ -1,6 +1,7 @@
 {
-  "name": "frontend",
+  "name": "nutakortti-frontend",
   "version": "3.0.0",
+  "description": "Frontend for Nutakortti application",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,6 +9,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.2",
     "formik": "^2.2.9",
     "history": "^5.3.0",
     "qrcode.react": "^4.2.0",
@@ -16,7 +18,6 @@
     "react-measure": "^2.5.2",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.11.0",
-    "@reduxjs/toolkit": "^2.6.2",
     "redux": "^5.0.1",
     "redux-saga": "^1.1.1",
     "styled-components": "^6.1.19",
@@ -28,9 +29,8 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/react-measure": "^2.0.12",
-    "typescript": "^5.9.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "cross-env": "^10.1.0",
+    "typescript": "^5.9.3",
     "vite": "^7.3.0"
   }
 }
