@@ -1,13 +1,32 @@
 import api from '../api';
-import { CREATE, GET_ONE, GET_LIST } from 'react-admin';
 import { newHttpErrorFromResponse } from '../utils';
+import { httpClientWithRefresh } from '../httpClients';
 
-export const announcementProvider = (type, params, httpClient) => {
-    let url;
-    let options;
-    switch (type) {
-        case GET_ONE: {
-            return {
+export const announcementProvider = {
+    getList: async (params: any) => {
+        const data = JSON.stringify({
+            recipient: params.data.recipient,
+            msgType: params.data.msgType,
+            youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
+        });
+
+        const url = api.announcement.dryRun;
+        const options = {
+            method: 'POST',
+            body: data,
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
+        }
+        return { data: response.message };
+    },
+
+    getOne: async (_params: any) => {
+        return {
+            data: {
                 content: {
                     fi: '',
                     en: '',
@@ -22,70 +41,75 @@ export const announcementProvider = (type, params, httpClient) => {
                 msgType: undefined,
                 youthClub: undefined
             }
-        }
-        case GET_LIST: {
-            const data = JSON.stringify({
-                recipient: params.data.recipient,
-                msgType: params.data.msgType,
-                youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
-            });
-            url = api.announcement.dryRun;
-            options = {
-                method: 'POST',
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    };
-                    return { data: response.message }; // React admin expects data as return value
-                });
-        }
-        case CREATE: {
-            // If all language versions of content and title are deleted or otherwise empty, params.data returns the whole title and content objects as null:
-            // this does not erase old contents, so we must set null to all fields
-            const contents = params.data.content ? {
-                    fi: params.data.content.fi,
-                    en: params.data.content.en,
-                    sv: params.data.content.sv,
-                } : {
-                    fi: null,
-                    en: null,
-                    sv: null,
-            };
-            const titles = params.data.title ? {
-                    fi: params.data.title.fi,
-                    en: params.data.title.en,
-                    sv: params.data.title.sv,
-                } : {
-                    fi: null,
-                    en: null,
-                    sv: null,
-            };
-            const data = JSON.stringify({
-                content: contents,
-                title: titles,
-                recipient: params.data.recipient,
-                msgType: params.data.msgType,
-                youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
-            });
-            url = api.announcement.create;
-            options = {
-                method: 'POST',
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    };
-                    return { data: { id: '' } }; // React admin expects data as return value
-                });
         };
-        default:
-            throw new Error(`Unsupported Data Provider request type ${type}`);
-    };
+    },
+
+    create: async (params: any) => {
+        // If all language versions of content and title are deleted or otherwise empty, params.data returns the whole title and content objects as null:
+        // this does not erase old contents, so we must set null to all fields
+        const contents = params.data.content ? {
+            fi: params.data.content.fi,
+            en: params.data.content.en,
+            sv: params.data.content.sv,
+        } : {
+            fi: null,
+            en: null,
+            sv: null,
+        };
+
+        const titles = params.data.title ? {
+            fi: params.data.title.fi,
+            en: params.data.title.en,
+            sv: params.data.title.sv,
+        } : {
+            fi: null,
+            en: null,
+            sv: null,
+        };
+
+        const data = JSON.stringify({
+            content: contents,
+            title: titles,
+            recipient: params.data.recipient,
+            msgType: params.data.msgType,
+            youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
+        });
+
+        const url = api.announcement.create;
+        const options = {
+            method: 'POST',
+            body: data,
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
+        }
+        return { data: { id: Date.now(), message: response.message } };
+    },
+
+    getMany: async (_params: any) => {
+        throw new Error('GET_MANY not implemented for announcement');
+    },
+
+    getManyReference: async (_params: any) => {
+        throw new Error('GET_MANY_REFERENCE not implemented for announcement');
+    },
+
+    update: async (_params: any) => {
+        throw new Error('UPDATE not implemented for announcement');
+    },
+
+    updateMany: async (_params: any) => {
+        throw new Error('UPDATE_MANY not implemented for announcement');
+    },
+
+    delete: async (_params: any) => {
+        throw new Error('DELETE not implemented for announcement');
+    },
+
+    deleteMany: async (_params: any) => {
+        throw new Error('DELETE_MANY not implemented for announcement');
+    },
 };

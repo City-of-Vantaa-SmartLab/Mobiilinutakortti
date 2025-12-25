@@ -1,5 +1,6 @@
-import { GET_LIST, HttpError } from 'react-admin';
-import { dataProvider } from './providers/dataProvider';
+import { HttpError } from 'react-admin';
+import { youthClubProvider } from './providers/youthClubProvider';
+import { extraEntryTypeProvider } from './providers/extraEntryTypeProvider';
 import { Container } from '@mui/material';
 
 // This should match the backend's middleware's admin route.
@@ -74,7 +75,7 @@ export const ageValidator = (value: any, _: any) => {
   return undefined;
 }
 
-export const getYouthClubOptions = async () => dataProvider(GET_LIST, 'youthClub', {
+export const getYouthClubOptions = async () => youthClubProvider.getList({
   pagination: { page: 1, perPage: 1000 },
   sort: { field: 'id', order: 'ASC' },
   filter: {},
@@ -87,7 +88,7 @@ export const getActiveYouthClubOptions = async () => {
 
 export const isSubstring = (mainString: string, subString: string) => mainString.includes(subString);
 
-export const getEntryTypes = () => dataProvider(GET_LIST, 'extraEntryType', {
+export const getEntryTypes = () => extraEntryTypeProvider.getList({
   pagination: { page: 1, perPage: 1000 },
   sort: { field: 'id', order: 'ASC' },
   filter: {},

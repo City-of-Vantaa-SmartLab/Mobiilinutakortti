@@ -21,8 +21,6 @@ import {
     useRedirect,
     Toolbar,
     useNotify,
-    DELETE,
-    CREATE,
     ListProps,
     EditProps
 } from 'react-admin';
@@ -30,7 +28,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from './extraEntryStyledComponents';
 import { extraEntryProvider } from '../../providers';
-import { httpClientWithRefresh } from '../../httpClients';
 import { PhoneNumberField } from '../phoneNumberField';
 import useAutoLogout from '../../hooks/useAutoLogout';
 
@@ -136,12 +133,11 @@ export const ExtraEntryEdit = (props: EditProps) => {
     };
 
     const handleDelete = async (eeId: string, isPermit: boolean) => {
-        const response = await extraEntryProvider(DELETE, {data: {deletableId: eeId, isPermit: isPermit}}, httpClientWithRefresh);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
+        const response = await extraEntryProvider.delete({data: {deletableId: eeId, isPermit: isPermit}});
+        if (response.data.statusCode < 200 || response.data.statusCode >= 300) {
             notifyError('Virhe merkinnän poistamisessa');
         } else {
-            const message = response.data.message || 'Merkintä poistettu';
-            notify(message, { type: 'success' });
+            notify(response.data.message, { type: 'success' });
             refresh();
         }
     };
@@ -156,13 +152,12 @@ export const ExtraEntryEdit = (props: EditProps) => {
 
     const handleAdd = async (juniorId: string, isPermit: boolean) => {
         const newType = isPermit ? newEntryPermitType : newExtraEntryType;
-        const response = await extraEntryProvider(CREATE, {data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}}, httpClientWithRefresh);
-         if (response.statusCode < 200 || response.statusCode >= 300) {
+        const response = await extraEntryProvider.create({data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}});
+         if (response.data.statusCode < 200 || response.data.statusCode >= 300) {
             notifyError('Virhe merkinnän lisäämisessä');
         } else {
             isPermit ? setNewEntryPermitType(-1) : setNewExtraEntryType(-1);
-            const message = response.data.message || 'Merkintä lisätty';
-            notify(message, { type: 'success' });
+            notify(response.data.message, { type: 'success' });
             refresh();
         }
     };

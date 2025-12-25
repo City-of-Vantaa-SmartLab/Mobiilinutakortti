@@ -1,37 +1,95 @@
-import { httpClientWithRefresh } from '../httpClients';
-import {
-  announcementProvider,
-  extraEntryProvider,
-  extraEntryTypeProvider,
-  juniorProvider,
-  youthClubProvider,
-  youthWorkerProvider
-} from './';
+import type { DataProvider } from 'react-admin';
+import { announcementProvider } from './announcementProvider';
+import { extraEntryProvider } from './extraEntryProvider';
+import { extraEntryTypeProvider } from './extraEntryTypeProvider';
+import { juniorProvider } from './juniorProvider';
+import { youthClubProvider } from './youthClubProvider';
+import { youthWorkerProvider } from './youthWorkerProvider';
 
-export const dataProvider = (type, resource, params) => {
-  switch (resource) {
-    case 'announcement': {
-      return announcementProvider(type, params, httpClientWithRefresh);
+// Export individual providers for direct use
+export { juniorProvider as junior, youthWorkerProvider as youthWorker, youthClubProvider as youthClub, announcementProvider as announcement, extraEntryProvider as extraEntry, extraEntryTypeProvider as extraEntryType };
+
+// Map resources to their providers
+const resourceProviders: Record<string, any> = {
+  junior: juniorProvider,
+  youthWorker: youthWorkerProvider,
+  youthClub: youthClubProvider,
+  editYouthClubs: youthClubProvider, // editYouthClubs uses the same provider as youthClub
+  announcement: announcementProvider,
+  extraEntry: extraEntryProvider,
+  extraEntryType: extraEntryTypeProvider,
+};
+
+export const dataProvider: DataProvider = {
+  getList: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'editYouthClubs': {
-      return youthClubProvider(type, params, httpClientWithRefresh);
+    return provider.getList(params);
+  },
+
+  getOne: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'extraEntry': {
-      return extraEntryProvider(type, params, httpClientWithRefresh);
+    return provider.getOne(params);
+  },
+
+  getMany: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'extraEntryType': {
-      return extraEntryTypeProvider(type, params, httpClientWithRefresh);
+    return provider.getMany(params);
+  },
+
+  getManyReference: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'junior': {
-      return juniorProvider(type, params, httpClientWithRefresh);
+    return provider.getManyReference(params);
+  },
+
+  create: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'youthClub': {
-      return youthClubProvider(type, params, httpClientWithRefresh);
+    return provider.create(params);
+  },
+
+  update: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    case 'youthWorker': {
-      return youthWorkerProvider(type, params, httpClientWithRefresh);
+    return provider.update(params);
+  },
+
+  updateMany: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
     }
-    default:
-      throw new Error(`Unsupported Resource ${resource}`);
-  }
+    return provider.updateMany(params);
+  },
+
+  delete: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
+    }
+    return provider.delete(params);
+  },
+
+  deleteMany: (resource: string, params: any) => {
+    const provider = resourceProviders[resource];
+    if (!provider) {
+      return Promise.reject(new Error(`Unknown resource: ${resource}`));
+    }
+    return provider.deleteMany(params);
+  },
 };

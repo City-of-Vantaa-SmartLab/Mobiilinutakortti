@@ -49,8 +49,8 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
     @ApiBearerAuth('youthWorker')
-    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<Message> {
-        return new Message(await this.extraEntryService.createEntry(createExtraEntryData, youthWorker.userId));
+    async createExtraEntry(@YouthWorker() youthWorker: { userId: string }, @Body() createExtraEntryData: CreateExtraEntryDto): Promise<{ id: number, message: string }> {
+        return await this.extraEntryService.createEntry(createExtraEntryData, youthWorker.userId);
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -94,8 +94,8 @@ export class ExtraEntryController {
     @AllowedRoles(Roles.ADMIN)
     @Post('type/create')
     @ApiBearerAuth('admin')
-    async createEntryType(@Body() entryTypeData: CreateEntryTypeDto): Promise<Message> {
-        return new Message(await this.extraEntryService.createEntryType(entryTypeData));
+    async createEntryType(@Body() entryTypeData: CreateEntryTypeDto): Promise<EntryTypeViewModel> {
+        return await this.extraEntryService.createEntryType(entryTypeData);
     };
 
     @UsePipes(new ValidationPipe({ transform: true }))

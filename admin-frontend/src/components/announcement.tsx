@@ -12,7 +12,6 @@ import {
     useNotify,
     useRedirect,
     FormDataConsumer,
-    GET_LIST,
     CreateProps,
     FormDataConsumerRenderParams
 } from 'react-admin';
@@ -20,7 +19,7 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import styled from 'styled-components';
 import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms, NoBasePath } from '../utils';
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
-import { dataProvider } from '../providers/dataProvider';
+import { announcementProvider } from '../providers/announcementProvider';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const MsgSection = styled.section`
@@ -120,7 +119,7 @@ export const AnnouncementCreate = (props: CreateProps) => {
                 setNumberOfRecipients(0);
             } else if (fd && fd.msgType && (!!fd.youthClub || fd.sendToAllYouthClubs)) {
                 console.debug("Updating recipient count");
-                dataProvider(GET_LIST, 'announcement', { data: fd }).then(
+                announcementProvider.getList({ data: fd } as any).then(
                     (response: any) => { setNumberOfRecipients(response.data) }
                 )
             } else {

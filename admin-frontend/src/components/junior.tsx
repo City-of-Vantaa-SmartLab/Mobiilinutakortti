@@ -38,7 +38,7 @@ import useAdminPermission from '../hooks/useAdminPermission';
 import api from '../api';
 
 // Lazy-load extra entry related code to keep it in a separate chunk
-const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/ExtraEntryLinkWrapper'));
+const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'));
 
 interface JuniorRecord {
   id: string;

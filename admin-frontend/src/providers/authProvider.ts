@@ -1,11 +1,11 @@
-import { AUTH_LOGIN, AUTH_ERROR, AUTH_CHECK, AUTH_LOGOUT, AUTH_GET_PERMISSIONS } from 'react-admin';
+import type { AuthProvider } from 'react-admin';
 import { httpClient } from '../httpClients';
 import api from '../api';
 import { userTokenKey, setUserInfo, clearUserInfo, loginFragment } from '../utils';
 import { newHttpErrorFromResponse } from '../utils';
 
-export const authProvider = (type, params) => {
-    if (type === AUTH_LOGIN) {
+export const authProvider: AuthProvider = {
+    login: async (params: any) => {
         const url = api.auth.login;
         const { username, password } = params;
 
@@ -13,36 +13,25 @@ export const authProvider = (type, params) => {
             method: 'POST',
             body: JSON.stringify({ email: username, password }),
         };
-        return new Promise((_, reject) => {
-            httpClient(url, options).then(response => {
-                if (response.statusCode < 200 || response.statusCode >= 300) {
-                    return reject(newHttpErrorFromResponse(response));
-                }
-                sessionStorage.setItem(userTokenKey, response.access_token);
-                httpClient(api.youthWorker.self, { method: 'GET' }).then((response) => {
-                    setUserInfo(response);
-                    // Forces recalculation of custom routes based on user role inside App.js.
-                    // This is made so that if a youth worker was logged in on the same browser that an admin now uses to log in,
-                    // the admin would not see all the admin pages since the routes were calculated for the previous user (with only youth worker permissions).
-                    // This also works vice versa.
-                    window.location.reload();
-                });
-            })
-        });
-    }
-    if (type === AUTH_ERROR) {
-        const status = params.status;
-        if (status === 401 || status === 403) {
-            sessionStorage.removeItem(userTokenKey);
-            sessionStorage.removeItem('role');
-            return Promise.reject();
+
+        try {
+            const response = await httpClient(url, options);
+            if (response.statusCode < 200 || response.statusCode >= 300) {
+                throw newHttpErrorFromResponse(response);
+            }
+            sessionStorage.setItem(userTokenKey, response.access_token);
+            const userResponse = await httpClient(api.youthWorker.self, { method: 'GET' });
+            setUserInfo(userResponse);
+            // Forces recalculation of routes based on user role inside App.tsx.
+            // If a youth worker was logged in and switches to an admin user (or vice versa),
+            // the latter user would not see correct routes.
+            window.location.reload();
+        } catch (error) {
+            throw error;
         }
-        return Promise.resolve()
-    }
-    if (type === AUTH_CHECK) {
-        return sessionStorage.getItem(userTokenKey) ? Promise.resolve() : Promise.reject();
-    }
-    if (type === AUTH_LOGOUT) {
+    },
+
+    logout: async (params: any) => {
         // Auth token may be given on automatic logout, since the provider mechanism (apparently) has already removed it.
         // At this point the token is already expired but still required by backend.
         const automatic = params?.automatic;
@@ -65,14 +54,34 @@ export const authProvider = (type, params) => {
                 import.meta.env.VITE_ENTRA_REDIRECT_URI :
                 loginFragment;
         }
-        httpClient(url, options).then(cleanup, cleanup);
-    }
-    if (type === AUTH_GET_PERMISSIONS) {
+
+        await httpClient(url, options).then(cleanup, cleanup);
+    },
+
+    checkAuth: async (_params: any) => {
+        if (!sessionStorage.getItem(userTokenKey)) {
+            throw new Error('Not authenticated');
+        }
+    },
+
+    checkError: async (error) => {
+        const status = error?.status;
+        if (status === 401 || status === 403) {
+            sessionStorage.removeItem(userTokenKey);
+            sessionStorage.removeItem('role');
+            throw error;
+        }
+    },
+
+    getPermissions: async (_params: any) => {
         // Allow opening the check-in QR reader page for convenience.
         if (window.location.hash !== '#/checkIn') {
-            const role = sessionStorage.getItem('role')
-            return role ? Promise.resolve(role) : Promise.reject('Role not defined.');
+            const role = sessionStorage.getItem('role');
+            if (!role) {
+                console.info('Role not defined.');
+                return '';
+            }
+            return role;
         }
     }
-    return Promise.resolve();
-}
+};

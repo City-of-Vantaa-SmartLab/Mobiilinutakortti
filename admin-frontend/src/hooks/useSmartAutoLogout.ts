@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { httpClientWithRefresh } from '../httpClients';
-import { AUTH_LOGOUT } from 'react-admin';
 import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
 import { authProvider } from '../providers';
 
@@ -41,7 +40,7 @@ export function useSmartAutoLogout() {
 const logout = () => {
     const timeoutId = setTimeout(async () => {
         console.info('Logging out user by smart auto logout.');
-        authProvider(AUTH_LOGOUT, { automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
+        authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
     }, autoLogoutTimeoutMinutes * 60000);
     console.debug(`Set smart auto logout of ${autoLogoutTimeoutMinutes} minutes.`);
     return timeoutId;

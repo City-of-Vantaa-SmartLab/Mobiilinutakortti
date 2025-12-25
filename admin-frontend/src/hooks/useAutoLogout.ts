@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { AUTH_LOGOUT } from 'react-admin';
 import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
 import { authProvider } from '../providers';
 
@@ -30,7 +29,7 @@ export const useAutoLogout = () => {
 
             if (!isLoggedOutPage) {
                 console.info('Logging out user automatically.');
-                authProvider(AUTH_LOGOUT, { automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
+                authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
             } else
                 // Remove the local session token in case the user has somehow reached this logged out page being logged in.
                 sessionStorage.removeItem(userTokenKey);

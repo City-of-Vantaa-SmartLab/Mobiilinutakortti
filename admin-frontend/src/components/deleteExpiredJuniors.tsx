@@ -1,25 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Title, useNotify, GET_LIST } from 'react-admin';
+import { Title, useNotify } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material';
 import { juniorProvider } from '../providers/juniorProvider';
-import { httpClient } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients';
 import { STATE } from '../state';
 import api from '../api';
 import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
-
-const getExpiredJuniors = () =>
-  juniorProvider(
-    GET_LIST,
-    {
-      filter: { status: Status.expired },
-      pagination: { page: 1, perPage: 1 },
-      sort: { field: 'id', order: 'ASC' },
-    },
-    httpClient,
-  );
 
 const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
@@ -42,7 +31,13 @@ const DeleteExpiredJuniors = () => {
       setState(STATE.LOADING);
 
       try {
-        const { total } = await getExpiredJuniors();
+        const { total } = await juniorProvider.getList(
+          {
+            filter: { status: Status.expired },
+            pagination: { page: 1, perPage: 1 },
+            sort: { field: 'id', order: 'ASC' },
+          },
+        );
         setExpiredUserCount(total);
       } catch (error) {
         notifyError('Käyttäjien haku epäonnistui');
@@ -56,7 +51,7 @@ const DeleteExpiredJuniors = () => {
   }, [notifyError]);
 
   const deleteExpiredJuniors = async () => {
-    const response = await httpClient(api.junior.deleteExpired, {
+    const response = await httpClientWithRefresh(api.junior.deleteExpired, {
       method: 'DELETE',
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {

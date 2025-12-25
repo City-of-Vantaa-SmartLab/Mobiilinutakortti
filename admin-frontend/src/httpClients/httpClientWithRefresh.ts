@@ -1,7 +1,6 @@
 import { httpClient } from './';
 import api from '../api';
 import { userTokenKey, adminUiBasePath } from '../utils';
-import { AUTH_LOGOUT } from 'react-admin';
 import { authProvider } from '../providers';
 
 // If url parameter evaluates to false, there will be a token refresh but no other data fetch.
@@ -16,7 +15,7 @@ export const httpClientWithRefresh = async (url: string, options: RequestInit = 
     return fetch(api.youthWorker.refresh, refreshOptions).then(async refreshResponse => {
         const refreshData = await refreshResponse.json();
         if (refreshData.statusCode < 200 || refreshData.statusCode >= 300) {
-            authProvider(AUTH_LOGOUT, {});
+            authProvider.logout({});
             document.location.href = adminUiBasePath;
             return Promise.resolve();
         } else {

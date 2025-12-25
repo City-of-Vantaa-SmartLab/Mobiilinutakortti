@@ -41,13 +41,13 @@ export class ExtraEntryService {
         return (await this.entryTypeRepo.find()).map(entryType => new EntryTypeViewModel(entryType));
     };
 
-    async createEntryType(entryTypeData: CreateEntryTypeDto): Promise<string> {
+    async createEntryType(entryTypeData: CreateEntryTypeDto): Promise<EntryTypeViewModel> {
         const entryType = {
             name: entryTypeData.name,
             expiryAge: entryTypeData.expiryAge,
         };
-        await this.entryTypeRepo.save(entryType);
-        return content.EntryTypeSaved;
+        const savedEntryType = await this.entryTypeRepo.save(entryType);
+        return new EntryTypeViewModel(savedEntryType);
     };
 
     // Similar function can be made for juniors checkIns when needed: simply replace extraEntries with checkIns
@@ -123,7 +123,7 @@ export class ExtraEntryService {
         }
     };
 
-    async createEntry(details: CreateExtraEntryDto, userId?: string): Promise<string> {
+    async createEntry(details: CreateExtraEntryDto, userId?: string): Promise<{ id: number, message: string }> {
         const isPermit = details.isPermit;
 
         if (userId && ConfigHandler.detailedLogs()) {
@@ -137,18 +137,19 @@ export class ExtraEntryService {
         if (!eeType) throw new BadRequestException(content.TypeNotFound);
 
         let message = content.ExtraEntryAdded;
+        let savedEntity;
 
         if (isPermit) {
             const newPermit = {junior: junior, entryType: eeType};
-            this.entryPermitRepo.save(newPermit);
+            savedEntity = await this.entryPermitRepo.save(newPermit);
         } else {
             const newExtraEntry = {junior: junior, entryType: eeType};
-            this.extraEntryRepo.save(newExtraEntry);
+            savedEntity = await this.extraEntryRepo.save(newExtraEntry);
             const permitDeleted = await this.deletePermitIfAddedAsEntry(details.juniorId, details.entryTypeId, userId);
             if (permitDeleted) message += " - lisämerkintää vastaava lupa poistettu";
         }
 
-        return message;
+        return { id: savedEntity.id, message };
     };
 
     async deleteEntry(deletableId: number, userId?: string, isPermit?: boolean): Promise<string> {

@@ -1,71 +1,89 @@
 import api from '../api';
-import { GET_LIST, GET_ONE, UPDATE } from 'react-admin';
 import { newHttpErrorFromResponse } from '../utils';
+import { httpClientWithRefresh } from '../httpClients';
 
-export const youthClubProvider = (type, params, httpClient) => {
-    let url;
-    let options;
-    switch (type) {
-        case GET_LIST: {
-            url = api.youthClub.list;
-            options = {
-                method: 'GET'
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data: response.sort((a,b) => a.name.localeCompare(b.name, 'fi', { sensitivity: 'base' })), total: response.length };
-                });
+export const youthClubProvider = {
+    getList: async (_params: any) => {
+        const url = api.youthClub.list;
+        const options = { method: 'GET' };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        case GET_ONE: {
-            url = api.youthClub.base + params.id;
-            options = {
-                method: 'GET'
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data: response };
-                });
-        }
-        case UPDATE: {
-            // If all messages are deleted or otherwise empty, params.data returns the whole messages object as null:
-            // this does not erase old messages, so we must set null to all fields
-            const messages = params.data.messages ? {
-                    fi: params.data.messages.fi,
-                    en: params.data.messages.en,
-                    sv: params.data.messages.sv,
-                } : {
-                    fi: null,
-                    en: null,
-                    sv: null,
-            };
-            const data = {
-                id: params.data.id,
-                active: params.data.active,
-                messages: messages,
-                kompassiIntegration: params.data.kompassiIntegration
-            };
-            const jsonData = JSON.stringify(data);
-            url = api.youthClub.edit;
-            options = {
-                method: 'POST',
-                body: jsonData,
-                headers: { "Content-Type": "application/json" },
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data }; // React admin expects data as return value
-                });
+        return {
+            data: response.sort((a: any, b: any) => a.name.localeCompare(b.name, 'fi', { sensitivity: 'base' })),
+            total: response.length
         };
-        default:
-            throw new Error(`Unsupported Data Provider request type ${type}`);
-    };
-}
+    },
+
+    getOne: async (params: any) => {
+        const url = api.youthClub.base + params.id;
+        const options = { method: 'GET' };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
+        }
+        return { data: response };
+    },
+
+    update: async (params: any) => {
+        // If all messages are deleted or otherwise empty, params.data returns the whole messages object as null:
+        // this does not erase old messages, so we must set null to all fields
+        const messages = params.data.messages ? {
+            fi: params.data.messages.fi,
+            en: params.data.messages.en,
+            sv: params.data.messages.sv,
+        } : {
+            fi: null,
+            en: null,
+            sv: null,
+        };
+
+        const data = {
+            id: params.data.id,
+            active: params.data.active,
+            messages: messages,
+            kompassiIntegration: params.data.kompassiIntegration
+        };
+
+        const jsonData = JSON.stringify(data);
+        const url = api.youthClub.edit;
+        const options = {
+            method: 'POST',
+            body: jsonData,
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
+        }
+        return { data };
+    },
+
+    getMany: async (_params: any) => {
+        throw new Error('GET_MANY not implemented for youthClub');
+    },
+
+    getManyReference: async (_params: any) => {
+        throw new Error('GET_MANY_REFERENCE not implemented for youthClub');
+    },
+
+    create: async (_params: any) => {
+        throw new Error('CREATE not implemented for youthClub');
+    },
+
+    updateMany: async (_params: any) => {
+        throw new Error('UPDATE_MANY not implemented for youthClub');
+    },
+
+    delete: async (_params: any) => {
+        throw new Error('DELETE not implemented for youthClub');
+    },
+
+    deleteMany: async (_params: any) => {
+        throw new Error('DELETE_MANY not implemented for youthClub');
+    },
+};

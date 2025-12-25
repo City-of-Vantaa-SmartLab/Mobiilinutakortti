@@ -1,108 +1,103 @@
 import api from '../api';
-import { GET_LIST, CREATE, UPDATE, GET_ONE, DELETE } from 'react-admin';
 import { newHttpErrorFromResponse } from '../utils';
+import { httpClientWithRefresh } from '../httpClients';
 
-export const youthWorkerProvider = (type, params, httpClient) => {
-    let url;
-    let options;
-    switch (type) {
-        case GET_LIST: {
-            url = api.youthWorker.list;
-            options = {
-                method: 'GET'
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data: response, total: response.length };
-                });
+export const youthWorkerProvider = {
+    getList: async (_params: any) => {
+        const url = api.youthWorker.list;
+        const options = { method: 'GET' };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        case CREATE: {
-            const data = JSON.stringify({
-                email: params.data.email,
-                password: params.data.password,
-                firstName: params.data.firstName,
-                lastName: params.data.lastName,
-                isAdmin: params.data.isAdmin,
-                mainYouthClub: params.data.mainYouthClub,
-            });
-            url = api.youthWorker.create;
-            options = {
-                method: 'POST',
-                body: data,
-                headers: { "Content-Type": "application/json" },
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    // Backend now returns the created user with id
-                    return { data: response }
-                });
+        return { data: response, total: response.length };
+    },
+
+    getOne: async (params: any) => {
+        const url = api.youthWorker.base + params.id;
+        const options = { method: 'GET' };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        case UPDATE: {
-            const data = {
-                id: params.data.id,
-                email: params.data.email,
-                //   password: params.data.password,
-                firstName: params.data.firstName,
-                lastName: params.data.lastName,
-                isAdmin: params.data.isAdmin,
-                mainYouthClub: params.data.mainYouthClub
-            };
-            const jsonData = JSON.stringify(data);
-            url = api.youthWorker.edit;
-            options = {
-                method: 'POST',
-                body: jsonData,
-                headers: { "Content-Type": "application/json" },
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data } //React-admin expects this format from from UPDATE. Hacky and ugly, but works.
-                });
+        return { data: response };
+    },
+
+    create: async (params: any) => {
+        const data = JSON.stringify({
+            email: params.data.email,
+            password: params.data.password,
+            firstName: params.data.firstName,
+            lastName: params.data.lastName,
+            isAdmin: params.data.isAdmin,
+            mainYouthClub: params.data.mainYouthClub,
+        });
+
+        const url = api.youthWorker.create;
+        const options = {
+            method: 'POST',
+            body: data,
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        case GET_ONE: {
-            // A fix to react-admins delete -> get_one bug:
-            // Edit-page is refreshed after delete when id is already undefined, causing an unnecessary error
-            const deletedItem = sessionStorage.getItem("deletedItem");
-            sessionStorage.removeItem("deletedItem");
-            if (params.id === deletedItem) {
-                return Promise.reject();
-            };
-            url = api.youthWorker.base + params.id;
-            options = {
-                method: 'GET'
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    return { data: response };
-                });
+        return { data: response };
+    },
+
+    update: async (params: any) => {
+        const data = {
+            id: params.data.id,
+            email: params.data.email,
+            firstName: params.data.firstName,
+            lastName: params.data.lastName,
+            isAdmin: params.data.isAdmin,
+            mainYouthClub: params.data.mainYouthClub
+        };
+
+        const jsonData = JSON.stringify(data);
+        const url = api.youthWorker.edit;
+        const options = {
+            method: 'POST',
+            body: jsonData,
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        case DELETE: {
-            url = api.youthWorker.base + params.id;
-            options = {
-                method: 'DELETE'
-            };
-            return httpClient(url, options)
-                .then(response => {
-                    if (response.statusCode < 200 || response.statusCode >= 300) {
-                        throw newHttpErrorFromResponse(response);
-                    }
-                    sessionStorage.setItem("deletedItem", params.id)
-                    return { data: { id: params.id } };
-                });
+        return { data };
+    },
+
+    delete: async (params: any) => {
+        const url = api.youthWorker.base + params.id;
+        const options = { method: 'DELETE' };
+
+        const response = await httpClientWithRefresh(url, options);
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response);
         }
-        default:
-            throw new Error(`Unsupported Data Provider request type ${type}`);
-    }
-}
+        return { data: { id: params.id } };
+    },
+
+    getMany: async (_params: any) => {
+        throw new Error('GET_MANY not implemented for youthWorker');
+    },
+
+    getManyReference: async (_params: any) => {
+        throw new Error('GET_MANY_REFERENCE not implemented for youthWorker');
+    },
+
+    updateMany: async (_params: any) => {
+        throw new Error('UPDATE_MANY not implemented for youthWorker');
+    },
+
+    deleteMany: async (_params: any) => {
+        throw new Error('DELETE_MANY not implemented for youthWorker');
+    },
+};

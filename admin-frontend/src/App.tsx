@@ -31,6 +31,7 @@ const CustomLoginPage = () =>
 const messages = {
     'fi': {
         ...finnishMessages,
+        'Not authenticated': 'Sinun tulee kirjautua',
         resources: {
             youthWorker: {
                 name: 'nuorisotyöntekijä |||| nuorisotyöntekijät',
