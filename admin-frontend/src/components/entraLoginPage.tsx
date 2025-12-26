@@ -75,9 +75,9 @@ export default function EntraLogin() {
         }
 
         const token = await MSALApp.getAuthorizationBearerToken();
-        if (token?.accessToken) {
+        if (token && 'accessToken' in token && token.accessToken) {
           try {
-            const logoutHintValue = token?.idTokenClaims?.login_hint;
+            const logoutHintValue = (token?.idTokenClaims as any)?.login_hint;
             const { access_token } = await httpClient(
               api.auth.loginEntraID,
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
@@ -119,8 +119,8 @@ export default function EntraLogin() {
             flexDirection: 'column',
             alignItems: 'center',
             bgcolor: '#FFFFFF',
-            padding: 20,
             borderRadius: '4px',
+            padding: '20px'
           }}
         >
           <Box sx={{ mb: 2 }}>
@@ -162,7 +162,7 @@ export default function EntraLogin() {
               Virhe sisäänkirjautuessa. Virkistä sivu ja yritä uudelleen.
             </Typography>
             <Box sx={{ m: 1 }}></Box>
-            {/* This is a thing that has actually happened: MSAL library didn't work if the browser wasn't recent enough. */}
+            {/* This is a thing that has actually happened: MSAL library didn't work because the browser wasn't recent enough. */}
             <Typography variant="caption">
               Jos ongelma toistuu, varmista ylläpitäjältä, että sähköpostiosoitteesi ei ole käytössä jollain toisella tunnuksella Nutakortissa. Pyydä tällöin ylläpitäjää poistamaan vanha/ylimääräinen tunnus. Koita myös päivittää selaimesi uusimpaan versioon.
             </Typography>

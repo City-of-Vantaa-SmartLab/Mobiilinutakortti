@@ -203,7 +203,7 @@ const getDummyPhoneNumber = async (cb: (value: string) => void) => {
 const DummyPhoneNumberButton = ({fieldName}: {fieldName: string}) => {
     const { setValue } = useFormContext();
     return (
-        <Button  style={{marginBottom: '5px'}} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
+        <Button  style={{ marginTop: '5px' }} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
             Käytä korvikepuhelinnumeroa
         </Button>
     )
@@ -250,7 +250,6 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
         addYouthClubsToState();
     }, []);
 
-    // We use the dummy div field to check whether we still wish to auto logout using the timeouts defined above.
     return (
         <SimpleForm>
             {loading ? null : (<>
@@ -259,12 +258,29 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
             <TextInput label="Sukunimi" source="lastName" validate={required()} onFocus={smartRefresh} />
             {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" onFocus={smartRefresh} />)}
             <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} onFocus={smartRefresh} />
-            <DateInput label="Syntymäaika" source="birthday" validate={[required(), ageValidator]} onFocus={smartRefresh} />
+            <DateInput
+                label="Syntymäaika"
+                source="birthday"
+                validate={[required(), ageValidator]}
+                onFocus={smartRefresh}
+                helperText={
+                    <span
+                        onClick={(e) => {
+                            const input = e.currentTarget.closest('.MuiFormControl-root')?.querySelector('input[type="date"]') as HTMLInputElement;
+                            input?.showPicker?.();
+                        }}
+                        style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underline' }}
+                    >
+                        Avaa kalenteri
+                    </span>
+                }
+                sx={{ mb: 1 }}
+            />
             <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} />
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="phoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} onFocus={smartRefresh} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} onFocus={smartRefresh} sx={{ mb: 2 }} />
             {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} onFocus={smartRefresh} />)}
             {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} onFocus={smartRefresh} />)}
             {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} onFocus={smartRefresh} />)}
@@ -273,8 +289,8 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} onFocus={smartRefresh} />
-            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" onFocus={smartRefresh} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} onFocus={smartRefresh} sx={{ mb: 2 }} />
+            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" onFocus={smartRefresh} helperText={false} />
             <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" onFocus={smartRefresh} />
             {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" onFocus={smartRefresh} />)}
             <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onFocus={smartRefresh} />

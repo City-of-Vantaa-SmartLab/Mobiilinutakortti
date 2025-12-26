@@ -2,7 +2,7 @@ import * as MSAL from '@azure/msal-browser'
 import * as MSALConfig from './msalConfig'
 
 export class MSALApp {
-    static instance: MSAL.PublicClientApplication;
+    static instance: MSAL.PublicClientApplication = null;
     static appUsername: string | undefined;
 
     // NOTE: to use the logout_hint parameter, you the login_hint optional claim must be configured according to:
@@ -19,18 +19,22 @@ export class MSALApp {
     }
 
     static async initNew() {
-        if (!!MSALApp.instance) {
+        if (MSALApp.instance) {
             console.debug('MSALApp already initialized.');
             return;
         }
 
         MSALApp.instance = new MSAL.PublicClientApplication(MSALConfig.authConfig);
         await MSALApp.instance.initialize();
-        const response = await MSALApp.instance.handleRedirectPromise();
-        if (response) {
-            MSALApp.appUsername = response.account.username;
+        try {
+            const response = await MSALApp.instance.handleRedirectPromise();
+            if (response) {
+                MSALApp.appUsername = response.account.username;
+            }
+            console.debug('MSAL user: ' + MSALApp.appUsername);
+        } catch (err) {
+            console.info(err);
         }
-        console.debug('MSAL user: ' + MSALApp.appUsername);
     }
 
     static async login() {

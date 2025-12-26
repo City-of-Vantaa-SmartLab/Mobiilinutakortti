@@ -3,7 +3,7 @@ import { httpClientWithRefresh } from '../httpClients';
 import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
 import { authProvider } from '../providers';
 
-// A sliding time window (so "smart") auto logout.
+// A sliding time window (hence "smart") auto logout.
 // Returns a refresh function to use in a component's onFocus, so e.g. in a form's input field.
 // The use case for per-field moving auto logout time window is that a youth worker is talking on the phone (with a parent) while filling out the form or just browsing a single page.
 // These phone calls may well last over half an hour, during which the page would auto logout, losing all the work done by the youth worker, even if they were still using the system.

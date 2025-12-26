@@ -17,10 +17,10 @@ const MenuContainer = styled.div`
 `;
 
 const Menu = () => {
-  const { isAdmin } = useAdminPermission();
+  const { isAdmin, isSignedIn } = useAdminPermission();
   const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
-  return (
+  return !isSignedIn ? null : (
     <MenuContainer>
       <MenuItemLink
         to="/junior"

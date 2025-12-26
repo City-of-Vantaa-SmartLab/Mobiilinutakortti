@@ -4,6 +4,7 @@ import { getActiveYouthClubOptions, getUserInfo, userTokenKey, hrefFragmentToJun
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
+import useAdminPermission from '../hooks/useAdminPermission';
 
 export const LandingPage = () => {
   const notify = useNotify();
@@ -13,6 +14,8 @@ export const LandingPage = () => {
   const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
   useAutoLogout();
+
+  const { isSignedIn } = useAdminPermission();
 
   useEffect(() => {
     userInfo.current = getUserInfo();
@@ -55,7 +58,7 @@ export const LandingPage = () => {
     window.location.href = hrefFragmentToJunior() + queryParams;
   }
 
-  return (
+  return !isSignedIn ? null : (
     <div style={{marginLeft: '20%', marginTop: '3em'}}>
       <p>Tervetuloa {userInfo.current?.firstName}!</p>
       <div>Jatka nuorten&nbsp;

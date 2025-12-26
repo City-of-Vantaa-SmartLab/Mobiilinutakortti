@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNotify } from 'react-admin';
 import { useParams } from 'react-router-dom';
-import { Form, Field } from 'react-final-form';
+import { Form } from 'react-final-form';
 import {
     Button, Table, TableHead,
     TableRow, TableCell, TableBody,
-    Link, TextField
+    Link
 } from '@mui/material';
 import {
     Container,
@@ -14,6 +14,7 @@ import {
     CheckInLogCardContent,
     CheckInLogCardContentSelect,
     VerticalCardPadding,
+    QueryDatePickerField
 } from './checkInStyledComponents';
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
@@ -104,17 +105,7 @@ const CheckInLogView = () => {
                         <CheckInLogCard>
                             <CheckInLogCardHeader title="Valitse päivämäärä" />
                             <CheckInLogCardContentSelect>
-                                <Field name="queryDate" defaultValue={new Date().toISOString().split('T')[0]}>
-                                    {({ input }) => (
-                                        <TextField
-                                            {...input}
-                                            label="Päivämäärä"
-                                            type="date"
-                                            slotProps={{ inputLabel: { shrink: true } }}
-                                            sx={{ width: 'fit-content' }}
-                                        />
-                                    )}
-                                </Field>
+                                <QueryDatePickerField />
                                 <Button type="submit">Hae</Button>
                             </CheckInLogCardContentSelect>
                         </CheckInLogCard>

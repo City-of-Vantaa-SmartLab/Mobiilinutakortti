@@ -23,6 +23,7 @@ const Container = styled.div`
 
 const cameraSize = '38em';
 
+/* The video is mirrored horizontally for easier QR code positioning. */
 const QrReaderContainer = styled.div`
   max-width: ${cameraSize};
   max-height: ${cameraSize};
@@ -36,6 +37,10 @@ const QrReaderContainer = styled.div`
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-sizing: border-box;
+
+  video {
+    transform: scaleX(-1);
+  }
 `
 
 const CheckInView = () => {
@@ -44,7 +49,9 @@ const CheckInView = () => {
   const [loading, setLoading] = useState(false);
   const [checkInSuccess, setCheckInSuccess] = useState(null);
   const [showCameraToggle, setShowCameraToggle] = useState(false);
-  const [useAlternativeCamera, setUseAlternativeCamera] = useState(false);
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
+  const [useFacingMode, setUseFacingMode] = useState(true);
   const [clubId, setClubId] = useState(null);
   const [securityCode, setSecurityCode] = useState(null);
   const [needsReload, setNeedsReload] = useState(false);
@@ -70,9 +77,26 @@ const CheckInView = () => {
     let isMounted = true;
     navigator.mediaDevices.enumerateDevices().then(devices => {
       if (isMounted) {
-        const cameras = devices.filter(dev => dev.kind === 'videoinput');
-        if (cameras.length > 1) setShowCameraToggle(true);
-        console.debug(cameras);
+        const videoCameras = devices.filter(dev => dev.kind === 'videoinput');
+        console.debug('Available cameras:', videoCameras);
+
+        if (videoCameras.length > 1) {
+          const hasDifferentFacingModes = videoCameras.some(cam =>
+            (cam as any).facingMode === 'environment'
+          ) && videoCameras.some(cam =>
+            (cam as any).facingMode === 'user' || !(cam as any).facingMode
+          );
+
+          if (hasDifferentFacingModes) {
+            console.debug('Using facingMode toggle (mobile/tablet)');
+            setUseFacingMode(true);
+          } else {
+            console.debug('Using deviceId toggle (PC with multiple webcams)');
+            setUseFacingMode(false);
+            setCameras(videoCameras.slice(0, 2));
+          }
+          setShowCameraToggle(true);
+        }
       }
     })
     return () => { isMounted = false; };
@@ -152,7 +176,12 @@ const CheckInView = () => {
                 formats={['qr_code']}
                 constraints={{
                   aspectRatio: 1,
-                  facingMode: useAlternativeCamera ? 'environment' : 'user'
+                  ...(useFacingMode
+                    ? { facingMode: currentCameraIndex === 0 ? 'user' : 'environment' }
+                    : cameras[currentCameraIndex]?.deviceId
+                      ? { deviceId: { exact: cameras[currentCameraIndex].deviceId } }
+                      : {}
+                  )
                 }}
             />
           </QrReaderContainer>
@@ -170,7 +199,17 @@ const CheckInView = () => {
           color="primary"
           size="large"
           variant="contained"
-          onClick={() => {const use = !useAlternativeCamera; setUseAlternativeCamera(use)}}
+          onClick={() => {
+            if (useFacingMode) {
+              const newIndex = currentCameraIndex === 0 ? 1 : 0;
+              console.debug('Switching facingMode, new index:', newIndex);
+              setCurrentCameraIndex(newIndex);
+            } else {
+              const newIndex = (currentCameraIndex + 1) % cameras.length;
+              console.debug('Switching camera by deviceId, new index:', newIndex, 'deviceId:', cameras[newIndex]?.deviceId);
+              setCurrentCameraIndex(newIndex);
+            }
+          }}
         >
           <SwitchCameraIcon />&nbsp;&nbsp;Vaihda&nbsp;kameraa
         </Button>
