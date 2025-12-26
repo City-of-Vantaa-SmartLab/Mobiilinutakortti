@@ -15,7 +15,7 @@ import { JuniorUserViewModel, JuniorQRViewModel, JuniorListViewModel } from './v
 import { JWTToken } from '../authentication/jwt.model';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 import { Junior } from './junior.decorator';
-import { Message, Check } from '../common/vm';
+import { Message } from '../common/vm';
 import { Challenge } from './entities';
 import * as content from '../content';
 import { ListControlDto } from '../common/dto';
@@ -37,14 +37,16 @@ export class JuniorController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('register')
     @ApiBearerAuth('youthWorker')
-    async registerJunior(@YouthWorker() youthWorker: { userId: string }, @Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<Message> {
-        return new Message(await this.juniorService.registerJunior(userData, youthWorker.userId));
+    async registerJunior(@YouthWorker() youthWorker: { userId: string }, @Body(PhoneNumberValidationPipe) userData: RegisterJuniorDto): Promise<JuniorUserViewModel> {
+        const createdJunior = await this.juniorService.registerJunior(userData, youthWorker.userId);
+        return new JuniorUserViewModel(createdJunior);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('parent-register')
     async registerJuniorByParent(@Body(PhoneNumberValidationPipe) parentFormData: ParentFormDto): Promise<Message> {
-        return new Message(await this.juniorService.registerByParent(parentFormData));
+        const junior = await this.juniorService.registerByParent(parentFormData);
+        return new Message(content.Created(junior.phoneNumber));
     }
 
     @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -121,7 +123,7 @@ export class JuniorController {
     @UsePipes(new ValidationPipe({ transform: true }))
     @Get('getChallenge/:phoneNumber')
     async getChallengeByPhoneNumber(@Param('phoneNumber') phoneNumber: string): Promise<Challenge> {
-        const allow = process.env.SETUP_ENDPOINTS || "no";
+        const allow = process.env.ENABLE_SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             return await this.juniorService.getChallengeByPhoneNumber(phoneNumber);
         }
@@ -170,7 +172,7 @@ export class JuniorController {
 
     @Post('createTestDataJuniors')
     async createTestDataJuniors(@Body() body: any): Promise<Message> {
-        const allow = process.env.SETUP_ENDPOINTS || "no";
+        const allow = process.env.ENABLE_SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             const { numberOfCases } = body;
             return new Message(await this.juniorService.createTestDataJuniors(numberOfCases));
@@ -180,7 +182,7 @@ export class JuniorController {
 
     @Post('deleteTestDataJuniors')
     async deleteTestDataJuniors(): Promise<Message> {
-        const allow = process.env.SETUP_ENDPOINTS || "no";
+        const allow = process.env.ENABLE_SETUP_ENDPOINTS || "no";
         if (allow === "yes") {
             return new Message(await this.juniorService.deleteTestDataJuniors());
         }

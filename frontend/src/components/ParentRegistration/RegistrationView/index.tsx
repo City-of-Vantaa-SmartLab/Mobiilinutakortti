@@ -27,7 +27,7 @@ const RegistrationView: React.FC = () => {
     const [error, setError] = useState(false);
     const [auth, setAuth] = useState(false);
 
-  const queryToSecurityContext = useCallback((encoded_sc: string) => {
+    const queryToSecurityContext = useCallback((encoded_sc: string) => {
         let b64str = encoded_sc.replace(/-/g, '+').replace(/_/g, '/');
         const pad = encoded_sc.length % 4;
         if (pad) {
@@ -53,7 +53,7 @@ const RegistrationView: React.FC = () => {
         const query = new URLSearchParams(location.search);
         const encoded_sc = query.get('sc');
         if (encoded_sc) {
-          queryToSecurityContext(encoded_sc);
+            queryToSecurityContext(encoded_sc);
         }
 
         const sc = getSecurityContext();
@@ -69,7 +69,10 @@ const RegistrationView: React.FC = () => {
                         .catch(_ => setError(true))
                 }
             })
-            .catch(_ => setError(true))
+            .catch(_ => {
+                if (window.location.hostname === "localhost") console.info("If you get an error, this is because SAML needs proper private key. For testing, do setAuth(true) in code here.");
+                setError(true)
+            })
     }, [location.search, queryToSecurityContext])
 
 
@@ -127,7 +130,7 @@ const RegistrationView: React.FC = () => {
              {error &&
              <Error>
                  <div>
-                   <p>{process.env.REACT_APP_ALT_ERR_MSG ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
+                   <p>{import.meta.env.VITE_USE_ALT_ERR_MSG ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
                     <ErrorButton onClick={() => {
                         //cleans query string if error happened during query string parsing
                         navigate('/hakemus', { replace: true })

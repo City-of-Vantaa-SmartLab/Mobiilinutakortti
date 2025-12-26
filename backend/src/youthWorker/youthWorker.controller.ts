@@ -49,9 +49,10 @@ export class YouthWorkerController {
     if (useEntraID) {
         throw new ForbiddenException('Microsoft Entra ID is in use. No need to register first admin.');
     }
-    const allow = process.env.SETUP_ENDPOINTS || "no";
+    const allow = process.env.ENABLE_SETUP_ENDPOINTS || "no";
     if ( allow === "yes" ) {
-      return new Message(await this.youthWorkerService.registerYouthWorker(userData));
+      const createdUser = await this.youthWorkerService.registerYouthWorker(userData);
+      return new Message(content.Created(createdUser.email));
     }
     throw new BadRequestException(content.NonProdFeature);
   }
@@ -136,11 +137,12 @@ export class YouthWorkerController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('register')
   @ApiBearerAuth('admin')
-  async create(@YouthWorker() admin: { userId: string }, @Body() userData: RegisterYouthWorkerDto): Promise<Message> {
+  async create(@YouthWorker() admin: { userId: string }, @Body() userData: RegisterYouthWorkerDto): Promise<YouthWorkerUserViewModel> {
     if (useEntraID) {
         throw new ForbiddenException('Microsoft Entra ID is in use. Creating users locally is disabled.');
     }
-    return new Message(await this.youthWorkerService.registerYouthWorker(userData, admin.userId));
+    const createdUser = await this.youthWorkerService.registerYouthWorker(userData, admin.userId);
+    return new YouthWorkerUserViewModel(createdUser);
   }
 
   /**

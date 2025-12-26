@@ -13,19 +13,17 @@ Note that currently for some services the backend keeps a small in-memory "datab
 
 ## Prerequisites
 
-- NodeJS - v22 preferred
-- PostgreSQL - v16 preferred
-- Docker (optional)
+- Node.js: v24.11.0 preferred
+- PostgreSQL: v16 preferred
+- Docker: optional
 
-**Only Docker is needed to run the app.** If you want to run backend locally, you'll need NodeJS and PostgreSQL installed. More info in ./backend/README.md.
+For production use, Telia SMS service is required. Note that there are two endpoints (see environment variables section in backend documentation). **The use of the batch endpoint requires a separate permit from Telia. Ensure your credentials have the permit.**
 
-For production use, Telia SMS service is required. Note that there are two endpoints (see environment variables section in backend documentation). **The use of the batch endpoint requires permit separately from Telia. Ensure your credentials have the permit.**
+## Default setup
 
-## Technologies
-
-- Frontend : React *(running on port 3001)*
 - Backend : NestJS *(running on port 3000)*
-- Admin-Frontend : React Admin *(running on port 3002)*
+- Frontend : React, Vite dev server *(running on port 3001)*
+- Admin-Frontend : React Admin, Vite dev server *(running on port 3002)*
 - Database : PostgreSQL *(running on port 5432)*
 
 ## Running the app
@@ -33,28 +31,22 @@ For production use, Telia SMS service is required. Note that there are two endpo
 Each subproject may be run individually, with or without docker - see README.md files of the projects.
 To start up everything using Docker compose, **run `docker compose -f docker-compose.yml.local up` in this directory**. Since there might be problems with Docker caching, the `run-locally.sh` helper script is a good alternative.
 
+Without Docker, the services are meant to be run in this order: backend, frontend, admin-frontend.
+
 To make sure everything is working, navigate to:
-- [http://localhost:3001](http://localhost:3001) - frontend
-- [http://localhost:3002](http://localhost:3002) - admin-frontend (default port will be 3000 if running without Docker)
 - [http://localhost:3000/api](http://localhost:3000/api) - backend
+- [http://localhost:3001](http://localhost:3001) - frontend
+- [http://localhost:3002](http://localhost:3002) - admin-frontend
 
 If you see the webpage for frontend and admin-frontend, and "API is running" message for backend, you're good.
 
-NOTE:
-* If you have PostgreSQL running locally, it is probably using port 5432 and will conflict with the Docker setup. Bring the local instance down or reconfigure it to solve the issue.
-* At some point during npm install you might get a weird error like this:
-
-    npm ERR! code EAI_AGAIN
-    npm ERR! errno EAI_AGAIN
-    npm ERR! request to https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz failed, reason: getaddrinfo EAI_AGAIN registry.npmjs.org registry.npmjs.org:443
-
-    This is because Docker might have some problems using IPv6 DNS servers. Force the use of IPv4 DNS in your localhost.
+If you have PostgreSQL running locally, it is probably using port 5432 and will conflict with the Docker setup. Bring the local instance down or reconfigure it to solve the issue.
 
 ## Create an initial admin
 
 NB: this section only applies if you are _not_ using Microsoft Entra ID to login users. By default, Entra ID is not used. It can be enabled via environment variables.
 
-The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `SETUP_ENDPOINTS` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
+The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `ENABLE_SETUP_ENDPOINTS` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
 
 Run the following `curl` command to create a youth worker with admin rights:
 
@@ -91,7 +83,7 @@ Now you can login to admin-frontend with given credentials.
 
 ### Note about production
 
-When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `SETUP_ENDPOINTS`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
+When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `ENABLE_SETUP_ENDPOINTS`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
 
 ## Creating youth clubs
 
@@ -121,7 +113,7 @@ To test SMS functionality locally, rename `.env.template` file to `.env` in */ba
 
 ## Creating test data
 
-With the `SETUP_ENDPOINTS` enabled and the backend running, use these two to create and remove test youth data:
+With the `ENABLE_SETUP_ENDPOINTS` enabled and the backend running, use these two to create and remove test youth data:
 * Create 100 test cases: `curl --location --request POST 'http://localhost:3000/api/junior/createTestDataJuniors' --header 'Content-Type: application/json' --data-raw '{ "numberOfCases": "100" }'`
 * Delete all created test cases: `curl --location --request POST 'http://localhost:3000/api/junior/deleteTestDataJuniors' --header 'Content-Type: application/json'`
 
@@ -149,15 +141,11 @@ To nuke the database, remove Docker volume from the PostgreSQL container, and br
 
 When running "docker compose up" you might get an error like this:
 
-    admin-frontend_1  | events.js:174
-    admin-frontend_1  |       throw er; // Unhandled 'error' event
-    admin-frontend_1  |       ^
-    admin-frontend_1  |
     admin-frontend_1  | Error: ENOSPC: System limit for number of file watchers reached, watch '/admin-frontend/public'
 
 or your build may error randomly.
 
-There's a lot of files under `node_modules` and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On a Ubuntu Linux the limit can be increased for example like this:
+There's a lot of files under `node_modules` and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On Ubuntu Linux the limit can be increased for example like this:
 
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 

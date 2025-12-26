@@ -16,6 +16,7 @@ import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../youthWorker/dto'
 import { repositoryMockFactory } from '../../test/Mock';
 import { SessionDBModule } from '../session/sessionDb.module';
 import { SmsModule } from '../sms/sms.module';
+import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { YouthWorker, Lockout } from '../youthWorker/entities';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
@@ -27,6 +28,7 @@ describe('AuthenticationService', () => {
   let service: AuthenticationService;
   let youthWorkerService: YouthWorkerService;
   let juniorService: JuniorService;
+  let challengeRepo;
 
   const testRegisterYouthWorker = {
     email: 'Authentication@service.test', firstName: 'Auth',
@@ -45,13 +47,17 @@ describe('AuthenticationService', () => {
     gender: 'M',
     birthday: new Date().toISOString(),
     homeYouthClub: 'Tikkurila',
+    school: 'Test School',
+    class: '5A',
+    status: 'accepted',
+    photoPermission: true,
   } as RegisterJuniorDto;
   let testLoginJunior: LoginJuniorDto;
 
   beforeAll(async () => {
     connection = getTestDB();
     module = await Test.createTestingModule({
-      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, JwtModule.register({
+      imports: [AuthenticationModule, YouthWorkerModule, AppModule, SessionDBModule, JuniorModule, SmsModule, SpamGuardModule, JwtModule.register({
         secret: jwtSecret,
       })],
       providers: [YouthWorkerService, AuthenticationService, JuniorService, {
@@ -77,11 +83,19 @@ describe('AuthenticationService', () => {
     service = module.get<AuthenticationService>(AuthenticationService);
     youthWorkerService = module.get<YouthWorkerService>(YouthWorkerService);
     juniorService = module.get<JuniorService>(JuniorService);
+    challengeRepo = connection.getRepository(Challenge);
 
     await youthWorkerService.registerYouthWorker(testRegisterYouthWorker);
-    await juniorService.registerJunior(testRegisterJunior);
-    const juniorChallenge = await juniorService.getChallengeByPhoneNumber(testRegisterJunior.phoneNumber);
-    testLoginJunior = { id: juniorChallenge.id, challenge: juniorChallenge.challenge };
+    await juniorService.registerJunior(testRegisterJunior, undefined, true);
+    
+    // Manually create challenge since noSMS=true skips it
+    const junior = await juniorService.getJuniorByPhoneNumber(testRegisterJunior.phoneNumber);
+    const challenge = challengeRepo.create({
+      phoneNumber: junior.phoneNumber,
+      challenge: 'test-challenge-code',
+    });
+    const savedChallenge = await challengeRepo.save(challenge);
+    testLoginJunior = { id: savedChallenge.id, challenge: savedChallenge.challenge };
   });
 
   afterAll(async () => {

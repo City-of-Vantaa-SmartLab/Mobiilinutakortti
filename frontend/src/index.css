@@ -27,6 +27,11 @@ code {
 
 }
 
+#wrapper {
+  height: 100%;
+  display: flex;
+}
+
 @media only screen and (min-width: 600px) {
   html {
     display: flex;

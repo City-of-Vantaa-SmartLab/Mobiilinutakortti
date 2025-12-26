@@ -67,7 +67,7 @@ import pino from 'pino';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(RoutersMiddleware).forRoutes('/**');
+    consumer.apply(RoutersMiddleware).forRoutes('*');
   }
 
   constructor() { }

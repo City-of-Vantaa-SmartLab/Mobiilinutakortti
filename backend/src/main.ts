@@ -1,11 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as express from 'express';
 import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { Logger } from 'nestjs-pino';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   // This is for local development only.
@@ -29,14 +29,14 @@ async function bootstrap() {
     .build();
 
   const app = httpsOptions ?
-    await NestFactory.create(AppModule, { ...httpsOptions, bufferLogs: true }) :
-    await NestFactory.create(AppModule, { bufferLogs: true });
-  if (process.env.JSON_LOGS) {
+    await NestFactory.create<NestExpressApplication>(AppModule, { ...httpsOptions, bufferLogs: true }) :
+    await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
+  if (process.env.USE_JSON_LOGS) {
     app.useLogger(app.get(Logger));
   }
   app.enableCors();
-  app.use('/', express.static(join(__dirname, '..', 'public')));
-  app.use('/', express.static(join(__dirname, '..', 'public-admin')));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(join(__dirname, '..', 'public-admin'));
   app.use(cookieParser());
 
   const document = SwaggerModule.createDocument(app, config);

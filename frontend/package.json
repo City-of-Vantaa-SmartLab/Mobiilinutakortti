@@ -1,62 +1,36 @@
 {
-  "name": "frontend",
-  "version": "2.3.0",
+  "name": "nutakortti-frontend",
+  "version": "3.0.0",
+  "description": "Frontend for Nutakortti application",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.2",
     "formik": "^2.2.9",
     "history": "^5.3.0",
-    "lodash.get": "^4.4.2",
     "qrcode.react": "^4.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-measure": "^2.5.2",
-    "react-redux": "^8.0.2",
-    "react-router-dom": "^6.3.0",
-    "react-scripts": "^5.0.1",
-    "redux": "^4.0.4",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.11.0",
+    "redux": "^5.0.1",
     "redux-saga": "^1.1.1",
-    "styled-components": "^5.3.5",
+    "styled-components": "^6.1.19",
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
-  },
-  "overrides": {
-    "react-scripts": {
-      "typescript": "5.9.3"
-    }
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.16",
-    "@types/node": "24.10",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
+    "@types/node": "25.0.3",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@types/react-measure": "^2.0.12",
-    "@types/styled-components": "^5.1.34",
-    "@types/yup": "^0.32.0",
-    "cross-env": "^7.0.3"
+    "@vitejs/plugin-react": "^5.1.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
   }
 }

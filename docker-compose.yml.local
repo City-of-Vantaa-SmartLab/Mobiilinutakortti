@@ -13,16 +13,15 @@ services:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
+      CERT_SELECTION:
       EMAIL_SOURCE:
       EMAIL_RETURN_PATH:
+      ENABLE_SETUP_ENDPOINTS: yes
       ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
-      CERT_SELECTION:
-      DETAILED_LOGS: true
       FRONTEND_URL:
       HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
-      JSON_LOGS:
       JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
@@ -32,7 +31,6 @@ services:
       RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
       RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
-      SETUP_ENDPOINTS: yes
       SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
@@ -44,6 +42,8 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
+      USE_DETAILED_LOGS: true
+      USE_JSON_LOGS:
     volumes:
       - ./backend/src:/backend/src
 
@@ -55,9 +55,9 @@ services:
     ports:
       - 3001:3000
     environment:
-      REACT_APP_API_URL: http://localhost:3000/api
-      REACT_APP_ALT_ERR_MSG:
-      WDS_SOCKET_PORT: 3001
+      VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3001
+      VITE_USE_ALT_ERR_MSG:
     volumes:
       - ./frontend/src:/frontend/src
 
@@ -69,13 +69,13 @@ services:
     depends_on:
       - backend
     environment:
-      REACT_APP_API_URL: http://localhost:3000/api
-      REACT_APP_ENABLE_EXTRA_ENTRIES: true
-      REACT_APP_ENABLE_KOMPASSI_INTEGRATION: true
-      REACT_APP_ENTRA_CLIENT_ID:
-      REACT_APP_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
-      REACT_APP_ENTRA_TENANT_ID:
-      WDS_SOCKET_PORT: 3002
+      VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3002
+      VITE_ENABLE_EXTRA_ENTRIES: true
+      VITE_ENABLE_KOMPASSI_INTEGRATION: true
+      VITE_ENTRA_CLIENT_ID:
+      VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
+      VITE_ENTRA_TENANT_ID:
     volumes:
       - ./admin-frontend/src:/admin-frontend/src
 

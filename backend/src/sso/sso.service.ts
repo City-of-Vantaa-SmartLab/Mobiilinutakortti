@@ -55,6 +55,7 @@ export class SsoService {
   }
 
   getLoginRequestUrl(res: Response) {
+    this.logger.debug('Creating login request.');
     this.sp.create_login_request_url(this.idp, {}, (err, login_url, request_id) => {
       this.logger.log('Created login request, ID: ' + request_id);
       if (this._handleError(err, res))

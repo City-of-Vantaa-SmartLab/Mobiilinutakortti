@@ -1,52 +1,38 @@
 {
-  "name": "admin-frontend",
-  "version": "2.3.0",
+  "name": "nutakortti-admin-frontend",
+  "version": "3.0.0",
+  "description": "Admin frontend for Nutakortti application",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@azure/msal-browser": "^4.21.1",
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "@yudiel/react-qr-scanner": "^2.5.0",
+    "final-form": "^5.0.0",
     "qrcode.react": "^4.2.0",
     "ra-i18n-polyglot": "^5.6.4",
-    "ra-language-finnish": "^3.18.3",
-    "react": "^17.0.2",
-    "react-admin": "^3.19.12",
-    "react-dom": "^17.0.2",
-    "react-qr-reader": "^2.2.1",
-    "react-router": "^5.3.3",
-    "react-router-dom": "^5.3.4",
-    "react-scripts": "^5.0.1",
+    "ra-language-finnish": "^5.0.0",
+    "react": "^19.0.0",
+    "react-admin": "^5.5.2",
+    "react-dom": "^19.0.0",
+    "react-final-form": "^7.0.0",
+    "react-is": "^19.2.3",
+    "react-router": "^7.11.0",
+    "react-router-dom": "^7.11.0",
     "styled-components": "^6.1.13"
   },
-  "overrides": {
-    "react-qr-reader": {
-      "react": "17.0.2",
-      "react-dom": "17.0.2"
-    }
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "dev": "vite",
+    "build": "vite build"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "cross-env": "^7.0.3"
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^5.1.2",
+    "baseline-browser-mapping": "^2.9.11",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
   }
 }

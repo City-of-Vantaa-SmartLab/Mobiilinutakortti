@@ -59,6 +59,6 @@ export class ConfigHandler {
     }
 
     static detailedLogs() {
-        return !!process.env.DETAILED_LOGS;
+        return !!process.env.USE_DETAILED_LOGS;
     }
 }

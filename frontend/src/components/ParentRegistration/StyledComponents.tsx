@@ -116,7 +116,7 @@ export const LogoutButton = styled(Button)`
     margin: 1em;
 `;
 
-//Form components
+// Form components
 
 export const Form = styled.form`
     padding: 0;

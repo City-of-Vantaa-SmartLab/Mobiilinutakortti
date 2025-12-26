@@ -1,4 +1,3 @@
-import React from 'react';
 import { Field, FormikProps, withFormik, FieldProps } from 'formik';
 import { string, object, boolean, Schema, number } from 'yup';
 import { post } from '../../../apis';

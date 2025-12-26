@@ -11,7 +11,7 @@ type Session = {
 
 @Injectable()
 export class SessionDBService {
-  private readonly maxSessions = 3;
+  private readonly maxSessions = 5;
   private readonly sessions: Session[];
   private readonly logger = new Logger('SessionDB Service');
 
