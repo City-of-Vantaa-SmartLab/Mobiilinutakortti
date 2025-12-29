@@ -103,7 +103,8 @@ export const setUserInfo = (userInfo: any) => {
   sessionStorage.setItem('userInfo', JSON.stringify({
     firstName: userInfo.firstName,
     mainYouthClubId: userInfo.mainYouthClub || -1,
-    passwordLastChanged: userInfo.passwordLastChanged
+    passwordLastChanged: userInfo.passwordLastChanged,
+    isAdmin: userInfo.isAdmin
   }));
 
   if (userInfo.isAdmin) {

@@ -46,7 +46,7 @@ If you have PostgreSQL running locally, it is probably using port 5432 and will 
 
 NB: this section only applies if you are _not_ using Microsoft Entra ID to login users. By default, Entra ID is not used. It can be enabled via environment variables.
 
-The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `ENABLE_SETUP_ENDPOINTS` equals "yes", so set it when launching the backend. You can do this temporarily for example by editing the `docker-compose.yml.local` file.
+The application needs at least one youth worker user to work properly. The backend must be running when executing this step. The endpoint that we call is only open if the environment variable `ENABLE_SETUP_ENDPOINTS` equals "yes".
 
 Run the following `curl` command to create a youth worker with admin rights:
 
@@ -62,28 +62,9 @@ curl --location --request POST 'http://localhost:3000/api/youthworker/registerAd
 }'
 ```
 
-### Use other tools
----
-
-Alternatively, you can use GUI tools such as Postman or Insomnia to create a youth worker user.
-
-POST to [http://localhost:3000/api/youthworker/registerAdmin](http://localhost:3000/api/youthworker/registerAdmin) with following body:
-
-```json
-{
-    "email":"test@test.com",
-    "password": "test",
-    "firstName": "admin",
-    "lastName": "admin",
-    "isAdmin": "true"
-}
-```
-
-Now you can login to admin-frontend with given credentials.
-
 ### Note about production
 
-When deploying application to production, endpoint should initially be open, and after creation of youth worker, it should be closed ASAP. The endpoint is toggled by environment variable `ENABLE_SETUP_ENDPOINTS`. Set its value to "yes" to allow registering youth workers via the endpoint and unset the variable (or set as "no") to disable the endpoint afterwards.
+When deploying application to production, the setup endpoint should initially be open, and after creating an admin youth worker, it should be closed.
 
 ## Creating youth clubs
 
@@ -103,7 +84,8 @@ insert into public.club (name) values
 ('Myyrmäen nuorisotila'),
 ('Pakkalan nuorisotila'),
 ('Pähkinärinteen nuorisotila'),
-('Tikkurilan nuorisotila');
+('Tikkurilan nuorisotila'),
+('Vernissa');
 commit;
 ```
 
@@ -121,23 +103,17 @@ With the `ENABLE_SETUP_ENDPOINTS` enabled and the backend running, use these two
 
 QR-code check-in endpoint is open by default, and should be accessible without authentication. This is due the removal of session-token when entering to QR-code screen, to prevent end-user to navigate to other parts of the application.
 
-## Extra entries
+## Optional features
 
-In the admin-frontend there is a possibility to enable extra entry registry via an environment variable (see its README.md). The extra entries are hidden in the UI by default. The extra entries enable permissions and markings to entries of type `<what> <expiry age>`. For example, if a junior has a permission to participate into a gym intro course, there could be an extra entry of type `<Gym course> <21>`, and the junior would have a permission for it. After completing the intro course, he could be given a permanent marking for the gym course. The marking would expire when the junior turns 21 years.
+### Extra entries
+
+In the admin-frontend there is a possibility to enable extra entry registry via an environment variable (see its README.md). The extra entries are hidden in the UI by default. The extra entries enable permissions and markings to entries of type `<what> <expiry age>`. For example, if a junior has a permission to participate into a gym intro course, there could be an extra entry of type `<Gym course> <21>`, and the junior would have a permission for it. After completing the intro course, he could be given a permanent marking for the gym course. The marking would then expire when the junior turns 21 years.
+
+### Kompassi integration
+
+In the admin-frontend there is a possibility to enable [Kompassi](https://kompassipalvelu.fi/) integration via an environment variable (see its README.md). Kompassi integration related stuff is hidden in the UI by default. Kompassi is a system for documenting youth work, including statistics and reporting tools. It is developed and maintained by the city of Oulu.
 
 ## Troubleshooting
-
-### Login not working
-
-Docker volumes sometimes get messed up and database won't work, often indicated by login not working. This might be indicated by error message such as:
-
-`Failed Password Authentication for user 'postgres'`
-
-Bring down the Docker containers with: `docker compose down`
-
-To nuke the database, remove Docker volume from the PostgreSQL container, and bring the application up again.
-
-### admin-frontend (or some other) build errors out
 
 When running "docker compose up" you might get an error like this:
 
@@ -151,15 +127,21 @@ There's a lot of files under `node_modules` and they are all being watched, reac
 
 Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
 
-## Environments, AWS and CI
+## Maintenance
+
+Normally there's only the certificates to update. TLS certificates are updated to AWS (or wherever the service is running).
+
+For Suomi.fi certificate updates, see the file `./backend/certs/README.md`.
+
+## Vantaa's environments, AWS and CI
 
 ### Test environment
 
-Application runs in Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
+The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
 
 ### Production environment
 
-Application runs in Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
+The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
@@ -186,13 +168,12 @@ Configure the EB CLI:
 **Deploy a new version to production:**
 * While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
 * To see how things are progressing, type: `eb events -f`
-* NB: also read the instructions in the next section (updating using a zip package)
 
 ### Updating using a zip package
 
 Building Nutakortti from scratch in AWS Elastic Beanstalk sometimes takes more than the maximum limit of 10 minutes. This will result in a failed environment update, which might lead to EB being in an unstable, unusable state. If that happens, the best thing to do is just to wait for a few hours. Re-deploying using CLI only makes things worse. As the command timeout setting in AWS EB doesn't work, an alternative for quickly updating the environment is to build the packages before uploading.
 
-The script `build-and-zip.sh` accomplishes this and creates a zip file you can just upload and deploy to Elastic Beanstalk.
+The script `build-and-zip.sh` accomplishes this and creates a zip file you can upload and deploy to Elastic Beanstalk.
 
 ### Searching logs
 
@@ -210,9 +191,3 @@ There exists [a nice tool](https://github.com/jorgebastida/awslogs) to solve the
 2. Set up AWS CLI (command: `aws configure`)
 3. Set up default region for awslogs (environment variable `AWS_REGION`) or give it as a command line parameter.
 4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`
-
-## Maintenance
-
-Normally there's only the certificates to update. TLS certificates are updated to AWS (or wherever the service is running).
-
-For Suomi.fi certificate updates, see the file `./backend/certs/README.md`.

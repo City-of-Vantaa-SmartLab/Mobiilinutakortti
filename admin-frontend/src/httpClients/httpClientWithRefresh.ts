@@ -1,4 +1,4 @@
-import { httpClient } from './';
+import { httpClient } from './httpClient';
 import api from '../api';
 import { userTokenKey, adminUiBasePath } from '../utils';
 import { authProvider } from '../providers';

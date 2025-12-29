@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: 'http://localhost:3000', // Note: this would be the container's localhost if running inside Docker.
           changeOrigin: true,
         },
       }

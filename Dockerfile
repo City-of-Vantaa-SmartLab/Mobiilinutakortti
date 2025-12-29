@@ -1,7 +1,6 @@
 FROM node:24.11.0-alpine
 
-ENV TZ=Europe/Helsinki
-RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/$TZ /etc/localtime
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
 
 ARG VITE_ENABLE_EXTRA_ENTRIES
 ENV VITE_ENABLE_EXTRA_ENTRIES=$VITE_ENABLE_EXTRA_ENTRIES
@@ -16,9 +15,9 @@ ENV VITE_ENTRA_REDIRECT_URI=$VITE_ENTRA_REDIRECT_URI
 ARG VITE_USE_ALT_ERR_MSG
 ENV VITE_USE_ALT_ERR_MSG=$VITE_USE_ALT_ERR_MSG
 
-ADD ./frontend /frontend
-ADD ./admin-frontend /admin-frontend
-ADD ./backend /backend
+COPY ./frontend /frontend
+COPY ./admin-frontend /admin-frontend
+COPY ./backend /backend
 
 WORKDIR /frontend
 RUN npm ci && npm run build && cp -r ./build ../backend/public

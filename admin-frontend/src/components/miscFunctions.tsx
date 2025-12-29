@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Title, useNotify } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import { Button, Card, CardContent } from '@mui/material';
-import { httpClient } from '../httpClients';
+import { httpClient } from '../httpClients/httpClient';
 import { STATE } from '../state';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -11,7 +11,6 @@ import EmptyIcon from '@mui/icons-material/Cached';
 
 const MiscFunctions = () => {
   const notify = useNotify();
-  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
 
   const [state, setState] = useState(STATE.INITIAL);
 
@@ -23,7 +22,7 @@ const MiscFunctions = () => {
       method: 'POST',
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      notifyError('Virhe alustaessa spam-estoa');
+      notify('Virhe alustaessa spam-estoa', { type: 'error' });
       setState(STATE.INITIAL);
     } else {
       notify(`Estolistalta poistettiin ${response.message} merkintää.`, { type: 'success' });
@@ -37,7 +36,7 @@ const MiscFunctions = () => {
       method: 'POST',
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      notifyError('Virhe tyhjentäessä Kompassi-välimuistia');
+      notify('Virhe tyhjentäessä Kompassi-välimuistia', { type: 'error' });
       setState(STATE.INITIAL);
     } else {
       notify('Kompassi-välimuisti tyhjennetty', { type: 'success' });

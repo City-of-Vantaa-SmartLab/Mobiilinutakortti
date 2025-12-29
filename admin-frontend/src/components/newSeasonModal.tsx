@@ -64,6 +64,18 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
           disabled={disabled}
           value={date}
           onChange={(event) => setDate(event.currentTarget.value)}
+          helperText={
+            <span
+              onClick={(e) => {
+                const input = e.currentTarget.closest('.MuiFormControl-root')?.querySelector('input[type="date"]') as HTMLInputElement;
+                input?.showPicker?.();
+              }}
+              style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underline' }}
+            >
+              Avaa kalenteri
+            </span>
+          }
+          sx={{ mb: 1 }}
         ></TextField>
         <div className="buttons-container">
           <Button

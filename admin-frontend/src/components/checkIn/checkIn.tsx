@@ -5,7 +5,7 @@ import QrCheckResultScreen from './qrCheckResultScreen.js';
 import LoadingMessage from '../loadingMessage';
 import { useNotify } from 'react-admin';
 import styled from 'styled-components';
-import { httpClient } from '../../httpClients';
+import { httpClient } from '../../httpClients/httpClient';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
 import { successSound, errorSound } from '../../audio/audio.js'

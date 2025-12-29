@@ -38,3 +38,21 @@ If using Entra ID to login we require password each time a user wishes to log in
 There are three ways the user can logout: manually from the menu, automatically after a certain idle time, or when going to a club check in page (QR reader). If the user was not logged out from Entra ID, the last one would be a hassle and a security risk.
 
 When opening a club check in page, before logout a random check in code is requested from the backend. That code is then required for the check in to work. This is a security measure because the check in API is not protected otherwise.
+
+## Maintenance / known issues
+
+When logging in using dev server, you might get an error:
+
+    useEvent.ts:18 Uncaught Error: Cannot call an event handler while rendering.
+        at Object.current (useEvent.ts:18:15)
+        at useEvent.ts:25:54
+        at handleBlur (InputBase.js:360:7)
+        at executeDispatch (react-dom-client.development.js:19116:9)
+        at runWithFiberInDEV (react-dom-client.development.js:871:30)
+        at processDispatchQueue (react-dom-client.development.js:19166:19)
+        at react-dom-client.development.js:19767:9
+        at batchedUpdates$1 (react-dom-client.development.js:3255:40)
+        at dispatchEventForPluginEventSystem (react-dom-client.development.js:19320:7)
+        at dispatchEvent (react-dom-client.development.js:23585:11)
+
+The error comes from MUI/react-admin and React 19 issues, but is not a fatal one. On the production build you will get the error twice: first when opening the login page, then when logging in.

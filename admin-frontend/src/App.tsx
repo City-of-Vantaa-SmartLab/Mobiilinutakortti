@@ -43,13 +43,26 @@ const messages = {
 
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
-const theme = createTheme({
+const lightTheme = createTheme({
   palette: {
+    mode: 'light',
     primary: {
-      main: '#1976d2', // Buttons and other components
+      main: '#1976d2' // Buttons and other components
     },
     secondary: {
-      main: '#3c8fde', // Navigation bar
+      main: '#3c8fde' // Navigation bar
+    },
+  },
+});
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#90caf9'
+    },
+    secondary: {
+      main: '#3c8fde'
     },
   },
 });
@@ -66,7 +79,7 @@ const App = () => {
   }
 
   return (
-    <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} theme={theme} disableTelemetry >
+    <Admin dashboard={LandingPage} layout={CustomLayout} loginPage={CustomLoginPage} i18nProvider={i18nProvider} dataProvider={dataProvider} authProvider={authProvider} lightTheme={lightTheme} darkTheme={darkTheme} disableTelemetry >
       {(role: string) => [
         <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
         <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,

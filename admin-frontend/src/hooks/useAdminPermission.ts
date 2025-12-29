@@ -17,7 +17,7 @@ const useAdminPermission = () => {
 
   useEffect(() => {
     getPermissions();
-  });
+  }, []);
 
   return {
     isAdmin,

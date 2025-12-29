@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNotify } from 'react-admin';
-import { getActiveYouthClubOptions, getUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, setUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -9,6 +9,7 @@ import useAdminPermission from '../hooks/useAdminPermission';
 export const LandingPage = () => {
   const notify = useNotify();
   const [youthClubs, setYouthClubs] = useState([]);
+  const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const dropdownRef = useRef(null);
   const userInfo = useRef(null);
   const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
@@ -24,8 +25,6 @@ export const LandingPage = () => {
       const addYouthClubsToState = async () => {
         const youthClubOptions = await getActiveYouthClubOptions();
         setYouthClubs(youthClubOptions.map((yc: any) => { return { 'label': yc.name, 'value': yc.id } }));
-
-        dropdownRef.current.value = userInfo.current?.mainYouthClubId || -1;
         setSelectedYouthClub(userInfo.current?.mainYouthClubId || -1);
       };
       addYouthClubsToState();
@@ -36,7 +35,12 @@ export const LandingPage = () => {
     }
   }, [useEntraID]);
 
-  const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
+  useEffect(() => {
+    if (dropdownRef.current && youthClubs.length > 0 && selectedYouthClub !== -1) {
+      dropdownRef.current.value = selectedYouthClub;
+    }
+  }, [youthClubs, selectedYouthClub]);
+
   const handleYouthClubChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedYouthClub(Number(e.target.value)) };
 
   const setDefaultYouthClub = async () => {
@@ -48,6 +52,7 @@ export const LandingPage = () => {
     });
     if (response) {
       notify('Oletusnuorisotila asetettu');
+      if (userInfo.current) setUserInfo({ ...userInfo.current, mainYouthClub: selectedYouthClub });
     } else {
       notify('Virhe asettaessa nuorisotilaa');
     }

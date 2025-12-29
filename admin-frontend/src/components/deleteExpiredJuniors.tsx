@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Title, useNotify } from 'react-admin';
 import { Navigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/DeleteForever';
 import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material';
 import { juniorProvider } from '../providers/juniorProvider';
-import { httpClientWithRefresh } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import { STATE } from '../state';
 import api from '../api';
 import { Status, statusChoices } from '../utils';
@@ -14,7 +14,6 @@ const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
 const DeleteExpiredJuniors = () => {
   const notify = useNotify();
-  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
 
   const [state, setState] = useState(STATE.INITIAL);
   const [expiredUserCount, setExpiredUserCount] = useState(0);
@@ -40,7 +39,7 @@ const DeleteExpiredJuniors = () => {
         );
         setExpiredUserCount(total);
       } catch (error) {
-        notifyError('Käyttäjien haku epäonnistui');
+        notify('Käyttäjien haku epäonnistui', { type: 'error' });
         setExpiredUserCount(0);
       }
 
@@ -48,14 +47,14 @@ const DeleteExpiredJuniors = () => {
     };
 
     getExpiredUserCount();
-  }, [notifyError]);
+  }, [notify]);
 
   const deleteExpiredJuniors = async () => {
     const response = await httpClientWithRefresh(api.junior.deleteExpired, {
       method: 'DELETE',
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      notifyError('Virhe poistettaessa käyttäjiä');
+      notify('Virhe poistettaessa käyttäjiä', { type: 'error' });
       setState(STATE.INITIAL);
     } else {
       notify(response.message, { type: 'success' });

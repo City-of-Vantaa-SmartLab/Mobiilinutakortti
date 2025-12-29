@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
-import { httpClientWithRefresh } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import { STATE } from '../state';
 import NewSeasonModal from './newSeasonModal';

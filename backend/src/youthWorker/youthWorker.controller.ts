@@ -98,7 +98,7 @@ export class YouthWorkerController {
   }
 
   /**
-   * A route that validates entraId login. If successful, a JWT access token is returned.
+   * A route that validates Entra Id login. If successful, a JWT access token is returned.
    *
    * @returns - JWTToken
    */

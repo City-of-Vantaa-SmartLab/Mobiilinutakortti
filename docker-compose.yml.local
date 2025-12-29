@@ -1,14 +1,18 @@
+# The services use a canonical Dockerfile to build the container.
+
+volumes:
+  db-data:
+
 services:
   backend:
-    # Use canonical Dockerfile for Docker Compose V2 to run container.
-    # NB: the mount point of the volume /backend (that is mounted further down this file)
-    # is created in the dockerfile, but the volume is not mounted yet at build time,
-    # so dockerfile needs to copy the files initially anyway.
     build: ./backend
     depends_on:
-      - db
+      db:
+        condition: service_started
     ports:
       - 3000:3000
+    volumes:
+      - ./backend/src:/backend/src
     environment:
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
@@ -44,30 +48,30 @@ services:
       TELIA_USERNAME:
       USE_DETAILED_LOGS: true
       USE_JSON_LOGS:
-    volumes:
-      - ./backend/src:/backend/src
 
   frontend:
-    # Use canonical Dockerfile for Docker Compose V2 to run container.
     build: ./frontend
-    links:
-      - backend
+    depends_on:
+      backend:
+        condition: service_started
     ports:
       - 3001:3000
+    volumes:
+      - ./frontend/src:/frontend/src
     environment:
       VITE_API_URL: http://localhost:3000/api
       VITE_DEV_SERVER_PORT: 3001
       VITE_USE_ALT_ERR_MSG:
-    volumes:
-      - ./frontend/src:/frontend/src
 
   admin-frontend:
-    # Use canonical Dockerfile for Docker Compose V2 to run container.
     build: ./admin-frontend
+    depends_on:
+      backend:
+        condition: service_started
     ports:
       - 3002:3000
-    depends_on:
-      - backend
+    volumes:
+      - ./admin-frontend/src:/admin-frontend/src
     environment:
       VITE_API_URL: http://localhost:3000/api
       VITE_DEV_SERVER_PORT: 3002
@@ -76,8 +80,6 @@ services:
       VITE_ENTRA_CLIENT_ID:
       VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
       VITE_ENTRA_TENANT_ID:
-    volumes:
-      - ./admin-frontend/src:/admin-frontend/src
 
   db:
     image: postgres:16
@@ -89,5 +91,4 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: nuta
-volumes:
-  db-data:
+

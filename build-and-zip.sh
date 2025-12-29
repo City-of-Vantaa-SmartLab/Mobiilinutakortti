@@ -2,14 +2,13 @@
 # Build app and create a zip package for deploying, for example to AWS Elastic Beanstalk.
 #
 # Nutakortti consists of three parts: backend, frontend and admin-frontend.
-# Building each (especially admin-frontend) from scratch in AWS EB sometimes takes more time than the maximum allowed command timeout.
+# Building each from scratch in AWS EB sometimes takes more time than the maximum allowed command timeout.
 # This will result in a failed environment update, which might lead to EB being in an unstable, unusable state.
 # If that happens, the best thing to do is to wait for a few hours. Re-deploying using CLI usually only makes things worse.
 #
 # As the command timeout setting in AWS EB doesn't quite work, an alternative for quickly updating the environment is to build the packages before uploading.
-# The backend uses environment variables only when running, not when compiling. It's therefore trivial to pre-build.
-# When compiling, the frontend only uses a single environment variable, with a trivial default value. The frontend can also be thus easily pre-built.
-# For building the admin-frontend you are asked to input the correct environment variable values when running this script.
+# The backend uses environment variables only when running, not when building. It's therefore trivial to pre-build.
+# The admin-frontend and frontend use some environment variables that need to be defined during build.
 #
 # The zip file created by this script can be uploaded to AWS EB and it will launch the application with environment variables configured in AWS.
 
@@ -80,17 +79,16 @@ cd ..
 cp docker-compose.yml $tmpdir/
 
 githash=$(git describe --always)
-zipfile=$(date +"nutakortti-app-%Y%m%d-$githash-$package_env.zip")
+zipfile=$(date +"nutakortti-%Y%m%d-$githash-$package_env.zip")
 
 cat > $tmpdir/Dockerfile << EOF
-FROM node:22.12.0
+FROM node:24.11.0-alpine
 
 RUN echo "Original zip package: $zipfile"
 
-ENV TZ=Europe/Helsinki
-RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/\$TZ /etc/localtime
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
 
-ADD ./backend /backend
+COPY ./backend /backend
 
 WORKDIR /backend
 

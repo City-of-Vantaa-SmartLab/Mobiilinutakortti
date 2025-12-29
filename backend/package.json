@@ -1,7 +1,7 @@
 {
   "name": "nutakortti-backend",
   "version": "3.0.0",
-  "description": "Backend for Nutakortti application",
+  "description": "Backend for the Nutakortti application",
   "private": true,
   "scripts": {
     "build": "nest build",

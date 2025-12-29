@@ -2,12 +2,10 @@ import { Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import ChangePasswordView from './components/changePassword';
 
-// Lazy-load check-in features (separate chunk)
 const CheckInView = lazy(() => import('./components/checkIn/checkIn'));
 const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'));
 const CheckInLogView = lazy(() => import('./components/checkInLog'));
 
-// Lazy-load admin features (separate chunk)
 const NewSeason = lazy(() => import('./components/newSeason'));
 const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'));
 const MiscFunctions = lazy(() => import('./components/miscFunctions'));

@@ -25,7 +25,7 @@ import useAutoLogout from '../hooks/useAutoLogout';
 
 const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
-// If using EntraID, adding youth workers is done automatically when they sign in.
+// If using Entra ID, adding youth workers is done automatically when they sign in.
 const YouthWorkerListActions = () => (
   <TopToolbar>
     {!useEntraID && <CreateButton />}

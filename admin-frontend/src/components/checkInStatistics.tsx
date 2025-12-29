@@ -16,7 +16,7 @@ import {
     QueryDatePickerField
 } from './checkInStyledComponents';
 import { Typography } from '@mui/material';
-import { httpClientWithRefresh } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 
