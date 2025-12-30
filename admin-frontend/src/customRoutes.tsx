@@ -1,6 +1,7 @@
 import { Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import ChangePasswordView from './components/changePassword';
+
+const ChangePasswordView = lazy(() => import('./components/changePassword'));
 
 const CheckInView = lazy(() => import('./components/checkIn/checkIn'));
 const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'));
@@ -9,6 +10,8 @@ const CheckInLogView = lazy(() => import('./components/checkInLog'));
 const NewSeason = lazy(() => import('./components/newSeason'));
 const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'));
 const MiscFunctions = lazy(() => import('./components/miscFunctions'));
+
+const QuickSearch = lazy(() => import('./components/quickSearch'));
 
 const Loading = () => <div>Ladataan...</div>;
 
@@ -19,7 +22,8 @@ export const checkInRoute = [
 export const normalRoutes = [
     <Route path="/statistics/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInStatisticsView /></Suspense>} />,
     <Route path="/log/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInLogView /></Suspense>} />,
-    <Route path="/password" element={<ChangePasswordView />} />
+    <Route path="/password" element={<ChangePasswordView />} />,
+    <Route path="/quickSearch" element={<Suspense fallback={<Loading />}><QuickSearch /></Suspense>} />
 ];
 
 export const adminRoutes = [

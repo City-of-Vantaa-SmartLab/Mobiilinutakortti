@@ -74,11 +74,13 @@ export const LandingPage = () => {
           color: '-webkit-link',
           cursor: 'pointer',
           fontSize: '1rem',
-          padding: '0' }}
+          padding: '0',
+          fontWeight: 'bold',
+          marginRight: '0.5rem'}}
           onClick={listSelectedClubJuniors}>
           nuorten listaukseen nuorisotilalle
         </button>
-        <select ref={dropdownRef} onChange={handleYouthClubChange} style={{fontSize: '1rem', marginLeft: '0.5rem', marginTop: '1rem', marginRight: '0.5rem'}}>
+        <select ref={dropdownRef} onChange={handleYouthClubChange} style={{fontSize: '1rem', marginTop: '1rem', marginRight: '0.5rem'}}>
           <option key='' value='-1'></option>
           {youthClubs.map(yc => (
             <option key={yc.label} value={yc.value}>{yc.label}</option>
@@ -91,7 +93,7 @@ export const LandingPage = () => {
                 border: 'none',
                 color: '-webkit-link',
                 cursor: 'pointer',
-                fontSize: '1rem',
+                fontSize: '0.9rem',
                 padding: '0'
               }}
               onClick={setDefaultYouthClub}>
@@ -99,8 +101,9 @@ export const LandingPage = () => {
             </button>
             )</Box>
         )}
+        ,
       </div>
-      <p>tai listaa <a href={hrefFragmentToJunior()}>kaikki nuoret</a>.</p>
+      <p>listaa <a href={hrefFragmentToJunior()} style={{textDecoration:"none", fontWeight: "bold"}}>kaikki nuoret</a> tai avaa <a href="#quickSearch" style={{textDecoration: "none", fontWeight: "bold"}}>pikahaku</a>.</p>
       {(useEntraID || userInfo.current?.passwordLastChanged) ? null : (<div style={{marginTop: '3em'}}>
         <p>Muistutus: sinun tulee <a href='#/password'>vaihtaa salasanasi</a>.</p>
       </div>)}

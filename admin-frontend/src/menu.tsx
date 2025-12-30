@@ -10,6 +10,7 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import BoltIcon from '@mui/icons-material/Bolt';
 import useAdminPermission from './hooks/useAdminPermission';
 
 const MenuContainer = styled.div`
@@ -79,6 +80,12 @@ const Menu = () => {
           to="/miscFunctions"
           primaryText="Muut toiminnot"
           leftIcon={<SettingsApplicationsIcon />}
+        />
+      }
+      {isAdmin && <MenuItemLink
+          to="/quickSearch"
+          primaryText="Pikahaku"
+          leftIcon={<BoltIcon/>}
         />
       }
     </MenuContainer>
