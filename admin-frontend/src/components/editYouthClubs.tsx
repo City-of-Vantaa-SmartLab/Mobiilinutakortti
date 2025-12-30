@@ -16,6 +16,7 @@ import {
   EditProps,
   useRecordContext
 } from 'react-admin';
+import { Divider, Box } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const StatusHelperText = () => (
@@ -38,11 +39,6 @@ const CustomToolbar = (props: any) => (
 );
 
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
-
-// Suppress React warnings about props for non-input elements.
-const NonInput = React.memo(function NonInput({ children }: { children: React.ReactNode }) {
-  return children;
-});
 
 export const EditYouthClubsList = (props: ListProps) => {
   useAutoLogout();
@@ -73,18 +69,18 @@ export const EditYouthClubs = (props: EditProps) => {
     <SimpleForm toolbar={<CustomToolbar />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />
-      <TextInput label="Tilakohtainen viesti FI" source="messages.fi" />
-      <TextInput label="Tilakohtainen viesti EN" source="messages.en" />
-      <TextInput label="Tilakohtainen viesti SV" source="messages.sv" />
+      <TextInput label="Tilakohtainen viesti FI" source="messages.fi" sx={{ width: 600 }} />
+      <TextInput label="Tilakohtainen viesti EN" source="messages.en" sx={{ width: 600 }} />
+      <TextInput label="Tilakohtainen viesti SV" source="messages.sv" sx={{ width: 600 }} />
       <MessageHelperText />
 
       {kompassiIntegration && (<>
-        <NonInput><br /><hr /><br /></NonInput>
+        <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
         <BooleanInput label="Kompassi-integraatio päällä" source="kompassiIntegration.enabled" defaultValue={false} />
         <KompassiHelperText />
-        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" />
-        <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} />
-        <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} />
+        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" sx={{ width: 400 }} />
+        <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} sx={{ width: 400 }} />
+        <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} sx={{ width: 400 }} />
       </>)}
     </SimpleForm>
   </Edit >

@@ -26,9 +26,9 @@ const MsgSection = styled.section`
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
-    max-width: 30%;
+    width: 100%;
     @media (max-width: 2015px) {
-        max-width: 60%;
+        max-width: 75%;
     }
     @media (max-width: 1150px) {
         max-width: 90%;
@@ -36,7 +36,7 @@ const MsgSection = styled.section`
 `;
 
 const SectionTitle = ({title}: {title: string}) => (
-    <span style={{fontSize: "small"}}>{title}</span>
+    <span style={{fontSize: "small", marginBottom: "5px"}}>{title}</span>
 );
 
 const MessageSectionForLanguage = (props: { langCode: string }) => {
@@ -156,7 +156,7 @@ export const AnnouncementCreate = (props: CreateProps) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
-                <SelectInput sx={{ minWidth: '300px', marginTop: 0, display: allSelected ? 'none' : undefined }} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
+                <SelectInput sx={{ minWidth: '300px', marginTop: 1, display: allSelected ? 'none' : undefined }} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
                 <NoBasePath>
                     <div style={{ marginTop: '8px', marginBottom: '8px' }}>
                         <Typography variant="subtitle1">

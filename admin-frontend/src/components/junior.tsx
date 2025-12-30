@@ -37,7 +37,6 @@ import { PhoneNumberField } from './phoneNumberField';
 import useAdminPermission from '../hooks/useAdminPermission';
 import api from '../api';
 
-// Lazy-load extra entry related code to keep it in a separate chunk
 const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'));
 
 interface JuniorRecord {
@@ -46,7 +45,7 @@ interface JuniorRecord {
   lastName: string;
   displayName: string;
   phoneNumber: string;
-  status: number;
+  status: string;
 }
 
 // Custom button components in Datagrid need to accept label prop for column headers.
@@ -103,7 +102,7 @@ export const JuniorList = (props: ListProps) => {
 
     const ResendSMSButton = (_props: ButtonProps) => (
         <FunctionField
-            render={(record) => (
+            render={(record: JuniorRecord) => (
                 <span style={{ display: 'inline-flex', width: '100%', justifyContent: 'center' }}>
                     {(record?.status === Status.accepted || record?.status === Status.expired)
                         ? <Button size="small" variant="contained" onClick={() => resendSMS(record.phoneNumber)}>📨&nbsp;SMS</Button>
@@ -122,7 +121,7 @@ export const JuniorList = (props: ListProps) => {
         </div>
     );
 
-    const showQR = async (id: string, status: number, owner: string) => {
+    const showQR = async (id: string, status: string, owner: string) => {
         try {
             const newWindow = window.open('');
             if (!newWindow) {
@@ -203,7 +202,7 @@ const getDummyPhoneNumber = async (cb: (value: string) => void) => {
 const DummyPhoneNumberButton = ({fieldName}: {fieldName: string}) => {
     const { setValue } = useFormContext();
     return (
-        <Button  style={{ marginTop: '5px' }} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
+        <Button style={{ marginTop: '5px' }} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
             Käytä korvikepuhelinnumeroa
         </Button>
     )
@@ -254,10 +253,10 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
         <SimpleForm>
             {loading ? null : (<>
             <div style={{ display: 'none' }}></div>
-            <TextInput label="Etunimi" source="firstName" validate={required()} onFocus={smartRefresh} />
-            <TextInput label="Sukunimi" source="lastName" validate={required()} onFocus={smartRefresh} />
-            {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" onFocus={smartRefresh} />)}
-            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} onFocus={smartRefresh} />
+            <TextInput label="Etunimi" source="firstName" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />
+            <TextInput label="Sukunimi" source="lastName" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />
+            {valueOrNull('nickName', <TextInput label="Kutsumanimi" source="nickName" onFocus={smartRefresh} sx={{ width: 400 }} />)}
+            <SelectInput label="Sukupuoli" source="gender" choices={genderChoices} validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />
             <DateInput
                 label="Syntymäaika"
                 source="birthday"
@@ -274,37 +273,37 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
                         Avaa kalenteri
                     </span>
                 }
-                sx={{ mb: 1 }}
+                sx={{ mb: 4, width: 400 }}
             />
-            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} />
+            <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} sx={{ width: 400 }} />
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="phoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} onFocus={smartRefresh} sx={{ mb: 2 }} />
-            {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} onFocus={smartRefresh} />)}
-            {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} onFocus={smartRefresh} />)}
-            {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} onFocus={smartRefresh} />)}
-            <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} onFocus={smartRefresh} />
-            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionJunior" helperText={false} onFocus={smartRefresh} sx={{ mb: 4 }} />
+            {valueOrNull('postCode', <TextInput label="Postinumero" source="postCode" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />)}
+            {valueOrNull('school', <TextInput label="Koulu" source="school" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />)}
+            {valueOrNull('class', <TextInput label="Luokka" source="class" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />)}
+                <TextInput label="Huoltajan nimi" source="parentsName" validate={required()} onFocus={smartRefresh} sx={{ mt: 2, width: 400 }} />
+            <TextInput label="Huoltajan puhelinnumero" source="parentsPhoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} sx={{ width: 400 }} />
             <FormDataConsumer>
                 {() => <DummyPhoneNumberButton fieldName="parentsPhoneNumber" />}
             </FormDataConsumer>
-            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} onFocus={smartRefresh} sx={{ mb: 2 }} />
-            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" onFocus={smartRefresh} helperText={false} />
+            <BooleanInput label="Tekstiviestit sallittu" source="smsPermissionParent" helperText={false} onFocus={smartRefresh} sx={{ mb: 4 }} />
+            <TextInput label="Huoltajan sähköpostiosoite" source="parentsEmail" onFocus={smartRefresh} helperText={false} sx={{ width: 400 }} />
             <BooleanInput label="Sähköpostit sallittu" source="emailPermissionParent" onFocus={smartRefresh} />
-            {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" onFocus={smartRefresh} />)}
-            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onFocus={smartRefresh} />
+            {valueOrNull('additionalContactInformation', <TextInput label="Toisen yhteyshenkilön tiedot" source="additionalContactInformation" onFocus={smartRefresh} sx={{ width: 400 }} />)}
+            <SelectInput label="Kotinuorisotila" source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onFocus={smartRefresh} sx={{ width: 400 }} />
             {formType === 'create' ?
                 <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()}
-                    disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi"
+                    disabled={hiddenFormFields.includes('communicationsLanguage')} defaultValue="fi" sx={{ width: 400 }}
                 />
                 :
-                valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()} onFocus={smartRefresh} />)
+                valueOrNull('communicationsLanguage', <SelectInput label="Kommunikaatiokieli" source="communicationsLanguage" choices={languages} validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />)
             }
             <BooleanInput label="Kuvauslupa" source="photoPermission" defaultValue={false} onFocus={smartRefresh} />
             <FormDataConsumer>
                 {({ formData }: { formData: any }) => {
-                    return <SelectInput disabled={(formType === 'edit' && formData && (formData.status === Status.expired || formData.status === Status.extraEntriesOnly) && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} onFocus={smartRefresh} />
+                    return <SelectInput disabled={(formType === 'edit' && formData && (formData.status === Status.expired || formData.status === Status.extraEntriesOnly) && !isAdmin)} label="Tila" source="status" choices={statusChoices} validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />
                 }}
             </FormDataConsumer>
             <FormDataConsumer>

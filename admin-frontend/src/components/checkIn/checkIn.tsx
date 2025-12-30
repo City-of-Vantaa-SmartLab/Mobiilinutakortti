@@ -23,8 +23,8 @@ const Container = styled.div`
 
 const cameraSize = '38em';
 
-/* The video is mirrored horizontally for easier QR code positioning. */
-const QrReaderContainer = styled.div`
+/* The video is mirrored horizontally for easier QR code positioning (except for mobile back camera). */
+const QrReaderContainer = styled.div<{ $shouldFlip: boolean }>`
   max-width: ${cameraSize};
   max-height: ${cameraSize};
   width: 100%;
@@ -32,14 +32,14 @@ const QrReaderContainer = styled.div`
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  border: 3em solid #f9e51e;
+  border: 3vw solid #f9e51e;
   -webkit-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   -moz-box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-shadow: 2px 10px 60px -19px rgba(0,0,0,0.75);
   box-sizing: border-box;
 
   video {
-    transform: scaleX(-1);
+    transform: ${props => props.$shouldFlip ? 'scaleX(-1)' : 'none'};
   }
 `
 
@@ -81,15 +81,23 @@ const CheckInView = () => {
         console.debug('Available cameras:', videoCameras);
 
         if (videoCameras.length > 1) {
+
+          // Not all cameras list their facing modes.
           const hasDifferentFacingModes = videoCameras.some(cam =>
             (cam as any).facingMode === 'environment'
           ) && videoCameras.some(cam =>
             (cam as any).facingMode === 'user' || !(cam as any).facingMode
           );
 
-          if (hasDifferentFacingModes) {
+          // Sometimes cameras have a label such as "facing front" or "facing back".
+          const hasLabelBasedFacing = videoCameras.some(cam =>
+            cam.label.toLowerCase().includes('facing')
+          );
+
+          if (hasDifferentFacingModes || hasLabelBasedFacing) {
             console.debug('Using facingMode toggle (mobile/tablet)');
             setUseFacingMode(true);
+            setCameras(videoCameras.slice(0, 2));
           } else {
             console.debug('Using deviceId toggle (PC with multiple webcams)');
             setUseFacingMode(false);
@@ -163,12 +171,29 @@ const CheckInView = () => {
     notify('Jokin meni pieleen! Kokeile uudestaan.', { type: 'warning' })
   };
 
+  const shouldFlipCameraView = () => {
+    // If facing mode is not in question, the camera is probably a web cam in which case it should be treated as a selfie cam.
+    if (!useFacingMode) return true;
+
+    // Selfie cameras are usually the first ones.
+    if (currentCameraIndex === 0) return true;
+
+    const currentCam = cameras[currentCameraIndex];
+    if (!currentCam) return false;
+
+    // Note that sometimes the mobile devices report the cameras wrong. So a back facing camera might actually read front in the label.
+    const label = currentCam.label.toLowerCase();
+    if (label.includes('front')) return true;
+
+    return false;
+  };
+
   return (
     <Container>
       <Notification />
       <CheckinBackground />
       {showQRCode && (
-          <QrReaderContainer>
+          <QrReaderContainer $shouldFlip={shouldFlipCameraView()}>
             <Scanner
                 scanDelay={500}
                 onScan={handleScan}
@@ -177,7 +202,7 @@ const CheckInView = () => {
                 constraints={{
                   aspectRatio: 1,
                   ...(useFacingMode
-                    ? { facingMode: currentCameraIndex === 0 ? 'user' : 'environment' }
+                    ? { facingMode: currentCameraIndex === 0 ? 'user' : 'environment' } // Usually the selfie camera is the first one.
                     : cameras[currentCameraIndex]?.deviceId
                       ? { deviceId: { exact: cameras[currentCameraIndex].deviceId } }
                       : {}

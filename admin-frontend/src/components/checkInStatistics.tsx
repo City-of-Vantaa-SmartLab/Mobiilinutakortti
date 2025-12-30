@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNotify } from 'react-admin';
 import { useParams } from 'react-router-dom';
 import { Form } from 'react-final-form';
-import { Button } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import {
     Container,
     CheckInLogCard,
@@ -138,7 +138,7 @@ const CheckInStatisticsView = () => {
                                         />
                                     ))}
                                 </CheckInLogTextFieldContainer>
-                                <hr />
+                                <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
                             </div>
                         ))}
                     </CheckInLogCardContent>

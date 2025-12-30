@@ -77,11 +77,11 @@ export const YouthWorkerCreate = (props: CreateProps) => {
   return (
     <Create title="Rekisteröi nuorisotyöntekijä" redirect="list" {...props}>
       <SimpleForm>
-        <TextInput label="Sähköposti" source="email" type="email" validate={required()} />
-        <TextInput label="Salasana" source="password" type="password" validate={required()} />
-        <TextInput label="Etunimi" source="firstName" validate={required()} />
-        <TextInput label="Sukunimi" source="lastName" validate={required()} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} />
+        <TextInput label="Sähköposti" source="email" type="email" validate={required()} sx={{ width: 400 }} />
+        <TextInput label="Salasana" source="password" type="password" validate={required()} sx={{ width: 400 }} />
+        <TextInput label="Etunimi" source="firstName" validate={required()} sx={{ width: 400 }} />
+        <TextInput label="Sukunimi" source="lastName" validate={required()} sx={{ width: 400 }} />
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
       </SimpleForm>
     </Create>
@@ -117,10 +117,10 @@ export const YouthWorkerEdit = (props: EditProps) => {
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" redirect="list" {...props} mutationMode="pessimistic">
       <SimpleForm>
-        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} />
-        <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} />
-        {!useEntraID && (<TextInput label="Sukunimi" source="lastName" />)}
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} />
+        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} sx={{ width: 400 }} />
+        <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} sx={{ width: 400 }} />
+        {!useEntraID && (<TextInput label="Sukunimi" source="lastName" sx={{ width: 400 }} />)}
+        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
         <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
       </SimpleForm>
     </Edit >

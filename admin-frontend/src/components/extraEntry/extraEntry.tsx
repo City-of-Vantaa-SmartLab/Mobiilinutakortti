@@ -25,6 +25,7 @@ import {
     EditProps
 } from 'react-admin';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
 import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from './extraEntryStyledComponents';
 import { extraEntryProvider } from '../../providers';
@@ -81,7 +82,7 @@ export const ExtraEntryList = (props: ListProps) => {
             <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
           </CardContent>
         </Card>
-        <List title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} exporter={false} {...props}
+        <List sx={{ mt: 2 }} title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} exporter={false} {...props}
             filterDefaultValues={{ entryPermitType: -2, extraEntryType: -2 }}>
             <Datagrid bulkActionButtons={false} rowClick={false}>
                 <TextField label="Nimi" source="displayName" />
@@ -204,7 +205,11 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                         <td>{status.name}</td>
                                     </tr>
                                     <tr>
-                                        <th><a href={hrefFragmentToJunior(formData.id)}>Muokkaa nuoren tietoja</a></th>
+                                        <th>
+                                            <a href={hrefFragmentToJunior(formData.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <ChildCareIcon /> Muokkaa nuoren tietoja
+                                            </a>
+                                        </th>
                                     </tr>
                                 </tbody>
                             </ExtraEntryTable>

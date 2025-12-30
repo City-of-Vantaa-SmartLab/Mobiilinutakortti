@@ -5,6 +5,7 @@ import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 import useAdminPermission from '../hooks/useAdminPermission';
+import { Box } from '@mui/material';
 
 export const LandingPage = () => {
   const notify = useNotify();
@@ -66,36 +67,38 @@ export const LandingPage = () => {
   return !isSignedIn ? null : (
     <div style={{marginLeft: '20%', marginTop: '3em'}}>
       <p>Tervetuloa {userInfo.current?.firstName}!</p>
-      <div>Jatka nuorten&nbsp;
+      <div>Jatka&nbsp;
         <button style={{
           background: 'none',
           border: 'none',
           color: '-webkit-link',
           cursor: 'pointer',
           fontSize: '1rem',
-          padding: '0',
-          textDecoration: 'underline' }}
+          padding: '0' }}
           onClick={listSelectedClubJuniors}>
-          listaukseen nuorisotilalle
+          nuorten listaukseen nuorisotilalle
         </button>
-        <select ref={dropdownRef} onChange={handleYouthClubChange} style={{fontSize: '1rem', marginLeft: '0.5rem', marginTop: '1rem'}}>
+        <select ref={dropdownRef} onChange={handleYouthClubChange} style={{fontSize: '1rem', marginLeft: '0.5rem', marginTop: '1rem', marginRight: '0.5rem'}}>
           <option key='' value='-1'></option>
           {youthClubs.map(yc => (
             <option key={yc.label} value={yc.value}>{yc.label}</option>
           ))}
         </select>
-        {selectedYouthClub.toString() !== '-1' && (<button style={{
-          marginLeft: '0.5rem',
-          background: 'none',
-          border: 'none',
-          color: '-webkit-link',
-          cursor: 'pointer',
-          fontSize: '1rem',
-          padding: '0',
-          textDecoration: 'underline' }}
-          onClick={setDefaultYouthClub}>
-          (aseta valittu oletukseksi)
-        </button>)}
+        {selectedYouthClub.toString() !== '-1' && (
+          <Box component="span" sx={{ whiteSpace: 'nowrap' }}>(
+            <button style={{
+              background: 'none',
+                border: 'none',
+                color: '-webkit-link',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                padding: '0'
+              }}
+              onClick={setDefaultYouthClub}>
+              💾 aseta oletukseksi
+            </button>
+            )</Box>
+        )}
       </div>
       <p>tai listaa <a href={hrefFragmentToJunior()}>kaikki nuoret</a>.</p>
       {(useEntraID || userInfo.current?.passwordLastChanged) ? null : (<div style={{marginTop: '3em'}}>

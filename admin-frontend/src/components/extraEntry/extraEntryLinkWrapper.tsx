@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExtraEntryLink } from './extraEntryStyledComponents';
 import { hrefFragmentToExtraEntry } from '../../utils';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 interface ExtraEntryLinkWrapperProps {
     juniorId: string;
@@ -8,8 +9,8 @@ interface ExtraEntryLinkWrapperProps {
 
 const ExtraEntryLinkWrapper: React.FC<ExtraEntryLinkWrapperProps> = ({ juniorId }) => {
     return (
-        <ExtraEntryLink href={hrefFragmentToExtraEntry(juniorId)}>
-            Muokkaa nuoren lisämerkintöjä
+        <ExtraEntryLink href={hrefFragmentToExtraEntry(juniorId)} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <LibraryAddIcon /> Muokkaa nuoren lisämerkintöjä
         </ExtraEntryLink>
     );
 };
