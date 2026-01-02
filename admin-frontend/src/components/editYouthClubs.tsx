@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   List,
   Edit,
@@ -16,7 +15,7 @@ import {
   EditProps,
   useRecordContext
 } from 'react-admin';
-import { Divider, Box } from '@mui/material';
+import { Divider } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const StatusHelperText = () => (

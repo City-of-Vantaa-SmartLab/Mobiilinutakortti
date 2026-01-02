@@ -11,6 +11,7 @@ import EditLocationIcon from '@mui/icons-material/EditLocation';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import BoltIcon from '@mui/icons-material/Bolt';
+import EventIcon from '@mui/icons-material/Event';
 import useAdminPermission from './hooks/useAdminPermission';
 
 const MenuContainer = styled.div`
@@ -33,6 +34,12 @@ const Menu = () => {
         primaryText="Nuorisotilat"
         leftIcon={<LocationOnIcon />}
       />
+      {<MenuItemLink
+          to="/events"
+          primaryText="Tapahtumat"
+          leftIcon={<EventIcon/>}
+        />
+      }
       {isAdmin &&
         <MenuItemLink
           to="/editYouthClubs"

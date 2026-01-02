@@ -1,7 +1,8 @@
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { Club } from './club.entity';
-import { Junior } from '../../junior/entities';
-import { ConfigHandler } from '../../configHandler';
+import { Club } from '../club/entities/club.entity';
+import { Junior } from '../junior/entities';
+import { Event } from '../event/event.entity';
+import { ConfigHandler } from '../configHandler';
 
 @Entity()
 export class CheckIn {
@@ -17,8 +18,11 @@ export class CheckIn {
     )
     checkInTime: Date;
 
-    @ManyToOne(() => Club)
-    club: Club;
+    @ManyToOne(() => Club, { nullable: true })
+    club: Club | null;
+
+    @ManyToOne(() => Event, { nullable: true })
+    event: Event | null;
 
     @ManyToOne(() => Junior, junior => junior.checkIns, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     junior: Junior;

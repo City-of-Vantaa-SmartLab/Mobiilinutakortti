@@ -75,7 +75,7 @@ const CheckInLogView = () => {
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInLog;
             const body = JSON.stringify({
-                clubId: youthClubId,
+                targetId: youthClubId,
                 date: date
             });
             const options = {

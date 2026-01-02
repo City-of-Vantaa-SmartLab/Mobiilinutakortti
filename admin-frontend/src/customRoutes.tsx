@@ -6,6 +6,7 @@ const ChangePasswordView = lazy(() => import('./components/changePassword'));
 const CheckInView = lazy(() => import('./components/checkIn/checkIn'));
 const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'));
 const CheckInLogView = lazy(() => import('./components/checkInLog'));
+const EventsList = lazy(() => import('./components/events'));
 
 const NewSeason = lazy(() => import('./components/newSeason'));
 const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'));
@@ -23,7 +24,8 @@ export const normalRoutes = [
     <Route path="/statistics/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInStatisticsView /></Suspense>} />,
     <Route path="/log/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInLogView /></Suspense>} />,
     <Route path="/password" element={<ChangePasswordView />} />,
-    <Route path="/quickSearch" element={<Suspense fallback={<Loading />}><QuickSearch /></Suspense>} />
+    <Route path="/quickSearch" element={<Suspense fallback={<Loading />}><QuickSearch /></Suspense>} />,
+    <Route path="/events" element={<Suspense fallback={<Loading />}><EventsList /></Suspense>} />
 ];
 
 export const adminRoutes = [

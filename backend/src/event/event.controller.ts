@@ -9,16 +9,15 @@ import {
     Body,
     UseInterceptors
 } from '@nestjs/common';
-import { ClubService } from './club.service';
+import { EventService } from './event.service';
 import { SpamGuardService } from '../spamGuard/spamGuard.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../roles/roles.guard';
 import { SessionGuard } from '../session/session.guard';
 import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
-import { ClubEditInterceptor } from './interceptors/edit.interceptor';
-import { EditClubDto } from './dto/edit.dto';
-import { ClubViewModel } from './vm';
+import { EditEventDto } from './edit.dto';
+import { EventViewModel } from './event.vm';
 import { CheckInResponseViewModel, CheckInStatsViewModel, CheckInLogViewModel, failReason } from '../checkIn/vm';
 import { CheckInDto } from '../checkIn/checkIn.dto';
 import { CheckInStatsSettingsDto } from '../checkIn/checkInStatsSettings.dto';
@@ -27,28 +26,19 @@ import { CheckIn } from '../checkIn/checkIn.entity';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller(`${content.Routes.api}/club`)
-@ApiTags('Club')
-export class ClubController {
+@Controller(`${content.Routes.api}/event`)
+@ApiTags('Event')
+export class EventController {
 
     constructor(
-        private readonly clubService: ClubService,
+        private readonly eventService: EventService,
         private readonly spamGuardService: SpamGuardService
     ) { }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Get('list')
-    async getAllClubs(): Promise<ClubViewModel[]> {
-        return await this.clubService.getClubs();
-    }
-
-    @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.YOUTHWORKER)
-    @Get('checkIn/:id')
-    @ApiBearerAuth('youthWorker')
-    async getGetClubCheckins(@Param('id') clubId: number): Promise<CheckIn[]> {
-        return await this.clubService.getCheckInsForClub(clubId);
+    async getAllEvents(): Promise<EventViewModel[]> {
+        return await this.eventService.getEvents();
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -59,7 +49,7 @@ export class ClubController {
 
         canCheckIn &&= this.spamGuardService.checkIn(userData.juniorId, userData.targetId);
         if (canCheckIn) {
-            canCheckIn &&= await this.clubService.checkInJunior(userData);
+            canCheckIn &&= await this.eventService.checkInJunior(userData);
         } else {
             return new CheckInResponseViewModel(false, failReason.SPAM);
         }
@@ -72,10 +62,10 @@ export class ClubController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('checkInLog')
     @ApiBearerAuth('youthWorker')
-    async getYouthClubCheckIns(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInLogViewModel> {
+    async getEventCheckIns(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInLogViewModel> {
         return new CheckInLogViewModel(
-            (await this.clubService.getClubById(settings.targetId)).name,
-            await this.clubService.getCheckIns(settings));
+            (await this.eventService.getEventById(settings.targetId)).name,
+            await this.eventService.getCheckIns(settings.targetId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -83,26 +73,17 @@ export class ClubController {
     @AllowedRoles(Roles.ADMIN)
     @Get(':id')
     @ApiBearerAuth('admin')
-    async getOneClub(@Param('id') id: number): Promise<ClubViewModel> {
-        return new ClubViewModel(await this.clubService.getClubById(id));
+    async getOneEvent(@Param('id') id: number): Promise<EventViewModel> {
+        return new EventViewModel(await this.eventService.getEventById(id));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.ADMIN)
-    @UseInterceptors(ClubEditInterceptor)
+    //@UseInterceptors(EventEditInterceptor)
     @Post('edit')
     @ApiBearerAuth('admin')
-    async edit(@Body() clubData: EditClubDto): Promise<Message> {
-        return new Message(await this.clubService.editClub(clubData));
-    }
-
-    @UsePipes(new ValidationPipe({ transform: true }))
-    @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
-    @AllowedRoles(Roles.YOUTHWORKER)
-    @Post('checkInStats')
-    @ApiBearerAuth('youthWorker')
-    async getCheckInStatistics(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInStatsViewModel> {
-        return await this.clubService.generateStats(settings);
+    async edit(@Body() EventData: EditEventDto): Promise<Message> {
+        return new Message(await this.eventService.editEvent(EventData));
     }
 }

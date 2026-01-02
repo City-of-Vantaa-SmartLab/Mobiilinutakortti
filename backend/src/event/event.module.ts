@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ClubService } from './club.service';
+import { ClubService } from '../club/club.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
-import { Club } from './entities';
+import { Club } from '../club/entities';
 import { CheckIn } from '../checkIn/checkIn.entity';
-import { ClubController } from './club.controller';
+import { ClubController } from '../club/club.controller';
 import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessionDb.module';
