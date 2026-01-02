@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   List,
   Edit,
@@ -16,7 +15,7 @@ import {
   EditProps,
   useRecordContext
 } from 'react-admin';
-import { Divider, Box } from '@mui/material';
+import { Divider } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
 
 const StatusHelperText = () => (
@@ -40,7 +39,7 @@ const CustomToolbar = (props: any) => (
 
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
-export const EditYouthClubsList = (props: ListProps) => {
+export const EditYouthClubList = (props: ListProps) => {
   useAutoLogout();
   return (
   <List title="Nuorisotilat" exporter={false} pagination={false} {...props}>
@@ -62,7 +61,7 @@ const YouthClubEditTitle = () => {
   return <span>{`Muokkaa tietoja: ${record.name}`}</span>;
 };
 
-export const EditYouthClubs = (props: EditProps) => {
+export const EditYouthClub = (props: EditProps) => {
   useAutoLogout();
   return (
   <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic" redirect="list">

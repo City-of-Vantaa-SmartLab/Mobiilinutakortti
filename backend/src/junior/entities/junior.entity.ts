@@ -1,4 +1,4 @@
-import { CheckIn } from '../../club/entities';
+import { CheckIn } from '../../checkIn/checkIn.entity';
 import { ConfigHandler } from '../../configHandler';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { ExtraEntry, EntryPermit } from '../../extraEntry/entities';

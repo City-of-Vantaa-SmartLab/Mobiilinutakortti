@@ -70,7 +70,7 @@ const CheckInStatisticsView = () => {
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInStats;
             const body = JSON.stringify({
-                clubId: youthClubId,
+                targetId: youthClubId,
                 date: date
             });
             const options = {

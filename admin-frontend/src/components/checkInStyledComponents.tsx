@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, TextField, DialogTitle } from '@mui/mate
 import styled from 'styled-components';
 import { Field } from 'react-final-form';
 import React from 'react';
+import { CalendarHelper } from './calendarHelper';
 
 export const Container = styled.div`
     height: 100%;
@@ -52,30 +53,14 @@ export const CheckInLogTextField = styled(TextField)`
 export const QueryDatePickerField: React.FC = () => (
     <Field name="queryDate" defaultValue={new Date().toISOString().split('T')[0]}>
         {({ input }) => (
-            <div style={{ position: 'relative' }}>
-                <TextField
-                    {...input}
-                    label="Päivämäärä"
-                    type="date"
-                    slotProps={{ inputLabel: { shrink: true } }}
-                    sx={{ width: 'fit-content' }}
-                />
-                <div
-                    onClick={() => {
-                        const dateInput = document.querySelector(`input[name="${input.name}"]`) as HTMLInputElement;
-                        dateInput?.showPicker?.();
-                    }}
-                    style={{
-                        cursor: 'pointer',
-                        color: '#1976d2',
-                        textDecoration: 'underline',
-                        fontSize: '0.875rem',
-                        marginTop: '4px'
-                    }}
-                >
-                    Avaa kalenteri
-                </div>
-            </div>
+            <TextField
+                {...input}
+                label="Päivämäärä"
+                type="date"
+                slotProps={{ inputLabel: { shrink: true } }}
+                sx={{ width: 'fit-content' }}
+                helperText={<CalendarHelper />}
+            />
         )}
     </Field>
 );

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { Messages } from '../classes/messages';
-import { KompassiIntegration } from './';
+import { KompassiIntegration } from '../../kompassi/kompassiIntegration.entity';
 
 @Entity()
 export class Club {

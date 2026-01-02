@@ -1,12 +1,12 @@
-import { CheckIn } from '../entities';
+import { CheckIn } from '../checkIn.entity';
 import { formatName } from '../../common/helpers';
 
 export class CheckInLogViewModel {
-    clubName: string;
+    targetName: string;
     juniors: JuniorInformation[];
 
-    constructor(clubName: string, checkIns: CheckIn[]) {
-        this.clubName = clubName;
+    constructor(targetName: string, checkIns: CheckIn[]) {
+        this.targetName = targetName;
 
         checkIns.sort((a, b) => {
             return a.checkInTime.getTime() - b.checkInTime.getTime();
@@ -16,8 +16,8 @@ export class CheckInLogViewModel {
             const dateTime = new Date(checkIn.checkInTime);
             let hours = dateTime.getHours().toString();
             let minutes = dateTime.getMinutes().toString();
-            if (hours.length < 2) { hours = `0${hours}`; }
-            if (minutes.length < 2) { minutes = `0${minutes}`; }
+            if (hours.length < 2) hours = `0${hours}`;
+            if (minutes.length < 2) minutes = `0${minutes}`;
             return {
                 name: formatName(checkIn.junior.firstName, checkIn.junior.lastName, checkIn.junior.nickName),
                 id: checkIn.junior.id,

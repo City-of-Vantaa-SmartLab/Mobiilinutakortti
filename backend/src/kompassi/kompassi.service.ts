@@ -42,6 +42,19 @@ export class KompassiService {
         this.logger.log((userId ? `User ${userId} cleared` : 'Cleared') + ' activities cache.');
     }
 
+    async checkInForKompassiActivity(junior: Junior, activityId: number) {
+        if (!this.kompassiApiUrl ||
+            !this.kompassiApiKey) return;
+
+        try {
+            const ageGroupId = KompassiService.getAgeGroupId(junior);
+            const genderId = KompassiService.getGenderId(junior);
+            await this.checkInForActivity({ activityId, ageGroupId, genderId });
+        } catch (e) {
+            this.logger.error('Error during Kompassi integration: ' + e);
+        }
+    }
+
     async updateKompassiData(junior: Junior, club: Club, numberOfRetries: number = 0) {
         if (!this.kompassiApiUrl ||
             !this.kompassiApiKey ||
@@ -81,9 +94,7 @@ export class KompassiService {
                 this.logger.debug(`Found club ${club.id} activity from in-memory DB` + ((numberOfRetries > 0) ? ` after ${numberOfRetries} retries.` : '.'));
             }
 
-            const ageGroupId = KompassiService.getAgeGroupId(junior);
-            const genderId = KompassiService.getGenderId(junior);
-            await this.checkInForActivity({ activityId, ageGroupId, genderId });
+            await this.checkInForKompassiActivity(junior, activityId);
         } catch (e) {
             this.logger.error('Error during Kompassi integration: ' + e);
 

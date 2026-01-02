@@ -1,6 +1,6 @@
 import { Messages } from '../classes/messages';
 import { Club } from '../entities';
-import { KompassiIntegration } from '../entities';
+import { KompassiIntegration } from '../../kompassi/kompassiIntegration.entity';
 
 export class ClubViewModel {
     id: number;
