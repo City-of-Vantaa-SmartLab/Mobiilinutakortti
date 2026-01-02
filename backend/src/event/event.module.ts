@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ClubService } from './club.service';
+import { EventService } from './event.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
-import { Club } from './entities';
+import { Event } from './event.entity';
 import { CheckIn } from '../checkIn/checkIn.entity';
-import { ClubController } from './club.controller';
+import { EventController } from './event.controller';
 import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionDBModule } from '../session/sessionDb.module';
@@ -15,7 +15,7 @@ import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Junior, Club, CheckIn]),
+    TypeOrmModule.forFeature([Junior, Event, CheckIn]),
     JwtModule.register({
       secret: jwtSecret,
     }),
@@ -25,8 +25,8 @@ import { SpamGuardModule } from '../spamGuard/spamGuard.module';
     KompassiModule,
     SpamGuardModule
   ],
-  providers: [ClubService],
-  controllers: [ClubController],
-  exports: [ClubService]
+  providers: [EventService],
+  controllers: [EventController],
+  exports: [EventService]
 })
-export class ClubModule { }
+export class EventModule { }

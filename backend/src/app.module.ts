@@ -13,6 +13,7 @@ import { RolesModule } from './roles/roles.module';
 import { SessionModule } from './session/session.module';
 import { SessionDBModule } from './session/sessionDb.module';
 import { ClubModule } from './club/club.module';
+import { EventModule } from './event/event.module';
 import { SmsModule } from './sms/sms.module';
 import { RoutersMiddleware } from './middleware/routers.middleware';
 import { ConfigModule } from '@nestjs/config';
@@ -39,6 +40,7 @@ import pino from 'pino';
     SessionModule,
     SessionDBModule,
     ClubModule,
+    EventModule,
     SmsModule,
     SsoModule,
     AnnouncementModule,

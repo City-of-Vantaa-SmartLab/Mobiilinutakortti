@@ -5,6 +5,7 @@ import { TextField } from '@mui/material';
 import { STATE } from '../state';
 import NewSeasonIcon from '@mui/icons-material/Autorenew';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { CalendarHelper } from './calendarHelper';
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -64,17 +65,7 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
           disabled={disabled}
           value={date}
           onChange={(event) => setDate(event.currentTarget.value)}
-          helperText={
-            <span
-              onClick={(e) => {
-                const input = e.currentTarget.closest('.MuiFormControl-root')?.querySelector('input[type="date"]') as HTMLInputElement;
-                input?.showPicker?.();
-              }}
-              style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underline' }}
-            >
-              Avaa kalenteri
-            </span>
-          }
+          helperText={<CalendarHelper />}
           sx={{ mb: 1 }}
         ></TextField>
         <div className="buttons-container">

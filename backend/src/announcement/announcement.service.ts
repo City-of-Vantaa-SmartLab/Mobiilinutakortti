@@ -30,7 +30,7 @@ export class AnnouncementService {
 
     private async getRecipientsByYouthClub(youthClubId: number): Promise<Junior[]> {
         const twoWeeksInSeconds = 1209600;
-        const checkIns = await this.clubService.getCheckins({clubId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
+        const checkIns = await this.clubService.getCheckIns({targetId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
         const checkedInJuniors = checkIns.map((checkIn) => {
             return checkIn.junior;
         });

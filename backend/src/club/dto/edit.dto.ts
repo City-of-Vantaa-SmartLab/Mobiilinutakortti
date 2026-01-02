@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { Messages } from '../classes/messages';
-import { KompassiIntegration } from '../entities';
+import { KompassiIntegration } from '../../kompassi/kompassiIntegration.entity';
 
 export class EditClubDto {
     @IsNotEmpty()

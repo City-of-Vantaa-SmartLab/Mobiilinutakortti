@@ -22,7 +22,7 @@ import useAutoLogout from '../hooks/useAutoLogout';
 import { hrefFragmentToJunior } from '../utils';
 
 interface CheckInLogViewModel {
-    clubName: string;
+    targetName: string;
     juniors: JuniorInformation[];
 }
 
@@ -75,7 +75,7 @@ const CheckInLogView = () => {
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInLog;
             const body = JSON.stringify({
-                clubId: youthClubId,
+                targetId: youthClubId,
                 date: date
             });
             const options = {
@@ -90,7 +90,7 @@ const CheckInLogView = () => {
                         return;
                     }
                     setSearchDate(date.toLocaleDateString());
-                    setClubName(response.clubName);
+                    setClubName(response.targetName);
                     populateTableRowData(response.juniors);
                 });
         }

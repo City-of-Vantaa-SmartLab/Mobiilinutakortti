@@ -36,6 +36,7 @@ import { useSmartAutoLogout } from '../hooks/useSmartAutoLogout';
 import { PhoneNumberField } from './phoneNumberField';
 import useAdminPermission from '../hooks/useAdminPermission';
 import api from '../api';
+import { CalendarHelper } from './calendarHelper';
 
 const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'));
 
@@ -262,17 +263,7 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
                 source="birthday"
                 validate={[required(), ageValidator]}
                 onFocus={smartRefresh}
-                helperText={
-                    <span
-                        onClick={(e) => {
-                            const input = e.currentTarget.closest('.MuiFormControl-root')?.querySelector('input[type="date"]') as HTMLInputElement;
-                            input?.showPicker?.();
-                        }}
-                        style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underline' }}
-                    >
-                        Avaa kalenteri
-                    </span>
-                }
+                helperText={<CalendarHelper />}
                 sx={{ mb: 4, width: 400 }}
             />
             <TextInput label="Puhelinnumero" source="phoneNumber" validate={required()} helperText={false} onFocus={smartRefresh} sx={{ width: 400 }} />

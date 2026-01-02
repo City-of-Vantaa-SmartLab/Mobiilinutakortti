@@ -1,6 +1,7 @@
 import { AppModule } from '../app.module';
-import { CheckInStatsSettingsDto } from './dto';
-import { Club, CheckIn } from './entities';
+import { CheckInQueryDto } from '../checkIn/checkInQuery.dto';
+import { Club } from './entities';
+import { CheckIn } from '../checkIn/checkIn.entity';
 import { ClubModule } from './club.module';
 import { ClubService } from './club.service';
 import { DataSource } from 'typeorm';
@@ -117,7 +118,7 @@ describe('ClubService', () => {
   // If you change junior used in this test, do same to test below, they are chained
   describe('CheckInJunior', () => {
     it('Should return true when successful', async () => {
-      const result = await service.checkInJunior({ juniorId: testJuniors[0].id, clubId: testClub.id, securityCode: null });
+      const result = await service.checkInJunior({ juniorId: testJuniors[0].id, targetId: testClub.id, securityCode: null });
       expect(result).toBeTruthy();
     });
   });
@@ -138,8 +139,8 @@ describe('ClubService', () => {
 
   describe('getCheckinsForClub', () => {
     it('Should return a list of all juniors who have checked in at the current club', async () => {
-      await service.checkInJunior({ juniorId: testJuniors[1].id, clubId: testClub.id, securityCode: null });
-      const checkIns = await service.getCheckinsForClub(testClub.id);
+      await service.checkInJunior({ juniorId: testJuniors[1].id, targetId: testClub.id, securityCode: null });
+      const checkIns = await service.getCheckInsForClub(testClub.id);
       const containsJunior1 = checkIns.some(c => c.junior.id === testJuniors[0].id && c.club.id === testClub.id);
       const containsJunior2 = checkIns.some(c => c.junior.id === testJuniors[1].id && c.club.id === testClub.id);
       expect(containsJunior1 && containsJunior2).toBeTruthy();
@@ -148,8 +149,8 @@ describe('ClubService', () => {
 
   describe('getCheckins', () => {
     it('Should return a list of all checkins for the given club on the given date', async () => {
-      const testClubDto = { clubId: testClub.id, date: new Date().toISOString() } as CheckInStatsSettingsDto;
-      const results = await service.getCheckins(testClubDto);
+      const testClubDto = { targetId: testClub.id, date: new Date().toISOString() } as CheckInQueryDto;
+      const results = await service.getCheckIns(testClubDto);
       expect(results.length > 0);
     });
   });

@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CheckInDto {
     @IsNotEmpty()
-    readonly clubId: number;
+    readonly targetId: number;
 
     @IsNotEmpty()
     readonly juniorId: string;

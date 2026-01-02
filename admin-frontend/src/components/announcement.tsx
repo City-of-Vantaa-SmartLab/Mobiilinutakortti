@@ -64,7 +64,7 @@ const MessageSectionForLanguage = (props: { langCode: string }) => {
 };
 
 const AnnouncementCreateTitle = () => (
-    <span>Lähetä tiedotusviesti</span>
+    <span>Tiedotus</span>
 );
 
 const AnnouncementCreateHelperText = ({msgType}) => (

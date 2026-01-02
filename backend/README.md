@@ -82,10 +82,6 @@ If you are not using Microsoft Entra ID to login users (as is by default; see en
 
 If you are using Microsoft Entra ID to login users, admin privileges are added on user login based on whether the user belongs to a group that has a role called 'Admin'. Configure the two groups (youthworkers and admins) in Entra accordingly, adding the 'Admin' role to the group for admins.
 
-## Testing SMS functionality
-
-To test SMS functionality locally, copy `.env.template` file to `.env` and set the Telia username/password/user variables.
-
 ## Environment variables / secrets
 
 In the following list the terms "IdP metadata XML" and "metadata XML" are used. The latter refers to service provider metadata, i.e. for this application. The metadata XML refers to the XML file used to register the service to Suomi.fi. Similarly, IdP metadata XML is the identity provider's (Suomi.fi) metadata file.

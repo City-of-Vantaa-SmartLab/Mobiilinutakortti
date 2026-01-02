@@ -143,7 +143,7 @@ const CheckInView = () => {
 
       const url = api.youthClub.checkIn;
       const body = JSON.stringify({
-        clubId,
+        targetId: clubId,
         securityCode,
         juniorId: detectedCodes[0].rawValue
       });
