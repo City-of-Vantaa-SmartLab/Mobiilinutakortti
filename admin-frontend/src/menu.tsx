@@ -82,12 +82,11 @@ const Menu = () => {
           leftIcon={<SettingsApplicationsIcon />}
         />
       }
-      {isAdmin && <MenuItemLink
-          to="/quickSearch"
-          primaryText="Pikahaku"
-          leftIcon={<BoltIcon/>}
-        />
-      }
+      <MenuItemLink
+        to="/quickSearch"
+        primaryText="Pikahaku"
+        leftIcon={<BoltIcon/>}
+      />
     </MenuContainer>
   );
 };
