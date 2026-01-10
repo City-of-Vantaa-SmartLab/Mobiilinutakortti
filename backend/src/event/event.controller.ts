@@ -81,8 +81,8 @@ export class EventController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('create')
     @ApiBearerAuth('youthWorker')
-    async create(@Body() eventData: CreateEventDto): Promise<EventViewModel> {
-        const createdEvent = await this.eventService.createEvent(eventData);
+    async create(@YouthWorker() youthWorker: { userId: string }, @Body() eventData: CreateEventDto): Promise<EventViewModel> {
+        const createdEvent = await this.eventService.createEvent(eventData, youthWorker.userId);
         return new EventViewModel(createdEvent);
     }
 
@@ -101,8 +101,8 @@ export class EventController {
     @UseInterceptors(EventEditInterceptor)
     @Post('edit')
     @ApiBearerAuth('youthWorker')
-    async edit(@Body() EventData: EditEventDto): Promise<Message> {
-        return new Message(await this.eventService.editEvent(EventData));
+    async edit(@YouthWorker() youthWorker: { userId: string }, @Body() EventData: EditEventDto): Promise<Message> {
+        return new Message(await this.eventService.editEvent(EventData, youthWorker.userId));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -110,7 +110,7 @@ export class EventController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('delete')
     @ApiBearerAuth('youthWorker')
-    async delete(@Body() data: { id: number }): Promise<Message> {
-        return new Message(await this.eventService.deleteEvent(data.id));
+    async delete(@YouthWorker() youthWorker: { userId: string }, @Body() data: { id: number }): Promise<Message> {
+        return new Message(await this.eventService.deleteEvent(data.id, youthWorker.userId));
     }
 }

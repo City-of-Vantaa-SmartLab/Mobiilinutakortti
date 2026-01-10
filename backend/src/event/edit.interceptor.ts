@@ -15,7 +15,10 @@ export class EventEditInterceptor implements NestInterceptor {
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const body = request.body as EditEventDto;
-        const eventToEdit = await this.eventRepo.findOne({ where: { id: body.id } });
+        const eventToEdit = await this.eventRepo.findOne({
+            where: { id: body.id },
+            relations: ['extraEntryType']
+        });
         if (!eventToEdit) { throw new BadRequestException(content.EventNotFound); };
 
         let dataChanged = false;
@@ -27,6 +30,8 @@ export class EventEditInterceptor implements NestInterceptor {
         dataChanged ||= bodyDate !== eventDate;
 
         dataChanged ||= body.integrationId !== eventToEdit.integrationId;
+
+        dataChanged ||= body.hasExtraEntry !== !!eventToEdit.extraEntryType;
 
         if (!dataChanged) { throw new BadRequestException(content.DataNotChanged); };
         return next.handle();

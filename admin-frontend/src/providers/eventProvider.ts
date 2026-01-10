@@ -34,7 +34,8 @@ export const eventProvider = {
             name: params.data.name,
             description: params.data.description || null,
             startDate: params.data.startDate || null,
-            integrationId: params.data.integrationId || null
+            integrationId: params.data.integrationId || null,
+            hasExtraEntry: params.data.hasExtraEntry || false
         };
 
         const jsonData = JSON.stringify(data);
@@ -57,7 +58,8 @@ export const eventProvider = {
             name: params.data.name,
             description: params.data.description || null,
             startDate: params.data.startDate || null,
-            integrationId: params.data.integrationId || null
+            integrationId: params.data.integrationId || null,
+            hasExtraEntry: params.data.hasExtraEntry || false
         };
 
         const jsonData = JSON.stringify(data);

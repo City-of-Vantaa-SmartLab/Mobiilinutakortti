@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { EntryType } from 'src/extraEntry/entities';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity()
 export class Event {
@@ -16,4 +17,8 @@ export class Event {
 
     @Column({ nullable: true  })
     integrationId: number;
+
+    @OneToOne(_ => EntryType, { cascade: true, nullable: true })
+    @JoinColumn()
+    extraEntryType: EntryType;
 }

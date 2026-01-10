@@ -6,6 +6,7 @@ export class EventViewModel {
     description: string;
     startDate: Date;
     integrationId: number;
+    hasExtraEntry: boolean;
 
     constructor(event: Event) {
         this.id = event.id;
@@ -13,5 +14,6 @@ export class EventViewModel {
         this.description = event.description;
         this.startDate = event.startDate;
         this.integrationId = event.integrationId;
+        this.hasExtraEntry = !!event.extraEntryType;
     }
 }

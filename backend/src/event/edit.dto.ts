@@ -7,4 +7,6 @@ export class EditEventDto {
     description: string | null;
     startDate: Date | null;
     integrationId: number | null;
+    hasExtraEntry: boolean;
+    readonly extraEntryTypeId: number | null;
 }

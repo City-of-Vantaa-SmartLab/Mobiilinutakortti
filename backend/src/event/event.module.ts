@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Junior } from '../junior/entities';
 import { Event } from './event.entity';
 import { CheckIn } from '../checkIn/checkIn.entity';
+import { EntryType, ExtraEntry } from '../extraEntry/entities';
+import { EntryPermit } from '../extraEntry/entities/entryPermit.entity';
 import { EventController } from './event.controller';
 import { jwtSecret } from '../authentication/authentication.consts';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,7 +17,7 @@ import { SpamGuardModule } from '../spamGuard/spamGuard.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Junior, Event, CheckIn]),
+    TypeOrmModule.forFeature([Junior, Event, CheckIn, EntryType, ExtraEntry, EntryPermit]),
     JwtModule.register({
       secret: jwtSecret,
     }),

@@ -6,4 +6,5 @@ export class CreateEventDto {
     description: string | null;
     startDate: Date | null;
     integrationId: number | null;
+    hasExtraEntry: boolean;
 }

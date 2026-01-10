@@ -16,6 +16,7 @@ import {
   TextInput,
   DateInput,
   NumberInput,
+  BooleanInput,
   required
 } from 'react-admin';
 import { Divider } from '@mui/material';
@@ -41,6 +42,7 @@ interface ButtonProps {
 }
 
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
+const enableExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 
 export const EventCreate = (props: CreateProps) => {
   return (
@@ -81,6 +83,14 @@ const EventForm = () => {
         helperText={<CalendarHelper />}
         sx={{ width: 400 }}
       />
+      {enableExtraEntries && (
+        <BooleanInput
+          label="Osallistuminen on luvanvaraista"
+          source="hasExtraEntry"
+          defaultValue={false}
+          sx={{ mt: 2 }}
+        />
+      )}
       {kompassiIntegration && (<>
         <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
         <NumberInput
