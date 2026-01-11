@@ -1,6 +1,8 @@
 FROM node:24.11.0-alpine
 
-RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
+# The TZ environment variable affects the backend log timestamps.
+ENV TZ=Europe/Helsinki
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/$TZ /etc/localtime
 
 ARG VITE_ENABLE_EXTRA_ENTRIES
 ENV VITE_ENABLE_EXTRA_ENTRIES=$VITE_ENABLE_EXTRA_ENTRIES
