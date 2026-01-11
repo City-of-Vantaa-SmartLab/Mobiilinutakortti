@@ -11,7 +11,7 @@ import {
     CheckInLogCard,
     CheckInLogCardHeader,
     CheckInLogCardContent
-} from './checkInStyledComponents';
+} from './styledComponents';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';

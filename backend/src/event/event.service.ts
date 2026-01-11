@@ -35,7 +35,7 @@ export class EventService {
         private readonly kompassiService: KompassiService
     ) {}
 
-    private getExtraEntryTypeName(eventName: string, startDate?: Date | null): string {
+    private getPermitName(eventName: string, startDate?: Date | null): string {
         if (startDate) {
             const formattedDate = new Date(startDate).toLocaleDateString('fi-FI');
             return `Tapahtuma ${formattedDate}: ${eventName}`;
@@ -45,14 +45,14 @@ export class EventService {
 
     async getEventById(EventId: number): Promise<Event> {
         return (await this.eventRepo.createQueryBuilder('Event')
-            .leftJoinAndSelect('Event.extraEntryType', 'extraEntryType')
+            .leftJoinAndSelect('Event.permit', 'permit')
             .where({ id: EventId })
             .getOne());
     }
 
     async getEvents(): Promise<EventViewModel[]> {
         return (await this.eventRepo.createQueryBuilder('Event')
-            .leftJoinAndSelect('Event.extraEntryType', 'extraEntryType')
+            .leftJoinAndSelect('Event.permit', 'permit')
             .getMany())
             .map(Event => new EventViewModel(Event));
     }
@@ -61,6 +61,32 @@ export class EventService {
         const event = await this.eventRepo.findOneBy({ id: eventId });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
         return await this.checkInRepo.find({ where: { event }, relations: ['event', 'junior'] });
+    }
+
+    async checkJuniorHasPermit(checkInData: CheckInDto): Promise<boolean> {
+        const [junior, event] = await Promise.all([
+            this.juniorRepo.findOne({
+                where: { id: checkInData.juniorId },
+                relations: ['entryPermits', 'entryPermits.entryType']
+            }),
+            this.eventRepo.createQueryBuilder('event')
+                .leftJoinAndSelect('event.permit', 'permit')
+                .where({ id: checkInData.targetId })
+                .getOne()
+        ]);
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        if (!event) { throw new BadRequestException(content.EventNotFound); }
+
+        // If event requires an entry permit, check the junior has it.
+        if (event.permit) {
+            const hasPermit = junior.entryPermits?.some(
+                permit => permit.entryType.id === event.permit.id
+            );
+            return hasPermit;
+        }
+
+        // Event doesn't require a permit.
+        return true;
     }
 
     async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
@@ -82,14 +108,13 @@ export class EventService {
     }
 
     async createEvent(data: CreateEventDto, userId?: string): Promise<Event> {
-        this.logger.log({ hasExtraEntry: data.hasExtraEntry, startDate: data.startDate, name: data.name }, 'Creating event with data');
-        let extraEntryType: EntryType | undefined;
+        let permit: EntryType | undefined;
 
-        if (data.hasExtraEntry) {
-            const typeName = this.getExtraEntryTypeName(data.name, data.startDate);
-            this.logger.log({ typeName }, 'Creating extra entry type');
-            extraEntryType = {
-                name: typeName,
+        if (data.needsPermit) {
+            const permitName = this.getPermitName(data.name, data.startDate);
+            this.logger.debug({ typeName: permitName }, 'Creating entry type');
+            permit = {
+                name: permitName,
                 expiryAge: 99
             } as EntryType;
         }
@@ -99,7 +124,7 @@ export class EventService {
             description: data.description,
             startDate: data.startDate,
             integrationId: data.integrationId,
-            extraEntryType: extraEntryType
+            permit: permit
         });
 
         await this.eventRepo.save(newEvent);
@@ -110,28 +135,27 @@ export class EventService {
     async editEvent(data: EditEventDto, userId?: string): Promise<string> {
         const event = await this.eventRepo.findOne({
             where: { id: data.id },
-            relations: ['extraEntryType']
+            relations: ['permit']
         });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
 
-        const hadExtraEntry = !!event.extraEntryType;
-        const willHaveExtraEntry = data.hasExtraEntry;
+        const hadPermit = !!event.permit;
 
-        if (!hadExtraEntry && willHaveExtraEntry) {
-            const newExtraEntryType = this.entryTypeRepo.create({
-                name: this.getExtraEntryTypeName(data.name, data.startDate),
+        if (!hadPermit && data.needsPermit) {
+            const newPermit = this.entryTypeRepo.create({
+                name: this.getPermitName(data.name, data.startDate),
                 expiryAge: 99
             });
-            event.extraEntryType = await this.entryTypeRepo.save(newExtraEntryType);
-        } else if (hadExtraEntry && !willHaveExtraEntry) {
+            event.permit = await this.entryTypeRepo.save(newPermit);
+        } else if (hadPermit && !data.needsPermit) {
 
-            const extraEntryTypeId = event.extraEntryType.id;
+            const permitId = event.permit.id;
             const [extraEntriesCount, entryPermitsCount] = await Promise.all([
                 this.extraEntryRepo.count({
-                    where: { entryType: { id: extraEntryTypeId } }
+                    where: { entryType: { id: permitId } }
                 }),
                 this.entryPermitRepo.count({
-                    where: { entryType: { id: extraEntryTypeId } }
+                    where: { entryType: { id: permitId } }
                 })
             ]);
 
@@ -139,14 +163,14 @@ export class EventService {
                 throw new BadRequestException(content.ExtraEntryTypeInUse);
             }
 
-            const entryTypeToRemove = event.extraEntryType;
-            event.extraEntryType = null;
+            const entryTypeToRemove = event.permit;
+            event.permit = null;
             await this.eventRepo.save(event);
             await this.entryTypeRepo.remove(entryTypeToRemove);
 
-        } else if (hadExtraEntry && willHaveExtraEntry) {
-            event.extraEntryType.name = this.getExtraEntryTypeName(data.name, data.startDate);
-            await this.entryTypeRepo.save(event.extraEntryType);
+        } else if (hadPermit && data.needsPermit) {
+            event.permit.name = this.getPermitName(data.name, data.startDate);
+            await this.entryTypeRepo.save(event.permit);
         }
 
         event.name = data.name;
@@ -162,19 +186,23 @@ export class EventService {
     async deleteEvent(id: number, userId?: string): Promise<string> {
         const event = await this.eventRepo.findOne({
             where: { id },
-            relations: ['extraEntryType']
+            relations: ['permit']
         });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
 
-        // If the event has an associated extra entry type, delete all related entries.
-        if (event.extraEntryType) {
-            const extraEntryTypeId = event.extraEntryType.id;
-            await this.extraEntryRepo.delete({ entryType: { id: extraEntryTypeId } });
-            await this.entryPermitRepo.delete({ entryType: { id: extraEntryTypeId } });
-            await this.entryTypeRepo.remove(event.extraEntryType);
+        // No need for a check-in log anymore, either.
+        await this.checkInRepo.delete({ event: { id } });
+
+        const associatedPermit = event.permit;
+        await this.eventRepo.remove(event);
+
+        // If the event has an associated entry type, delete all related entries and permits.
+        if (associatedPermit) {
+            await this.extraEntryRepo.delete({ entryType: { id: associatedPermit.id } });
+            await this.entryPermitRepo.delete({ entryType: { id: associatedPermit.id } });
+            await this.entryTypeRepo.remove(associatedPermit);
         }
 
-        await this.eventRepo.remove(event);
         this.logger.log({ userId, eventId: id }, 'User deleted event.');
         return `${id} ${content.Deleted}`;
     }

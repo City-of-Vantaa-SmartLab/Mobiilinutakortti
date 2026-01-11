@@ -20,5 +20,5 @@ export class Event {
 
     @OneToOne(_ => EntryType, { cascade: true, nullable: true })
     @JoinColumn()
-    extraEntryType: EntryType;
+    permit: EntryType;
 }

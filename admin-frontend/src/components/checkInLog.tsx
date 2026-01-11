@@ -15,7 +15,7 @@ import {
     CheckInLogCardContentSelect,
     VerticalCardPadding,
     QueryDatePickerField
-} from './checkInStyledComponents';
+} from './styledComponents';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';

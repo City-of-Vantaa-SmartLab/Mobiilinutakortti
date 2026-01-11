@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import CheckMark from './checkMark';
 import ErrorMark from './errorMark';
@@ -28,23 +27,27 @@ const StyledText = styled.span`
     color: black;
     margin: auto;
     text-align: center;
-    font-size: 32px;
+    font-size: 28px;
 `
 
-const QrCheckResultScreen = (props: { successful: boolean }) => (
+const QrCheckResultScreen = (props: { successful: boolean; errorReason?: string }) => (
     <Wrapper>
         {props.successful && (
           <div className={"mark-container"}>
               <Header>Tervetuloa!</Header>
               <CheckMark />
-              <StyledText>Kirjautuminen nuorisotilaan onnistui!</StyledText>
+              <StyledText>Kirjautuminen onnistui.</StyledText>
           </div>
             )}
         {!props.successful && (
           <div className={"mark-container"}>
               <Header>Jokin meni pieleen!</Header>
               <ErrorMark />
-              <StyledText>Yrititkö kirjautua samalla tunnuksella uudelleen sisään?</StyledText>
+              {props.errorReason === 'PERMIT' ? (
+                <StyledText>Nuorella ei ole lupaa osallistua tapahtumaan.</StyledText>
+              ) : (
+                <StyledText>Yrititkö kirjautua kahdesti samalla tunnuksella?</StyledText>
+              )}
           </div>
             )}
     </Wrapper>

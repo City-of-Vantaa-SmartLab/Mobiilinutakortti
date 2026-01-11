@@ -14,7 +14,7 @@ import {
     VerticalCardPadding,
     StyledDialogTitle,
     QueryDatePickerField
-} from './checkInStyledComponents';
+} from './styledComponents';
 import { Typography } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';

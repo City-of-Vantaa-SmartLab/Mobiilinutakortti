@@ -22,7 +22,6 @@ import { EventViewModel } from './event.vm';
 import { CheckInResponseViewModel, CheckInLogViewModel, failReason } from '../checkIn/vm';
 import { CheckInDto } from '../checkIn/checkIn.dto';
 import { Message } from '../common/vm';
-import { CheckIn } from '../checkIn/checkIn.entity';
 import { CreateEventDto } from './create.dto';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -52,17 +51,17 @@ export class EventController {
     @Post('checkIn')
     @ApiBearerAuth('youthWorker')
     async checkInForEvent(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
-        let canCheckIn = this.spamGuardService.checkSecurityCode(userData.targetId, userData.securityCode);
-        if (!canCheckIn) return new CheckInResponseViewModel(false, failReason.CODE);
+        const hasPermit = await this.eventService.checkJuniorHasPermit(userData);
+        if (!hasPermit) {
+            return new CheckInResponseViewModel(false, failReason.PERMIT);
+        }
 
-        canCheckIn &&= this.spamGuardService.checkIn(userData.juniorId, userData.targetId);
-        if (canCheckIn) {
-            canCheckIn &&= await this.eventService.checkInJunior(userData);
-        } else {
+        if (!this.spamGuardService.checkIn(userData.juniorId, userData.targetId, true)) {
             return new CheckInResponseViewModel(false, failReason.SPAM);
         }
 
-        return new CheckInResponseViewModel(canCheckIn);
+        await this.eventService.checkInJunior(userData);
+        return new CheckInResponseViewModel(true);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))

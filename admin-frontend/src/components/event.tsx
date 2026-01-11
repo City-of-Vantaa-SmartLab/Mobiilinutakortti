@@ -4,7 +4,6 @@ import {
   Datagrid,
   TextField,
   DateField,
-  useNotify,
   ListProps,
   CreateProps,
   EditProps,
@@ -25,10 +24,9 @@ import { successSound, errorSound } from '../audio/audio.js'
 import ListIcon from '@mui/icons-material/List';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 import useAutoLogout from '../hooks/useAutoLogout';
-import { httpClient } from '../httpClients/httpClient.js';
-import api from '../api.js';
 import { STATE } from '../state';
 import { CalendarHelper } from './calendarHelper';
+import CheckInPopup from './checkIn/checkInPopup';
 
 interface EventRecord {
   id: number;
@@ -86,7 +84,7 @@ const EventForm = () => {
       {enableExtraEntries && (
         <BooleanInput
           label="Osallistuminen on luvanvaraista"
-          source="hasExtraEntry"
+          source="needsPermit"
           defaultValue={false}
           sx={{ mt: 2 }}
         />
@@ -105,9 +103,9 @@ const EventForm = () => {
 
 export const EventList = (props: ListProps) => {
 
-  const notify = useNotify();
-  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
   const [state, setState] = useState(STATE.INITIAL);
+  const [showCheckInPopup, setShowCheckInPopup] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   useAutoLogout();
 
   const goToCheckIn = async (id: number) => {
@@ -122,18 +120,14 @@ export const EventList = (props: ListProps) => {
     errorSound.currentTime = 0;
     successSound.volume = 1;
     errorSound.volume = 1;
-    const response = await httpClient(api.spamGuard.getSecurityCode, {
-      method: 'POST',
-      body: JSON.stringify({
-        targetId: id
-      })
-    });
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      notifyError('Virhe turvakoodin haussa');
-    } else {
-      //sessionStorage.setItem(checkInSecurityCodeKey, response.message);
-      //document.location.hash = '#/checkIn';
-    }
+    setSelectedEventId(id);
+    setShowCheckInPopup(true);
+    setState(STATE.INITIAL);
+  }
+
+  const closeCheckInPopup = () => {
+    setShowCheckInPopup(false);
+    setSelectedEventId(null);
   }
 
   const OpenCheckInButton = (_props: ButtonProps) => {
@@ -144,7 +138,7 @@ export const EventList = (props: ListProps) => {
         onClick={() => goToCheckIn(record.id)}
         size="small"
         variant="contained"
-        disabled={!record.active || state === STATE.LOADING}
+        disabled={state === STATE.LOADING}
       >
         <CropFreeIcon />
         &nbsp;QR-lukija
@@ -169,6 +163,9 @@ export const EventList = (props: ListProps) => {
         <OpenCheckInLogButton label="Ilmoittautuneet" />
         <EditButton />
       </Datagrid>
+      {showCheckInPopup && selectedEventId !== null && (
+        <CheckInPopup eventId={selectedEventId} onClose={closeCheckInPopup} />
+      )}
     </List>
 )};
 
