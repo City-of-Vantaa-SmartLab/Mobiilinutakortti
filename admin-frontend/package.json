@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@azure/msal-browser": "^4.21.1",
+    "@azure/msal-browser": "^5.0.2",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "@yudiel/react-qr-scanner": "^2.5.0",

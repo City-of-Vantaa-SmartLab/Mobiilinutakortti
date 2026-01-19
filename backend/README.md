@@ -139,11 +139,11 @@ The tests do not currently work correctly due to historical reasons.
 
 ### Dependency version constraints
 
-Some dependencies have specific version constraints documented in `package.json` for compatibility or security reasons:
+Some dependencies have specific version constraints in `package.json` for compatibility or security reasons:
 
 **TypeScript (`~5.5.0`)**
 - Locked to 5.5.x due to breaking type changes in TypeScript 5.6+
-- TypeScript 5.9.3 introduced stricter type checking that causes compilation errors in `@oozcitak/util` (a dependency of xmlbuilder2)
+- The new version introduced stricter type checking that causes compilation errors in `@oozcitak/util` (a dependency of xmlbuilder2)
 - The affected types are `SetIterator` missing `[Symbol.dispose]` property required by TypeScript 5.9+
 - Upgrading to 5.6+ would require upstream fixes in xmlbuilder2's dependencies
 
