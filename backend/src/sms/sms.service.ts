@@ -8,7 +8,7 @@ import { ClubService } from '../club/club.service';
 import * as content from '../content';
 import { ConfigHandler } from '../configHandler';
 import { standardizePhoneNumber } from '../common/transformers';
-import moment = require('moment');
+import moment from 'moment';
 
 @Injectable()
 export class SmsService {

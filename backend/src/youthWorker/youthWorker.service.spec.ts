@@ -150,16 +150,4 @@ describe('YouthWorkerService', () => {
           && (!updatedList.some(e => e.email === youthWorkerToEdit.email.toLowerCase()))).toBeTruthy();
       });
   });
-
-  // describe('Delete Youth worker', () => {
-  //   let youthWorkerToDelete: string;
-  //   beforeAll(async () => {
-  //     youthWorkerToDelete = (await service.listAllYouthWorkers())[0].id;
-  //   }),
-  //     it('Should delete the user provided', async () => {
-  //       await service.deleteYouthWorker(youthWorkerToDelete, '');
-  //       const YouthWorkerList = await service.listAllYouthWorkers();
-  //       expect(YouthWorkerList.findIndex(a => a.id === youthWorkerToDelete) < 0);
-  //     });
-  // });
 });

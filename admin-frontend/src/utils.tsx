@@ -1,7 +1,6 @@
 import { HttpError } from 'react-admin';
 import { youthClubProvider } from './providers/youthClubProvider';
 import { extraEntryTypeProvider } from './providers/extraEntryTypeProvider';
-import { Container } from '@mui/material';
 
 // This should match the backend's middleware's admin route.
 export const adminUiBasePath = '/nuorisotyontekijat';
@@ -141,11 +140,6 @@ export const getAlertDialogObserver = (newDialogTitle: any) => {
 
   return observer;
 }
-
-// Removes basePath from DOM elements to show notes inside forms without console errors.
-export const NoBasePath = ({basePath, ...props}: {basePath?: any, [key: string]: any}) => (
-  <Container {...props} style={{'marginLeft': '0px', 'marginRight': '0px', 'paddingLeft': '0px', 'paddingRight': '0px', 'width': '100%'}}/>
-);
 
 // How many minutes to wait for inactivity before auto logout functions trigger.
 // This should be kept more or less the same as youthWorkerExpiry authentication const in backend.

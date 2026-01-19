@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { EmailAnnouncement, EmailData } from './models/emailModels.model';
-import { EmailSettings } from './models/emailSettings.model';
+import { EmailAnnouncement, EmailData } from './emailModels.interfaces';
+import { EmailSettings } from './emailSettings.interfaces';
 import { EmailConfig } from './emailConfigHandler';
 
 @Injectable()

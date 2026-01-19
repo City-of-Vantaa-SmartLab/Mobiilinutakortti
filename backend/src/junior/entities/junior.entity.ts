@@ -83,7 +83,7 @@ export class Junior {
     @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
     extraEntries: ExtraEntry[];
 
-    // The permits are meant to work as an intermediate step towards an extra entry. For example, a junior could have a parent's permit to participate in an introductory gym course. After the course, they would have the extra entry itself, indicating they have permission to use the gym.
+    // The permits are meant to work as an intermediate step towards an extra entry. For example, a junior could have a parent's permit to participate in an introductory gym course. After the course, they would have the extra entry itself, indicating they are qualified to use the gym.
     @OneToMany(() => EntryPermit, permit => permit.junior)
     entryPermits: EntryPermit[];
 }

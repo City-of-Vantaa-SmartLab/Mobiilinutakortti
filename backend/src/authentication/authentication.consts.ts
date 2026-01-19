@@ -6,7 +6,7 @@ function getRandomSecret() {
   return toBase64UrlString(Buffer.from(array));
 }
 
-// If using multiple instances, these two should be defined as constant in environment.
+// If using multiple instances, these two should be defined as constants in the environment variables.
 export const jwtSecret = process.env.JWT_SECRET || getRandomSecret();
 export const scSecret = process.env.SC_SECRET || getRandomSecret();
 

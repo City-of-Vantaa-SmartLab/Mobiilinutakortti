@@ -136,7 +136,13 @@ export const translations: Translations = {
     codeExpired: "FÖREGÅENDE SÄSONG",
     codeValid: "NUVARANDE SÄSONG",
     login: 'Logga in',
-    instruction: 'Visa QR-kod för en läsare vid inträde i ungdomsklubben.',
+    instruction: (
+      <p>
+        Visa QR-koden för en läsare vid inträde i en ungdomsklubb.
+        <br/>
+        Du kan också ta en skärmdump av den här sidan och använda den när du loggar in.
+      </p>
+    )
   },
   languages: {
     fi: 'finska',

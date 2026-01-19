@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   List,
   Datagrid,
@@ -18,7 +18,7 @@ import {
   BooleanInput,
   required
 } from 'react-admin';
-import { Divider } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
 import ListIcon from '@mui/icons-material/List';
@@ -81,21 +81,29 @@ const EventForm = () => {
         helperText={<CalendarHelper />}
         sx={{ width: 400 }}
       />
-      {enableExtraEntries && (
+      {enableExtraEntries && (<>
         <BooleanInput
           label="Osallistuminen on luvanvaraista"
           source="needsPermit"
           defaultValue={false}
           sx={{ mt: 2 }}
+          helperText={false}
         />
-      )}
+        <Typography sx={{ width: '100%', fontSize: 'small' }}>
+          Osallistumisen luvanvaraisuus luo Nutakorttiin tapahtumaa vastaavan uuden merkintätyypin. Nuorella tulee olla kyseistä merkintätyyppiä vastaava lupa kirjautuessaan sisään tapahtumaan. Voit muokata nuoren lupia <a href="#/extraEntry">Lisämerkinnät</a>-sivulta. Luvanvaraisuutta ei voi poistaa jos nuorille on jo myönnetty tapahtumaan lupia. Poista tällöin ensin luvat nuorilta tai koko tapahtuma.
+        </Typography>
+      </>)}
       {kompassiIntegration && (<>
         <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
         <NumberInput
-          label="Kompassi-palvelun aktiviteettitunniste"
+          label="Kompassi-palvelun toimintatunniste"
           source="integrationId"
           sx={{ width: 400 }}
+          helperText={false}
         />
+        <Typography sx={{ width: '100%', fontSize: 'small', mt: '1rem' }}>
+          Näet toimintatunnisteen helpoiten kun navigoit Kompassi-palvelussa muokkaamaan toimintaa. Tällöin selaimen osoitepalkissa näkyy esimerkiksi polku: /group/123/activities/4567. Tässä esimerkkitapauksessa toimintatunniste olisi: 4567
+        </Typography>
       </>)}
     </SimpleForm>
   );

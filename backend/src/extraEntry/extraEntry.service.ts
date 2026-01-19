@@ -137,7 +137,7 @@ export class ExtraEntryService {
         if (!eeType) throw new BadRequestException(content.TypeNotFound);
 
         let message = content.ExtraEntryAdded;
-        let savedEntity;
+        let savedEntity: EntryPermit | ExtraEntry;
 
         if (isPermit) {
             const newPermit = {junior: junior, entryType: eeType};

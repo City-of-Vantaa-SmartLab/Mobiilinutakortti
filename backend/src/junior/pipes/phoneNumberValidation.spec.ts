@@ -7,19 +7,19 @@ describe('Phone number validation', () => {
   // International: + + 9-13 digits (including country code)
   const validLocalNumbers = [
     '0401234567',      // 10 chars: 0 + 9 digits
-    '04012345678',     // 11 chars: 0 + 10 digits  
+    '04012345678',     // 11 chars: 0 + 10 digits
     '040123456789',    // 12 chars: 0 + 11 digits
     '0401234567890',   // 13 chars: 0 + 12 digits
     '04012345678901',  // 14 chars: 0 + 13 digits
   ];
-  
+
   const validIntlNumbers = [
     '+358401234567',   // 14 chars: + + 12 digits (358 country + 9)
     '+35840123456',    // 13 chars: + + 11 digits
     '+3584012345',     // 12 chars: + + 10 digits
     '+358401234',      // 11 chars: + + 9 digits
   ];
-  
+
   const validNumbers = [...validLocalNumbers, ...validIntlNumbers];
 
   describe('PhoneNumberValidationPipe', () => {
@@ -68,7 +68,7 @@ describe('Phone number validation', () => {
           },
         }),
       ).toThrow('Huoltajan puhelinnumero on virheellinen');
-      
+
       // Incorrect length (too long - over 13 digits after prefix)
       expect(() =>
         validationPipe.transform({
@@ -116,7 +116,7 @@ describe('Phone number validation', () => {
           phoneNumber: '050777',
         }),
       ).toThrow('Puhelinnumero on virheellinen');
-      
+
       // Incorrect length (too long - over 13 digits after prefix)
       expect(() =>
         validationPipe.transform({

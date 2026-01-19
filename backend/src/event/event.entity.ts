@@ -1,4 +1,4 @@
-import { EntryType } from 'src/extraEntry/entities';
+import { EntryType } from '../extraEntry/entities';
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity()

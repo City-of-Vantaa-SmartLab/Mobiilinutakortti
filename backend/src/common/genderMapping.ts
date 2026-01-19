@@ -1,8 +1,8 @@
 export enum Gender {
-  Male = 'm',
-  Female = 'f',
-  Other = 'o',
-  Undisclosed = '-',
+    Male = 'm',
+    Female = 'f',
+    Other = 'o',
+    Undisclosed = '-',
 }
 
 export const genderMapping = [

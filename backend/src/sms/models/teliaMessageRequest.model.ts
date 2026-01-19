@@ -1,8 +1,8 @@
 /**
  * The entire documentation for the SMS REST API can be found at
- * 
+ *
  * https://secure.lekab.com/restsms/swagger.html
- * 
+ *
  * Telia is the service provider, but the service itself is produced
  * and maintained by Lekab.
  */
@@ -15,9 +15,9 @@ export interface TeliaMessageRequestBase {
 
 /**
  * Model for sending a single message to multiple recipients. See entire documentation at
- * 
+ *
  * https://secure.lekab.com/restsms/swagger.html#/send/sendPost
- */ 
+ */
 export interface TeliaMessageRequest extends TeliaMessageRequestBase {
     message: string;
     to: string[];
@@ -25,7 +25,7 @@ export interface TeliaMessageRequest extends TeliaMessageRequestBase {
 
 /**
  * Model for sending multiple messages to multiple recipients. See entire documentation at
- * 
+ *
  * https://secure.lekab.com/restsms/swagger.html#/batchsend/batchsendJson
  */
 export interface TeliaBatchMessageRequest extends TeliaMessageRequestBase {

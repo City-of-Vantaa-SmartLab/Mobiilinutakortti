@@ -1,5 +1,5 @@
 import { BadRequestException, Logger } from '@nestjs/common';
-import { SesSettings, EmailSettings } from "./models/emailSettings.model";
+import { SesSettings, EmailSettings } from "./emailSettings.interfaces";
 import * as content from '../content';
 
 export class EmailConfig {

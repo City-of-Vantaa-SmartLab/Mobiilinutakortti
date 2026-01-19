@@ -4,7 +4,7 @@ import { JuniorModule } from './junior.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMockFactory } from '../../test/Mock';
 import { AppModule } from '../app.module';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { getTestDB } from '../../test/testdb';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { YouthWorkerModule } from '../youthWorker/youthWorker.module';
@@ -19,7 +19,7 @@ describe('JuniorService', () => {
   let module: TestingModule;
   let service: JuniorService;
   let connection: DataSource;
-  let challengeRepo;
+  let challengeRepo: Repository<Challenge>;
 
   const testRegisterYouth = {
     phoneNumber: '+3587772345000',
@@ -82,7 +82,7 @@ describe('JuniorService', () => {
       // Manually create challenge since noSMS=true skips it
       const junior = await service.getJuniorByPhoneNumber(testRegisterYouth.phoneNumber);
       const challenge = challengeRepo.create({
-        phoneNumber: junior.phoneNumber,
+        junior: junior,
         challenge: 'test-challenge-code',
       });
       await challengeRepo.save(challenge);
