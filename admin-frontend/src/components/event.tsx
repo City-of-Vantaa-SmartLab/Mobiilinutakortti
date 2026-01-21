@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   List,
   Datagrid,
@@ -16,8 +16,10 @@ import {
   DateInput,
   NumberInput,
   BooleanInput,
-  required
+  required,
+  FunctionField
 } from 'react-admin';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
@@ -32,6 +34,7 @@ interface EventRecord {
   id: number;
   name: string;
   active: boolean;
+  startDate: string;
 }
 
 // Custom button components in Datagrid need to accept label prop for column headers.
@@ -57,6 +60,21 @@ const EventEditTitle = () => {
 };
 
 export const EventEdit = (props: EditProps) => {
+  const [searchParams] = useSearchParams();
+  const shouldDelete = searchParams.get('delete') === 'true';
+
+  useEffect(() => {
+    if (shouldDelete) {
+      const timer = setTimeout(() => {
+        const deleteButton = document.querySelector('button[class*="ra-delete-button"]') as HTMLButtonElement;
+        if (deleteButton) {
+          deleteButton.click();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldDelete]);
+
   return (
     <Edit title={<EventEditTitle />} {...props} mutationMode='pessimistic'>
       <EventForm />
@@ -162,6 +180,56 @@ export const EventList = (props: ListProps) => {
     );
   }
 
+  const DeleteOldEventButton = (_props: ButtonProps) => {
+    const navigate = useNavigate();
+
+    const handleDelete = (record: EventRecord) => {
+      navigate(`/event/${record.id}?delete=true`);
+    };
+
+    return (
+      <FunctionField
+        render={(record: EventRecord) => {
+          let disabledText = '';
+          let showDeleteButton = false;
+
+          if (!record.startDate) {
+            disabledText = 'Ei päivämäärää';
+          } else {
+            const now = new Date();
+            const eventDate = new Date(record.startDate);
+            if (eventDate > now) {
+              disabledText = 'Tulevaisuudessa';
+            } else if (eventDate > new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)) {
+              disabledText = 'Alle 2 viikkoa';
+            } else {
+              showDeleteButton = true;
+            }
+          }
+
+          return (
+            <span style={{ display: 'inline-flex', width: '100%', justifyContent: 'center' }}>
+              {showDeleteButton ? (
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => handleDelete(record)}
+                  style={{ backgroundColor: '#d32f2f', color: 'white' }}
+                >
+                  Poista
+                </Button>
+              ) : (
+                <Button size="small" disabled style={{ padding: 0 }}>
+                  {disabledText}
+                </Button>
+              )}
+            </span>
+          );
+        }}
+      />
+    );
+  }
+
   return (
     <List title="Tapahtumat" exporter={false} pagination={false} {...props}>
       <Datagrid bulkActionButtons={false} rowClick={false}>
@@ -169,6 +237,7 @@ export const EventList = (props: ListProps) => {
         <DateField label="Alkupäivämäärä" source="startDate" locales={['fi']} />
         <OpenCheckInButton label="Ilmoittautuminen" />
         <OpenCheckInLogButton label="Ilmoittautuneet" />
+        <DeleteOldEventButton label="Poista vanha" />
         <EditButton />
       </Datagrid>
       {showCheckInPopup && selectedEventId !== null && (
