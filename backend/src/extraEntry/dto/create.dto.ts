@@ -1,4 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateExtraEntryDto {
 
@@ -6,7 +7,9 @@ export class CreateExtraEntryDto {
     juniorId: string;
 
     @IsNotEmpty()
+    @Type(() => Number)
     entryTypeId: number;
 
+    @Type(() => Boolean)
     isPermit: boolean;
 }

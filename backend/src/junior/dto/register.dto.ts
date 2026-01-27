@@ -1,4 +1,5 @@
 import { IsNotEmpty, Length, IsDateString, ValidateIf } from 'class-validator';
+import { Type } from 'class-transformer';
 import * as content from '../../content';
 
 export class RegisterJuniorDto {
@@ -6,6 +7,7 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly phoneNumber: string;
 
+    @Type(() => Boolean)
     readonly smsPermissionJunior: boolean;
 
     @IsNotEmpty()
@@ -34,8 +36,10 @@ export class RegisterJuniorDto {
     @IsNotEmpty()
     readonly parentsPhoneNumber: string;
 
+    @Type(() => Boolean)
     readonly smsPermissionParent: boolean;
     readonly parentsEmail: string;
+    @Type(() => Boolean)
     readonly emailPermissionParent: boolean;
     readonly additionalContactInformation: string;
 
@@ -56,5 +60,6 @@ export class RegisterJuniorDto {
     readonly status: string;
 
     @IsNotEmpty()
+    @Type(() => Boolean)
     readonly photoPermission: boolean;
 }

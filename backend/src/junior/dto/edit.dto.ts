@@ -1,4 +1,5 @@
 import { IsNotEmpty, Length, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class EditJuniorDto {
 
@@ -6,6 +7,7 @@ export class EditJuniorDto {
     readonly id: string;
 
     phoneNumber: string;
+    @Type(() => Boolean)
     smsPermissionJunior: boolean;
     firstName: string;
     lastName: string;
@@ -15,8 +17,10 @@ export class EditJuniorDto {
     class: string;
     parentsName: string;
     parentsPhoneNumber: string;
+    @Type(() => Boolean)
     smsPermissionParent: boolean;
     parentsEmail: string;
+    @Type(() => Boolean)
     emailPermissionParent: boolean;
     additionalContactInformation: string;
 
@@ -26,8 +30,10 @@ export class EditJuniorDto {
     @IsDateString()
     birthday: string;
 
+    @Type(() => Number)
     homeYouthClub: number;
     communicationsLanguage: string;
     status: string;
+    @Type(() => Boolean)
     photoPermission: boolean;
 }

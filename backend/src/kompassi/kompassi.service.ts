@@ -64,7 +64,7 @@ export class KompassiService {
         let shouldCancelPending = false;
         try {
             let activityId: number = 0;
-            const activityInDB = this.activities.find(a => a.clubId == club.id);
+            const activityInDB = this.activities.find(a => a.clubId === club.id);
             if (!activityInDB) {
                 // This prevents another async call from creating a new activity via API.
                 this.activities.push({clubId: club.id, kompassiActivityId: null, pendingCreation: true});
@@ -76,7 +76,7 @@ export class KompassiService {
                 shouldCancelPending = false;
 
                 // Release waiting in possible other parallel async calls.
-                const pendingActivity = this.activities.find(a => a.clubId == club.id);
+                const pendingActivity = this.activities.find(a => a.clubId === club.id);
                 pendingActivity.kompassiActivityId = activityId;
                 pendingActivity.pendingCreation = false;
             } else if (activityInDB.pendingCreation) {
@@ -100,7 +100,7 @@ export class KompassiService {
 
             // If there was an error creating an activity, remove the pending one so that later requests aren't blocked.
             if (shouldCancelPending) {
-                const removeIndex = this.activities.findIndex(a => a.clubId == club.id && a.pendingCreation);
+                const removeIndex = this.activities.findIndex(a => a.clubId === club.id && a.pendingCreation);
                 if (removeIndex > -1) this.activities.splice(removeIndex, 1);
             }
         }
