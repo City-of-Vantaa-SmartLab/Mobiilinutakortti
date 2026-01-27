@@ -34,6 +34,9 @@ const messages = {
     ...finnishMessages,
     'Not authenticated': 'Sinun tulee kirjautua',
     resources: {
+      junior: {
+        name: 'nuori |||| nuoret',
+      },
       youthWorker: {
         name: 'nuorisotyöntekijä |||| nuorisotyöntekijät',
       },

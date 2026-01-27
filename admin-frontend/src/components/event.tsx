@@ -34,6 +34,7 @@ import CheckInPopup from './checkIn/checkInPopup';
 import { checkInTargetIdKey, checkInSecurityCodeKey, checkInForEventKey } from '../utils';
 import { httpClient } from '../httpClients/httpClient.js';
 import api from '../api.js';
+import { CustomBasicToolbar } from './styledComponents';
 
 interface EventRecord {
   id: number;
@@ -54,7 +55,7 @@ const enableExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
 export const EventCreate = (props: CreateProps) => {
   return (
     <Create title="Luo tapahtuma" redirect="list" {...props}>
-      <EventForm />
+      <EventForm isEdit={false} />
     </Create>
   );
 }
@@ -83,14 +84,14 @@ export const EventEdit = (props: EditProps) => {
 
   return (
     <Edit title={<EventEditTitle />} {...props} mutationMode='pessimistic'>
-      <EventForm />
+      <EventForm isEdit={true} />
     </Edit>
   );
 }
 
-const EventForm = () => {
+const EventForm = ({ isEdit = false }: { isEdit?: boolean }) => {
   return (
-    <SimpleForm>
+    <SimpleForm toolbar={<CustomBasicToolbar listPath="/event" showDelete={isEdit} />}>
       <TextInput label="Nimi" source="name" validate={required()} sx={{ width: 400 }} />
       <TextInput
         label="Kuvaus"

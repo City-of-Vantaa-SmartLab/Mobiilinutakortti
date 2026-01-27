@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRefresh } from 'react-admin';
-import { MenuItem, Select, Card, CardContent, SelectChangeEvent } from '@mui/material';
+import { MenuItem, Select, Card, CardContent, SelectChangeEvent, Button } from '@mui/material';
 import { Add, CancelOutlined } from '@mui/icons-material';
 import {
     List,
@@ -17,17 +17,16 @@ import {
     ChipField,
     Edit,
     FormDataConsumer,
-    Button,
     useRedirect,
     Toolbar,
     useNotify,
     ListProps,
     EditProps
 } from 'react-admin';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
-import { ExtraEntryTable, ExtraEntryButton, EmptyChoicesText } from './extraEntryStyledComponents';
+import { ExtraEntryTable, EmptyChoicesText } from './extraEntryStyledComponents';
+import { ReturnButton } from '../styledComponents';
 import { extraEntryProvider } from '../../providers';
 import { PhoneNumberField } from '../phoneNumberField';
 import useAutoLogout from '../../hooks/useAutoLogout';
@@ -74,7 +73,7 @@ export const ExtraEntryList = (props: ListProps) => {
     );
 
     return (<>
-        <Card>
+        <Card sx={{ marginTop: 2 }}>
           <CardContent>
             <p>Nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" ja joilla ei ole ainuttakaan lisämerkintää (tai lupaa), poistuvat järjestelmästä automaattisesti joka yö tehtävässä ylläpitosiivouksessa. Samalla tarkistetaan myös onko lisämerkinnän ikäraja tullut vastaan, ja merkintä poistetaan automaattisesti jos on.</p>
             <p>Huomaa myös, että toiminto "Poista vanhat käyttäjät" siirtää "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" -tilaan nuoret, joilla on lisämerkintöjä.</p>
@@ -106,7 +105,7 @@ export const ExtraEntryList = (props: ListProps) => {
 
 const CustomToolbar = ({cancel, ...others}: {cancel: () => void, [key: string]: any}) => (
     <Toolbar {...others}>
-        <Button label="Takaisin" onClick={cancel} alignIcon="left"><ArrowBackIcon /></Button>
+        <ReturnButton onClick={cancel} />
     </Toolbar>
 );
 
@@ -223,9 +222,18 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                         return <tr key={ee.id}>
                                             <td>{ee.entryType.name}</td>
                                             <td>
-                                                <ExtraEntryButton value={ee.id} onClick={() => handleDelete(ee.id, false)} type="button">
-                                                    Poista <CancelOutlined />
-                                                </ExtraEntryButton>
+                                                <Button
+                                                    value={ee.id}
+                                                    onClick={() => handleDelete(ee.id, false)}
+                                                    type="button"
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="small"
+                                                    startIcon={<CancelOutlined />}
+                                                    sx={{ margin: '5px' }}
+                                                >
+                                                    Poista
+                                                </Button>
                                             </td>
                                         </tr>
                                     })}
@@ -244,13 +252,21 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                                 {availableEeChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei valittavia lisämerkintöjä'}</EmptyChoicesText>}
+                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lisämerkintöjä'}</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, false)} type="button"
-                                                disabled={newExtraEntryType === -1 || availableEeChoices.length === 0 || status.id === Status.expired}>
-                                                Lisää <Add />
-                                            </ExtraEntryButton>
+                                            <Button
+                                                onClick={() => handleAdd(formData.id, false)}
+                                                type="button"
+                                                disabled={newExtraEntryType === -1 || availableEeChoices.length === 0 || status.id === Status.expired}
+                                                variant="contained"
+                                                color="primary"
+                                                size="small"
+                                                startIcon={<Add />}
+                                                sx={{ margin: '5px' }}
+                                            >
+                                                Lisää
+                                            </Button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -265,9 +281,18 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                         return <tr key={permit.id}>
                                             <td>{permit.entryType.name}</td>
                                             <td>
-                                                <ExtraEntryButton value={permit.id} onClick={() => handleDelete(permit.id, true)} type="button">
-                                                    Poista <CancelOutlined />
-                                                </ExtraEntryButton>
+                                                <Button
+                                                    value={permit.id}
+                                                    onClick={() => handleDelete(permit.id, true)}
+                                                    type="button"
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="small"
+                                                    startIcon={<CancelOutlined />}
+                                                    sx={{ margin: '5px' }}
+                                                >
+                                                    Poista
+                                                </Button>
                                             </td>
                                         </tr>
                                     })}
@@ -286,13 +311,21 @@ export const ExtraEntryEdit = (props: EditProps) => {
                                                 {availablePermitChoices.map(ac => (
                                                     <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
                                                 ))}
-                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei valittavia lupia'}</EmptyChoicesText>}
+                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lupia'}</EmptyChoicesText>}
                                         </td>
                                         <td>
-                                            <ExtraEntryButton onClick={() => handleAdd(formData.id, true)} type="button"
-                                                disabled={newEntryPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}>
-                                                Lisää <Add />
-                                            </ExtraEntryButton>
+                                            <Button
+                                                onClick={() => handleAdd(formData.id, true)}
+                                                type="button"
+                                                disabled={newEntryPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}
+                                                variant="contained"
+                                                color="primary"
+                                                size="small"
+                                                startIcon={<Add />}
+                                                sx={{ margin: '5px' }}
+                                            >
+                                                Lisää
+                                            </Button>
                                         </td>
                                     </tr>
                                 </tbody>

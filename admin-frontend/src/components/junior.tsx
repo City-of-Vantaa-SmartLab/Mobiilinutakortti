@@ -37,6 +37,7 @@ import { PhoneNumberField } from './phoneNumberField';
 import useAdminPermission from '../hooks/useAdminPermission';
 import api from '../api';
 import { CalendarHelper } from './calendarHelper';
+import { CustomBasicToolbar, LoadingMessage } from './styledComponents';
 
 const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'));
 
@@ -251,7 +252,7 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
     }, []);
 
     return (
-        <SimpleForm>
+        <SimpleForm toolbar={<CustomBasicToolbar listPath="/junior" showDelete={formType === 'edit'} />}>
             {loading ? null : (<>
             <div style={{ display: 'none' }}></div>
             <TextInput label="Etunimi" source="firstName" validate={required()} onFocus={smartRefresh} sx={{ width: 400 }} />
@@ -305,7 +306,7 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
             {(formType === 'edit' && showExtraEntries) &&<FormDataConsumer>
                 {({ formData }: { formData: any }) => {
                     return (
-                        <Suspense fallback={<div>Ladataan...</div>}>
+                        <Suspense fallback={<LoadingMessage />}>
                             <ExtraEntryLinkComponent juniorId={formData.id} />
                         </Suspense>
                     )

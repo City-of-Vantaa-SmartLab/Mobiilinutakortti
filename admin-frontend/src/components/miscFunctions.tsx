@@ -51,7 +51,7 @@ const MiscFunctions = () => {
   const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
   return (
-    <Card>
+    <Card sx={{ marginTop: 2 }}>
       <Title title="Muut toiminnot"></Title>
       <CardContent>
         <p>Spam-estotoiminto estää nuoria kirjautumasta nuorisotiloille tai tilaamasta kirjautumistekstiviestilinkkejä liian tiheään. Toiminnolla ylläpidetään palvelun saavutettavuutta ja turvallisuutta.</p>

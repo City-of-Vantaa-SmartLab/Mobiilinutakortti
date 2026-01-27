@@ -80,7 +80,7 @@ const QuickSearch = () => {
   };
 
   return (
-    <Card>
+    <Card sx={{ marginTop: 2 }}>
       <Title title="Pikahaku"></Title>
       <CardContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 600 }}>

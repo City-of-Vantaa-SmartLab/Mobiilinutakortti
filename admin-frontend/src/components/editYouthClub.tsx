@@ -8,8 +8,6 @@ import {
   TextInput,
   BooleanInput,
   BooleanField,
-  Toolbar,
-  SaveButton,
   NumberInput,
   ListProps,
   EditProps,
@@ -17,6 +15,7 @@ import {
 } from 'react-admin';
 import { Divider } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { CustomBasicToolbar } from './styledComponents';
 
 const StatusHelperText = () => (
   <p>Nuoren rekisteröintilomakkeella näytetään vain aktiiviset nuorisotilat.</p>
@@ -30,12 +29,6 @@ const MessageHelperText = () => (
 const KompassiHelperText = () => (<>
   <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
 </>);
-
-const CustomToolbar = (props: any) => (
-  <Toolbar {...props}>
-    <SaveButton disabled={props.pristine && !props.validating} />
-  </Toolbar>
-);
 
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
@@ -63,9 +56,10 @@ const YouthClubEditTitle = () => {
 
 export const EditYouthClub = (props: EditProps) => {
   useAutoLogout();
+
   return (
   <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic" redirect="list">
-    <SimpleForm toolbar={<CustomToolbar />}>
+    <SimpleForm toolbar={<CustomBasicToolbar listPath="/editYouthclub" />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />
       <TextInput label="Tilakohtainen viesti FI" source="messages.fi" sx={{ width: 600 }} />

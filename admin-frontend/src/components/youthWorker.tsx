@@ -22,6 +22,7 @@ import {
 } from 'react-admin';
 import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { CustomBasicToolbar } from './styledComponents';
 
 const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
 
@@ -76,7 +77,7 @@ export const YouthWorkerCreate = (props: CreateProps) => {
 
   return (
     <Create title="Rekisteröi nuorisotyöntekijä" redirect="list" {...props}>
-      <SimpleForm>
+      <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" />}>
         <TextInput label="Sähköposti" source="email" type="email" validate={required()} sx={{ width: 400 }} />
         <TextInput label="Salasana" source="password" type="password" validate={required()} sx={{ width: 400 }} />
         <TextInput label="Etunimi" source="firstName" validate={required()} sx={{ width: 400 }} />
@@ -116,7 +117,7 @@ export const YouthWorkerEdit = (props: EditProps) => {
 
   return (
     <Edit title="Muokkaa nuorisotyöntekijää" redirect="list" {...props} mutationMode="pessimistic">
-      <SimpleForm>
+      <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" showDelete={true} />}>
         <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} sx={{ width: 400 }} />
         <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} sx={{ width: 400 }} />
         {!useEntraID && (<TextInput label="Sukunimi" source="lastName" sx={{ width: 400 }} />)}

@@ -72,7 +72,7 @@ const DeleteExpiredJuniors = () => {
   }
 
   return (
-    <Card>
+    <Card sx={{ marginTop: 2 }}>
       <Title title="Poista vanhat käyttäjät"></Title>
       <CardContent>
         <p>
