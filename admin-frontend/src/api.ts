@@ -57,6 +57,7 @@ const apiEndpoints = {
     create: `${apiUrl}/event/create`,
     delete: `${apiUrl}/event/delete`,
     checkIn: `${apiUrl}/event/checkIn`,
+    checkInWithCode: `${apiUrl}/event/checkInwithCode`,
     checkInLog: `${apiUrl}/event/checkInLog`
   },
   spamGuard: {

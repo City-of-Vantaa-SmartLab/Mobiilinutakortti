@@ -25,7 +25,8 @@ type SpamGuardItem = {
 
 type SecurityCode = {
   id: number,
-  code: string
+  code: string,
+  forEvent: boolean
 }
 
 const maxContextCounters: SpamGuardContextLimit = {
@@ -111,22 +112,22 @@ export class SpamGuardService {
     return true;
   }
 
-  // Generate and return a new security code for club check-in (the QR reader view).
-  getSecurityCode(clubId: number): string {
-    if (this.securityCodes.filter(sc => sc.id == clubId).length == maxSecurityCodes) {
-      this.logger.verbose('Expiring a security code for club: ' + clubId);
-      this.securityCodes.splice(this.securityCodes.findIndex(sc => sc.id == clubId), 1);
+  // Generate and return a new security code for a check-in (the QR reader view).
+  getSecurityCode(targetId: number, forEvent: boolean = false): string {
+    if (this.securityCodes.filter(sc => (sc.id === targetId && sc.forEvent === forEvent)).length === maxSecurityCodes) {
+      this.logger.verbose(`Expiring a security code for ${forEvent ? 'event' : 'club'}: ${targetId}`);
+      this.securityCodes.splice(this.securityCodes.findIndex(sc => (sc.id === targetId && sc.forEvent === forEvent)), 1);
     }
     const code = Math.random().toString(36).substring(2, 12);
-    this.securityCodes.push({id: clubId, code});
-    this.logger.verbose(`Added new security code for club ${clubId}: ${code}`);
+    this.securityCodes.push({id: targetId, code, forEvent});
+    this.logger.verbose(`Added new security code for ${forEvent ? 'event' : 'club'} ${targetId}: ${code}`);
     return code;
   }
 
-  // Checks if club check-in code is valid (exists in spam guard code list). Returns true if valid, false if not.
-  checkSecurityCode(clubId: number, code: string): boolean {
-    const found = this.securityCodes.some(sc => sc.id == clubId && sc.code == code);
-    if (!found) this.logger.debug('Check security code failed for club: ' + clubId);
+  // Checks if check-in code is valid (exists in spam guard code list). Returns true if valid, false if not.
+  checkSecurityCode(targetId: number, code: string, forEvent: boolean = false): boolean {
+    const found = this.securityCodes.some(sc => (sc.id === targetId && sc.code === code && sc.forEvent === forEvent));
+    if (!found) this.logger.debug(`Check security code failed for ${forEvent ? 'event' : 'club'}: ${targetId}`);
     return found;
   }
 

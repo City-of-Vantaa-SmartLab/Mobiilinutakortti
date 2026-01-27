@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   List,
   Datagrid,
@@ -17,18 +17,23 @@ import {
   NumberInput,
   BooleanInput,
   required,
-  FunctionField
+  FunctionField,
+  useNotify
 } from 'react-admin';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Divider, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
 import ListIcon from '@mui/icons-material/List';
+import ScreenshotIcon from '@mui/icons-material/Screenshot';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 import useAutoLogout from '../hooks/useAutoLogout';
 import { STATE } from '../state';
 import { CalendarHelper } from './calendarHelper';
 import CheckInPopup from './checkIn/checkInPopup';
+import { checkInTargetIdKey, checkInSecurityCodeKey, checkInForEventKey } from '../utils';
+import { httpClient } from '../httpClients/httpClient.js';
+import api from '../api.js';
 
 interface EventRecord {
   id: number;
@@ -40,6 +45,7 @@ interface EventRecord {
 // Custom button components in Datagrid need to accept label prop for column headers.
 interface ButtonProps {
   label?: string;
+  popup?: boolean;
 }
 
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
@@ -129,12 +135,14 @@ const EventForm = () => {
 
 export const EventList = (props: ListProps) => {
 
+  const notify = useNotify();
+  const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
   const [state, setState] = useState(STATE.INITIAL);
   const [showCheckInPopup, setShowCheckInPopup] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   useAutoLogout();
 
-  const goToCheckIn = async (id: number) => {
+  const goToCheckIn = async (id: number, popup: boolean = false) => {
     setState(STATE.LOADING);
     successSound.volume = 0;
     successSound.play();
@@ -146,9 +154,27 @@ export const EventList = (props: ListProps) => {
     errorSound.currentTime = 0;
     successSound.volume = 1;
     errorSound.volume = 1;
-    setSelectedEventId(id);
-    setShowCheckInPopup(true);
-    setState(STATE.INITIAL);
+    if (popup) {
+      setSelectedEventId(id);
+      setShowCheckInPopup(true);
+      setState(STATE.INITIAL);
+    } else {
+      sessionStorage.setItem(checkInTargetIdKey, id.toString());
+      const response = await httpClient(api.spamGuard.getSecurityCode, {
+        method: 'POST',
+        body: JSON.stringify({
+          targetId: id,
+          forEvent: true
+        })
+      });
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        notifyError('Virhe turvakoodin haussa');
+      } else {
+        sessionStorage.setItem(checkInSecurityCodeKey, response.message);
+        sessionStorage.setItem(checkInForEventKey, "true");
+        document.location.hash = '#/checkIn';
+      }
+    }
   }
 
   const closeCheckInPopup = () => {
@@ -156,17 +182,17 @@ export const EventList = (props: ListProps) => {
     setSelectedEventId(null);
   }
 
-  const OpenCheckInButton = (_props: ButtonProps) => {
+  const OpenCheckInButton = ({ popup = false }: { label: string, popup?: boolean }) => {
     const record = useRecordContext<EventRecord>();
     if (!record) return null;
     return (
       <Button
-        onClick={() => goToCheckIn(record.id)}
+        onClick={() => goToCheckIn(record.id, popup)}
         size="small"
         variant="contained"
         disabled={state === STATE.LOADING}
       >
-        <CropFreeIcon />
+        {popup ? <ScreenshotIcon /> : <CropFreeIcon />}
         &nbsp;QR-lukija
       </Button>
     )
@@ -236,6 +262,7 @@ export const EventList = (props: ListProps) => {
         <TextField label="Nimi" source="name" />
         <DateField label="Alkupäivämäärä" source="startDate" locales={['fi']} />
         <OpenCheckInButton label="Ilmoittautuminen" />
+        <OpenCheckInButton label="Ilmoittautuminen (pop-up)" popup={true} />
         <OpenCheckInLogButton label="Ilmoittautuneet" />
         <DeleteOldEventButton label="Poista vanha" />
         <EditButton />
@@ -245,4 +272,3 @@ export const EventList = (props: ListProps) => {
       )}
     </List>
 )};
-

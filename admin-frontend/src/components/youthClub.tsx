@@ -9,7 +9,7 @@ import {
 } from 'react-admin';
 import Button from '@mui/material/Button';
 import { successSound, errorSound } from '../audio/audio.js'
-import { checkInClubIdKey, checkInSecurityCodeKey } from '../utils';
+import { checkInTargetIdKey, checkInSecurityCodeKey, checkInForEventKey } from '../utils';
 import ListIcon from '@mui/icons-material/List';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import CropFreeIcon from '@mui/icons-material/CropFree';
@@ -48,17 +48,18 @@ export const YouthClubList = (props: ListProps) => {
     errorSound.currentTime = 0;
     successSound.volume = 1;
     errorSound.volume = 1;
-    sessionStorage.setItem(checkInClubIdKey, id.toString());
+    sessionStorage.setItem(checkInTargetIdKey, id.toString());
     const response = await httpClient(api.spamGuard.getSecurityCode, {
       method: 'POST',
       body: JSON.stringify({
-        clubId: id
+        targetId: id
       })
     });
     if (response.statusCode < 200 || response.statusCode >= 300) {
       notifyError('Virhe turvakoodin haussa');
     } else {
       sessionStorage.setItem(checkInSecurityCodeKey, response.message);
+      sessionStorage.removeItem(checkInForEventKey);
       document.location.hash = '#/checkIn';
     }
   }

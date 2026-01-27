@@ -44,8 +44,9 @@ export const messageTypeChoices = [
   { id: 'email', name: 'Sähköposti' },
 ];
 
-export const checkInClubIdKey = 'checkInClubId';
+export const checkInTargetIdKey = 'checkInTargetId';
 export const checkInSecurityCodeKey = 'checkInSecurityCode';
+export const checkInForEventKey = 'checkInForEvent';
 export const userTokenKey = 'user-token';
 export const MSALAppLogoutInProgressKey = 'MSALAppLogoutInProgress';
 

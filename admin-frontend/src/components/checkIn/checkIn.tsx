@@ -7,7 +7,7 @@ import { useNotify } from 'react-admin';
 import { httpClient } from '../../httpClients/httpClient';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
-import { checkInClubIdKey, userTokenKey, adminUiBasePath, checkInSecurityCodeKey, clearUserInfo } from '../../utils';
+import { checkInTargetIdKey, userTokenKey, adminUiBasePath, checkInSecurityCodeKey, clearUserInfo, checkInForEventKey } from '../../utils';
 import { Button } from '@mui/material';
 import SwitchCameraIcon from '@mui/icons-material/SwitchCamera';
 import { Container, QrReaderContainer } from './checkInStyledComponents';
@@ -22,8 +22,9 @@ const CheckInView = () => {
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
   const [useFacingMode, setUseFacingMode] = useState(true);
-  const [clubId, setClubId] = useState(null);
+  const [targetId, setTargetId] = useState(null);
   const [securityCode, setSecurityCode] = useState(null);
+  const [isEventCheckIn, setIsEventCheckIn] = useState(null);
   const [needsReload, setNeedsReload] = useState(false);
   const notify = useNotify();
 
@@ -34,15 +35,17 @@ const CheckInView = () => {
     // Security could be made a bit tighter with rotating codes.
     // Emptying the session storage would result in need to re-login if refreshing the page.
     // This might be somewhat inconvenient with current use cases.
-    const storedClubId = sessionStorage.getItem(checkInClubIdKey);
+    const storedTargetId = sessionStorage.getItem(checkInTargetIdKey);
     const storedSecurityCode = sessionStorage.getItem(checkInSecurityCodeKey);
+    const forEvent: boolean = !!sessionStorage.getItem(checkInForEventKey);
 
-    if (storedClubId === null || storedSecurityCode === null) {
+    if (storedTargetId === null || storedSecurityCode === null) {
       console.debug("Missing required info.");
       setTimeout(() => { document.location.href = adminUiBasePath }, 100);
     }
-    setClubId(storedClubId);
+    setTargetId(storedTargetId);
     setSecurityCode(storedSecurityCode);
+    setIsEventCheckIn(forEvent);
 
     let isMounted = true;
     setupCameras().then(result => {
@@ -74,9 +77,9 @@ const CheckInView = () => {
       setShowQRCode(false);
       setLoading(true);
 
-      const url = api.youthClub.checkIn;
+      const url = isEventCheckIn ? api.event.checkInWithCode : api.youthClub.checkIn;
       const body = JSON.stringify({
-        targetId: clubId,
+        targetId: targetId,
         securityCode,
         juniorId: detectedCodes[0].rawValue
       });

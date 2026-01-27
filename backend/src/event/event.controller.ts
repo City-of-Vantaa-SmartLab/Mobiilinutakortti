@@ -46,22 +46,36 @@ export class EventController {
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
+    @Post('checkInWithCode')
+    async checkInForEventWithCode(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
+        if (!this.spamGuardService.checkSecurityCode(checkInData.targetId, checkInData.securityCode, true)) {
+            return new CheckInResponseViewModel(false, failReason.CODE);
+        }
+
+        return this.doCheckIn(checkInData);
+    }
+
+    @UsePipes(new ValidationPipe({ transform: true }))
     @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('checkIn')
     @ApiBearerAuth('youthWorker')
-    async checkInForEvent(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
-        const hasPermit = await this.eventService.checkJuniorHasPermit(userData);
+    async checkInForEvent(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
+        return this.doCheckIn(checkInData);
+    }
+
+    private async doCheckIn(checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
+        if (!this.spamGuardService.checkIn(checkInData.juniorId, checkInData.targetId, true)) {
+            return new CheckInResponseViewModel(false, failReason.SPAM);
+        }
+
+        const hasPermit = await this.eventService.checkJuniorHasPermit(checkInData);
         if (!hasPermit) {
             return new CheckInResponseViewModel(false, failReason.PERMIT);
         }
 
-        if (!this.spamGuardService.checkIn(userData.juniorId, userData.targetId, true)) {
-            return new CheckInResponseViewModel(false, failReason.SPAM);
-        }
-
-        await this.eventService.checkInJunior(userData);
-        return new CheckInResponseViewModel(true);
+        const success = await this.eventService.checkInJunior(checkInData);
+        return new CheckInResponseViewModel(success);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
