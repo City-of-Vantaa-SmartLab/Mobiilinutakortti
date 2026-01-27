@@ -1,4 +1,4 @@
-import { Admin, Resource, Login, CustomRoutes } from 'react-admin';
+import { Admin, Resource, Login, CustomRoutes, defaultLightTheme, defaultDarkTheme } from 'react-admin';
 import { lazy } from 'react';
 import finnishMessages from 'ra-language-finnish';
 import { createTheme } from '@mui/material/styles';
@@ -47,26 +47,25 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
 const lightTheme = createTheme({
+  ...defaultLightTheme,
   palette: {
-    mode: 'light',
+    ...defaultLightTheme.palette,
     primary: {
       main: '#1976d2' // Buttons and other components
     },
     secondary: {
-      main: '#3c8fde' // Navigation bar
+      main: '#3c8fde' // Navigation bar in light theme
     },
   },
 });
 
 const darkTheme = createTheme({
+  ...defaultDarkTheme,
   palette: {
-    mode: 'dark',
+    ...defaultDarkTheme.palette,
     primary: {
-      main: '#90caf9'
-    },
-    secondary: {
-      main: '#3c8fde'
-    },
+      main: '#64b5f6'
+    }
   },
 });
 

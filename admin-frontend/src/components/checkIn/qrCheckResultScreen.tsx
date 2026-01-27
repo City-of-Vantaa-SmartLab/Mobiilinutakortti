@@ -12,22 +12,22 @@ const Wrapper = styled.div`
   .mark-container{
     margin: auto;
     text-align: center;
+    max-width: 90vw;
   }
 `;
 
 const Header = styled.span`
     color: #f9e51e;
     display: inline-block;
-    margin-top: 0.6em;
-    font-size: 50px;
+    margin-top: 0.3em;
+    font-size: clamp(28px, 6vw, 50px);
     font-family: 'GT-Walsheim-Bold';
 `
 
 const StyledText = styled.span`
-    color: black;
     margin: auto;
     text-align: center;
-    font-size: 28px;
+    font-size: clamp(18px, 4vw, 28px);
 `
 
 const QrCheckResultScreen = (props: { successful: boolean; errorReason?: string }) => (

@@ -1,45 +1,60 @@
 import { useState } from 'react';
-import styled from 'styled-components';
-import { Button } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { TextField } from '@mui/material';
 import { STATE } from '../state';
 import NewSeasonIcon from '@mui/icons-material/Autorenew';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { CalendarHelper } from './calendarHelper';
+import { Box } from '@mui/material';
 
-const ModalContainer = styled.div`
-  position: fixed;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(0, 0, 0);
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 10;
+const ModalBackdrop = ({ children }) => (
+  <Box
+    sx={{
+      position: 'fixed',
+      paddingTop: '100px',
+      left: 0,
+      top: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 10,
+    }}
+  >
+    {children}
+  </Box>
+);
 
-  .modal-content {
-    background-color: white;
-    padding: 1.2em;
-    margin: auto;
-    min-width: 200px;
-    max-width: 600px;
-    flex-direction: column;
+const ModalContent = ({ children }) => (
+  <Paper
+    sx={{
+      padding: '1.2em',
+      margin: 'auto',
+      minWidth: '200px',
+      maxWidth: '600px',
+      flexDirection: 'column',
+    }}
+  >
+    {children}
+  </Paper>
+);
 
-    .buttons-container {
-      margin-top: 1em;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-button {
-      margin-top: 1em;
-      margin-right: 1em;
-    }
-  }
-`;
+const ButtonsContainer = ({ children }) => (
+  <Box
+    sx={{
+      marginTop: '1em',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '& > button': {
+        marginTop: '1em',
+        marginRight: '1em',
+      }
+    }}
+  >
+    {children}
+  </Box>
+);
 
 const getCurrentDate = () => new Date().toISOString().split('T')[0];
 
@@ -48,8 +63,8 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
   const disabled = loadingState !== STATE.INITIAL;
 
   return (
-    <ModalContainer>
-      <div className="modal-content">
+    <ModalBackdrop>
+      <ModalContent>
         <p>
           Anna päivämäärä, jona vanhentuneet käyttäjät tullaan poistamaan. Tämä
           päivämäärä ilmoitetaan huoltajille lähetettävässä tekstiviestissä.
@@ -68,13 +83,12 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
           helperText={<CalendarHelper />}
           sx={{ mb: 1 }}
         ></TextField>
-        <div className="buttons-container">
+        <ButtonsContainer>
           <Button
             onClick={() => onConfirm(date)}
             disabled={disabled}
             variant="contained"
             color="primary"
-            className={'modal-button'}
             startIcon={<NewSeasonIcon />}
           >
             {disabled ? 'Odota' : 'Aloita uusi kausi'}
@@ -83,14 +97,13 @@ const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
             onClick={onCancel}
             disabled={disabled}
             variant="contained"
-            className={'modal-button'}
             startIcon={<CancelIcon />}
           >
             Peruuta
           </Button>
-        </div>
-      </div>
-    </ModalContainer>
+        </ButtonsContainer>
+      </ModalContent>
+    </ModalBackdrop>
   );
 };
 

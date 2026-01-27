@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { httpClient } from '../../httpClients/httpClient';
 import api from '../../api';
 import CheckinBackground from './checkInBackground.js';
-import { Button } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import SwitchCameraIcon from '@mui/icons-material/SwitchCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import { Container, QrReaderContainer } from './checkInStyledComponents';
@@ -24,16 +24,14 @@ const PopupOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 10000;
 `;
 
-const PopupContainer = styled.div`
+const PopupContainer = styled(Paper)`
   position: relative;
-  width: 95vw;
-  height: 90vh;
-  max-height: calc(100vh - 80px);
-  margin-top: 20px;
-  background: #fff;
+  width: 70vw;
+  height: 70vh;
+  max-width: 1200px;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -44,20 +42,21 @@ const CloseButton = styled(Button)`
   position: absolute !important;
   top: 1em;
   right: 1em;
-  z-index: 10000;
+  z-index: 10;
   min-width: 60px !important;
   min-height: 60px !important;
   border-radius: 50% !important;
-  background-color: rgba(249, 229, 30, 0.95) !important;
-  color: #000 !important;
-
-  &:hover {
-    background-color: rgba(249, 229, 30, 1) !important;
-  }
-
   svg {
     font-size: 2em;
   }
+`;
+
+const CameraSwitchButton = styled(Button)`
+  position: absolute !important;
+  bottom: 2em;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 `;
 
 interface CheckInPopupProps {
@@ -147,10 +146,23 @@ const CheckInPopup = ({ eventId, onClose }: CheckInPopupProps) => {
         <CloseButton
           onClick={onClose}
           variant="contained"
+          color="error"
         >
           <CloseIcon />
         </CloseButton>
-        <Container>
+        {(showCameraToggle) && (
+          <CameraSwitchButton
+            color="primary"
+            size="large"
+            variant="contained"
+            onClick={() => {
+              setCurrentCameraIndex(switchCamera(useFacingMode, currentCameraIndex, cameras));
+            }}
+          >
+            <SwitchCameraIcon />&nbsp;&nbsp;Vaihda&nbsp;kameraa
+          </CameraSwitchButton>
+        )}
+        <Container $isPopup={true}>
           <Notification />
           <CheckinBackground />
           {showQRCode && (
@@ -167,19 +179,6 @@ const CheckInPopup = ({ eventId, onClose }: CheckInPopupProps) => {
           {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} errorReason={errorReason} />}
           {loading && (
               <LoadingMessage message={'Odota hetki'}/>
-          )}
-          {(showCameraToggle) && (
-            <Button
-              style={{ position: 'absolute', bottom: '2em' }}
-              color="primary"
-              size="large"
-              variant="contained"
-              onClick={() => {
-                setCurrentCameraIndex(switchCamera(useFacingMode, currentCameraIndex, cameras));
-              }}
-            >
-              <SwitchCameraIcon />&nbsp;&nbsp;Vaihda&nbsp;kameraa
-            </Button>
           )}
         </Container>
       </PopupContainer>
