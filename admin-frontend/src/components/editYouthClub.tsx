@@ -9,6 +9,7 @@ import {
   BooleanInput,
   BooleanField,
   NumberInput,
+  maxValue,
   ListProps,
   EditProps,
   useRecordContext
@@ -71,7 +72,7 @@ export const EditYouthClub = (props: EditProps) => {
         <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
         <BooleanInput label="Kompassi-integraatio päällä" source="kompassiIntegration.enabled" defaultValue={false} />
         <KompassiHelperText />
-        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" sx={{ width: 400 }} />
+        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" validate={maxValue(2000000000)} sx={{ width: 400 }} />
         <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} sx={{ width: 400 }} />
         <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} sx={{ width: 400 }} />
       </>)}

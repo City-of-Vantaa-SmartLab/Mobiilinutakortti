@@ -42,20 +42,23 @@ export class KompassiService {
         this.logger.log((userId ? `User ${userId} cleared` : 'Cleared') + ' activities cache.');
     }
 
-    async checkInForKompassiActivity(junior: Junior, activityId: number) {
+    // Check in to a Kompassi activity. The activity must exist on Kompassi's side already.
+    async checkInToKompassiActivity(junior: Junior, activityId: number) {
         if (!this.kompassiApiUrl ||
             !this.kompassiApiKey) return;
 
         try {
             const ageGroupId = KompassiService.getAgeGroupId(junior);
             const genderId = KompassiService.getGenderId(junior);
-            await this.checkInForActivity({ activityId, ageGroupId, genderId });
+            await this.checkIn({ activityId, ageGroupId, genderId });
         } catch (e) {
-            this.logger.error('Error during Kompassi integration: ' + e);
+            // To allow for better error investigations, add just a tiny bit of info about the junior.
+            this.logger.error(`Kompassi error for junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ` + e);
         }
     }
 
-    async updateKompassiData(junior: Junior, club: Club, numberOfRetries: number = 0) {
+    // Create a Kompassi activity for club for today if the activity doesn't already exist, and check in a junior to it.
+    async createAndCheckInToKompassiActivity(junior: Junior, club: Club, numberOfRetries: number = 0) {
         if (!this.kompassiApiUrl ||
             !this.kompassiApiKey ||
             !club.kompassiIntegration?.enabled ||
@@ -82,11 +85,11 @@ export class KompassiService {
             } else if (activityInDB.pendingCreation) {
                 // Wait for the first parallel async call to finish fetching/creating activity via API.
                 // Try 6 times at max, so 6*10 seconds in total until giving up.
-                // The longest delay seen when creating activity, with network and API lagging, is around 30 seconds.
+                // In reality, the longest delay seen when creating activity, with network and API lagging, is around 30 seconds.
                 if (numberOfRetries == 6) throw new Error('Failed to find activity after waiting.');
                 this.logger.verbose(`Waiting for pending activity for club ${club.id}.`);
                 numberOfRetries++;
-                setTimeout(() => this.updateKompassiData(junior, club, numberOfRetries), 10000);
+                setTimeout(() => this.createAndCheckInToKompassiActivity(junior, club, numberOfRetries), 10000);
                 return;
             } else {
                 if (activityInDB.kompassiActivityId == null) throw new Error('Null activity id.');
@@ -94,7 +97,7 @@ export class KompassiService {
                 this.logger.debug(`Found club ${club.id} activity from in-memory DB` + ((numberOfRetries > 0) ? ` after ${numberOfRetries} retries.` : '.'));
             }
 
-            await this.checkInForKompassiActivity(junior, activityId);
+            await this.checkInToKompassiActivity(junior, activityId);
         } catch (e) {
             this.logger.error('Error during Kompassi integration: ' + e);
 
@@ -188,8 +191,8 @@ export class KompassiService {
         return id;
     }
 
-    private async checkInForActivity(body: CheckInRequestBody) {
-        this.logger.log('Check-in for activity: ' + body.activityId);
+    private async checkIn(body: CheckInRequestBody) {
+        this.logger.log('Check-in to activity: ' + body.activityId);
 
         const url = this.kompassiApiUrl + '/check-in';
         const headers = {

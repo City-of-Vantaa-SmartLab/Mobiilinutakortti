@@ -102,7 +102,7 @@ export class EventService {
         await this.checkInRepo.save({ junior, event, checkInTime: new Date() });
 
         // Intentionally not awaited.
-        if (event.integrationId) this.kompassiService.checkInForKompassiActivity(junior, event.integrationId);
+        if (event.integrationId) this.kompassiService.checkInToKompassiActivity(junior, event.integrationId);
 
         return true;
     }

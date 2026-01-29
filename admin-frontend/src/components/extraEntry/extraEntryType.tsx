@@ -6,6 +6,7 @@ import {
   SimpleForm,
   TextInput,
   required,
+  maxValue,
   NumberField,
   NumberInput,
   ListProps,
@@ -38,7 +39,7 @@ export const ExtraEntryTypeCreate = (props: CreateProps) => {
     <Create title="Lisää merkintätyyppi" {...props} redirect="list">
       <SimpleForm toolbar={<CustomBasicToolbar listPath="/extraEntryType" />}>
         <TextInput label="Merkintätyyppi" source="name" validate={required()} />
-        <NumberInput label="Yläikäraja" source="expiryAge" validate={required()} />
+        <NumberInput label="Yläikäraja" source="expiryAge" validate={[required(), maxValue(99)]} />
       </SimpleForm>
     </Create>
   );

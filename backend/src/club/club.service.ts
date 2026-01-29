@@ -75,7 +75,7 @@ export class ClubService {
         await this.checkInRepo.save({ junior, club, checkInTime: new Date() });
 
         // Intentionally not awaited.
-        this.kompassiService.updateKompassiData(junior, club);
+        this.kompassiService.createAndCheckInToKompassiActivity(junior, club);
 
         return true;
     }

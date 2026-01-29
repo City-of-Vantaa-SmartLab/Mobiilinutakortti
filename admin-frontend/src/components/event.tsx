@@ -17,6 +17,7 @@ import {
   NumberInput,
   BooleanInput,
   required,
+  maxValue,
   FunctionField,
   useNotify
 } from 'react-admin';
@@ -123,6 +124,7 @@ const EventForm = ({ isEdit = false }: { isEdit?: boolean }) => {
         <NumberInput
           label="Kompassi-palvelun toimintatunniste"
           source="integrationId"
+          validate={maxValue(2000000000)}
           sx={{ width: 400 }}
           helperText={false}
         />
