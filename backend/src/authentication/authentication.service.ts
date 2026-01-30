@@ -119,9 +119,9 @@ export class AuthenticationService {
     }
 
     async loginJunior(loginData: LoginJuniorDto): Promise<JWTToken> {
-        const challengeResponse = await this.juniorService.attemptChallenge(loginData.id, loginData.challenge);
-        if (!challengeResponse) { throw new UnauthorizedException(content.FailedLogin); }
-        return this.signToken(challengeResponse);
+        const juniorId = await this.juniorService.checkLoginChallenge(loginData.id, loginData.challenge);
+        if (!juniorId) { throw new UnauthorizedException(content.FailedLogin); }
+        return this.signToken(juniorId);
     }
 
     private async validateYouthWorker(attempt: { provided: string, expected: string }, userId: string): Promise<void> {

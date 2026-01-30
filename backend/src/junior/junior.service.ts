@@ -92,7 +92,7 @@ export class JuniorService {
         return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday, firstName, lastName } });
     }
 
-    async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
+    async checkLoginChallenge(challengeId: string, challenge: string): Promise<string> {
         const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
         if (!entry) { return undefined; }

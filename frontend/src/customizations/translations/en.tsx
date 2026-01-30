@@ -137,6 +137,7 @@ export const translations: Translations = {
     codeExpired: "PREVIOUS SEASON",
     codeValid: "CURRENT SEASON",
     login: 'Login',
+    loginSubtitle: 'Vantaa youth clubs',
     instruction: (
       <p>
         Show the QR code to a reader when entering a youth club.

@@ -30,16 +30,16 @@ const StyledText = styled.span`
     font-size: clamp(18px, 4vw, 28px);
 `
 
-const QrCheckResultScreen = (props: { successful: boolean; errorReason?: string }) => (
+const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string }) => (
     <Wrapper>
-        {props.successful && (
+        {props.checkInName && (
           <div className={"mark-container"}>
-              <Header>Tervetuloa!</Header>
+              <Header>Tervetuloa {props.checkInName}!</Header>
               <CheckMark />
               <StyledText>Kirjautuminen onnistui.</StyledText>
           </div>
             )}
-        {!props.successful && (
+        {!props.checkInName && (
           <div className={"mark-container"}>
               <Header>Jokin meni pieleen!</Header>
               <ErrorMark />

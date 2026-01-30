@@ -17,7 +17,7 @@ const CheckInView = () => {
   const [showQRCode, setShowQRCode] = useState(true);
   const [showQrCheckNotification, setShowQrCheckNotification] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checkInSuccess, setCheckInSuccess] = useState(null);
+  const [checkInName, setCheckInName] = useState(null);
   const [showCameraToggle, setShowCameraToggle] = useState(false);
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
@@ -58,18 +58,18 @@ const CheckInView = () => {
     return () => { isMounted = false; };
   }, [])
 
-  const handleCheckInReturn = (success: boolean, needsNewSecurityCode: boolean) => {
+  const handleCheckInReturn = (checkInName: string, needsNewSecurityCode: boolean) => {
     setLoading(false);
     setShowQRCode(false)
-    setCheckInSuccess(success)
+    setCheckInName(checkInName)
     setShowQrCheckNotification(true);
-    tryToPlayAudio(success).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', { type: 'warning' }));
+    tryToPlayAudio(!!checkInName).catch(() => notify('Audion toistaminen epäonnistui. Tarkista selaimesi oikeudet.', { type: 'warning' }));
     setTimeout(() => {
-      setCheckInSuccess(null);
+      setCheckInName(null);
       setShowQrCheckNotification(false);
       setShowQRCode(!needsNewSecurityCode);
       setNeedsReload(needsNewSecurityCode);
-    }, success ? 2500 : 3000);
+    }, checkInName ? 2500 : 3000);
   };
 
   const handleScan = async (detectedCodes: any[]) => {
@@ -96,7 +96,7 @@ const CheckInView = () => {
             setShowQRCode(true)
           } else {
             const needsNewSecurityCode = response.reason === 'CODE';
-            handleCheckInReturn(response.success, needsNewSecurityCode);
+            handleCheckInReturn(response.checkInName, needsNewSecurityCode);
           }
         });
     }
@@ -125,7 +125,7 @@ const CheckInView = () => {
       {needsReload && (
           <LoadingMessage message={'Nuorisotyöntekijän on avattava kirjautumissivu uudelleen.'}/>
       )}
-      {showQrCheckNotification && <QrCheckResultScreen successful={checkInSuccess} />}
+      {showQrCheckNotification && <QrCheckResultScreen checkInName={checkInName} />}
       {loading && (
           <LoadingMessage message={'Odota hetki'}/>
       )}

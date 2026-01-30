@@ -136,6 +136,7 @@ export const translations: Translations = {
     codeExpired: "FÖREGÅENDE SÄSONG",
     codeValid: "NUVARANDE SÄSONG",
     login: 'Logga in',
+    loginSubtitle: 'Vanda ungdomsklubbar',
     instruction: (
       <p>
         Visa QR-koden för en läsare vid inträde i en ungdomsklubb.

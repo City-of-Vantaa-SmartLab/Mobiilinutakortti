@@ -145,6 +145,7 @@ export const translations: Translations = {
     codeExpired: "Edellinen kausi",
     codeValid: "Kuluva kausi",
     login: 'Kirjaudu',
+    loginSubtitle: 'Vantaan nuorisotilat',
     instruction: (
       <p>
         Näytä QR-koodi lukulaitteelle saapuessasi nuorisotilaan.

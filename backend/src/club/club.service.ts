@@ -61,7 +61,8 @@ export class ClubService {
         return clubCheckIns;
     }
 
-    async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
+    // Returns nick name or first name of the junior on success.
+    async checkInJunior(checkInData: CheckInDto): Promise<string> {
         const [junior, club] = await Promise.all([
             this.juniorRepo.findOneBy({ id: checkInData.juniorId }),
             this.clubRepo.createQueryBuilder('club')
@@ -77,7 +78,7 @@ export class ClubService {
         // Intentionally not awaited.
         this.kompassiService.createAndCheckInToKompassiActivity(junior, club);
 
-        return true;
+        return junior.nickName ? junior.nickName : junior.firstName;
     }
 
     async editClub(data: EditClubDto): Promise<string> {

@@ -6,7 +6,8 @@ export enum failReason {
 };
 
 export class CheckInResponseViewModel {
-    success: boolean;
+    // Nick name or first name of who is checking in. Empty on failed check in attempt.
+    checkInName: string;
 
     // Used to show the reason why check-in fails.
     // CODE = security code is wrong.
@@ -15,8 +16,8 @@ export class CheckInResponseViewModel {
     // '' = check-in was successful.
     reason: failReason = failReason.NONE;
 
-    constructor(success: boolean, reason?: failReason) {
-        this.success = success;
-        if (reason) { this.reason = reason; }
+    constructor(checkInName: string, reason?: failReason) {
+        this.checkInName = checkInName;
+        if (reason) this.reason = reason;
     }
 }

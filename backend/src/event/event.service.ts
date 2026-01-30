@@ -89,7 +89,8 @@ export class EventService {
         return true;
     }
 
-    async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
+    // Returns nick name or first name of the junior on success.
+    async checkInJunior(checkInData: CheckInDto): Promise<string> {
         const [junior, event] = await Promise.all([
             this.juniorRepo.findOneBy({ id: checkInData.juniorId }),
             this.eventRepo.createQueryBuilder('event')
@@ -104,7 +105,7 @@ export class EventService {
         // Intentionally not awaited.
         if (event.integrationId) this.kompassiService.checkInToKompassiActivity(junior, event.integrationId);
 
-        return true;
+        return junior.nickName ? junior.nickName : junior.firstName;
     }
 
     async createEvent(data: CreateEventDto, userId?: string): Promise<Event> {
