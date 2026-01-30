@@ -107,7 +107,8 @@ const EventForm = ({ isEdit = false }: { isEdit?: boolean }) => {
         helperText={<CalendarHelper />}
         sx={{ width: 400 }}
       />
-      {enableExtraEntries && (<>
+      {false && enableExtraEntries && // NOTE: Permissions for events have been disabled from the view for now.
+        (<>
         <BooleanInput
           label="Osallistuminen on luvanvaraista"
           source="needsPermit"
@@ -265,7 +266,8 @@ export const EventList = (props: ListProps) => {
         <TextField label="Nimi" source="name" />
         <DateField label="Alkupäivämäärä" source="startDate" locales={['fi']} />
         <OpenCheckInButton label="Ilmoittautuminen" />
-        <OpenCheckInButton label="Ilmoittautuminen (pop-up)" popup={true} />
+        {false && // NOTE: Pop-up check-in has been disabled from the view for now.
+        (<OpenCheckInButton label="Ilmoittautuminen (pop-up)" popup={true} />)}
         <OpenCheckInLogButton label="Ilmoittautuneet" />
         <DeleteOldEventButton label="Poista vanha" />
         <EditButton />
