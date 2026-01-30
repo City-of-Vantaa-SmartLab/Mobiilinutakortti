@@ -44,7 +44,7 @@ export const applyFilters = (filterOptions: FilterDto) => {
 
     Object.keys(filterOptions).forEach(property => {
         if (property === 'name') {
-            queryParams.push("CONCAT (junior.firstName, ' ', junior.lastName) ILIKE :name")
+            queryParams.push("(CONCAT (junior.firstName, ' ', junior.lastName) ILIKE :name OR (junior.nickName) ILIKE :name)")
             filterValues['name'] = `%${filterOptions.name}%`
         } else if (property === 'phoneNumber') {
             queryParams.push('junior.phoneNumber ILIKE :phoneNumber')
