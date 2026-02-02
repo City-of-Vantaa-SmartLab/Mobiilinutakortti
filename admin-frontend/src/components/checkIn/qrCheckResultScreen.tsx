@@ -34,7 +34,11 @@ const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string 
     <Wrapper>
         {props.checkInName && (
           <div className={"mark-container"}>
-              <Header>Tervetuloa {props.checkInName}!</Header>
+              <Header>Tervetuloa!</Header>
+              {/*
+                For anonymity reasons, name is hidden even here.
+                <Header>Tervetuloa {props.checkInName}!</Header>
+              */}
               <CheckMark />
               <StyledText>Kirjautuminen onnistui.</StyledText>
           </div>
