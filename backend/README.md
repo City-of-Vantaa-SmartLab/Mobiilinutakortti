@@ -7,7 +7,7 @@ The backend uses NestJS. The database is PostgreSQL.
 ## System requirements:
 
 - Node.js: v24.11.0 preferred
-- PostgreSQL: v16 preferred
+- PostgreSQL: v18 preferred
 - Docker: optional
 
 ## Multiple instances
@@ -17,7 +17,7 @@ There are some services that rely on an in-memory "database". If the backend was
 * src/session/sessionDb.service.ts
 * src/spamGuard/spamGuard.service.ts
 
-Also note that the environment variables `SC_SECRET` and `JWT_SECRET` are required if multiple instances are used.
+Also note that the environment variables `SC_SECRET` and `JWT_SECRET` must be defined if multiple instances are used, because a randomly generated value only works for a single instance.
 
 ### Accessing the NestJS/PostgreSQL Docker container
 

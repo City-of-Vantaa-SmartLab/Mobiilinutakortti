@@ -14,7 +14,7 @@ Note that currently for some services the backend keeps a small in-memory "datab
 ## Prerequisites
 
 - Node.js: v24.11.0 preferred
-- PostgreSQL: v16 preferred
+- PostgreSQL: v18 preferred
 - Docker: optional
 
 For production use, Telia SMS service is required. Note that there are two endpoints (see environment variables section in backend documentation). **The use of the batch endpoint requires a separate permit from Telia. Ensure your credentials have the permit.**
