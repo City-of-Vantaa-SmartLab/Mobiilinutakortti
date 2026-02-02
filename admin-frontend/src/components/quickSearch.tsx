@@ -107,6 +107,7 @@ const QuickSearch = () => {
                 ),
               },
             }}
+            helperText='Huomioi pakollinen maakoodi: esimerkiksi hakuehto "040" ei löydä +35840123 alkuisia numeroita, mutta hakuehto "40" tai "123" löytää ne.'
           />
 
           <Box sx={{ display: 'flex', gap: 1 }}>
