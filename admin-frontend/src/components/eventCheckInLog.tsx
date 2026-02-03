@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNotify } from 'react-admin';
+import { useNotify, useRedirect } from 'react-admin';
 import { useParams } from 'react-router-dom';
 import {
     Table, TableHead,
@@ -10,7 +10,9 @@ import {
     Container,
     CheckInLogCard,
     CheckInLogCardHeader,
-    CheckInLogCardContent
+    CheckInLogCardContent,
+    VerticalCardPadding,
+    ReturnButton
 } from './styledComponents';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
@@ -31,6 +33,7 @@ interface JuniorInformation {
 // Lists the names of people who have checked into an event.
 const EventCheckInLogView = () => {
     useAutoLogout();
+    const redirect = useRedirect();
     const { eventId } = useParams<{ eventId: string }>();
 
     const [eventName, setEventName] = useState('');
@@ -108,6 +111,9 @@ const EventCheckInLogView = () => {
                     </CheckInLogCardContent>
                 </CheckInLogCard>
             }
+            <VerticalCardPadding />
+            <ReturnButton onClick={() => redirect("/event")} />
+            <VerticalCardPadding />
         </Container>
     )
 }

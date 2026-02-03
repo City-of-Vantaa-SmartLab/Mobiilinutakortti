@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotify } from 'react-admin';
+import { useNotify, useRedirect } from 'react-admin';
 import { useParams } from 'react-router-dom';
 import { Form } from 'react-final-form';
 import {
@@ -14,7 +14,8 @@ import {
     CheckInLogCardContent,
     CheckInLogCardContentSelect,
     VerticalCardPadding,
-    QueryDatePickerField
+    QueryDatePickerField,
+    ReturnButton
 } from './styledComponents';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
@@ -38,6 +39,7 @@ interface JuniorInformation {
 // see "cron" from club service in backend.
 const CheckInLogView = () => {
     useAutoLogout();
+    const redirect = useRedirect();
     const { youthClubId } = useParams<{ youthClubId: string }>();
 
     const [clubName, setClubName] = useState('');
@@ -131,6 +133,9 @@ const CheckInLogView = () => {
                     </CheckInLogCardContent>
                 </CheckInLogCard>
             }
+            <VerticalCardPadding />
+            <ReturnButton onClick={() => redirect("/youthClub")} />
+            <VerticalCardPadding />
         </Container>
     )
 }
