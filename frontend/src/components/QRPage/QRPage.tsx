@@ -59,7 +59,8 @@ const QRPage: React.FC<QRPageProps> = (props) => {
             <LanguageSelect color={theme.pages.qr.languageSelectText} />
             <Wrapper>
                 <Header>
-                    <Title title={t.qrPage.login} subtitle={props.name} />
+                    { /* props.name as subtitle would show nick name or first name, but is hidden for security reasons */ }
+                    <Title title={t.qrPage.login} subtitle={t.qrPage.loginSubtitle} />
                 </Header>
                 <QR id={props.id} status={props.status} />
                 <Footer>{t.qrPage.instruction}</Footer>

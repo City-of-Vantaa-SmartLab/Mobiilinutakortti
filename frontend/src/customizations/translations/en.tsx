@@ -137,7 +137,14 @@ export const translations: Translations = {
     codeExpired: "PREVIOUS SEASON",
     codeValid: "CURRENT SEASON",
     login: 'Login',
-    instruction: 'Show QR code to a reader when entering the youth club.',
+    loginSubtitle: 'Vantaa youth clubs',
+    instruction: (
+      <p>
+        Show the QR code to a reader when entering a youth club.
+        <br/>
+        You may also take a screen shot of this page and use it when logging in.
+      </p>
+    )
   },
   languages: {
     fi: 'Finnish',

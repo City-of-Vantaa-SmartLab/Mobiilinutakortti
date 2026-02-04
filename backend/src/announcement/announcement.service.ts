@@ -4,7 +4,7 @@ import * as content from '../content';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { BatchItem, TeliaBatchMessageRequest } from '../sms/models';
 import { ClubService } from '../club/club.service';
-import { EmailAnnouncement } from '../email/models/emailModels.model';
+import { EmailAnnouncement } from '../email/emailModels.interfaces';
 import { EmailConfig } from '../email/emailConfigHandler';
 import { EmailService } from '../email/email.service';
 import { Junior } from '../junior/entities';
@@ -30,7 +30,7 @@ export class AnnouncementService {
 
     private async getRecipientsByYouthClub(youthClubId: number): Promise<Junior[]> {
         const twoWeeksInSeconds = 1209600;
-        const checkIns = await this.clubService.getCheckins({clubId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
+        const checkIns = await this.clubService.getCheckIns({targetId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
         const checkedInJuniors = checkIns.map((checkIn) => {
             return checkIn.junior;
         });

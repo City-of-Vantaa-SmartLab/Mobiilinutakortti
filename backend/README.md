@@ -7,7 +7,7 @@ The backend uses NestJS. The database is PostgreSQL.
 ## System requirements:
 
 - Node.js: v24.11.0 preferred
-- PostgreSQL: v16 preferred
+- PostgreSQL: v18 preferred
 - Docker: optional
 
 ## Multiple instances
@@ -17,7 +17,7 @@ There are some services that rely on an in-memory "database". If the backend was
 * src/session/sessionDb.service.ts
 * src/spamGuard/spamGuard.service.ts
 
-Also note that the environment variables `SC_SECRET` and `JWT_SECRET` are required if multiple instances are used.
+Also note that the environment variables `SC_SECRET` and `JWT_SECRET` must be defined if multiple instances are used, because a randomly generated value only works for a single instance.
 
 ### Accessing the NestJS/PostgreSQL Docker container
 
@@ -82,10 +82,6 @@ If you are not using Microsoft Entra ID to login users (as is by default; see en
 
 If you are using Microsoft Entra ID to login users, admin privileges are added on user login based on whether the user belongs to a group that has a role called 'Admin'. Configure the two groups (youthworkers and admins) in Entra accordingly, adding the 'Admin' role to the group for admins.
 
-## Testing SMS functionality
-
-To test SMS functionality locally, copy `.env.template` file to `.env` and set the Telia username/password/user variables.
-
 ## Environment variables / secrets
 
 In the following list the terms "IdP metadata XML" and "metadata XML" are used. The latter refers to service provider metadata, i.e. for this application. The metadata XML refers to the XML file used to register the service to Suomi.fi. Similarly, IdP metadata XML is the identity provider's (Suomi.fi) metadata file.
@@ -143,11 +139,11 @@ The tests do not currently work correctly due to historical reasons.
 
 ### Dependency version constraints
 
-Some dependencies have specific version constraints documented in `package.json` for compatibility or security reasons:
+Some dependencies have specific version constraints in `package.json` for compatibility or security reasons:
 
 **TypeScript (`~5.5.0`)**
 - Locked to 5.5.x due to breaking type changes in TypeScript 5.6+
-- TypeScript 5.9.3 introduced stricter type checking that causes compilation errors in `@oozcitak/util` (a dependency of xmlbuilder2)
+- The new version introduced stricter type checking that causes compilation errors in `@oozcitak/util` (a dependency of xmlbuilder2)
 - The affected types are `SetIterator` missing `[Symbol.dispose]` property required by TypeScript 5.9+
 - Upgrading to 5.6+ would require upstream fixes in xmlbuilder2's dependencies
 

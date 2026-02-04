@@ -4,6 +4,7 @@ export const YouthWorkerAlreadyExists = "Käyttäjätili on jo luotu tällä sä
 export const Created = (what: string) => `${what} luotu.`
 export const Renew = (what: string) => `${what} uudistettu.`
 export const ClubNotFound = "Kyseistä nuorisotilaa ei löydy."
+export const EventNotFound = "Kyseistä tapahtumaa ei löydy."
 export const RecipientsNotFound = "Hakuehdoilla ei löydetty yhtään vastaanottajaa."
 export const DataNotChanged = "Tietoja ei muutettu."
 export const IncorrectPassword = "Nykyinen salasana on väärä."
@@ -19,6 +20,7 @@ export const JuniorResetLinkThrottled = "Palautuslinkkejä pyydetty liikaa"
 export const Updated = "Päivitetty."
 export const UserNotFound = "Käyttäjää ei löydy."
 export const TypeNotFound = "Lisämerkintätyyppiä ei löydy."
+export const ExtraEntryTypeInUse = "Lisämerkintätyyppi on käytössä, eikä sitä voi poistaa."
 export const ExtraEntryAdded = "Merkintä lisätty"
 export const ExtraEntryDeleted = "Merkintä poistettu"
 export const ExtraEntryNotFound = "Poistettavaa merkintää ei löytynyt."

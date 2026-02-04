@@ -17,7 +17,7 @@ import {
 } from 'react-admin';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import styled from 'styled-components';
-import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms, NoBasePath } from '../utils';
+import { getActiveYouthClubOptions, messageTypeChoices, recipientChoicesForSms } from '../utils';
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { announcementProvider } from '../providers/announcementProvider';
 import useAutoLogout from '../hooks/useAutoLogout';
@@ -64,11 +64,7 @@ const MessageSectionForLanguage = (props: { langCode: string }) => {
 };
 
 const AnnouncementCreateTitle = () => (
-    <span>Lähetä tiedotusviesti</span>
-);
-
-const AnnouncementCreateHelperText = ({msgType}) => (
-    <p style={{'marginTop': '0px', 'fontSize': 'small'}}>{msgType === "email" ? "Viesti lähetetään vanhemmille, jotka ovat sallineet infosähköpostien lähettämisen." : "Viesti lähetetään henkilöille, jotka ovat sallineet infotekstiviestien lähettämisen."}</p>
+    <span>Tiedotus</span>
 );
 
 const CustomToolbar = (props: any) => (
@@ -119,7 +115,7 @@ export const AnnouncementCreate = (props: CreateProps) => {
                 setNumberOfRecipients(0);
             } else if (fd && fd.msgType && (!!fd.youthClub || fd.sendToAllYouthClubs)) {
                 console.debug("Updating recipient count");
-                announcementProvider.getList({ data: fd } as any).then(
+                announcementProvider.getList({ data: fd }).then(
                     (response: any) => { setNumberOfRecipients(response.data) }
                 )
             } else {
@@ -136,42 +132,38 @@ export const AnnouncementCreate = (props: CreateProps) => {
                     {({ formData }: FormDataConsumerRenderParams) => { formDataRef.current = formData; return null; }}
                 </FormDataConsumer>
                 <RadioButtonGroupInput source="msgType" choices={messageTypeChoices} label="Valitse lähetettävän viestin tyyppi" validate={required()} defaultValue={"sms"} onChange={updateRecipientCount} helperText={false}/>
-                <FormDataConsumer sx={{ marginTop: 0 }}>
-                    {({ formData }) => {
-                        return <AnnouncementCreateHelperText msgType={formData.msgType} />
-                    }}
-                </FormDataConsumer>
+                <Typography sx={{ width: '100%', fontSize: 'small' }}>
+                    <FormDataConsumer>
+                        {({ formData }: FormDataConsumerRenderParams) => {
+                            return formData.msgType === "email" ? "Viesti lähetetään vanhemmille, jotka ovat sallineet infosähköpostien lähettämisen." : "Viesti lähetetään henkilöille, jotka ovat sallineet infotekstiviestien lähettämisen."
+                        }}
+                    </FormDataConsumer>
+                </Typography>
                 <FormDataConsumer>
                     {({ formData }) => {
-                        return <>{formData.msgType === "sms" && <CheckboxGroupInput source="recipient" choices={recipientChoicesForSms} label="Viestin vastaanottajat" onChange={updateRecipientCount} validate={formData.msgType === "sms" && required()} />}</>
+                        return <>{formData.msgType === "sms" && <CheckboxGroupInput source="recipient" choices={recipientChoicesForSms} label="Viestin vastaanottajat" onChange={updateRecipientCount} validate={formData.msgType === "sms" && required()} helperText={false} />}</>
                     }}
                 </FormDataConsumer>
-                <NoBasePath>
-                    <Typography sx={{ width: '100%', fontSize: 'small' }}>
-                        Viestien vastaanottajat katsotaan nuoren kotinuorisotilan tai kuluneen kahden viikon aikana vierailemansa nuorisotilan perusteella.
-                    </Typography>
-                </NoBasePath>
+                <Typography sx={{ width: '100%', fontSize: 'small', mt: '1rem' }}>
+                    Viestien vastaanottajat katsotaan nuoren kotinuorisotilan tai kuluneen kahden viikon aikana vierailemansa nuorisotilan perusteella.
+                </Typography>
                 <FormDataConsumer>
                     {({ formData }) => {
                         return <FormControlLabel label="Lähetä kaikille nuorisotiloille" control={<Checkbox onChange={(event) => onCheckboxChange(event, formData)} color="primary"/>}/>
                     }}
                 </FormDataConsumer>
                 <SelectInput sx={{ minWidth: '300px', marginTop: 1, display: allSelected ? 'none' : undefined }} label="Koskien nuorisotilaa" source="youthClub" choices={youthClubs} validate={!allSelected && required()} onChange={updateRecipientCount} />
-                <NoBasePath>
-                    <div style={{ marginTop: '8px', marginBottom: '8px' }}>
-                        <Typography variant="subtitle1">
-                            Viestin sisältö
-                        </Typography>
-                    </div>
-                </NoBasePath>
+                <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                    <Typography variant="subtitle1">
+                        Viestin sisältö
+                    </Typography>
+                </div>
                 <MessageSectionForLanguage langCode="fi" />
                 <MessageSectionForLanguage langCode="en" />
                 <MessageSectionForLanguage langCode="sv" />
-                <NoBasePath>
-                    <Typography variant="body1">
-                        Tietojen perusteella laskettu viestin vastaanottajien määrä: {numberOfRecipients}
-                    </Typography>
-                </NoBasePath>
+                <Typography variant="body1">
+                    Tietojen perusteella laskettu viestin vastaanottajien määrä: {numberOfRecipients}
+                </Typography>
             </SimpleForm>
         </Create>
     );

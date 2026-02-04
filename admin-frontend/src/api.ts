@@ -50,6 +50,16 @@ const apiEndpoints = {
     base: `${apiUrl}/youthworker/`,
     setMainYouthClub: `${apiUrl}/youthworker/setMainYouthClub`
   },
+  event: {
+    base: `${apiUrl}/event/`,
+    list: `${apiUrl}/event/list`,
+    edit: `${apiUrl}/event/edit`,
+    create: `${apiUrl}/event/create`,
+    delete: `${apiUrl}/event/delete`,
+    checkIn: `${apiUrl}/event/checkIn`,
+    checkInWithCode: `${apiUrl}/event/checkInwithCode`,
+    checkInLog: `${apiUrl}/event/checkInLog`
+  },
   spamGuard: {
     reset:`${apiUrl}/spamguard/reset`,
     getSecurityCode:`${apiUrl}/spamguard/getSecurityCode`

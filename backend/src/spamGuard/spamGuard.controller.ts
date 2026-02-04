@@ -10,6 +10,7 @@ import { SessionGuard } from '../session/session.guard';
 import { YouthWorker } from '../youthWorker/youthWorker.decorator';
 import { Message } from '../common/vm';
 import * as content from '../content';
+import { GetSecurityCodeDto } from './getSecurityCode.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller(`${content.Routes.api}/spamguard`)
@@ -35,8 +36,8 @@ export class SpamGuardController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('getSecurityCode')
     @ApiBearerAuth('youthWorker')
-    async getSecurityCode(@Body() body: { clubId: number }): Promise<Message> {
-        const code = this.spamGuardService.getSecurityCode(body.clubId);
+    async getSecurityCode(@Body() body: GetSecurityCodeDto): Promise<Message> {
+        const code = this.spamGuardService.getSecurityCode(body.targetId, body.forEvent);
         return new Message(code);
     }
 }

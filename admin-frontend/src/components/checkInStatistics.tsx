@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNotify } from 'react-admin';
+import { useNotify, useRedirect } from 'react-admin';
 import { useParams } from 'react-router-dom';
 import { Form } from 'react-final-form';
 import { Button, Divider } from '@mui/material';
@@ -13,8 +13,9 @@ import {
     CheckInLogCardContentSelect,
     VerticalCardPadding,
     StyledDialogTitle,
-    QueryDatePickerField
-} from './checkInStyledComponents';
+    QueryDatePickerField,
+    ReturnButton
+} from './styledComponents';
 import { Typography } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
@@ -52,6 +53,8 @@ interface CheckInStatistics {
 // Similar to CheckInLogView, but displays general statistics, not names.
 const CheckInStatisticsView = () => {
     useAutoLogout();
+    const redirect = useRedirect();
+
     const { youthClubId } = useParams<{ youthClubId: string }>();
 
     const [clubName, setClubName] = useState('');
@@ -70,7 +73,7 @@ const CheckInStatisticsView = () => {
         if (!isNaN(date.getTime())) {
             const url = api.youthClub.checkInStats;
             const body = JSON.stringify({
-                clubId: youthClubId,
+                targetId: youthClubId,
                 date: date
             });
             const options = {
@@ -144,6 +147,9 @@ const CheckInStatisticsView = () => {
                     </CheckInLogCardContent>
                 </CheckInLogCard>
             }
+            <VerticalCardPadding />
+            <ReturnButton onClick={() => redirect("/youthClub")} />
+            <VerticalCardPadding />
         </Container>
     )
 }

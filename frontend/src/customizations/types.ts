@@ -204,6 +204,7 @@ export interface Translations {
     codeExpired: string;
     codeValid: string;
     login: string,
+    loginSubtitle: string,
     instruction: ReactNode
   },
   languages: {

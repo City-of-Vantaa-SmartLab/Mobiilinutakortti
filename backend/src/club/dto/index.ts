@@ -1,2 +1,2 @@
-export { CheckInDto } from './checkIn.dto';
-export { CheckInStatsSettingsDto } from './checkInStatsSettings.dto';
+export { CheckInDto } from '../../checkIn/checkIn.dto';
+export { CheckInQueryDto } from '../../checkIn/checkInQuery.dto';

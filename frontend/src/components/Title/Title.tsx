@@ -8,8 +8,8 @@ interface TitleProps {
 
 
 const Main = styled.h1`
-    font-weight: bold; 
-    font-size: 9vw;  
+    font-weight: bold;
+    font-size: 9vw;
     padding: 0;
     margin: 0;
     @media(min-width: 600px) {

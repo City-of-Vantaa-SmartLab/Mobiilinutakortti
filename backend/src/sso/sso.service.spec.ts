@@ -3,28 +3,28 @@ import * as xmlbuilder from 'xmlbuilder2';
 
 /**
  * SSO Service Tests
- * 
+ *
  * These tests verify the XML building and SAML workflow used by the SSO service.
- * 
+ *
  * Background on js-yaml dependency:
  * The xmlbuilder2 library (used by saml2-js) includes js-yaml as a dependency.
  * However, js-yaml is only used by xmlbuilder2's YAMLReader class, which is invoked
  * when parsing YAML files/strings into XML.
- * 
+ *
  * Our SSO code never uses YAML - it exclusively uses xmlbuilder.create() with
  * JavaScript objects to build SAML XML structures. Therefore, js-yaml is never
  * actually invoked in the SSO workflow despite being in the dependency tree.
- * 
+ *
  * This test suite verifies that:
  * 1. xmlbuilder2 correctly builds XML from JavaScript objects (our actual usage)
  * 2. The zlib compression/decompression cycle works (used for SAML requests)
  * 3. Complex SAML structures with namespaces and attributes build correctly
- * 
+ *
  * These tests serve as a regression check if xmlbuilder2 or its dependencies
  * (including js-yaml) are updated, ensuring our SSO functionality continues to work.
  */
 describe('SSO XML Building and Compression', () => {
-  
+
   describe('xmlbuilder2 with JavaScript objects', () => {
     it('should create simple XML from JavaScript object', () => {
       const xml = xmlbuilder.create({
@@ -33,7 +33,7 @@ describe('SSO XML Building and Compression', () => {
           'child': 'text'
         }
       }).end();
-      
+
       expect(xml).toContain('<root attr="value">');
       expect(xml).toContain('<child>text</child>');
     });
@@ -88,7 +88,7 @@ describe('SSO XML Building and Compression', () => {
 
       // Deflate (compress) like SSO does for SAML requests
       const deflated = zlib.deflateRawSync(originalXml);
-      
+
       // Inflate (decompress) like SSO does when reading SAML requests
       const inflated = zlib.inflateRawSync(deflated).toString();
 

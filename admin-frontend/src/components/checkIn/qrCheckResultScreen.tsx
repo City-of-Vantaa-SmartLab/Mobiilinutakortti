@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import CheckMark from './checkMark';
 import ErrorMark from './errorMark';
@@ -13,38 +12,46 @@ const Wrapper = styled.div`
   .mark-container{
     margin: auto;
     text-align: center;
+    max-width: 90vw;
   }
 `;
 
 const Header = styled.span`
     color: #f9e51e;
     display: inline-block;
-    margin-top: 0.6em;
-    font-size: 50px;
+    margin-top: 0.3em;
+    font-size: clamp(28px, 6vw, 50px);
     font-family: 'GT-Walsheim-Bold';
 `
 
 const StyledText = styled.span`
-    color: black;
     margin: auto;
     text-align: center;
-    font-size: 32px;
+    font-size: clamp(18px, 4vw, 28px);
 `
 
-const QrCheckResultScreen = (props: { successful: boolean }) => (
+const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string }) => (
     <Wrapper>
-        {props.successful && (
+        {props.checkInName && (
           <div className={"mark-container"}>
               <Header>Tervetuloa!</Header>
+              {/*
+                For anonymity reasons, name is hidden even here.
+                <Header>Tervetuloa {props.checkInName}!</Header>
+              */}
               <CheckMark />
-              <StyledText>Kirjautuminen nuorisotilaan onnistui!</StyledText>
+              <StyledText>Kirjautuminen onnistui.</StyledText>
           </div>
             )}
-        {!props.successful && (
+        {!props.checkInName && (
           <div className={"mark-container"}>
               <Header>Jokin meni pieleen!</Header>
               <ErrorMark />
-              <StyledText>Yrititkö kirjautua samalla tunnuksella uudelleen sisään?</StyledText>
+              {props.errorReason === 'PERMIT' ? (
+                <StyledText>Nuorella ei ole lupaa osallistua tapahtumaan.</StyledText>
+              ) : (
+                <StyledText>Yrititkö kirjautua kahdesti samalla tunnuksella?</StyledText>
+              )}
           </div>
             )}
     </Wrapper>

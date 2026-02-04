@@ -18,13 +18,14 @@ import { AllowedRoles } from '../roles/roles.decorator';
 import { Roles } from '../roles/roles.enum';
 import { ClubEditInterceptor } from './interceptors/edit.interceptor';
 import { EditClubDto } from './dto/edit.dto';
-import { ClubViewModel, CheckInResponseViewModel, CheckInStatsViewModel, CheckInLogViewModel } from './vm';
-import { CheckInDto, CheckInStatsSettingsDto } from './dto';
+import { ClubViewModel } from './vm';
+import { CheckInResponseViewModel, CheckInStatsViewModel, CheckInLogViewModel, failReason } from '../checkIn/vm';
+import { CheckInDto } from '../checkIn/checkIn.dto';
+import { CheckInQueryDto } from '../checkIn/checkInQuery.dto';
 import { Message } from '../common/vm';
-import { CheckIn } from './entities';
+import { CheckIn } from '../checkIn/checkIn.entity';
 import * as content from '../content';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { failReason } from './vm/checkInResponse.vm';
 
 @Controller(`${content.Routes.api}/club`)
 @ApiTags('Club')
@@ -47,23 +48,22 @@ export class ClubController {
     @Get('checkIn/:id')
     @ApiBearerAuth('youthWorker')
     async getGetClubCheckins(@Param('id') clubId: number): Promise<CheckIn[]> {
-        return await this.clubService.getCheckinsForClub(clubId);
+        return await this.clubService.getCheckInsForClub(clubId);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
     @Post('checkIn')
-    async checkInJunior(@Body() userData: CheckInDto): Promise<CheckInResponseViewModel> {
-        let canCheckIn = this.spamGuardService.checkSecurityCode(userData.clubId, userData.securityCode);
-        if (!canCheckIn) return new CheckInResponseViewModel(false, failReason.CODE);
-
-        canCheckIn &&= this.spamGuardService.checkIn(userData.juniorId, userData.clubId);
-        if (canCheckIn) {
-            canCheckIn &&= await this.clubService.checkInJunior(userData);
-        } else {
-            return new CheckInResponseViewModel(false, failReason.SPAM);
+    async checkInJunior(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
+        if (!this.spamGuardService.checkSecurityCode(checkInData.targetId, checkInData.securityCode)) {
+            return new CheckInResponseViewModel(undefined, failReason.CODE);
         }
 
-        return new CheckInResponseViewModel(canCheckIn);
+        if (!this.spamGuardService.checkIn(checkInData.juniorId, checkInData.targetId)) {
+            return new CheckInResponseViewModel(undefined, failReason.SPAM);
+        }
+
+        const name = await this.clubService.checkInJunior(checkInData);
+        return new CheckInResponseViewModel(name);
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -71,10 +71,10 @@ export class ClubController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('checkInLog')
     @ApiBearerAuth('youthWorker')
-    async getYouthClubCheckIns(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInLogViewModel> {
+    async getYouthClubCheckIns(@Body() settings: CheckInQueryDto): Promise<CheckInLogViewModel> {
         return new CheckInLogViewModel(
-            (await this.clubService.getClubById(settings.clubId)).name,
-            await this.clubService.getCheckins(settings));
+            (await this.clubService.getClubById(settings.targetId)).name,
+            await this.clubService.getCheckIns(settings));
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -101,7 +101,7 @@ export class ClubController {
     @AllowedRoles(Roles.YOUTHWORKER)
     @Post('checkInStats')
     @ApiBearerAuth('youthWorker')
-    async getCheckInStatistics(@Body() settings: CheckInStatsSettingsDto): Promise<CheckInStatsViewModel> {
+    async getCheckInStatistics(@Body() settings: CheckInQueryDto): Promise<CheckInStatsViewModel> {
         return await this.clubService.generateStats(settings);
     }
 }

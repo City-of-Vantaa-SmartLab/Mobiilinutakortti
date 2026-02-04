@@ -86,7 +86,8 @@ FROM node:24.11.0-alpine
 
 RUN echo "Original zip package: $zipfile"
 
-RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
+ENV TZ=Europe/Helsinki
+RUN rm -f /etc/localtime && ln -s /usr/share/zoneinfo/\$TZ /etc/localtime
 
 COPY ./backend /backend
 

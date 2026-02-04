@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
-import { Club } from '../../club/entities';
+import { Club } from '../club/entities';
 
 @Entity()
 export class KompassiIntegration {
@@ -13,7 +13,7 @@ export class KompassiIntegration {
     @Column({ nullable: false, default: false })
     enabled: boolean;
 
-    // Kompassi group id. Mandatory if using Kompassi integration.
+    // Kompassi group id. Mandatory in practice, but nullable here so as not to force youth workers to fill in all the data at once on the frontend side.
     @Column({ nullable: true })
     groupId: number;
 

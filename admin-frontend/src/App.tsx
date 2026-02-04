@@ -1,11 +1,11 @@
-import { Admin, Resource, Login, CustomRoutes } from 'react-admin';
+import { Admin, Resource, Login, CustomRoutes, defaultLightTheme, defaultDarkTheme } from 'react-admin';
 import { lazy } from 'react';
 import finnishMessages from 'ra-language-finnish';
 import { createTheme } from '@mui/material/styles';
 import { authProvider, dataProvider } from './providers';
 import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
 import { YouthClubList } from './components/youthClub';
-import { EditYouthClubs, EditYouthClubsList} from './components/editYouthClubs';
+import { EditYouthClub, EditYouthClubList} from './components/editYouthClub';
 import { LandingPage } from './components/landingPage';
 import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
 import { normalRoutes, adminRoutes, checkInRoute } from './customRoutes';
@@ -15,8 +15,8 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import EntraLogin from './components/entraLoginPage';
+import { EventList, EventCreate, EventEdit } from './components/event';
 
-// Lazy-load extra entry features (separate chunk)
 const ExtraEntryTypeList = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeList })));
 const ExtraEntryTypeCreate = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeCreate })));
 const ExtraEntryEdit = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryEdit })));
@@ -34,8 +34,14 @@ const messages = {
     ...finnishMessages,
     'Not authenticated': 'Sinun tulee kirjautua',
     resources: {
+      junior: {
+        name: 'nuori |||| nuoret',
+      },
       youthWorker: {
         name: 'nuorisotyöntekijä |||| nuorisotyöntekijät',
+      },
+      event: {
+        name: 'tapahtuma |||| tapahtumat',
       }
     }
   },
@@ -44,26 +50,25 @@ const messages = {
 const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
 
 const lightTheme = createTheme({
+  ...defaultLightTheme,
   palette: {
-    mode: 'light',
+    ...defaultLightTheme.palette,
     primary: {
       main: '#1976d2' // Buttons and other components
     },
     secondary: {
-      main: '#3c8fde' // Navigation bar
+      main: '#3c8fde' // Navigation bar in light theme
     },
   },
 });
 
 const darkTheme = createTheme({
+  ...defaultDarkTheme,
   palette: {
-    mode: 'dark',
+    ...defaultDarkTheme.palette,
     primary: {
-      main: '#90caf9'
-    },
-    secondary: {
-      main: '#3c8fde'
-    },
+      main: '#64b5f6'
+    }
   },
 });
 
@@ -84,8 +89,9 @@ const App = () => {
         <Resource name="junior" options={{ label: 'Nuoret' }} list={JuniorList} create={JuniorCreate} icon={ChildCareIcon} edit={JuniorEdit} />,
         <Resource name="youthClub" options={{ label: 'Nuorisotilat' }} list={YouthClubList} />,
         role === 'ADMIN'
-          ? <Resource name="editYouthClubs" options={{ label: 'Nuorisotilojen muokkaus' }} list={EditYouthClubsList} edit={EditYouthClubs} />
+          ? <Resource name="editYouthClub" options={{ label: 'Nuorisotilojen muokkaus' }} list={EditYouthClubList} edit={EditYouthClub} />
           : null,
+        <Resource name="event" options={{ label: 'Tapahtumat' }} list={EventList} create={EventCreate} edit={EventEdit} />,
         role === 'ADMIN'
           ? <Resource name="youthWorker" options={{ label: 'Nuorisotyöntekijät' }} recordRepresentation={(record) => `${record.email}`} list={YouthWorkerList} create={YouthWorkerCreate} edit={YouthWorkerEdit} />
           : null,

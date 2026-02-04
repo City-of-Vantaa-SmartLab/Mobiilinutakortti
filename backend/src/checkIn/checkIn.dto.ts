@@ -1,8 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CheckInDto {
     @IsNotEmpty()
-    readonly clubId: number;
+    @Type(() => Number)
+    readonly targetId: number;
 
     @IsNotEmpty()
     readonly juniorId: string;

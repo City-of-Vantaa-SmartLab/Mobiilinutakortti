@@ -92,7 +92,7 @@ export class JuniorService {
         return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday, firstName, lastName } });
     }
 
-    async attemptChallenge(challengeId: string, challenge: string): Promise<string> {
+    async checkLoginChallenge(challengeId: string, challenge: string): Promise<string> {
         const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
         if (!entry) { return undefined; }
@@ -141,7 +141,6 @@ export class JuniorService {
         }
 
         let junior: Junior;
-        let renew = false;
         if (existingJunior) {
             // Youth workers should edit existing juniors via the edit endpoint. Ending up here means they are accidentally trying to create a new junior with matching information of an existing junior. The existing junior would be overwritten, which is probably not what is wanted.
             if (userId) {
@@ -153,7 +152,6 @@ export class JuniorService {
             if ([Status.expired, Status.pending, Status.extraEntriesOnly].includes(existingJunior.status as Status)) {
                 this.logger.log(`Overwriting junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}`);
                 junior = existingJunior;
-                renew = true;
             } else {
                 this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}: status is not allowed.`);
                 throw new ConflictException(content.JuniorNotExpiredOrPending);

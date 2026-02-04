@@ -82,11 +82,11 @@ services:
       VITE_ENTRA_TENANT_ID:
 
   db:
-    image: postgres:16
+    image: postgres:18
     ports:
       - 5432:5432
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password

@@ -3,7 +3,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Challenge, Junior } from '../junior/entities';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { getTestDB } from '../../test/testdb';
 import { JuniorModule } from '../junior/junior.module';
@@ -28,7 +28,7 @@ describe('AuthenticationService', () => {
   let service: AuthenticationService;
   let youthWorkerService: YouthWorkerService;
   let juniorService: JuniorService;
-  let challengeRepo;
+  let challengeRepo: Repository<Challenge>;
 
   const testRegisterYouthWorker = {
     email: 'Authentication@service.test', firstName: 'Auth',
@@ -87,11 +87,11 @@ describe('AuthenticationService', () => {
 
     await youthWorkerService.registerYouthWorker(testRegisterYouthWorker);
     await juniorService.registerJunior(testRegisterJunior, undefined, true);
-    
+
     // Manually create challenge since noSMS=true skips it
     const junior = await juniorService.getJuniorByPhoneNumber(testRegisterJunior.phoneNumber);
     const challenge = challengeRepo.create({
-      phoneNumber: junior.phoneNumber,
+      junior: junior,
       challenge: 'test-challenge-code',
     });
     const savedChallenge = await challengeRepo.save(challenge);

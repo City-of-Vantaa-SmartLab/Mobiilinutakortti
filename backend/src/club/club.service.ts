@@ -1,11 +1,14 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CheckIn, Club } from './entities';
+import { Club } from './entities';
+import { CheckIn } from '../checkIn/checkIn.entity';
 import { LessThan, Repository } from 'typeorm';
 import { Junior } from '../junior/entities';
-import { ClubViewModel, CheckInStatsViewModel } from './vm';
+import { ClubViewModel } from './vm';
+import { CheckInStatsViewModel } from '../checkIn/vm';
 import * as content from '../content';
-import { CheckInDto, CheckInStatsSettingsDto } from './dto';
+import { CheckInDto } from '../checkIn/checkIn.dto';
+import { CheckInQueryDto } from '../checkIn/checkInQuery.dto';
 import { Cron } from '@nestjs/schedule';
 import { sub } from 'date-fns';
 import { EditClubDto } from './dto/edit.dto';
@@ -43,27 +46,28 @@ export class ClubService {
             .map(club => new ClubViewModel(club));
     }
 
-    async getCheckinsForClub(clubId: number): Promise<CheckIn[]> {
+    async getCheckInsForClub(clubId: number): Promise<CheckIn[]> {
         const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
         return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
     }
 
     // Get checkins for a time period by providing the time period in unix timestamp, otherwise checkins are returned for the selected day
-    async getCheckins(settings: CheckInStatsSettingsDto, timePeriod?: number): Promise<CheckIn[]> {
+    async getCheckIns(settings: CheckInQueryDto, timePeriod?: number): Promise<CheckIn[]> {
         const startOfTimePeriod = timePeriod ? new Date(settings.date).setHours(0, 0, 0, 0) - timePeriod : new Date(settings.date).setHours(0, 0, 0, 0);
         const endOfTimePeriod = new Date(settings.date).setHours(23, 59, 59, 59);
-        const clubCheckIns = (await this.getCheckinsForClub(settings.clubId))
+        const clubCheckIns = (await this.getCheckInsForClub(settings.targetId))
             .filter(checkIn => (isBetween(new Date(checkIn.checkInTime).getTime(), startOfTimePeriod, endOfTimePeriod)) && checkIn.junior);
         return clubCheckIns;
     }
 
-    async checkInJunior(checkInData: CheckInDto): Promise<boolean> {
+    // Returns nick name or first name of the junior on success.
+    async checkInJunior(checkInData: CheckInDto): Promise<string> {
         const [junior, club] = await Promise.all([
             this.juniorRepo.findOneBy({ id: checkInData.juniorId }),
             this.clubRepo.createQueryBuilder('club')
                 .leftJoinAndSelect('club.kompassiIntegration', 'kompassiIntegration')
-                .where({ id: checkInData.clubId })
+                .where({ id: checkInData.targetId })
                 .getOne()
         ]);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
@@ -72,9 +76,9 @@ export class ClubService {
         await this.checkInRepo.save({ junior, club, checkInTime: new Date() });
 
         // Intentionally not awaited.
-        this.kompassiService.updateKompassiData(junior, club);
+        this.kompassiService.createAndCheckInToKompassiActivity(junior, club);
 
-        return true;
+        return junior.nickName ? junior.nickName : junior.firstName;
     }
 
     async editClub(data: EditClubDto): Promise<string> {
@@ -91,8 +95,8 @@ export class ClubService {
         return `${data.id} ${content.Updated}`;
     }
 
-    async generateStats(settings: CheckInStatsSettingsDto): Promise<CheckInStatsViewModel> {
-        const checkIns = await this.getCheckins(settings);
+    async generateStats(settings: CheckInQueryDto): Promise<CheckInStatsViewModel> {
+        const checkIns = await this.getCheckIns(settings);
         const uniqueJuniors: Junior[] = [];
         checkIns.forEach(checkIn => {
             if (uniqueJuniors.findIndex(junior => junior && junior.id === checkIn.junior.id) < 0) {
@@ -115,7 +119,7 @@ export class ClubService {
             [gender]: this.getAgesForStatistics(juniors),
         }), {});
 
-        const clubName = (await this.getClubById(settings.clubId)).name;
+        const clubName = (await this.getClubById(settings.targetId)).name;
         return new CheckInStatsViewModel(clubName, byGenderAndAge);
     }
 

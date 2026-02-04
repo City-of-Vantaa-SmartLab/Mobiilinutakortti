@@ -5,19 +5,17 @@ import { extraEntryTypeProvider } from './extraEntryTypeProvider';
 import { juniorProvider } from './juniorProvider';
 import { youthClubProvider } from './youthClubProvider';
 import { youthWorkerProvider } from './youthWorkerProvider';
+import { eventProvider } from './eventProvider';
 
-// Export individual providers for direct use
-export { juniorProvider as junior, youthWorkerProvider as youthWorker, youthClubProvider as youthClub, announcementProvider as announcement, extraEntryProvider as extraEntry, extraEntryTypeProvider as extraEntryType };
-
-// Map resources to their providers
 const resourceProviders: Record<string, any> = {
   junior: juniorProvider,
   youthWorker: youthWorkerProvider,
   youthClub: youthClubProvider,
-  editYouthClubs: youthClubProvider, // editYouthClubs uses the same provider as youthClub
+  editYouthClub: youthClubProvider,
   announcement: announcementProvider,
   extraEntry: extraEntryProvider,
   extraEntryType: extraEntryTypeProvider,
+  event: eventProvider
 };
 
 export const dataProvider: DataProvider = {

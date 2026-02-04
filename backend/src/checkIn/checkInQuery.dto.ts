@@ -1,9 +1,11 @@
 import { IsNotEmpty, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CheckInStatsSettingsDto {
+export class CheckInQueryDto {
 
     @IsNotEmpty()
-    clubId: number;
+    @Type(() => Number)
+    targetId: number;
 
     @IsNotEmpty()
     @IsDateString()

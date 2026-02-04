@@ -1,6 +1,16 @@
 import styled from 'styled-components';
 
 const CheckMarkContainer = styled.div`
+  display: block;
+  width: 100%;
+
+  svg {
+    display: block;
+    width: min(270px, 45vmin);
+    height: auto;
+    margin: 0 auto;
+  }
+
   #line-1 {
     stroke-linecap: round;
     stroke-dasharray: 380;
@@ -14,8 +24,9 @@ const CheckMarkContainer = styled.div`
     -webkit-animation: draw 1s ease forwards;
     animation-fill-mode: forwards;
     animation-delay: 0.1s;
-    transform-box: fill-box
-}
+    transform-box: fill-box;
+  }
+
   #line-2 {
     stroke-linecap: round;
     stroke-dasharray: 380;
@@ -28,23 +39,26 @@ const CheckMarkContainer = styled.div`
     animation: draw 0.5s ease forwards;
     -webkit-animation: draw 1s ease forwards;
     animation-fill-mode: forwards;
-    transform-box: fill-box
+    transform-box: fill-box;
     animation-delay: 0.3s;
-}
--webkit-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
   }
-}
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
+
+  -webkit-@keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 `
 
 const ErrorMark = () =>  (
   <CheckMarkContainer>
-    <svg max-width={550} max-height={550} viewBox="0 0 500 500" >
+    <svg viewBox="0 0 500 500" >
       <g transform="translate(250, 250)">
         <circle cx="0" cy="0"  r="230" fill="#f9e51e" />
         <circle id="circle" cx="0" cy="0" r="186" fill="#f7423a" />

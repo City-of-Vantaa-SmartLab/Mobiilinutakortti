@@ -42,7 +42,23 @@ export class KompassiService {
         this.logger.log((userId ? `User ${userId} cleared` : 'Cleared') + ' activities cache.');
     }
 
-    async updateKompassiData(junior: Junior, club: Club, numberOfRetries: number = 0) {
+    // Check in to a Kompassi activity. The activity must exist on Kompassi's side already.
+    async checkInToKompassiActivity(junior: Junior, activityId: number) {
+        if (!this.kompassiApiUrl ||
+            !this.kompassiApiKey) return;
+
+        try {
+            const ageGroupId = KompassiService.getAgeGroupId(junior);
+            const genderId = KompassiService.getGenderId(junior);
+            await this.checkIn({ activityId, ageGroupId, genderId });
+        } catch (e) {
+            // To allow for better error investigations, add just a tiny bit of info about the junior.
+            this.logger.error(`Kompassi error for junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ` + e);
+        }
+    }
+
+    // Create a Kompassi activity for club for today if the activity doesn't already exist, and check in a junior to it.
+    async createAndCheckInToKompassiActivity(junior: Junior, club: Club, numberOfRetries: number = 0) {
         if (!this.kompassiApiUrl ||
             !this.kompassiApiKey ||
             !club.kompassiIntegration?.enabled ||
@@ -51,7 +67,7 @@ export class KompassiService {
         let shouldCancelPending = false;
         try {
             let activityId: number = 0;
-            const activityInDB = this.activities.find(a => a.clubId == club.id);
+            const activityInDB = this.activities.find(a => a.clubId === club.id);
             if (!activityInDB) {
                 // This prevents another async call from creating a new activity via API.
                 this.activities.push({clubId: club.id, kompassiActivityId: null, pendingCreation: true});
@@ -63,17 +79,17 @@ export class KompassiService {
                 shouldCancelPending = false;
 
                 // Release waiting in possible other parallel async calls.
-                const pendingActivity = this.activities.find(a => a.clubId == club.id);
+                const pendingActivity = this.activities.find(a => a.clubId === club.id);
                 pendingActivity.kompassiActivityId = activityId;
                 pendingActivity.pendingCreation = false;
             } else if (activityInDB.pendingCreation) {
                 // Wait for the first parallel async call to finish fetching/creating activity via API.
                 // Try 6 times at max, so 6*10 seconds in total until giving up.
-                // The longest delay seen when creating activity, with network and API lagging, is around 30 seconds.
+                // In reality, the longest delay seen when creating activity, with network and API lagging, is around 30 seconds.
                 if (numberOfRetries == 6) throw new Error('Failed to find activity after waiting.');
                 this.logger.verbose(`Waiting for pending activity for club ${club.id}.`);
                 numberOfRetries++;
-                setTimeout(() => this.updateKompassiData(junior, club, numberOfRetries), 10000);
+                setTimeout(() => this.createAndCheckInToKompassiActivity(junior, club, numberOfRetries), 10000);
                 return;
             } else {
                 if (activityInDB.kompassiActivityId == null) throw new Error('Null activity id.');
@@ -81,15 +97,13 @@ export class KompassiService {
                 this.logger.debug(`Found club ${club.id} activity from in-memory DB` + ((numberOfRetries > 0) ? ` after ${numberOfRetries} retries.` : '.'));
             }
 
-            const ageGroupId = KompassiService.getAgeGroupId(junior);
-            const genderId = KompassiService.getGenderId(junior);
-            await this.checkInForActivity({ activityId, ageGroupId, genderId });
+            await this.checkInToKompassiActivity(junior, activityId);
         } catch (e) {
             this.logger.error('Error during Kompassi integration: ' + e);
 
             // If there was an error creating an activity, remove the pending one so that later requests aren't blocked.
             if (shouldCancelPending) {
-                const removeIndex = this.activities.findIndex(a => a.clubId == club.id && a.pendingCreation);
+                const removeIndex = this.activities.findIndex(a => a.clubId === club.id && a.pendingCreation);
                 if (removeIndex > -1) this.activities.splice(removeIndex, 1);
             }
         }
@@ -177,8 +191,8 @@ export class KompassiService {
         return id;
     }
 
-    private async checkInForActivity(body: CheckInRequestBody) {
-        this.logger.log('Check-in for activity: ' + body.activityId);
+    private async checkIn(body: CheckInRequestBody) {
+        this.logger.log('Check-in to activity: ' + body.activityId);
 
         const url = this.kompassiApiUrl + '/check-in';
         const headers = {

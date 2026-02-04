@@ -6,8 +6,7 @@ import {
   SimpleForm,
   TextInput,
   required,
-  Toolbar,
-  SaveButton,
+  maxValue,
   NumberField,
   NumberInput,
   ListProps,
@@ -15,17 +14,12 @@ import {
 } from 'react-admin';
 import { Card, CardContent } from '@mui/material';
 import useAutoLogout from '../../hooks/useAutoLogout';
-
-const CustomToolbar = (props: any) => (
-  <Toolbar {...props}>
-    <SaveButton disabled={props.pristine && !props.validating} />
-  </Toolbar>
-);
+import { CustomBasicToolbar } from '../styledComponents';
 
 export const ExtraEntryTypeList = (props: ListProps) => {
   useAutoLogout();
   return (<>
-    <Card>
+    <Card sx={{ marginTop: 2 }}>
       <CardContent>
         <p>Huomaa, että luotuja merkintätyyppejä ei toistaiseksi voi muokata eikä poistaa.</p>
       </CardContent>
@@ -43,9 +37,9 @@ export const ExtraEntryTypeCreate = (props: CreateProps) => {
   useAutoLogout();
   return (
     <Create title="Lisää merkintätyyppi" {...props} redirect="list">
-      <SimpleForm toolbar={<CustomToolbar />}>
+      <SimpleForm toolbar={<CustomBasicToolbar listPath="/extraEntryType" />}>
         <TextInput label="Merkintätyyppi" source="name" validate={required()} />
-        <NumberInput label="Yläikäraja" source="expiryAge" validate={required()} />
+        <NumberInput label="Yläikäraja" source="expiryAge" validate={[required(), maxValue(99)]} />
       </SimpleForm>
     </Create>
   );

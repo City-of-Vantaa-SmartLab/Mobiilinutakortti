@@ -4,15 +4,72 @@ import { Navigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
+import { TextField } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import { STATE } from '../state';
-import NewSeasonModal from './newSeasonModal';
 import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 import ForwardIcon from '@mui/icons-material/Forward';
+import NewSeasonIcon from '@mui/icons-material/Autorenew';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { CalendarHelper } from './calendarHelper';
+import { ModalBackdrop, ModalContent, ModalButtonsContainer } from './styledComponents';
 
 const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+
+const getCurrentDate = () => new Date().toISOString().split('T')[0];
+
+const NewSeasonModal = ({ onConfirm, onCancel, loadingState }) => {
+  const [date, setDate] = useState(getCurrentDate());
+  const disabled = loadingState !== STATE.INITIAL;
+
+  return (
+    <ModalBackdrop zIndex={10} paddingTop="100px">
+      <ModalContent maxWidth="600px">
+        <p>
+          Anna päivämäärä, jona vanhentuneet käyttäjät tullaan poistamaan. Tämä
+          päivämäärä ilmoitetaan huoltajille lähetettävässä tekstiviestissä.
+        </p>
+        <p>
+          Huomaa, että järjestelmä <strong>ei poista</strong> vanhentuneita
+          käyttäjiä automaattisesti annettuna päivämääränä, vaan se on tehtävä
+          käsin valikon kohdasta "Poista vanhat käyttäjät".
+        </p>
+        <TextField
+          label="Päivämäärä"
+          type="date"
+          disabled={disabled}
+          value={date}
+          onChange={(event) => setDate(event.currentTarget.value)}
+          helperText={<CalendarHelper />}
+          sx={{ mb: 1 }}
+        ></TextField>
+        <ModalButtonsContainer justifyContent="center">
+          <Button
+            onClick={onCancel}
+            disabled={disabled}
+            variant="contained"
+            startIcon={<CancelIcon />}
+            sx={{ mt: '1em', mr: '1em' }}
+          >
+            Peruuta
+          </Button>
+          <Button
+            onClick={() => onConfirm(date)}
+            disabled={disabled}
+            variant="contained"
+            color="primary"
+            startIcon={<NewSeasonIcon />}
+            sx={{ mt: '1em' }}
+          >
+            {disabled ? 'Odota' : 'Aloita uusi kausi'}
+          </Button>
+        </ModalButtonsContainer>
+      </ModalContent>
+    </ModalBackdrop>
+  );
+};
 
 const NewSeason = () => {
   const notify = useNotify();
@@ -54,7 +111,7 @@ const NewSeason = () => {
   }
 
   return (
-    <Card>
+    <Card sx={{ marginTop: 2 }}>
       <Title title="Aloita uusi kausi"></Title>
       <CardContent>
         <p>

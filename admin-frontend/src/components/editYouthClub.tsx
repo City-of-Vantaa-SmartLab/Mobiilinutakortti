@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   List,
   Edit,
@@ -9,15 +8,15 @@ import {
   TextInput,
   BooleanInput,
   BooleanField,
-  Toolbar,
-  SaveButton,
   NumberInput,
+  maxValue,
   ListProps,
   EditProps,
   useRecordContext
 } from 'react-admin';
-import { Divider, Box } from '@mui/material';
+import { Divider } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { CustomBasicToolbar } from './styledComponents';
 
 const StatusHelperText = () => (
   <p>Nuoren rekisteröintilomakkeella näytetään vain aktiiviset nuorisotilat.</p>
@@ -32,15 +31,9 @@ const KompassiHelperText = () => (<>
   <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
 </>);
 
-const CustomToolbar = (props: any) => (
-  <Toolbar {...props}>
-    <SaveButton disabled={props.pristine && !props.validating} />
-  </Toolbar>
-);
-
 const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
 
-export const EditYouthClubsList = (props: ListProps) => {
+export const EditYouthClubList = (props: ListProps) => {
   useAutoLogout();
   return (
   <List title="Nuorisotilat" exporter={false} pagination={false} {...props}>
@@ -62,11 +55,12 @@ const YouthClubEditTitle = () => {
   return <span>{`Muokkaa tietoja: ${record.name}`}</span>;
 };
 
-export const EditYouthClubs = (props: EditProps) => {
+export const EditYouthClub = (props: EditProps) => {
   useAutoLogout();
+
   return (
   <Edit title={<YouthClubEditTitle />} {...props} mutationMode="pessimistic" redirect="list">
-    <SimpleForm toolbar={<CustomToolbar />}>
+    <SimpleForm toolbar={<CustomBasicToolbar listPath="/editYouthclub" />}>
       <BooleanInput label="Tila aktiivinen" source="active" />
       <StatusHelperText />
       <TextInput label="Tilakohtainen viesti FI" source="messages.fi" sx={{ width: 600 }} />
@@ -78,7 +72,7 @@ export const EditYouthClubs = (props: EditProps) => {
         <Divider sx={{ width: '100%', my: 3, borderColor: '#808080' }} />
         <BooleanInput label="Kompassi-integraatio päällä" source="kompassiIntegration.enabled" defaultValue={false} />
         <KompassiHelperText />
-        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" sx={{ width: 400 }} />
+        <NumberInput label="Kompassi ryhmä-id" source="kompassiIntegration.groupId" validate={maxValue(2000000000)} sx={{ width: 400 }} />
         <TextInput label="Kompassi aktiviteettityyppi-id:t" source="kompassiIntegration.activityTypeIds" parse={(value) => (value?.replace(/[^0-9,]/g, ''))} sx={{ width: 400 }} />
         <TextInput label="Aktiviteetin otsikko" source="kompassiIntegration.activityTitle" defaultValue={'Nuta-ilta'} sx={{ width: 400 }} />
       </>)}

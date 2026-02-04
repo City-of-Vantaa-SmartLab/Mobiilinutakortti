@@ -8,7 +8,8 @@ enum SpamGuardContext {
   LoginLinkMinInterval,
   LoginLinkMaxCount,
   CheckInMinInterval,
-  CheckInMaxCount
+  CheckInMaxCount,
+  EventCheckIn
 }
 
 type SpamGuardContextLimit = {
@@ -24,14 +25,16 @@ type SpamGuardItem = {
 
 type SecurityCode = {
   id: number,
-  code: string
+  code: string,
+  forEvent: boolean
 }
 
 const maxContextCounters: SpamGuardContextLimit = {
   [SpamGuardContext.LoginLinkMinInterval]: 10*60000, // 10 minutes minimum time between login link SMSs
   [SpamGuardContext.LoginLinkMaxCount]: 3, // Max login link SMSs a day
   [SpamGuardContext.CheckInMinInterval]: 120*60000, // 120 minutes minimum time between check-ins
-  [SpamGuardContext.CheckInMaxCount]: 3 // Max check-ins a day
+  [SpamGuardContext.CheckInMaxCount]: 3, // Max check-ins a day
+  [SpamGuardContext.EventCheckIn]: 1 // Allowed event check-ins a day
 };
 
 // How many security check-in codes *per club* can there be at the same time before old ones are removed.
@@ -69,14 +72,23 @@ export class SpamGuardService {
 
   // Check if junior can check in to a club.
   // Returns true if everything OK, false if not.
-  checkIn(juniorId: string, clubId: number): boolean {
+  checkIn(juniorId: string, targetId: number, targetIsEvent: boolean = false): boolean {
     const uuidRegEx = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!juniorId.match(uuidRegEx)) {
-      this.logger.log('Check-in failed with invalid junior UUID; clubId: ' + clubId + ', juniorId: ' + juniorId);
+      this.logger.log(`Check-in failed with invalid junior UUID; ${targetIsEvent ? 'eventId' : 'clubId'}: ${targetId}, juniorId: ${juniorId}`);
       return false;
     }
 
-    if (!this.addItemWithInterval(juniorId, SpamGuardContext.CheckInMinInterval, clubId)) {
+    // In case of an event check in, only duplicate check-in makes sense.
+    if (targetIsEvent) {
+      if (!this.addItemWithCount(juniorId, SpamGuardContext.EventCheckIn, targetId)) {
+        this.logger.debug({ juniorId }, 'Duplicate check-in.');
+        return false;
+      }
+      return true;
+    }
+
+    if (!this.addItemWithInterval(juniorId, SpamGuardContext.CheckInMinInterval, targetId)) {
       this.logger.debug({ juniorId }, 'Duplicate check-in.');
       return false;
     }
@@ -100,22 +112,22 @@ export class SpamGuardService {
     return true;
   }
 
-  // Generate and return a new security code for club check-in (the QR reader view).
-  getSecurityCode(clubId: number): string {
-    if (this.securityCodes.filter(sc => sc.id == clubId).length == maxSecurityCodes) {
-      this.logger.verbose('Expiring a security code for club: ' + clubId);
-      this.securityCodes.splice(this.securityCodes.findIndex(sc => sc.id == clubId), 1);
+  // Generate and return a new security code for a check-in (the QR reader view).
+  getSecurityCode(targetId: number, forEvent: boolean = false): string {
+    if (this.securityCodes.filter(sc => (sc.id === targetId && sc.forEvent === forEvent)).length === maxSecurityCodes) {
+      this.logger.verbose(`Expiring a security code for ${forEvent ? 'event' : 'club'}: ${targetId}`);
+      this.securityCodes.splice(this.securityCodes.findIndex(sc => (sc.id === targetId && sc.forEvent === forEvent)), 1);
     }
     const code = Math.random().toString(36).substring(2, 12);
-    this.securityCodes.push({id: clubId, code});
-    this.logger.verbose(`Added new security code for club ${clubId}: ${code}`);
+    this.securityCodes.push({id: targetId, code, forEvent});
+    this.logger.verbose(`Added new security code for ${forEvent ? 'event' : 'club'} ${targetId}: ${code}`);
     return code;
   }
 
-  // Checks if club check-in code is valid (exists in spam guard code list). Returns true if valid, false if not.
-  checkSecurityCode(clubId: number, code: string): boolean {
-    const found = this.securityCodes.some(sc => sc.id == clubId && sc.code == code);
-    if (!found) this.logger.debug('Check security code failed for club: ' + clubId);
+  // Checks if check-in code is valid (exists in spam guard code list). Returns true if valid, false if not.
+  checkSecurityCode(targetId: number, code: string, forEvent: boolean = false): boolean {
+    const found = this.securityCodes.some(sc => (sc.id === targetId && sc.code === code && sc.forEvent === forEvent));
+    if (!found) this.logger.debug(`Check security code failed for ${forEvent ? 'event' : 'club'}: ${targetId}`);
     return found;
   }
 
