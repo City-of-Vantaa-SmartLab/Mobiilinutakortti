@@ -86,6 +86,7 @@ If you are using Microsoft Entra ID to login users, admin privileges are added o
 
 In the following list the terms "IdP metadata XML" and "metadata XML" are used. The latter refers to service provider metadata, i.e. for this application. The metadata XML refers to the XML file used to register the service to Suomi.fi. Similarly, IdP metadata XML is the identity provider's (Suomi.fi) metadata file.
 
+* `APPLICATION_PORT`: The port to run the backend on. Optional, defaults to 3000.
 * `AWS_SES_KEY_ID`: Key ID for Amazon SES.
 * `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
 * `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".

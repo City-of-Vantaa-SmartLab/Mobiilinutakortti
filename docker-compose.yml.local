@@ -14,6 +14,7 @@ services:
     volumes:
       - ./backend/src:/backend/src
     environment:
+      APPLICATION_PORT: 3000
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
