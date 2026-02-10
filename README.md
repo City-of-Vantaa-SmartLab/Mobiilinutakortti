@@ -64,7 +64,7 @@ curl --location --request POST 'http://localhost:3000/api/youthworker/registerAd
 
 ### Note about production
 
-When deploying application to production, the setup endpoint should initially be open, and after creating an admin youth worker, it should be closed.
+When deploying application to production, the setup endpoint should initially be open, and after creating an admin youth worker, it should be closed. If you use Entra ID, this is not needed.
 
 ## Creating youth clubs
 
@@ -88,10 +88,6 @@ insert into public.club (name) values
 ('Vernissa');
 commit;
 ```
-
-## Testing SMS functionality
-
-To test SMS functionality locally, rename `.env.template` file to `.env` in */backend* and update the Telia username/password/user fields with right values *(check in Microsoft Teams - Vantaan Kaupunki Wiki page to see whom to contact to get the values)*
 
 ## Creating test data
 

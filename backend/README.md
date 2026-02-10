@@ -138,6 +138,8 @@ The tests do not currently work correctly due to historical reasons.
 
 ## Maintenance
 
+The SQLite package depends on a vulnerable version of tar. However, because this is only related to tests and not production use, you may safely ignore any reported vulnerabilities related to the sqlite3 and tar packages.
+
 ### Dependency version constraints
 
 Some dependencies have specific version constraints in `package.json` for compatibility or security reasons:
