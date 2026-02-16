@@ -1,16 +1,10 @@
 #!/usr/bin/sh
-# Build app and create a zip package for deploying, for example to AWS Elastic Beanstalk.
+# Build app and create a zip package.
+# The package created by this script can be for example uploaded to AWS Elastic Beanstalk.
+# This is useful in situations where the environment update fails via eb deploy, e.g. because of timeout reasons.
 #
-# Nutakortti consists of three parts: backend, frontend and admin-frontend.
-# Building each from scratch in AWS EB sometimes takes more time than the maximum allowed command timeout.
-# This will result in a failed environment update, which might lead to EB being in an unstable, unusable state.
-# If that happens, the best thing to do is to wait for a few hours. Re-deploying using CLI usually only makes things worse.
-#
-# As the command timeout setting in AWS EB doesn't quite work, an alternative for quickly updating the environment is to build the packages before uploading.
-# The backend uses environment variables only when running, not when building. It's therefore trivial to pre-build.
-# The admin-frontend and frontend use some environment variables that need to be defined during build.
-#
-# The zip file created by this script can be uploaded to AWS EB and it will launch the application with environment variables configured in AWS.
+# The application will launch with runtime environment variables configured in AWS.
+# Build-time environment variables (VITE_*) are defined in this script.
 
 required_version="v24.11.0"
 node_version=$(node --version)

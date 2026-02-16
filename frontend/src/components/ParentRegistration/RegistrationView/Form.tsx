@@ -55,14 +55,14 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                 <Column>
                     <Fieldset>
                         <FieldTitle>{t.parentRegistration.form.juniorHeading}</FieldTitle>
-                        <Field name='juniorFirstName' component={InputField} title={t.parentRegistration.form.juniorFirstName} />
-                        <Field name='juniorLastName' component={InputField} title={t.parentRegistration.form.juniorLastName} />
-                        {valueOrNull('juniorNickName', <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} />)}
+                        <Field name='juniorFirstName' component={InputField} title={t.parentRegistration.form.juniorFirstName} maxLength={40} />
+                        <Field name='juniorLastName' component={InputField} title={t.parentRegistration.form.juniorLastName} maxLength={40} />
+                        {valueOrNull('juniorNickName', <Field name='juniorNickName' component={InputField} title={t.parentRegistration.form.juniorNickName} maxLength={40} />)}
                         <Field name='juniorBirthday' component={InputField} title={t.parentRegistration.form.juniorBirthday} placeholder={t.parentRegistration.form.juniorBirthdayPlaceholder} />
                         <Field name='juniorPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.juniorPhoneNumber} />
-                        {valueOrNull('postCode', <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} />)}
-                        {valueOrNull('school', <Field name='school' component={InputField} title={t.parentRegistration.form.school} />)}
-                        {valueOrNull('class', <Field name='class' component={InputField} title={t.parentRegistration.form.class} />)}
+                        {valueOrNull('postCode', <Field name='postCode' component={InputField} title={t.parentRegistration.form.postCode} maxLength={5} />)}
+                        {valueOrNull('school', <Field name='school' component={InputField} title={t.parentRegistration.form.school} maxLength={100} />)}
+                        {valueOrNull('class', <Field name='class' component={InputField} title={t.parentRegistration.form.class} maxLength={40} />)}
 
                         <SelectGroup
                             error={errors.juniorGender}
@@ -113,7 +113,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
                         <Field disabled name='parentLastName' component={InputField} title={t.parentRegistration.form.parentLastName} />
                         <Field name='parentPhoneNumber' component={InputField} type='phone' title={t.parentRegistration.form.parentPhoneNumber} />
                         <Field name='parentsEmail' component={InputField} type='email' title={t.parentRegistration.form.parentsEmail} />
-                        <Field name='additionalContactInformation' component={InputField} type='phone' title={t.parentRegistration.form.additionalContactInformation} />
+                        <Field name='additionalContactInformation' component={InputField} title={t.parentRegistration.form.additionalContactInformation} maxLength={100} />
                     </Fieldset>
 
                     <Fieldset>
@@ -269,15 +269,15 @@ const RegistrationForm = withFormik<Props, FormValues>({
         }
     },
     validationSchema: (): Schema<FormValues> => object().shape({
-        juniorFirstName: string().required('required'),
-        juniorLastName: string().required('required'),
-        juniorNickName: string(),
+        juniorFirstName: string().max(40).required('required'),
+        juniorLastName: string().max(40).required('required'),
+        juniorNickName: string().max(40),
         juniorBirthday: string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'birthdayFormat').required('birthdayFormat'),
         juniorPhoneNumber: string().matches(validPhoneNumber, 'phoneNumberFormat').required('required'),
         smsPermissionJunior: string().oneOf(['smsJuniorOk', 'smsJuniorNotOk']).required('required'),
         postCode: valueOr('postCode', string().length(5, 'postCodeFormat').matches(/^[0-9]*$/, 'postCodeFormat').required('required'), string()),
-        school: valueOr('school', string().required('required'), string()),
-        class: valueOr('class', string().required('required'), string()),
+        school: valueOr('school', string().max(100).required('required'), string()),
+        class: valueOr('class', string().max(40).required('required'), string()),
         juniorGender: string().required('required'),
         photoPermission: string().required('required'),
         parentFirstName: string().required('required'),
@@ -286,7 +286,7 @@ const RegistrationForm = withFormik<Props, FormValues>({
         smsPermissionParent: string().oneOf(['smsParentOk', 'smsParentNotOk']).required('required'),
         parentsEmail: string().matches(/^\S+@\S+\.\S+$/, 'emailFormat'),
         emailPermissionParent: string().oneOf(['emailParentOk', 'emailParentNotOk']),
-        additionalContactInformation: string(),
+        additionalContactInformation: string().max(100),
         youthClub: number().integer().required('selectYouthClub').notOneOf([0], 'required'),
         communicationsLanguage: valueOr('communicationsLanguage', string().oneOf(['fi', 'sv', 'en']).required('selectLanguage'), string()),
         termsOfUse: boolean().oneOf([true], 'acceptTermsOfUse').required('acceptTermsOfUse')

@@ -133,17 +133,17 @@ For Suomi.fi certificate updates, see the file `./backend/certs/README.md`.
 
 ### Test environment
 
-The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-dev**.
+The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml).
 
 ### Production environment
 
-The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml) and is deployed via command-line manually. The name is **nutakortti-vantaa-prod**. See next section for updating the production environment using EB CLI tools.
+The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml). See next section for updating the production environment using EB CLI tools.
 
 * [Junior-app](https://nutakortti.vantaa.fi)
 * [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
 * [Api](https://nutakortti.vantaa.fi/api)
 
-Production logs are found in AWS CloudWatch under `/aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/` (just go to CloudWatch and select Log groups from the left panel). The current app log and nginx access/error logs are of most interest.
+Logs are found in AWS CloudWatch - to browse, select Log groups from CloudWatch's left panel. The current app log and nginx access/error logs are of most interest.
 
 ### Updating the environments using EB CLI tools
 
@@ -159,10 +159,10 @@ Configure the EB CLI:
 2. Select `eu-central-1` as the location (unless something's been changed).
 3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/config`.
 4. Select the `Nutakortti` as application. Don't continue with CodeCommit (defaults to N).
-5. Ensure the environment is set up by typing `eb list`. You should see **nutakortti-vantaa-prod**.
+5. Ensure the environment is set up by typing `eb list`.
 
 **Deploy a new version to production:**
-* While in the project root directory, type: `eb deploy nutakortti-vantaa-prod`
+* While in the project root directory, type: `eb deploy <environment name>`
 * To see how things are progressing, type: `eb events -f`
 
 ### Updating using a zip package
@@ -186,4 +186,4 @@ There exists [a nice tool](https://github.com/jorgebastida/awslogs) to solve the
 1. Install awslogs using pip: `pip install awslogs`
 2. Set up AWS CLI (command: `aws configure`)
 3. Set up default region for awslogs (environment variable `AWS_REGION`) or give it as a command line parameter.
-4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-vantaa-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`
+4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`
