@@ -20,7 +20,7 @@
     "react-router-dom": "^7.11.0",
     "redux": "^5.0.1",
     "redux-saga": "^1.1.1",
-    "styled-components": "^6.1.19",
+    "styled-components": "^6.3.11",
     "yup": "^1.4.0"
   },
   "devDependencies": {
