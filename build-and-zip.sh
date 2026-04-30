@@ -2,9 +2,7 @@
 # Build app and create a zip package.
 # The package created by this script can be for example uploaded to AWS Elastic Beanstalk.
 # This is useful in situations where the environment update fails via eb deploy, e.g. because of timeout reasons.
-#
-# The application will launch with runtime environment variables configured in AWS.
-# Build-time environment variables (VITE_*) are defined in this script.
+# Configure environment variables elsewhere, e.g. in AWS.
 
 required_version="v24.11.0"
 node_version=$(node --version)
@@ -18,40 +16,6 @@ fi
 tmpdir=$(mktemp -d)
 mkdir $tmpdir/backend
 
-echo "Is this a <dev> or <prod> package? [dev]"
-read package_env
-[ ! "$package_env" ] && package_env=dev
-if [ "$1" ]
-then
-    echo Enter value for: VITE_ENABLE_EXTRA_ENTRIES
-    read VITE_ENABLE_EXTRA_ENTRIES
-    export VITE_ENABLE_EXTRA_ENTRIES
-    echo Enter value for: VITE_ENABLE_KOMPASSI_INTEGRATION
-    read VITE_ENABLE_KOMPASSI_INTEGRATION
-    export VITE_ENABLE_KOMPASSI_INTEGRATION
-    echo Enter value for: VITE_USE_ALT_ERR_MSG
-    read VITE_USE_ALT_ERR_MSG
-    export VITE_USE_ALT_ERR_MSG
-else
-    echo Run the script with any parameter to use other than these values:
-    echo "   export VITE_ENABLE_EXTRA_ENTRIES=true"
-    echo "   export VITE_ENABLE_KOMPASSI_INTEGRATION=true"
-    echo "   export VITE_USE_ALT_ERR_MSG="
-    export VITE_ENABLE_EXTRA_ENTRIES=true
-    export VITE_ENABLE_KOMPASSI_INTEGRATION=true
-    export VITE_USE_ALT_ERR_MSG=
-fi
-echo Enter value for: VITE_ENTRA_TENANT_ID
-read VITE_ENTRA_TENANT_ID
-export VITE_ENTRA_TENANT_ID
-echo Enter value for: VITE_ENTRA_CLIENT_ID
-read VITE_ENTRA_CLIENT_ID
-export VITE_ENTRA_CLIENT_ID
-echo Enter value for: VITE_ENTRA_REDIRECT_URI
-read VITE_ENTRA_REDIRECT_URI
-export VITE_ENTRA_REDIRECT_URI
-
-export VITE_API_URL=/api
 cd frontend
 npm ci
 npm run build
@@ -73,7 +37,7 @@ cd ..
 cp docker-compose.yml $tmpdir/
 
 githash=$(git describe --always)
-zipfile=$(date +"nutakortti-%Y%m%d-$githash-$package_env.zip")
+zipfile=$(date +"nutakortti-%Y%m%d-$githash.zip")
 
 cat > $tmpdir/Dockerfile << EOF
 FROM node:24.11.0-alpine
@@ -87,7 +51,8 @@ COPY ./backend /backend
 
 WORKDIR /backend
 
-EXPOSE 3000
+ENV APPLICATION_PORT=80
+EXPOSE 80
 CMD ["npm", "run", "start"]
 EOF
 
@@ -96,7 +61,8 @@ echo $githash > git-commit-hash.txt
 # Sometimes EB might complain about missing files so make sure there isn't a permission problem.
 find ./ -type d -exec chmod a+x {} \;
 chmod -R a+r *
-zip -q -r --symlinks $zipfile *
+# Skip docker-compose.yml so that Elastic Beanstalk uses just the Dockerfile.
+zip -q -r --symlinks -x docker-compose.yml $zipfile *
 cd -
 
 cp $tmpdir/$zipfile ~/

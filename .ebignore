@@ -1,4 +1,10 @@
-# Keep the file contents in sync with .ebignore.
+# Ignoring docker-compose.yml makes AWS EB to use Dockerfile.
+
+build-and-zip.sh
+docker-compose.yml
+docker-compose-dockerfile.yml
+
+# .gitignore contents follows, keep synced:
 
 .DS_Store
 .elasticbeanstalk

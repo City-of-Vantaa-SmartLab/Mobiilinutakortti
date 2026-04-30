@@ -1,4 +1,5 @@
 import { HttpError } from 'react-admin';
+import { getEnvConfig, ENV_VARS } from './envConfig';
 import { youthClubProvider } from './providers/youthClubProvider';
 import { extraEntryTypeProvider } from './providers/extraEntryTypeProvider';
 
@@ -28,7 +29,7 @@ export const statusChoices = [
   { id: Status.pending, name: 'Kotisoitto tekemättä' },
   { id: Status.expired, name: 'Tunnus vanhentunut' },
   { id: Status.failedCall, name: 'Kotisoittoa yritetty' },
-  ...( import.meta.env.VITE_ENABLE_EXTRA_ENTRIES ?
+  ...( getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES) ?
     [ { id: Status.extraEntriesOnly, name: 'Vain merkintärekisteri' } ] :
     []
   )

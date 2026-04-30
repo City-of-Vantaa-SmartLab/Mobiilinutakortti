@@ -28,8 +28,8 @@ For production use, Telia SMS service is required. Note that there are two endpo
 
 ## Running the app
 
-Each subproject may be run individually, with or without docker - see README.md files of the projects.
-To start up everything using Docker compose, **run `docker compose -f docker-compose.yml.local up` in this directory**. Since there might be problems with Docker caching, the `run-locally.sh` helper script is a good alternative.
+Each subproject may be run individually, with or without Docker - see README.md files of the projects.
+To start up everything using Docker compose, run `docker compose up`. There is also a single container `Dockerfile` and the corresponding `docker-compose-dockerfile.yml` for production use.
 
 Without Docker, the services are meant to be run in this order: backend, frontend, admin-frontend.
 

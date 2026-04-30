@@ -1,11 +1,12 @@
 import { Layout, AppBar, UserMenu, MenuItemLink, Notification, Logout } from 'react-admin';
+import { getEnvConfig, ENV_VARS } from './envConfig';
 import LockIcon from '@mui/icons-material/Lock';
 import styled from 'styled-components';
 import Menu from './menu';
 
 const CustomUserMenu = (props: any) => (
     <UserMenu {...props}>
-        {!import.meta.env.VITE_ENTRA_TENANT_ID ? (
+        {!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) ? (
             <MenuItemLink
                 to="/password"
                 primaryText="Salasana"

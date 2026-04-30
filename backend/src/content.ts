@@ -35,6 +35,7 @@ export const Deleted = "Käyttäjä poistettu."
 export const Routes = {
     api: "/api",
     admin: "/nuorisotyontekijat",
+    envConfig: "/env.js" // Make sure this matches what is in index.html files in frontends.
 }
 export const EntryTypeSaveFailed = "Merkintätyypin tallennus epäonnistui."
 export const EntryTypeSaved = "Merkintätyyppi tallennettu"

@@ -1,4 +1,5 @@
 import * as MSAL from '@azure/msal-browser'
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 import * as MSALConfig from './msalConfig'
 
 export class MSALApp {
@@ -12,7 +13,7 @@ export class MSALApp {
     static async logout(logoutHintValue?: string) {
         console.debug('Calling MSAL logout redirect.');
         const options: any = {
-            postLogoutRedirectUri: import.meta.env.VITE_ENTRA_REDIRECT_URI
+            postLogoutRedirectUri: getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI)
         };
         if (logoutHintValue) options.logoutHint = logoutHintValue;
         await MSALApp.instance.logoutRedirect(options);

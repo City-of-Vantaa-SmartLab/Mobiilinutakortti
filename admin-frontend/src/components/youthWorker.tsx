@@ -23,8 +23,9 @@ import {
 import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
 import { CustomBasicToolbar } from './styledComponents';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
-const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
+const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID);
 
 // If using Entra ID, adding youth workers is done automatically when they sign in.
 const YouthWorkerListActions = () => (

@@ -31,6 +31,8 @@ There are following environment variables:
 * `VITE_ENTRA_REDIRECT_URI`: If using Entra ID for login, the redirect URI configured in the login scope, e.g. "https://nutakortti.vantaa.fi/nuorisotyontekijat/loginEntraID". Note that the page must reside outside react-admin router, as MSAL returns the code as an URL fragment (after a # sign), which also marks a route so there would be a conflict.
 * `VITE_ENTRA_TENANT_ID`: Microsoft Entra tenant ID. If given, Microsoft Entra ID will be used for login. Login and user management based on database data will be disabled. A different login page will be used to initiate Entra ID login.
 
+Note: in production, the variables will be defined by backend and passed on to frontend by using middleware to intercept fetching of `env.js`.
+
 ## Entra ID login flow
 
 If using Entra ID to login we require password each time a user wishes to log in. Once the youth worker logs in to Entra ID, an access token is requested from the backend, and then the user's Entra ID account is signed out automatically. The user is then accessing Nutakortti with the access token from the backend.

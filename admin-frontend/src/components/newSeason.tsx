@@ -15,8 +15,9 @@ import NewSeasonIcon from '@mui/icons-material/Autorenew';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { CalendarHelper } from './calendarHelper';
 import { ModalBackdrop, ModalContent, ModalButtonsContainer } from './styledComponents';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
-const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
 
 const getCurrentDate = () => new Date().toISOString().split('T')[0];
 

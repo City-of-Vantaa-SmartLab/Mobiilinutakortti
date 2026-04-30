@@ -1,0 +1,60 @@
+# This file is meant for production to run a single container Dockerfile if needed.
+
+services:
+  nutakortti:
+    ports:
+      - 80:80
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        VITE_ENABLE_EXTRA_ENTRIES: ${VITE_ENABLE_EXTRA_ENTRIES}
+        VITE_ENABLE_KOMPASSI_INTEGRATION: ${VITE_ENABLE_KOMPASSI_INTEGRATION}
+        VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID}
+        VITE_ENTRA_REDIRECT_URI: ${VITE_ENTRA_REDIRECT_URI}
+        VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID}
+        VITE_USE_ALT_ERR_MSG: ${VITE_USE_ALT_ERR_MSG}
+    image: nutakortti/latest
+    environment:
+      APPLICATION_PORT:
+      AWS_SES_KEY_ID:
+      AWS_SES_KEY_VALUE:
+      AWS_SES_REGION:
+      CERT_SELECTION:
+      EMAIL_SOURCE:
+      EMAIL_RETURN_PATH:
+      ENABLE_SETUP_ENDPOINTS:
+      ENTRA_ADMIN_ROLE:
+      ENTRA_APP_KEY_DISCOVERY_URL:
+      FRONTEND_URL:
+      HTTP_LOG_LEVEL:
+      IDP_ENTITY_ID:
+      JWT_SECRET:
+      KOMPASSI_API_KEY:
+      KOMPASSI_API_URL:
+      NODE_ENV:
+      RDS_DB_NAME:
+      RDS_HOSTNAME:
+      RDS_PASSWORD:
+      RDS_PORT:
+      RDS_USERNAME:
+      SC_SECRET:
+      SP_ASSERT_ENDPOINT:
+      SP_ENTITY_ID:
+      SP_PKEY:
+      SSO_LOGIN_URL:
+      SSO_LOGOUT_URL:
+      TELIA_BATCH_ENDPOINT:
+      TELIA_ENDPOINT:
+      TELIA_PASSWORD:
+      TELIA_USER:
+      TELIA_USERNAME:
+      USE_DETAILED_LOGS:
+      USE_JSON_LOGS:
+      VITE_API_URL:
+      VITE_ENABLE_EXTRA_ENTRIES:
+      VITE_ENABLE_KOMPASSI_INTEGRATION:
+      VITE_ENTRA_CLIENT_ID:
+      VITE_ENTRA_REDIRECT_URI:
+      VITE_ENTRA_TENANT_ID:
+      VITE_USE_ALT_ERR_MSG:

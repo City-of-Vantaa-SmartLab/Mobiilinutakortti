@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, CSSProperties, lazy, Suspense } from 'react';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 import { createRoot } from 'react-dom/client';
 import { Button } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
@@ -235,7 +236,7 @@ export const JuniorEdit = (props: EditProps) => {
 
 
 export const JuniorForm = ({ formType }: { formType: string }) => {
-    const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+    const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
     const [youthClubs, setYouthClubs] = useState([]);
     const [loading, setLoading] = useState(true);
     const { isAdmin } = useAdminPermission();

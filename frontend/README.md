@@ -22,3 +22,5 @@ Note that if you are not using Docker, you need to either set the `VITE_API_URL`
 There are two environment variables:
 * `VITE_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to '/api' if not set.
 * `VITE_USE_ALT_ERR_MSG`: if evaluates to true: in parent's junior registration form, use alternative error message. This is e.g. for summertime contact information.
+
+Note: in production, the variables will be defined by backend and passed on to frontend by using middleware to intercept fetching of `env.js`.

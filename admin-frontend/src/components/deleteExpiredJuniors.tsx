@@ -9,8 +9,9 @@ import { STATE } from '../state';
 import api from '../api';
 import { Status, statusChoices } from '../utils';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
-const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
 
 const DeleteExpiredJuniors = () => {
   const notify = useNotify();

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
 import { authProvider } from '../providers';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
 // NB:
 // * So that page changes trigger the useEffect, use auto logout in each relevant component, not just on App level.
@@ -10,8 +11,8 @@ import { authProvider } from '../providers';
 export const useAutoLogout = () => {
     useEffect(() => {
         const isEntraLoginPage =
-            import.meta.env.VITE_ENTRA_TENANT_ID &&
-            (window.location.href + '/').includes(import.meta.env.VITE_ENTRA_REDIRECT_URI);
+            getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) &&
+            (window.location.href + '/').includes(getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI));
         if (isEntraLoginPage) {
             return;
         }

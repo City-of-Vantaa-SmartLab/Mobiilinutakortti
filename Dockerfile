@@ -30,5 +30,6 @@ RUN npm ci && npm run build && cp -r ./build ../backend/public-admin
 WORKDIR /backend
 RUN npm ci && npm run build
 
-EXPOSE 3000
+ENV APPLICATION_PORT=80
+EXPOSE 80
 CMD ["npm", "run", "start"]

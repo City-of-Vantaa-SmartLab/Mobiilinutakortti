@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 import { useNotify } from 'react-admin';
 import { getActiveYouthClubOptions, getUserInfo, setUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
@@ -13,7 +14,7 @@ export const LandingPage = () => {
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const dropdownRef = useRef(null);
   const userInfo = useRef(null);
-  const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
+  const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID);
 
   useAutoLogout();
 
@@ -32,7 +33,7 @@ export const LandingPage = () => {
     } else {
       // Since this landing page is at the base URL, without the fragment the app would be in infinite loop here.
       // If using Entra for login, the redirect URI page is the login page.
-      window.location.href = useEntraID ? import.meta.env.VITE_ENTRA_REDIRECT_URI : loginFragment;
+      window.location.href = useEntraID ? getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI) : loginFragment;
     }
   }, [useEntraID]);
 

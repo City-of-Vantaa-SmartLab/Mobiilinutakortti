@@ -8,6 +8,8 @@ import LanguageSelect from '../../LanguageSelect'
 import styled, { useTheme } from 'styled-components'
 import { Club } from '../../../customizations/types';
 
+const useAltErrorMessage: boolean = window.__ENV_CONFIG__?.VITE_USE_ALT_ERR_MSG || import.meta.env.VITE_USE_ALT_ERR_MSG;
+
 const ErrorButton = styled(Button)`
   color: ${p => p.theme.pages.registration.errorButtonText};
   background: ${p => p.theme.pages.registration.errorButtonBackground};
@@ -130,7 +132,7 @@ const RegistrationView: React.FC = () => {
              {error &&
              <Error>
                  <div>
-                   <p>{import.meta.env.VITE_USE_ALT_ERR_MSG ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
+                   <p>{useAltErrorMessage ? t.parentRegistration.error.alternativeMessage : t.parentRegistration.error.message}</p>
                     <ErrorButton onClick={() => {
                         //cleans query string if error happened during query string parsing
                         navigate('/hakemus', { replace: true })

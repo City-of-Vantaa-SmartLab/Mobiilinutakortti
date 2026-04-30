@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || '/api';
+const apiUrl = window.__ENV_CONFIG__?.VITE_API_URL || import.meta.env.VITE_API_URL || '/api';
 
 export const get = async (uri: string, token?: string): Promise<any> => {
     const url: string = `${apiUrl}${uri}`;

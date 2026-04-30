@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SimpleForm, useNotify, TextInput } from 'react-admin';
 import { Button, Toolbar } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import { httpClientWithRefresh } from '../httpClients';
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 

@@ -1,10 +1,11 @@
 import { LogLevel } from '@azure/msal-browser'
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
 const authConfig = {
   auth: {
-    clientId: import.meta.env.VITE_ENTRA_CLIENT_ID,
-    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_ENTRA_TENANT_ID}`,
-    redirectUri: import.meta.env.VITE_ENTRA_REDIRECT_URI
+    clientId: getEnvConfig(ENV_VARS.VITE_ENTRA_CLIENT_ID),
+    authority: `https://login.microsoftonline.com/${getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID)}`,
+    redirectUri: getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI)
   },
   cache: {
     cacheLocation: 'sessionStorage',
@@ -43,7 +44,7 @@ const authConfig = {
 // For the login, scopes 'openid' and 'profile' were automatically included but we'll define them here anyway.
 const loginRequestScopes = ['User.Read', 'openid', 'profile']
 
-const tokenRequestScopes = [`api://${import.meta.env.VITE_ENTRA_CLIENT_ID}/user_login`]
+const tokenRequestScopes = [`api://${getEnvConfig(ENV_VARS.VITE_ENTRA_CLIENT_ID)}/user_login`]
 
 export {
   authConfig,

@@ -8,6 +8,7 @@ import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 import ResetIcon from '@mui/icons-material/Autorenew';
 import EmptyIcon from '@mui/icons-material/Cached';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
 const MiscFunctions = () => {
   const notify = useNotify();
@@ -48,7 +49,7 @@ const MiscFunctions = () => {
     return <Navigate to="/" replace />;
   }
 
-  const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
+  const kompassiIntegration = getEnvConfig(ENV_VARS.VITE_ENABLE_KOMPASSI_INTEGRATION);
 
   return (
     <Card sx={{ marginTop: 2 }}>

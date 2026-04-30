@@ -13,6 +13,7 @@ import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import BoltIcon from '@mui/icons-material/Bolt';
 import EventIcon from '@mui/icons-material/Event';
 import useAdminPermission from './hooks/useAdminPermission';
+import { getEnvConfig, ENV_VARS } from './envConfig';
 
 const MenuContainer = styled.div`
   margin-top: 1.5em;
@@ -20,7 +21,7 @@ const MenuContainer = styled.div`
 
 const Menu = () => {
   const { isAdmin, isSignedIn } = useAdminPermission();
-  const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
 
   return !isSignedIn ? null : (
     <MenuContainer>

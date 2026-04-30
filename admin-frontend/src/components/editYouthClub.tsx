@@ -17,6 +17,7 @@ import {
 import { Divider } from '@mui/material';
 import useAutoLogout from '../hooks/useAutoLogout';
 import { CustomBasicToolbar } from './styledComponents';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 
 const StatusHelperText = () => (
   <p>Nuoren rekisteröintilomakkeella näytetään vain aktiiviset nuorisotilat.</p>
@@ -31,7 +32,7 @@ const KompassiHelperText = () => (<>
   <p>Kompassi-integraatio vaatii myös oikean ryhmä-id:n, jotta sisäänkirjautumiset rekisteröityvät Kompassiin.</p><p>Erota aktiviteettityyppi-id:t pilkulla, jos useita.</p><p>Aktiviteetin otsikon perään lisätään automaattisesti päivämäärä.</p>
 </>);
 
-const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
+const kompassiIntegration = getEnvConfig(ENV_VARS.VITE_ENABLE_KOMPASSI_INTEGRATION);
 
 export const EditYouthClubList = (props: ListProps) => {
   useAutoLogout();

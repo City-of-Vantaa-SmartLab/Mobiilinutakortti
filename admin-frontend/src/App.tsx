@@ -16,6 +16,7 @@ import useAdminPermission from './hooks/useAdminPermission';
 import { AnnouncementCreate } from './components/announcement';
 import EntraLogin from './components/entraLoginPage';
 import { EventList, EventCreate, EventEdit } from './components/event';
+import { getEnvConfig, ENV_VARS } from './envConfig';
 
 const ExtraEntryTypeList = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeList })));
 const ExtraEntryTypeCreate = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeCreate })));
@@ -23,7 +24,7 @@ const ExtraEntryEdit = lazy(() => import('./components/extraEntry/extraEntry').t
 const ExtraEntryList = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryList })));
 
 const CustomLoginPage = () =>
-  !!import.meta.env.VITE_ENTRA_TENANT_ID ? (
+  !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) ? (
     <EntraLogin />
   ) : (
     <Login backgroundImage="/nuta-admin-bg.jpg" />
@@ -75,11 +76,11 @@ const darkTheme = createTheme({
 const App = () => {
   const { isAdmin } = useAdminPermission();
   const routes = normalRoutes.concat(...isAdmin ? adminRoutes : []);
-  const showExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
 
   // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
   // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
-  if (import.meta.env.VITE_ENTRA_TENANT_ID && (window.location.href + '/').includes(import.meta.env.VITE_ENTRA_REDIRECT_URI)) {
+  if (getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) && (window.location.href + '/').includes(getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI))) {
     return (<EntraLogin />)
   }
 

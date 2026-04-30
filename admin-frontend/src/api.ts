@@ -1,4 +1,5 @@
-const apiUrl = import.meta.env.VITE_API_URL || '/api';
+import { getEnvConfig, ENV_VARS } from './envConfig';
+const apiUrl = getEnvConfig(ENV_VARS.VITE_API_URL) || '/api';
 
 const apiEndpoints = {
   junior: {

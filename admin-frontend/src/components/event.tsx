@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 import {
   List,
   Datagrid,
@@ -50,8 +51,8 @@ interface ButtonProps {
   popup?: boolean;
 }
 
-const kompassiIntegration = import.meta.env.VITE_ENABLE_KOMPASSI_INTEGRATION;
-const enableExtraEntries = import.meta.env.VITE_ENABLE_EXTRA_ENTRIES;
+const kompassiIntegration = getEnvConfig(ENV_VARS.VITE_ENABLE_KOMPASSI_INTEGRATION);
+const enableExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
 
 export const EventCreate = (props: CreateProps) => {
   return (

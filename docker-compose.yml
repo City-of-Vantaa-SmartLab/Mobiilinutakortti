@@ -1,41 +1,42 @@
+# The services use a canonical Dockerfile to build the container.
+# This file is meant for locally running multiple containers.
+
+volumes:
+  db-data:
+
 services:
-  nutakortti:
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_started
     ports:
-      - 80:3000
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      args:
-        VITE_ENABLE_EXTRA_ENTRIES: ${VITE_ENABLE_EXTRA_ENTRIES}
-        VITE_ENABLE_KOMPASSI_INTEGRATION: ${VITE_ENABLE_KOMPASSI_INTEGRATION}
-        VITE_ENTRA_CLIENT_ID: ${VITE_ENTRA_CLIENT_ID}
-        VITE_ENTRA_REDIRECT_URI: ${VITE_ENTRA_REDIRECT_URI}
-        VITE_ENTRA_TENANT_ID: ${VITE_ENTRA_TENANT_ID}
-        VITE_USE_ALT_ERR_MSG: ${VITE_USE_ALT_ERR_MSG}
-    image: nutakortti/latest
+      - 3000:3000
+    volumes:
+      - ./backend/src:/backend/src
     environment:
-      APPLICATION_PORT:
+      APPLICATION_PORT: 3000
       AWS_SES_KEY_ID:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
       CERT_SELECTION:
       EMAIL_SOURCE:
       EMAIL_RETURN_PATH:
-      ENABLE_SETUP_ENDPOINTS:
+      ENABLE_SETUP_ENDPOINTS: yes
       ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
       FRONTEND_URL:
-      HTTP_LOG_LEVEL:
+      HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
       JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
       NODE_ENV:
       RDS_DB_NAME:
-      RDS_HOSTNAME:
-      RDS_PASSWORD:
+      RDS_HOSTNAME: db # In case a local postgres exists and env variable is already set.
+      RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
       RDS_PORT:
-      RDS_USERNAME:
+      RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
       SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
@@ -47,12 +48,49 @@ services:
       TELIA_PASSWORD:
       TELIA_USER:
       TELIA_USERNAME:
-      USE_DETAILED_LOGS:
+      USE_DETAILED_LOGS: true
       USE_JSON_LOGS:
-      VITE_API_URL:
-      VITE_ENABLE_EXTRA_ENTRIES:
-      VITE_ENABLE_KOMPASSI_INTEGRATION:
-      VITE_ENTRA_CLIENT_ID:
-      VITE_ENTRA_REDIRECT_URI:
-      VITE_ENTRA_TENANT_ID:
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - 3001:3000
+    volumes:
+      - ./frontend/src:/frontend/src
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3001
       VITE_USE_ALT_ERR_MSG:
+
+  admin-frontend:
+    build: ./admin-frontend
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - 3002:3000
+    volumes:
+      - ./admin-frontend/src:/admin-frontend/src
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+      VITE_DEV_SERVER_PORT: 3002
+      VITE_ENABLE_EXTRA_ENTRIES: true
+      VITE_ENABLE_KOMPASSI_INTEGRATION: true
+      VITE_ENTRA_CLIENT_ID:
+      VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
+      VITE_ENTRA_TENANT_ID:
+
+  db:
+    image: postgres:18
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nuta
+

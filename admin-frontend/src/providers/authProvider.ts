@@ -1,4 +1,5 @@
 import type { AuthProvider } from 'react-admin';
+import { getEnvConfig, ENV_VARS } from '../envConfig';
 import { httpClient } from '../httpClients';
 import api from '../api';
 import { userTokenKey, setUserInfo, clearUserInfo, loginFragment } from '../utils';
@@ -46,12 +47,12 @@ export const authProvider: AuthProvider = {
             method: 'GET'
         }
 
-        const useEntraID = !!import.meta.env.VITE_ENTRA_TENANT_ID;
+        const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID);
         const cleanup = () => {
             sessionStorage.removeItem(userTokenKey);
             sessionStorage.removeItem('role');
             window.location.href = useEntraID ?
-                import.meta.env.VITE_ENTRA_REDIRECT_URI :
+                getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI) :
                 loginFragment;
         }
 
