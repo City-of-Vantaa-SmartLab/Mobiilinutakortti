@@ -4,6 +4,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const hmrClientPort = env.VITE_DEV_SERVER_PORT ? Number(env.VITE_DEV_SERVER_PORT) : undefined;
+  // Note: localhost would be this container's localhost if running inside Docker, so define correctly in docker-container.yml.
+  const apiTargetHost = process.env.VITE_API_TARGET_HOST || "localhost"
   return {
     plugins: [react()],
     publicDir: 'public',
@@ -16,14 +18,14 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://localhost:3000', // Note: this would be the container's localhost if running inside Docker.
+          target: `http://${apiTargetHost}:3000`,
           changeOrigin: true,
         },
       }
     },
     build: {
-      outDir: 'build',
       chunkSizeWarningLimit: 1000,
+      outDir: 'build',
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -32,7 +34,8 @@ export default defineConfig(({ mode }) => {
             }
           }
         }
-      }
+      },
+      target: "es2020"
     }
   }
 });

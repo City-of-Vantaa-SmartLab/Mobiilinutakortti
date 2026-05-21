@@ -12,7 +12,6 @@ export class RoutersMiddleware implements NestMiddleware {
         if (baseUrl === content.Routes.envConfig) {
             res.type("application/javascript");
             res.send(`window.__ENV_CONFIG__ = ${JSON.stringify({
-                VITE_API_URL: process.env.VITE_API_URL,
                 VITE_ENABLE_EXTRA_ENTRIES: process.env.VITE_ENABLE_EXTRA_ENTRIES,
                 VITE_ENABLE_KOMPASSI_INTEGRATION: process.env.VITE_ENABLE_KOMPASSI_INTEGRATION,
                 VITE_ENTRA_CLIENT_ID: process.env.VITE_ENTRA_CLIENT_ID,

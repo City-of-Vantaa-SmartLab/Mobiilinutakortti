@@ -4,7 +4,7 @@
 # This is useful in situations where the environment update fails via eb deploy, e.g. because of timeout reasons.
 # Configure environment variables elsewhere, e.g. in AWS.
 
-required_version="v24.11.0"
+required_version="v24.15.0"
 node_version=$(node --version)
 if [ "$node_version" != "$required_version" ]
 then
@@ -40,7 +40,7 @@ githash=$(git describe --always)
 zipfile=$(date +"nutakortti-%Y%m%d-$githash.zip")
 
 cat > $tmpdir/Dockerfile << EOF
-FROM node:24.11.0-alpine
+FROM node:24.15-alpine
 
 RUN echo "Original zip package: $zipfile"
 

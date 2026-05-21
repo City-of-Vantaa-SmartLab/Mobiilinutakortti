@@ -1,4 +1,4 @@
-FROM node:24.11.0-alpine
+FROM node:24.15-alpine
 
 # The TZ environment variable affects the backend log timestamps.
 ENV TZ=Europe/Helsinki

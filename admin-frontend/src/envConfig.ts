@@ -3,7 +3,6 @@
 declare global {
   interface Window {
     __ENV_CONFIG__: {
-      VITE_API_URL: string;
       VITE_ENABLE_EXTRA_ENTRIES: boolean;
       VITE_ENABLE_KOMPASSI_INTEGRATION: boolean;
       VITE_ENTRA_CLIENT_ID: string;
@@ -16,7 +15,6 @@ declare global {
 type EnvConfig = Window['__ENV_CONFIG__'];
 
 export const ENV_VARS = {
-  VITE_API_URL: 'VITE_API_URL',
   VITE_ENABLE_EXTRA_ENTRIES: 'VITE_ENABLE_EXTRA_ENTRIES',
   VITE_ENABLE_KOMPASSI_INTEGRATION: 'VITE_ENABLE_KOMPASSI_INTEGRATION',
   VITE_ENTRA_CLIENT_ID: 'VITE_ENTRA_CLIENT_ID',

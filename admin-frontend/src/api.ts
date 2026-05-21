@@ -1,72 +1,71 @@
-import { getEnvConfig, ENV_VARS } from './envConfig';
-const apiUrl = getEnvConfig(ENV_VARS.VITE_API_URL) || '/api';
+const api = '/api';
 
 const apiEndpoints = {
   junior: {
-    base: `${apiUrl}/junior/`,
-    create: `${apiUrl}/junior/register`,
-    edit: `${apiUrl}/junior/edit`,
-    list: `${apiUrl}/junior/list`,
-    loginLink: `${apiUrl}/junior/loginLinkByAdmin`,
-    dummynumber: `${apiUrl}/junior/nextAvailableDummyPhoneNumber`,
-    newSeason: `${apiUrl}/junior/newSeason`,
-    newSeasonSMSCount: `${apiUrl}/junior/newSeason/SMSCount`,
-    deleteExpired:`${apiUrl}/junior/newSeason/deleteExpired`
+    base: `${api}/junior/`,
+    create: `${api}/junior/register`,
+    edit: `${api}/junior/edit`,
+    list: `${api}/junior/list`,
+    loginLink: `${api}/junior/loginLinkByAdmin`,
+    dummynumber: `${api}/junior/nextAvailableDummyPhoneNumber`,
+    newSeason: `${api}/junior/newSeason`,
+    newSeasonSMSCount: `${api}/junior/newSeason/SMSCount`,
+    deleteExpired:`${api}/junior/newSeason/deleteExpired`
   },
   auth: {
-    login: `${apiUrl}/youthworker/login`,
-    loginEntraID: `${apiUrl}/youthworker/loginEntraID`,
-    logout: `${apiUrl}/youthworker/logout`,
-    autologout: `${apiUrl}/youthworker/autologout`,
+    login: `${api}/youthworker/login`,
+    loginEntraID: `${api}/youthworker/loginEntraID`,
+    logout: `${api}/youthworker/logout`,
+    autologout: `${api}/youthworker/autologout`,
   },
   announcement: {
-    create: `${apiUrl}/announcement/create`,
-    dryRun: `${apiUrl}/announcement/dryrun`
+    create: `${api}/announcement/create`,
+    dryRun: `${api}/announcement/dryrun`
   },
   extraEntry: {
-    base: `${apiUrl}/extraEntry/`,
-    list: `${apiUrl}/extraEntry/list`,
-    create: `${apiUrl}/extraEntry/create`,
-    delete: `${apiUrl}/extraEntry/delete`,
-    deletePermit: `${apiUrl}/extraEntry/deletePermit`,
-    type: `${apiUrl}/extraEntry/type/`,
-    typeList: `${apiUrl}/extraEntry/type/list`,
-    typeCreate: `${apiUrl}/extraEntry/type/create`
+    base: `${api}/extraEntry/`,
+    list: `${api}/extraEntry/list`,
+    create: `${api}/extraEntry/create`,
+    delete: `${api}/extraEntry/delete`,
+    deletePermit: `${api}/extraEntry/deletePermit`,
+    type: `${api}/extraEntry/type/`,
+    typeList: `${api}/extraEntry/type/list`,
+    typeCreate: `${api}/extraEntry/type/create`
   },
   youthClub: {
-    base: `${apiUrl}/club/`,
-    list: `${apiUrl}/club/list`,
-    edit: `${apiUrl}/club/edit`,
-    checkIn: `${apiUrl}/club/checkIn`,
-    checkInStats: `${apiUrl}/club/checkInStats`,
-    checkInLog: `${apiUrl}/club/checkInLog`
+    base: `${api}/club/`,
+    list: `${api}/club/list`,
+    edit: `${api}/club/edit`,
+    checkIn: `${api}/club/checkIn`,
+    checkInStats: `${api}/club/checkInStats`,
+    checkInLog: `${api}/club/checkInLog`
   },
   youthWorker: {
-    create: `${apiUrl}/youthworker/register`,
-    edit: `${apiUrl}/youthworker/edit`,
-    list: `${apiUrl}/youthworker/list`,
-    self: `${apiUrl}/youthworker/getSelf`,
-    refresh: `${apiUrl}/youthworker/refresh`,
-    password: `${apiUrl}/youthworker/changePassword`,
-    base: `${apiUrl}/youthworker/`,
-    setMainYouthClub: `${apiUrl}/youthworker/setMainYouthClub`
+    create: `${api}/youthworker/register`,
+    edit: `${api}/youthworker/edit`,
+    list: `${api}/youthworker/list`,
+    self: `${api}/youthworker/getSelf`,
+    refresh: `${api}/youthworker/refresh`,
+    password: `${api}/youthworker/changePassword`,
+    base: `${api}/youthworker/`,
+    setMainYouthClub: `${api}/youthworker/setMainYouthClub`
   },
   event: {
-    base: `${apiUrl}/event/`,
-    list: `${apiUrl}/event/list`,
-    edit: `${apiUrl}/event/edit`,
-    create: `${apiUrl}/event/create`,
-    delete: `${apiUrl}/event/delete`,
-    checkIn: `${apiUrl}/event/checkIn`,
-    checkInWithCode: `${apiUrl}/event/checkInwithCode`,
-    checkInLog: `${apiUrl}/event/checkInLog`
+    base: `${api}/event/`,
+    list: `${api}/event/list`,
+    edit: `${api}/event/edit`,
+    create: `${api}/event/create`,
+    delete: `${api}/event/delete`,
+    checkIn: `${api}/event/checkIn`,
+    checkInWithCode: `${api}/event/checkInwithCode`,
+    checkInLog: `${api}/event/checkInLog`
   },
   spamGuard: {
-    reset:`${apiUrl}/spamguard/reset`,
-    getSecurityCode:`${apiUrl}/spamguard/getSecurityCode`
+    reset:`${api}/spamguard/reset`,
+    getSecurityCode:`${api}/spamguard/getSecurityCode`
   },
   kompassi: {
-    reset:`${apiUrl}/kompassi/reset`,
+    reset:`${api}/kompassi/reset`,
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "nutakortti-frontend",
-  "version": "3.1.3",
+  "version": "3.1.4",
   "description": "Frontend for the Nutakortti application",
   "private": true,
   "type": "module",

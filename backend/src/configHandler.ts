@@ -44,13 +44,21 @@ export class ConfigHandler {
     static getTypeOrmModuleConfig(): TypeOrmModuleOptions {
         return {
             type: 'postgres',
-            host: process.env.RDS_HOSTNAME || 'db',
-            port: +process.env.RDS_PORT || 5432,
-            username: process.env.RDS_USERNAME || 'postgres',
-            password: process.env.RDS_PASSWORD || 'password',
-            database: process.env.RDS_DB_NAME || 'nuta',
+            host: process.env.DB_HOST || 'db',
+            port: Number(process.env.DB_PORT) || 5432,
+            username: process.env.DB_USERNAME || 'postgres',
+            password: process.env.DB_PASSWORD || 'password',
+            database: process.env.DB_NAME || 'nuta',
             entities: ['dist/**/*.entity{.ts,.js}'],
             synchronize: true,
+            ssl: process.env.DB_USE_SSL ? {
+                rejectUnauthorized: false,
+            } : false,
+            extra: {
+                max: Number(process.env.DB_POOL_SIZE) || 10,
+                idleTimeoutMillis: 30000,
+                connectionTimeoutMillis: 2000
+            }
         };
     }
 

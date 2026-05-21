@@ -1,19 +1,20 @@
-# The services use a canonical Dockerfile to build the container.
-# This file is meant for locally running multiple containers.
+# This file is meant for locally running the components with dev servers.
 
 volumes:
   db-data:
 
 services:
   backend:
-    build: ./backend
+    image: node:24.15-alpine
+    working_dir: /backend
     depends_on:
       db:
         condition: service_started
     ports:
       - 3000:3000
     volumes:
-      - ./backend/src:/backend/src
+      - ./backend:/backend
+      - /backend/node_modules
     environment:
       APPLICATION_PORT: 3000
       AWS_SES_KEY_ID:
@@ -25,6 +26,13 @@ services:
       ENABLE_SETUP_ENDPOINTS: yes
       ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
+      DB_HOST: db # In case a local postgres exists and env variable is already set.
+      DB_NAME:
+      DB_PASSWORD: password # In case a local postgres exists and env variable is already set.
+      DB_POOL_SIZE:
+      DB_PORT:
+      DB_USE_SSL:
+      DB_USERNAME: postgres # In case a local postgres exists and env variable is already set.
       FRONTEND_URL:
       HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
@@ -32,11 +40,6 @@ services:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
       NODE_ENV:
-      RDS_DB_NAME:
-      RDS_HOSTNAME: db # In case a local postgres exists and env variable is already set.
-      RDS_PASSWORD: password # In case a local postgres exists and env variable is already set.
-      RDS_PORT:
-      RDS_USERNAME: postgres # In case a local postgres exists and env variable is already set.
       SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
@@ -50,38 +53,45 @@ services:
       TELIA_USERNAME:
       USE_DETAILED_LOGS: true
       USE_JSON_LOGS:
+    command: sh -c "npm i && npm run dev"
 
   frontend:
-    build: ./frontend
+    image: node:24.15-alpine
+    working_dir: /frontend
     depends_on:
       backend:
         condition: service_started
     ports:
       - 3001:3000
     volumes:
-      - ./frontend/src:/frontend/src
+      - ./frontend:/frontend
+      - /frontend/node_modules
     environment:
-      VITE_API_URL: http://localhost:3000/api
+      VITE_API_TARGET_HOST: backend
       VITE_DEV_SERVER_PORT: 3001
       VITE_USE_ALT_ERR_MSG:
+    command: sh -c "npm i && npm run dev"
 
   admin-frontend:
-    build: ./admin-frontend
+    image: node:24.15-alpine
+    working_dir: /admin-frontend
     depends_on:
       backend:
         condition: service_started
     ports:
       - 3002:3000
     volumes:
-      - ./admin-frontend/src:/admin-frontend/src
+      - ./admin-frontend:/admin-frontend
+      - /admin-frontend/node_modules
     environment:
-      VITE_API_URL: http://localhost:3000/api
+      VITE_API_TARGET_HOST: backend
       VITE_DEV_SERVER_PORT: 3002
       VITE_ENABLE_EXTRA_ENTRIES: true
       VITE_ENABLE_KOMPASSI_INTEGRATION: true
       VITE_ENTRA_CLIENT_ID:
       VITE_ENTRA_REDIRECT_URI: http://localhost:3002/loginEntraID
       VITE_ENTRA_TENANT_ID:
+    command: sh -c "npm i && npm run dev"
 
   db:
     image: postgres:18
@@ -93,4 +103,3 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: nuta
-

@@ -5,7 +5,6 @@ export {};
 declare global {
   interface Window {
     __ENV_CONFIG__: {
-      VITE_API_URL: string;
       VITE_USE_ALT_ERR_MSG: boolean;
     };
   }

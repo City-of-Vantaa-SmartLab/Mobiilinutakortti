@@ -4,12 +4,6 @@ The backend directory includes the server side code of the Mobiilinutakortti app
 
 The backend uses NestJS. The database is PostgreSQL.
 
-## System requirements:
-
-- Node.js: v24.11.0 preferred
-- PostgreSQL: v18 preferred
-- Docker: optional
-
 ## Multiple instances
 
 There are some services that rely on an in-memory "database". If the backend was to run as multiple instances, these services might not work correctly. If ever multiple instances are required, these services might need to be refactored to use a real database. The relevant services are:
@@ -49,8 +43,8 @@ To change password for a PostgreSQL user, use the psql command `\password <user>
 **Backend**
 
 1. Run `npm install`
-2. Before running the backend, set database-related environment variables to match your system configuration (the variables beginning with `RDS_`):
-    * For example: `export RDS_HOSTNAME=localhost` would use a PostgreSQL install on localhost
+2. Before running the backend, set database-related environment variables to match your system configuration (the variables beginning with `DB_`):
+    * For example: `export DB_HOST=localhost` would use a PostgreSQL install on localhost
     * The username and password are for PostgreSQL
     * PostgreSQL roles can be checked with psql using the command `\du`
 3. Run `npm run dev`
@@ -91,6 +85,13 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `AWS_SES_KEY_VALUE`: Key value for Amazon SES.
 * `AWS_SES_REGION`: Aws region for Amazon SES. For example: "eu-central-1".
 * `CERT_SELECTION`: Possible values are `test` and `prod`. Determines which set of certificates to use in SAML2.0 communication with Suomi.fi. The certificates are stored in the `certs` directory.
+* `DB_HOST`: Database URL, host part.
+* `DB_NAME`: Database name.
+* `DB_PASSWORD`: Database password.
+* `DB_POOL_SIZE`: Database connection pool size. Defaults to 10.
+* `DB_PORT`: Database port.
+* `DB_USE_SSL`: If evaluates to true, database uses SSL. Defaults to empty (evaluates to false).
+* `DB_USERNAME`: Database user name.
 * `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
 * `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
 * `ENABLE_SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
@@ -103,11 +104,6 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
 * `KOMPASSI_API_URL`: URL to use for Kompassi integration.
 * `NODE_ENV`: used to check if running tests (value = 'test') or not.
-* `RDS_DB_NAME`: Amazon RDS database name.
-* `RDS_HOSTNAME`: Amazon RDS URL host part.
-* `RDS_PASSWORD`: Amazon RDS password.
-* `RDS_PORT`: Amazon RDS port.
-* `RDS_USERNAME`: Amazon RDS user name.
 * `SC_SECRET`: Secret string used to sign and validate security context tokens. Arbitrary. Optional if only single backend instance is in use.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.

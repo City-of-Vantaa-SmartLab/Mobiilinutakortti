@@ -13,7 +13,7 @@ Note that currently for some services the backend keeps a small in-memory "datab
 
 ## Prerequisites
 
-- Node.js: v24.11.0 preferred
+- Node.js: v24.15.0 preferred
 - PostgreSQL: v18 preferred
 - Docker: optional
 
@@ -21,7 +21,7 @@ For production use, Telia SMS service is required. Note that there are two endpo
 
 ## Default setup
 
-- Backend : NestJS *(running on port 3000)*
+- Backend : NestJS, Nest dev server *(running on port 3000)*
 - Frontend : React, Vite dev server *(running on port 3001)*
 - Admin-Frontend : React Admin, Vite dev server *(running on port 3002)*
 - Database : PostgreSQL *(running on port 5432)*
@@ -29,7 +29,7 @@ For production use, Telia SMS service is required. Note that there are two endpo
 ## Running the app
 
 Each subproject may be run individually, with or without Docker - see README.md files of the projects.
-To start up everything using Docker compose, run `docker compose up`. There is also a single container `Dockerfile` and the corresponding `docker-compose-dockerfile.yml` for production use.
+To start up everything using Docker compose, run `docker compose up`.
 
 Without Docker, the services are meant to be run in this order: backend, frontend, admin-frontend.
 
@@ -133,15 +133,15 @@ For Suomi.fi certificate updates, see the file `./backend/certs/README.md`.
 
 ### Test environment
 
-The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml).
+The application runs in AWS Elastic Beanstalk in a single Docker container.
 
 ### Production environment
 
-The application runs in AWS Elastic Beanstalk in a single container (using Dockerfile via docker-compose.yml). See next section for updating the production environment using EB CLI tools.
+The application runs in AWS Elastic Beanstalk in a single Docker container. See next section for updating the production environment using EB CLI tools.
 
-* [Junior-app](https://nutakortti.vantaa.fi)
-* [Admin-app](https://nutakortti.vantaa.fi/nuorisotyontekijat)
-* [Api](https://nutakortti.vantaa.fi/api)
+* [Junior user interface](https://nutakortti.vantaa.fi)
+* [Youth worker user interface](https://nutakortti.vantaa.fi/nuorisotyontekijat)
+* [API](https://nutakortti.vantaa.fi/api)
 
 Logs are found in AWS CloudWatch - to browse, select Log groups from CloudWatch's left panel. The current app log and nginx access/error logs are of most interest.
 
@@ -157,7 +157,7 @@ Configure the EB CLI:
 * Note: this process only initializes the current directory/repository on your computer. The relevant files have been added to gitignore.
 1. Go to project directory root (where this file is). Type: `eb init`.
 2. Select `eu-central-1` as the location (unless something's been changed).
-3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/config`.
+3. If you haven't set up your AWS credentials yet, provide your personal Access key ID and Secret access key. You got them when receiving the AWS credentials (you should have got the following: **User name,Password,Access key ID,Secret access key,Console login link**). On Linux/OS X, the credentials will be stored in `~/.aws/credentials`.
 4. Select the `Nutakortti` as application. Don't continue with CodeCommit (defaults to N).
 5. Ensure the environment is set up by typing `eb list`.
 
@@ -167,7 +167,7 @@ Configure the EB CLI:
 
 ### Updating using a zip package
 
-Building Nutakortti from scratch in AWS Elastic Beanstalk sometimes takes more than the maximum limit of 10 minutes. This will result in a failed environment update, which might lead to EB being in an unstable, unusable state. If that happens, the best thing to do is just to wait for a few hours. Re-deploying using CLI only makes things worse. As the command timeout setting in AWS EB doesn't work, an alternative for quickly updating the environment is to build the packages before uploading.
+In case the AWS Elastic Beanstalk environment is in a state where updates hang and timeout, or for some other reason, it is beneficial to be able to package the application yourself and just drop it in.
 
 The script `build-and-zip.sh` accomplishes this and creates a zip file you can upload and deploy to Elastic Beanstalk.
 

@@ -2,7 +2,7 @@
 
 build-and-zip.sh
 docker-compose.yml
-docker-compose-dockerfile.yml
+.git
 
 # .gitignore contents follows, keep synced:
 

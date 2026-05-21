@@ -2,10 +2,6 @@
 
 The admin-frontend directory includes the admin side code for Mobiilinutakortti app. The users are youth workers.
 
-## System Requirements:
-
-- Node.js: v24.11.0 preferred
-
 ## Running locally
 
 You need to have the backend running before starting the admin-frontend; see `../backend/README.md` for info.
@@ -15,8 +11,6 @@ You need to have the backend running before starting the admin-frontend; see `..
     * if the ports 3000-3001 are taken by the backend and frontend already, you are suggested another port automatically
     * if you choose port 3002, you can see admin-frontend running at [http://localhost:3002](http://localhost:3002)
 
-Note that if you are not using Docker, you need to either set the `VITE_API_URL` variable correctly to include the backend port (e.g. http://localhost:3000/api), or make sure backend is running in port 3000 locally. The Vite dev server proxy is configured to use that for /api calls.
-
 ## Creating a youth worker user
 
 If you are not using Microsoft Entra ID to login users (as is by default; see the environment variables section below), you need to add an initial admin user. See the generic README.md at the root of the repository *(../README.md)* on instructions how to create one.
@@ -24,7 +18,7 @@ If you are not using Microsoft Entra ID to login users (as is by default; see th
 ## Environment variables / secrets
 
 There are following environment variables:
-* `VITE_API_URL`: the base API URL, e.g. "https://api.mobiilinuta-admin-test.com/api". Defaults to "/api" if not set.
+* `VITE_API_TARGET_HOST`: Hostname where API is running in port 3000, only for dev server. Defaults to `localhost`.
 * `VITE_ENABLE_EXTRA_ENTRIES`: if evaluates to true, enable showing the extra entry registry related functions in the admin frontend.
 * `VITE_ENABLE_KOMPASSI_INTEGRATION`: if evaluates to true, show Kompassi (a statistics system) related settings in the admin frontend's club views.
 * `VITE_ENTRA_CLIENT_ID`: Microsoft Entra client ID, if using Entra ID for login.
