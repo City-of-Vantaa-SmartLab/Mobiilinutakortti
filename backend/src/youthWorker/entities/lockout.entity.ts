@@ -1,28 +1,27 @@
 import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
 import { YouthWorker } from './youthWorker.entity';
-import { ConfigHandler } from '../../configHandler';
 
 @Entity()
 export class Lockout {
     @PrimaryColumn()
-    youthWorkerId: string
+    youthWorkerId!: string
 
     @OneToOne(_ => YouthWorker, { onDelete: 'CASCADE' })
     @JoinColumn()
-    youthWorker: YouthWorker;
+    youthWorker!: YouthWorker;
 
     @Column({ default: 0 })
-    attempts: number;
+    attempts!: number;
 
     @Column({
-        type: ConfigHandler.isTest() ? 'text' : 'timestamp with time zone',
+        type: 'timestamp with time zone',
         default: getDefaultDate(),
     })
-    expiry: string;
+    expiry!: Date;
 }
 
 function getDefaultDate() {
     const currentTime = new Date();
     currentTime.setHours(currentTime.getHours() + 3, currentTime.getMinutes());
-    return ConfigHandler.isTest() ? currentTime.getTime() : currentTime;
+    return currentTime;
 }

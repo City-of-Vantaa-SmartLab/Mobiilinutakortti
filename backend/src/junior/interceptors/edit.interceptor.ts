@@ -18,20 +18,26 @@ export class JuniorEditInterceptor implements NestInterceptor {
         const userToEdit = await this.juniorRepo.findOneBy({ id: body.id });
         if (!userToEdit) { throw new BadRequestException(content.UserNotFound); }
         let dataChanged = false;
+        const bodyRecord = body as unknown as Record<string, unknown>;
+        const userRecord = userToEdit as unknown as Record<string, unknown>;
 
         // Interceptor for non-nullable fields
-        const nonNullableFields = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent', 'emailPermissionParent'];
-        dataChanged = nonNullableFields.some(field => {
-            body[field] = body[field] ?? '';
-            return body[field] !== userToEdit[field];
+        const stringFields: Array<keyof EditJuniorDto> = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'communicationsLanguage', 'status'];
+        stringFields.forEach(field => {
+            bodyRecord[field as string] = bodyRecord[field as string] ?? '';
         });
 
-        body.homeYouthClub = body.homeYouthClub === -1 ? body.homeYouthClub = null : body.homeYouthClub;
+        const nonNullableFields: Array<keyof EditJuniorDto> = ['phoneNumber', 'firstName', 'lastName', 'nickName', 'postCode', 'school', 'class', 'parentsName', 'parentsPhoneNumber', 'gender', 'communicationsLanguage', 'status', 'photoPermission', 'smsPermissionJunior', 'smsPermissionParent', 'emailPermissionParent'];
+        dataChanged = nonNullableFields.some(field => {
+            return bodyRecord[field as string] !== userRecord[field as string];
+        });
+
+        body.homeYouthClub = body.homeYouthClub === -1 ? null : body.homeYouthClub;
 
         // Interceptor for nullable fields
-        const nullableFields = ['additionalContactInformation', 'parentsEmail', 'homeYouthClub'];
+        const nullableFields: Array<keyof EditJuniorDto> = ['additionalContactInformation', 'parentsEmail', 'homeYouthClub'];
         dataChanged = dataChanged || nullableFields.some(field => {
-            return body[field] !== userToEdit[field];
+            return bodyRecord[field as string] !== userRecord[field as string];
         });
 
         // Some dates include timestamp which makes it seem like birthday has changed even when it hasn't

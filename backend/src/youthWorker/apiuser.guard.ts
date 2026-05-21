@@ -25,7 +25,10 @@ export class ApiUserGuard implements CanActivate {
     }
 
     try {
-      const payload: JwtPayload = decode(token, { json: true });
+      const payload = decode(token, { json: true }) as JwtPayload | null;
+      if (!payload || payload.exp === undefined) {
+        return false;
+      }
 
       // Frontend has an auto logout interval but backend issued tokens might have just expired.
       // Allow for just expired tokens to pass e.g. for the auto logout.

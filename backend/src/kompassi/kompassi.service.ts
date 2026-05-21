@@ -80,6 +80,7 @@ export class KompassiService {
 
                 // Release waiting in possible other parallel async calls.
                 const pendingActivity = this.activities.find(a => a.clubId === club.id);
+                if (!pendingActivity) throw new Error('Pending activity not found.');
                 pendingActivity.kompassiActivityId = activityId;
                 pendingActivity.pendingCreation = false;
             } else if (activityInDB.pendingCreation) {
@@ -109,7 +110,7 @@ export class KompassiService {
         }
     }
 
-    private async getActivityForTodayFromAPI(club: Club): Promise<Activity> {
+    private async getActivityForTodayFromAPI(club: Club): Promise<Activity | null> {
         this.logger.debug('Get activity for club: ' + club.name);
 
         // Get the group to get the organisation id to get the activities.
@@ -138,7 +139,7 @@ export class KompassiService {
 
         // If multiple found with the same title, use the newest.
         const maxId = Math.max(...matchingActivities.map(ma => ma.activityId)) || 0;
-        return maxId === 0 ? null : matchingActivities.find(ma => ma.activityId === maxId);
+        return maxId === 0 ? null : (matchingActivities.find(ma => ma.activityId === maxId) || null);
     }
 
     private async getGroup(id: number): Promise<Group> {

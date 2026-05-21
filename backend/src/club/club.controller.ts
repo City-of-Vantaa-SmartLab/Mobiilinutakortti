@@ -55,11 +55,11 @@ export class ClubController {
     @Post('checkIn')
     async checkInJunior(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
         if (!this.spamGuardService.checkSecurityCode(checkInData.targetId, checkInData.securityCode)) {
-            return new CheckInResponseViewModel(undefined, failReason.CODE);
+            return new CheckInResponseViewModel('', failReason.CODE);
         }
 
         if (!this.spamGuardService.checkIn(checkInData.juniorId, checkInData.targetId)) {
-            return new CheckInResponseViewModel(undefined, failReason.SPAM);
+            return new CheckInResponseViewModel('', failReason.SPAM);
         }
 
         const name = await this.clubService.checkInJunior(checkInData);

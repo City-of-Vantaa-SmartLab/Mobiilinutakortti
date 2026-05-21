@@ -4,21 +4,21 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'ty
 @Entity()
 export class Event {
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @Column()
-    name: string;
+    name!: string;
 
-    @Column({ nullable: true  })
-    description: string;
+    @Column({ type: 'varchar', nullable: true })
+    description!: string | null;
 
-    @Column({ nullable: true  })
-    startDate: Date;
+    @Column({ type: 'timestamp with time zone', nullable: true })
+    startDate!: Date | null;
 
-    @Column({ nullable: true  })
-    integrationId: number;
+    @Column({ type: 'int', nullable: true })
+    integrationId!: number | null;
 
     @OneToOne(_ => EntryType, { cascade: true, nullable: true })
     @JoinColumn()
-    permit: EntryType;
+    permit!: EntryType | null;
 }

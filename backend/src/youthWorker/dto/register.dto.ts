@@ -8,21 +8,21 @@ export class RegisterYouthWorkerDto {
 
     @IsEmail()
     @IsNotEmpty()
-    readonly email: string;
+    readonly email!: string;
 
     @IsNotEmpty()
-    readonly password: string;
+    readonly password!: string;
 
     @IsNotEmpty()
-    readonly firstName: string;
+    readonly firstName!: string;
 
     @IsNotEmpty()
-    readonly lastName: string;
+    readonly lastName!: string;
 
     @IsNotEmpty()
     @Type(() => Boolean)
-    readonly isAdmin: boolean;
+    readonly isAdmin!: boolean;
 
     @Type(() => Number)
-    readonly mainYouthClub: number;
+    readonly mainYouthClub!: number;
 }

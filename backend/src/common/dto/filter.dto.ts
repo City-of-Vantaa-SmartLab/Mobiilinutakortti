@@ -1,13 +1,13 @@
 import { Type } from 'class-transformer';
 
 export class FilterDto {
-    name: string;
-    homeYouthClub: string;
-    status: string;
-    phoneNumber: string;
-    parentsPhoneNumber: string;
+    name!: string;
+    homeYouthClub!: string;
+    status!: string;
+    phoneNumber!: string;
+    parentsPhoneNumber!: string;
     @Type(() => Number)
-    extraEntryType: number;
+    extraEntryType!: number;
     @Type(() => Number)
-    entryPermitType: number;
+    entryPermitType!: number;
 }

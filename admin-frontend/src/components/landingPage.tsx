@@ -1,19 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import { getEnvConfig, ENV_VARS } from '../envConfig';
 import { useNotify } from 'react-admin';
-import { getActiveYouthClubOptions, getUserInfo, setUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment } from '../utils'
+import { getActiveYouthClubOptions, getUserInfo, setUserInfo, userTokenKey, hrefFragmentToJunior, loginFragment, throwIfErrorResponse } from '../utils'
 import { httpClientWithRefresh } from '../httpClients';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
 import useAdminPermission from '../hooks/useAdminPermission';
 import { Box } from '@mui/material';
 
+interface LandingUserInfo {
+  firstName: string;
+  mainYouthClubId?: number;
+  passwordLastChanged?: string;
+  isAdmin: boolean;
+}
+
+const isLandingUserInfo = (value: any): value is LandingUserInfo => {
+  return !!value && typeof value === 'object' && typeof value.firstName === 'string' && typeof value.isAdmin === 'boolean';
+};
+
 export const LandingPage = () => {
   const notify = useNotify();
   const [youthClubs, setYouthClubs] = useState([]);
   const [selectedYouthClub, setSelectedYouthClub] = useState(-1);
   const dropdownRef = useRef(null);
-  const userInfo = useRef(null);
+  const userInfo = useRef<LandingUserInfo | null>(null);
   const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID);
 
   useAutoLogout();
@@ -21,7 +32,8 @@ export const LandingPage = () => {
   const { isSignedIn } = useAdminPermission();
 
   useEffect(() => {
-    userInfo.current = getUserInfo();
+    const loadedUserInfo = getUserInfo();
+    userInfo.current = isLandingUserInfo(loadedUserInfo) ? loadedUserInfo : null;
     const hasUserToken = sessionStorage.getItem(userTokenKey) && sessionStorage.getItem(userTokenKey) !== 'undefined';
     if (!!userInfo.current && hasUserToken) {
       const addYouthClubsToState = async () => {
@@ -46,17 +58,38 @@ export const LandingPage = () => {
   const handleYouthClubChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setSelectedYouthClub(Number(e.target.value)) };
 
   const setDefaultYouthClub = async () => {
-    const response = await httpClientWithRefresh(api.youthWorker.setMainYouthClub, {
-      method: 'POST',
-      body: JSON.stringify({
-        clubId: selectedYouthClub
-      })
-    });
-    if (response) {
+    try {
+      const response = await httpClientWithRefresh(api.youthWorker.setMainYouthClub, {
+        method: 'POST',
+        body: JSON.stringify({
+          clubId: selectedYouthClub
+        })
+      });
+
+      if (!response) {
+        notify('Istunto vanhentui. Kirjaudu uudelleen.', { type: 'warning' });
+        return;
+      }
+
+      try {
+        throwIfErrorResponse(response);
+      } catch (_error: any) {
+        notify(response.message || 'Virhe asettaessa nuorisotilaa', { type: 'error' });
+        return;
+      }
+
       notify('Oletusnuorisotila asetettu');
-      if (userInfo.current) setUserInfo({ ...userInfo.current, mainYouthClub: selectedYouthClub });
-    } else {
-      notify('Virhe asettaessa nuorisotilaa');
+      if (userInfo.current) {
+        setUserInfo({
+          firstName: userInfo.current.firstName,
+          mainYouthClub: selectedYouthClub,
+          passwordLastChanged: userInfo.current.passwordLastChanged,
+          isAdmin: userInfo.current.isAdmin,
+        });
+        userInfo.current.mainYouthClubId = selectedYouthClub;
+      }
+    } catch (_error) {
+      notify('Virhe asettaessa nuorisotilaa', { type: 'error' });
     }
   };
 

@@ -8,10 +8,9 @@ export class CheckInStatsViewModel {
       const count = Array.from(ranges.values()).reduce(
         (sum, value) => sum + value,
       );
-      const keys = Array.from(ranges.keys());
-      const ageRanges = keys.map(ageRange => ({
+      const ageRanges = Array.from(ranges.entries()).map(([ageRange, count]) => ({
         ageRange,
-        count: ranges.get(ageRange),
+        count,
       }));
 
       return {

@@ -7,14 +7,14 @@ export class LoginYouthWorkerDto {
 
     @IsNotEmpty()
     @IsEmail()
-    readonly email: string;
+    readonly email!: string;
 
     @IsNotEmpty()
-    readonly password: string;
+    readonly password!: string;
 }
 
 export class LoginYouthWorkerEntraDto {
 
     @IsNotEmpty()
-    readonly msalToken: string;
+    readonly msalToken!: string;
 }

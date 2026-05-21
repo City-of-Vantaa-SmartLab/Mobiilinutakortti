@@ -5,9 +5,9 @@ export class CheckInQueryDto {
 
     @IsNotEmpty()
     @Type(() => Number)
-    targetId: number;
+    targetId!: number;
 
     @IsNotEmpty()
     @IsDateString()
-    date: string;
+    date!: string;
 }

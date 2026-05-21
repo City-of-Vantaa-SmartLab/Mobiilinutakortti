@@ -20,6 +20,7 @@ import { Typography } from '@mui/material';
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
+import { throwIfErrorResponse } from '../utils';
 
 const labelForGender = (genderSymbol: string): string => {
     switch (genderSymbol) {
@@ -81,16 +82,27 @@ const CheckInStatisticsView = () => {
                 body
             };
             resetState();
-            await httpClientWithRefresh(url, options)
-                .then((response: CheckInStatsViewModel) => {
-                    if (response.statistics.map((s: CheckInStatistics) => s.count).reduce((x,y) => x + y, 0) === 0) {
-                        notify("Ei kirjautumisia valitulla aikavälillä", { type: 'warning' });
-                        return;
-                    }
-                    setSearchDate(date.toLocaleDateString());
-                    setClubName(response.clubName);
-                    setData(response.statistics);
-                });
+            try {
+                const response = await httpClientWithRefresh(url, options);
+                throwIfErrorResponse(response);
+
+                if (!response || !Array.isArray(response.statistics) || typeof response.clubName !== 'string') {
+                    notify('Virhe tietojen haussa', { type: 'error' });
+                    return;
+                }
+
+                const viewModel: CheckInStatsViewModel = response;
+                if (viewModel.statistics.map((s: CheckInStatistics) => s.count).reduce((x, y) => x + y, 0) === 0) {
+                    notify('Ei kirjautumisia valitulla aikavälillä', { type: 'warning' });
+                    return;
+                }
+
+                setSearchDate(date.toLocaleDateString());
+                setClubName(viewModel.clubName);
+                setData(viewModel.statistics);
+            } catch (error: any) {
+                notify(error?.message || 'Virhe tilastojen haussa', { type: 'error' });
+            }
         }
     }
 

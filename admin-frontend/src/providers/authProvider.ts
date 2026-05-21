@@ -3,7 +3,7 @@ import { getEnvConfig, ENV_VARS } from '../envConfig';
 import { httpClient } from '../httpClients';
 import api from '../api';
 import { userTokenKey, setUserInfo, clearUserInfo, loginFragment } from '../utils';
-import { newHttpErrorFromResponse } from '../utils';
+import { throwIfErrorResponse } from '../utils';
 
 export const authProvider: AuthProvider = {
     login: async (params: any) => {
@@ -17,17 +17,19 @@ export const authProvider: AuthProvider = {
 
         try {
             const response = await httpClient(url, options);
-            if (response.statusCode < 200 || response.statusCode >= 300) {
-                throw newHttpErrorFromResponse(response);
-            }
+            throwIfErrorResponse(response);
             sessionStorage.setItem(userTokenKey, response.access_token);
             const userResponse = await httpClient(api.youthWorker.self, { method: 'GET' });
+            throwIfErrorResponse(userResponse);
             setUserInfo(userResponse);
             // Forces recalculation of routes based on user role inside App.tsx.
             // If a youth worker was logged in and switches to an admin user (or vice versa),
             // the latter user would not see correct routes.
             window.location.reload();
         } catch (error) {
+            sessionStorage.removeItem(userTokenKey);
+            sessionStorage.removeItem('role');
+            clearUserInfo();
             throw error;
         }
     },

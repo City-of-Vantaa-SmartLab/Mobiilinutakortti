@@ -9,28 +9,28 @@ import { lowercase, jsonDataToBoolean } from '../../common/transformers';
 export class YouthWorker {
 
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id!: string;
 
     @Column()
-    firstName: string;
+    firstName!: string;
 
     @Column()
-    lastName: string;
+    lastName!: string;
 
     @Column()
-    password: string;
+    password!: string;
 
     @IsEmail()
     @Column({ unique: true, transformer: lowercase })
-    email: string;
+    email!: string;
 
     @Column({ default: false, transformer: jsonDataToBoolean })
-    isAdmin: boolean;
+    isAdmin!: boolean;
 
     // For historical reasons, type is character varying and not integer and needs to be transformed back into number for UI.
     @Column({ nullable: true  })
-    mainYouthClub: number;
+    mainYouthClub!: number;
 
     @Column({ default: null, nullable: true })
-    passwordLastChanged: Date;
+    passwordLastChanged!: Date;
 }

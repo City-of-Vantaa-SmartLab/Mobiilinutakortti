@@ -61,6 +61,12 @@ export const newHttpErrorFromResponse = (response: any) => {
   return new HttpError(msg, response.statusCode);
 }
 
+export const throwIfErrorResponse = (response: any) => {
+  if (typeof response?.statusCode === 'number' && (response.statusCode < 200 || response.statusCode >= 300)) {
+    throw newHttpErrorFromResponse(response);
+  }
+}
+
 export const ageValidator = (value: any, _: any) => {
   const valueAsTimestamp = Date.parse(value.toString());
 

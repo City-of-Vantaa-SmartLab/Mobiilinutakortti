@@ -75,4 +75,4 @@ export const ExpiredSmsContent = {
 }
 
 // Valid values: 'nickName', 'postCode', 'school', 'class', 'communicationsLanguage', 'additionalContactInformation'
-export const hiddenJuniorFields = []
+export const hiddenJuniorFields: string[] = []

@@ -24,7 +24,8 @@ export class SmsService {
         const settings = SMSConfig.getTeliaConfig();
 
         // check stack trace to see if sendVerificationSMS() is called from registerJunior()
-        const checkRegisterJuniorCalls = new Error().stack.split("at ")[2].includes("registerJunior");
+        const stackLine = new Error().stack?.split('at ')[2] || '';
+        const checkRegisterJuniorCalls = stackLine.includes('registerJunior');
 
         if (!settings) {
             throw new InternalServerErrorException(

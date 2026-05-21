@@ -4,6 +4,6 @@ export class SeasonExpiredDto {
 
     @IsNotEmpty()
     @IsDateString()
-    readonly expireDate: string;
+    readonly expireDate!: string;
 
 }

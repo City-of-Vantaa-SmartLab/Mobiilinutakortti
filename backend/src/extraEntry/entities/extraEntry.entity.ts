@@ -6,11 +6,11 @@ import { Junior } from '../../junior/entities';
 export class ExtraEntry {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @ManyToOne(() => Junior, junior => junior.extraEntries, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-    junior: Junior;
+    junior!: Junior;
 
     @ManyToOne(() => EntryType)
-    entryType: EntryType;
+    entryType!: EntryType;
 }

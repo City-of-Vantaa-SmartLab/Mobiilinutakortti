@@ -1,4 +1,4 @@
 export class GroupType {
-    groupTypeId: number;
-    name: string;
+    groupTypeId!: number;
+    name!: string;
 }

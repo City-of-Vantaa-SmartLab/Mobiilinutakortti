@@ -9,6 +9,8 @@ import { saltRounds, maximumAttempts } from '../authentication/authentication.co
 import { YouthWorkerUserViewModel } from './vm/youthWorker.vm';
 import { ChangePasswordDto } from './dto/changePassword.dto';
 
+const useEntraID = !!process.env.ENTRA_APP_KEY_DISCOVERY_URL;
+
 /**
  * A service designed to deal with youth worker actions.
  */
@@ -37,7 +39,7 @@ export class YouthWorkerService {
      * @param id - the id of the youth worker.
      * @returns Promise<YouthWorker> - the youth worker entity being searched for.
      */
-    async getYouthWorker(id: string): Promise<YouthWorker> {
+    async getYouthWorker(id: string): Promise<YouthWorker | null> {
         return await this.youthWorkerRepo.findOneBy({ id });
     }
 
@@ -45,7 +47,7 @@ export class YouthWorkerService {
      * @param email - the email of the youth worker.
      * @returns Promise<YouthWorker> - the youth worker entity being searched for.
      */
-    async getYouthWorkerByEmail(email: string): Promise<YouthWorker> {
+    async getYouthWorkerByEmail(email: string): Promise<YouthWorker | null> {
         return await this.youthWorkerRepo.findOneBy({ email });
     }
 
@@ -61,13 +63,15 @@ export class YouthWorkerService {
      * Returns the lockout record of the youth worker.
      * @param youthWorker - the id of the youth worker.
      */
-    async getLockoutRecord(youthWorkerId: string): Promise<Lockout> {
+    async getLockoutRecord(youthWorkerId: string): Promise<Lockout | null> {
+        if (useEntraID) { return null; }
         const youthWorker = await this.getYouthWorker(youthWorkerId);
         if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
         return await this.lockoutRepo.findOne({ where: { youthWorker }, relations: ['youthWorker'] });
     }
 
     async deleteLockoutRecord(youthWorkerId: string) {
+        if (useEntraID) { return; }
         const lockoutRecord = await this.getLockoutRecord(youthWorkerId);
         if (lockoutRecord) { await this.lockoutRepo.remove(lockoutRecord); }
     }
@@ -111,7 +115,7 @@ export class YouthWorkerService {
      * @param details the details to change, including the ID of the user in question.
      * @return Promise<string>  a success message.
      */
-    async editYouthWorker(details: EditYouthWorkerDto, adminId: string): Promise<string> {
+    async editYouthWorker(details: EditYouthWorkerDto, adminId: string | null): Promise<string> {
         const user = await this.youthWorkerRepo.findOneBy({ id: details.id });
         if (!user) { throw new BadRequestException(content.UserNotFound); }
         if (user.email !== details.email.toLowerCase()) {
@@ -145,6 +149,7 @@ export class YouthWorkerService {
     }
 
     async isLockedOut(youthWorkerId: string): Promise<boolean> {
+        if (useEntraID) { return false; }
         const lockoutRecord = await this.getLockoutRecord(youthWorkerId);
         if (!lockoutRecord) { return false; }
         const expired = await this.hasLockoutPeriodEnded(lockoutRecord);
@@ -153,16 +158,19 @@ export class YouthWorkerService {
     }
 
     async addFailedAttempt(youthWorkerId: string) {
+        if (useEntraID) { return; }
         let lockoutRecord = await this.getLockoutRecord(youthWorkerId);
         if (!lockoutRecord) {
-            lockoutRecord = { youthWorker: await this.getYouthWorker(youthWorkerId), attempts: 0 } as Lockout;
+            const youthWorker = await this.getYouthWorker(youthWorkerId);
+            if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
+            lockoutRecord = { youthWorker, attempts: 0 } as Lockout;
         }
         lockoutRecord.attempts++;
         await this.lockoutRepo.save(lockoutRecord);
     }
 
     private async hasLockoutPeriodEnded(lockout: Lockout): Promise<boolean> {
-        const expired = new Date(lockout.expiry) < new Date();
+        const expired = lockout.expiry < new Date();
         if (!expired) { return false; }
         await this.lockoutRepo.remove(lockout);
         return true;

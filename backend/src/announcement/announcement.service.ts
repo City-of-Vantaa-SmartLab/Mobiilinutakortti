@@ -16,6 +16,7 @@ import { SmsService } from '../sms/sms.service';
 export class AnnouncementService {
 
     private readonly logger = new Logger('Announcement Service');
+    private readonly supportedLanguages: Array<keyof AnnouncementLanguageVersions> = ['fi', 'en', 'sv'];
 
     constructor(
         private readonly clubService: ClubService,
@@ -24,8 +25,15 @@ export class AnnouncementService {
         private readonly juniorService: JuniorService
         ) { }
 
-    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string | null {
-        return content ? (content[langCode] || content.fi) : null;
+    private getLanguageKey(langCode: string): keyof AnnouncementLanguageVersions {
+        return this.supportedLanguages.includes(langCode as keyof AnnouncementLanguageVersions)
+            ? langCode as keyof AnnouncementLanguageVersions
+            : 'fi';
+    }
+
+    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string {
+        const language = this.getLanguageKey(langCode);
+        return content[language] ?? content.fi ?? '';
     };
 
     private async getRecipientsByYouthClub(youthClubId: number): Promise<Junior[]> {
@@ -59,16 +67,15 @@ export class AnnouncementService {
     };
 
     private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: string[], lang: string): EmailAnnouncement {
+        const language = this.getLanguageKey(lang);
         return {
             to: recipients,
-            title: announcementData.title[lang] || announcementData.title["fi"],
-            message: announcementData.content[lang] || announcementData.content["fi"]
+            title: announcementData.title[language] || announcementData.title.fi,
+            message: announcementData.content[language] || announcementData.content.fi
         };
     };
 
     async clubAnnouncementSms(announcementData: AnnouncementData, userId: string): Promise<string> {
-        const settings = announcementData.dryRun ? null : SMSConfig.getTeliaConfig();
-
         const selectedRecipients = announcementData.youthClub ?
             await this.getRecipientsByYouthClub(announcementData.youthClub) :
             await this.getRecipientsForAllYouthClubs();
@@ -99,6 +106,8 @@ export class AnnouncementService {
             return batch.length.toString();
         }
 
+        const settings = SMSConfig.getTeliaConfig();
+
         if (batch.length < 1) {
             throw new BadRequestException(content.RecipientsNotFound);
         };
@@ -120,8 +129,6 @@ export class AnnouncementService {
     };
 
     async clubAnnouncementEmail(announcementData: AnnouncementData, userId: string): Promise<string> {
-        const settings = announcementData.dryRun ? null : EmailConfig.getEmailConfig();
-
         const selectedRecipients = announcementData.youthClub ?
             await this.getRecipientsByYouthClub(announcementData.youthClub) :
             await this.getRecipientsForAllYouthClubs();
@@ -135,6 +142,8 @@ export class AnnouncementService {
         if (announcementData.dryRun) {
             return totalAmount.toString();
         }
+
+        const settings = EmailConfig.getEmailConfig();
 
         if (totalAmount === 0) {
             throw new BadRequestException(content.RecipientsNotFound);

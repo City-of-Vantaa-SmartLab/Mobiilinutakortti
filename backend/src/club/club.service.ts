@@ -33,10 +33,13 @@ export class ClubService {
     ) {}
 
     async getClubById(clubId: number): Promise<Club> {
-        return (await this.clubRepo.createQueryBuilder('club')
+        const club = await this.clubRepo.createQueryBuilder('club')
             .leftJoinAndSelect('club.kompassiIntegration', 'kompassiIntegration')
             .where({ id: clubId })
-            .getOne());
+            .getOne();
+
+        if (!club) { throw new BadRequestException(content.ClubNotFound); }
+        return club;
     }
 
     async getClubs(): Promise<ClubViewModel[]> {
@@ -104,14 +107,16 @@ export class ClubService {
             }
         });
 
-        const byGender = {
+        const byGender: Record<Gender, Junior[]> = {
             [Gender.Female]: [],
             [Gender.Male]: [],
             [Gender.Undisclosed]: [],
             [Gender.Other]: [],
         };
         uniqueJuniors.forEach(junior => {
-            const { gender } = junior;
+            const gender = Object.values(Gender).includes(junior.gender as Gender)
+                ? junior.gender as Gender
+                : Gender.Other;
             byGender[gender].push(junior);
         });
         const byGenderAndAge = Object.entries(byGender).reduce((result, [gender, juniors]) => ({

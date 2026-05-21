@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { MSALApp } from './msalApp';
 import { httpClient } from '../httpClients';
 import api from '../api';
-import { userTokenKey, setUserInfo, MSALAppLogoutInProgressKey, adminUiBasePath } from '../utils';
+import { userTokenKey, setUserInfo, MSALAppLogoutInProgressKey, adminUiBasePath, throwIfErrorResponse } from '../utils';
 
 const theme = createTheme({
   palette: {
@@ -78,20 +78,34 @@ export default function EntraLogin() {
         if (token && 'accessToken' in token && token.accessToken) {
           try {
             const logoutHintValue = (token?.idTokenClaims as any)?.login_hint;
-            const { access_token } = await httpClient(
+            const loginResponse = await httpClient(
               api.auth.loginEntraID,
               { method: 'POST', body: JSON.stringify({ msalToken: token.accessToken }) }
             );
+            throwIfErrorResponse(loginResponse);
+
+            const { access_token } = loginResponse;
+            if (!access_token || typeof access_token !== 'string') {
+              throw new Error('No access token in Entra login response.');
+            }
+
             sessionStorage.setItem(userTokenKey, access_token);
 
             const userInfo = await httpClient(api.youthWorker.self, { method: 'GET' });
+            throwIfErrorResponse(userInfo);
+            if (!userInfo?.firstName) {
+              throw new Error('No user info in youth worker self response.');
+            }
+
             setUserInfo(userInfo);
 
             sessionStorage.setItem(MSALAppLogoutInProgressKey, 'true');
             await MSALApp.logout(logoutHintValue);
 
           } catch (error) {
+            sessionStorage.removeItem(userTokenKey);
             setErrorState(true);
+            setLoginInProgress(false);
             console.log(error);
             return;
           }

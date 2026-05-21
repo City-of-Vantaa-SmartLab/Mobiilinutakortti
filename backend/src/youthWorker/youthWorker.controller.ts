@@ -67,7 +67,9 @@ export class YouthWorkerController {
   @Get('getSelf')
   @ApiBearerAuth('youthWorker')
   async getSelf(@YouthWorker() youthWorkerData: { userId: string }): Promise<YouthWorkerUserViewModel> {
-    return new YouthWorkerUserViewModel(await this.youthWorkerService.getYouthWorker(youthWorkerData.userId));
+    const youthWorker = await this.youthWorkerService.getYouthWorker(youthWorkerData.userId);
+    if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
+    return new YouthWorkerUserViewModel(youthWorker);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard, SessionGuard)
@@ -197,7 +199,9 @@ export class YouthWorkerController {
   @Get(':id')
   @ApiBearerAuth('admin')
   async getOneYouthWorker(@Param('id') id: string): Promise<YouthWorkerUserViewModel> {
-    return new YouthWorkerUserViewModel(await this.youthWorkerService.getYouthWorker(id));
+    const youthWorker = await this.youthWorkerService.getYouthWorker(id);
+    if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
+    return new YouthWorkerUserViewModel(youthWorker);
   }
 
   /**

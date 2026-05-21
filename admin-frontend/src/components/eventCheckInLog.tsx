@@ -17,7 +17,7 @@ import {
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
-import { hrefFragmentToJunior } from '../utils';
+import { hrefFragmentToJunior, throwIfErrorResponse } from '../utils';
 
 interface EventCheckInLogViewModel {
     targetName: string;
@@ -65,26 +65,35 @@ const EventCheckInLogView = () => {
         const options = {
             method: 'GET'
         };
-        await httpClientWithRefresh(url, options)
-            .then((response: EventCheckInLogViewModel) => {
-                if (!response || !response.juniors) {
-                    notify("Virhe tietojen haussa", { type: 'error' });
-                    setLoaded(true);
-                    return;
-                }
-                setEventName(response.targetName || 'Tapahtuma');
+        try {
+            const response = await httpClientWithRefresh(url, options);
+            if (!response) {
+                notify('Istunto vanhentui. Kirjaudu uudelleen.', { type: 'warning' });
                 setLoaded(true);
-                if (response.juniors.length === 0) {
-                    notify("Ei ilmoittautuneita", { type: 'warning' });
-                    return;
-                }
-                populateTableRowData(response.juniors);
-            })
-            .catch((error) => {
-                console.error('Error fetching check-ins:', error);
-                notify("Virhe ilmoittautumisten haussa", { type: 'error' });
+                return;
+            }
+
+            throwIfErrorResponse(response);
+
+            if (!Array.isArray(response.juniors)) {
+                notify('Virhe tietojen haussa', { type: 'error' });
                 setLoaded(true);
-            });
+                return;
+            }
+
+            const viewModel: EventCheckInLogViewModel = response;
+            setEventName(viewModel.targetName || 'Tapahtuma');
+            setLoaded(true);
+            if (viewModel.juniors.length === 0) {
+                notify('Ei ilmoittautuneita', { type: 'warning' });
+                return;
+            }
+            populateTableRowData(viewModel.juniors);
+        } catch (error: any) {
+            console.error('Error fetching check-ins:', error);
+            notify(error?.message || 'Virhe ilmoittautumisten haussa', { type: 'error' });
+            setLoaded(true);
+        }
     }
 
     useEffect(() => {

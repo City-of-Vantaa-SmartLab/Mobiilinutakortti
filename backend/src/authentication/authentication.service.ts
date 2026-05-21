@@ -46,7 +46,7 @@ export class AuthenticationService {
         const tokenParts = loginData.msalToken.split('.');
         if (tokenParts.length !== 3) {
             this.logger.error('Entra ID token has incorrect format.');
-            return;
+            throw new UnauthorizedException(content.FailedLogin);
         }
         try {
             const header = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
@@ -58,7 +58,10 @@ export class AuthenticationService {
 
             // We have only one scope in use, so no need to check it separately. (If there is one, it must be the one.)
             // The audience is the App ID with a protocol. App ID in the key discovery URL.
-            const appId = process.env.ENTRA_APP_KEY_DISCOVERY_URL.match(/\?appid=(.*)$/);
+            const appKeyDiscoveryUrl = process.env.ENTRA_APP_KEY_DISCOVERY_URL;
+            if (!appKeyDiscoveryUrl) throw new Error('Entra key discovery URL is not configured.');
+
+            const appId = appKeyDiscoveryUrl.match(/\?appid=(.*)$/);
             if (!appId) throw new Error("No app ID in Entra key discovery URL.");
 
             // For some reason, this does not work via jwtService and we have to use verify directly.
@@ -90,8 +93,8 @@ export class AuthenticationService {
             return token;
         } catch (err) {
             this.logger.error('Entra ID token validation failed.');
-            this.logger.error(err.toString());
-            return;
+            this.logger.error(err instanceof Error ? err.toString() : String(err));
+            throw new UnauthorizedException(content.FailedLogin);
         }
     }
 
@@ -101,7 +104,11 @@ export class AuthenticationService {
 
         const lockedOut = await this.youthWorkerService.isLockedOut(user.id);
         if (lockedOut) {
-            const timeRemaining = new Date((new Date((await this.youthWorkerService.getLockoutRecord(user.id)).expiry).getTime() - new Date().getTime()));
+            const lockoutRecord = await this.youthWorkerService.getLockoutRecord(user.id);
+            if (!lockoutRecord) {
+                throw new ForbiddenException(content.LockedOut);
+            }
+            const timeRemaining = new Date(lockoutRecord.expiry.getTime() - new Date().getTime());
             const hoursRemaining = timeRemaining.getUTCHours();
             throw new ForbiddenException(`${content.LockedOut} Kokeile uudestaan ${hoursRemaining} tunnin päästä.`);
         }

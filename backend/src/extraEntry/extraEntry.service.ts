@@ -34,7 +34,9 @@ export class ExtraEntryService {
         ) { }
 
     async getEntryType(id: number): Promise<EntryTypeViewModel> {
-        return (await this.entryTypeRepo.findOneBy({ id }));
+        const entryType = await this.entryTypeRepo.findOneBy({ id });
+        if (!entryType) throw new BadRequestException(content.TypeNotFound);
+        return new EntryTypeViewModel(entryType);
     };
 
     async getAllEntryTypes(): Promise<EntryTypeViewModel[]> {
@@ -60,6 +62,7 @@ export class ExtraEntryService {
             .where('user.id = :id', { id: id })
             .getOne();
 
+        if (!junior) throw new BadRequestException(content.UserNotFound);
         return new JuniorExtraEntriesViewModel(junior);
     }
 
@@ -105,7 +108,9 @@ export class ExtraEntryService {
             if (controls?.sort?.order === "ASC") juniorEntities = juniorEntities.sort((a,b) => b[sortField].length - a[sortField].length);
         }
 
-        const juniors = (controls ? juniorEntities.slice(filters.skip, filters.skip + filters.take) : juniorEntities).map(e => new JuniorExtraEntriesViewModel(e));
+        const skip = filters.skip ?? 0;
+        const take = filters.take ?? juniorEntities.length;
+        const juniors = (controls ? juniorEntities.slice(skip, skip + take) : juniorEntities).map(e => new JuniorExtraEntriesViewModel(e));
 
         return new ExtraEntryListViewModel(juniors, juniorEntities.length);
     }

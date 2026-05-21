@@ -50,7 +50,7 @@ export class EmailService {
             const command = new SendEmailCommand(message);
             client.send(command).then(response => {
                 const { httpStatusCode, requestId } = response.$metadata;
-                if ((httpStatusCode >= 200) && (httpStatusCode < 300)) {
+                if ((httpStatusCode !== undefined) && (httpStatusCode >= 200) && (httpStatusCode < 300)) {
                     this.logger.log(`Request ${requestId} OK`);
                 } else {
                     this.logger.log(`Request ${requestId} failed with code: ${httpStatusCode}`);

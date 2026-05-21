@@ -37,6 +37,9 @@ export class SessionDBService {
       this.sessions.push({ownerId, authTokens: []});
     }
     const sessionData = this.sessions.find(s => s.ownerId === ownerId);
+    if (!sessionData) {
+      return;
+    }
     if (!sessionData.authTokens.includes(authToken)) {
       sessionData.authTokens.push(authToken);
       sessionData.authTokens = sessionData.authTokens.splice(-this.maxSessions, this.maxSessions);

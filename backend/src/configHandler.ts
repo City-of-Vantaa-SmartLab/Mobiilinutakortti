@@ -19,9 +19,15 @@ export class ConfigHandler {
     static async getPublicCert(kid: string): Promise<string | null> {
         // Refresh keys once a day.
         if (ConfigHandler._keys.length === 0 || ConfigHandler._keyRefreshDay.getDate() !== new Date().getDate()) {
+            const appKeyDiscoveryUrl = process.env.ENTRA_APP_KEY_DISCOVERY_URL;
+            if (!appKeyDiscoveryUrl) {
+                ConfigHandler._logger.error('Entra key discovery URL is not configured.');
+                return null;
+            }
+
             try {
                 const request = ConfigHandler._httpService
-                    .get(process.env.ENTRA_APP_KEY_DISCOVERY_URL)
+                    .get(appKeyDiscoveryUrl)
                     .pipe(map((response) => response.data as { keys: KeyData[] }));
                 ConfigHandler._keys = (await lastValueFrom(request)).keys;
 

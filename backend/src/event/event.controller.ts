@@ -50,7 +50,7 @@ export class EventController {
     @Post('checkInWithCode')
     async checkInForEventWithCode(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
         if (!this.spamGuardService.checkSecurityCode(checkInData.targetId, checkInData.securityCode, true)) {
-            return new CheckInResponseViewModel(undefined, failReason.CODE);
+            return new CheckInResponseViewModel('', failReason.CODE);
         }
 
         return this.doCheckIn(checkInData);
@@ -68,12 +68,12 @@ export class EventController {
 
     private async doCheckIn(checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
         if (!this.spamGuardService.checkIn(checkInData.juniorId, checkInData.targetId, true)) {
-            return new CheckInResponseViewModel(undefined, failReason.SPAM);
+            return new CheckInResponseViewModel('', failReason.SPAM);
         }
 
         const hasPermit = await this.eventService.checkJuniorHasPermit(checkInData);
         if (!hasPermit) {
-            return new CheckInResponseViewModel(undefined, failReason.PERMIT);
+            return new CheckInResponseViewModel('', failReason.PERMIT);
         }
 
         const name = await this.eventService.checkInJunior(checkInData);

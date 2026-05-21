@@ -21,7 +21,7 @@ export class ClubEditInterceptor implements NestInterceptor {
         let dataChanged = false;
         dataChanged = body.active !== clubToEdit.active;
 
-        const messageLanguages = ['fi', 'en', 'sv'];
+        const messageLanguages: Array<keyof typeof body.messages> = ['fi', 'en', 'sv'];
         dataChanged ||= messageLanguages.some(language => {
             return body.messages[language] !== clubToEdit.messages[language];
         });

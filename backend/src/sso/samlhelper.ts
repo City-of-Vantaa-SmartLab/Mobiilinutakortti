@@ -32,10 +32,12 @@ export class SAMLHelper {
   */
   fixMissingXMLAttributes(logout_url: string): string {
     // url parses %2B (ASCII code for '+') from the query string as spaces, so we replace them with +
-    const old_saml_request = url
-      .parse(decodeURIComponent(logout_url), true)
-      .query.SAMLRequest.toString()
-      .replace(/ /g, '+');
+    const parsedRequest = url.parse(decodeURIComponent(logout_url), true).query.SAMLRequest;
+    const oldSamlRequest = (Array.isArray(parsedRequest) ? parsedRequest[0] : parsedRequest);
+    if (!oldSamlRequest) {
+      throw new Error('Missing SAMLRequest from logout URL.');
+    }
+    const old_saml_request = oldSamlRequest.replace(/ /g, '+');
     const deflated = Buffer.from(old_saml_request, 'base64');
     const xml_string = zlib.inflateRawSync(deflated).toString();
     const xml_json = XML.parse(xml_string, { preserveAttributes: true }) as any;
@@ -78,15 +80,19 @@ export class SAMLHelper {
 
   checkLogoutResponse(req_url: string): boolean {
     try {
-      const response = url.parse(req_url, true).query.SAMLResponse;
+      const parsedResponse = url.parse(req_url, true).query.SAMLResponse;
+      const response = Array.isArray(parsedResponse) ? parsedResponse[0] : parsedResponse;
+      if (!response) return false;
+
       const deflated = Buffer.from(response.toString(), 'base64');
       const xml_string = zlib.inflateRawSync(deflated).toString();
-      const xml_json = XML.parse(xml_string, { preserveAttributes: true });
+      const xml_json = XML.parse(xml_string, { preserveAttributes: true }) as Record<string, any>;
 
       // The status is in an XML element attribute like this:
       // <saml2p:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success" />
       const status_value =
-        xml_json['saml2p:Status']['saml2p:StatusCode']._Attribs['Value'];
+        xml_json['saml2p:Status']?.['saml2p:StatusCode']?._Attribs?.['Value'];
+      if (!status_value) return false;
       const val_array = status_value.split(':');
       if (val_array[val_array.length - 1] === 'Success') {
         return true;
@@ -114,11 +120,11 @@ export class SAMLHelper {
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(saml_request_data + sigalg_data);
 
-    let samlQueryString: any = {}
-    samlQueryString.SAMLRequest = saml_request;
-    samlQueryString.SigAlg =
-      'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256';
-    samlQueryString.Signature = sign.sign(this.private_key, 'base64');
+    const samlQueryString: SAMLQuery = {
+      SAMLRequest: saml_request,
+      SigAlg: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+      Signature: sign.sign(this.private_key, 'base64')
+    };
     return samlQueryString;
   }
 }

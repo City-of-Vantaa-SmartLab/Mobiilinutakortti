@@ -21,7 +21,7 @@ export class JuniorUserViewModel {
     gender: string;
     birthday: string;
     creationDate: string;
-    homeYouthClub: number;
+    homeYouthClub: number | null;
     communicationsLanguage: string;
     status: string;
     photoPermission: boolean;

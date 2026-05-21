@@ -3,9 +3,9 @@ import { Event } from './event.entity';
 export class EventViewModel {
     id: number;
     name: string;
-    description: string;
-    startDate: Date;
-    integrationId: number;
+    description: string | null;
+    startDate: Date | null;
+    integrationId: number | null;
     needsPermit: boolean;
 
     constructor(event: Event) {

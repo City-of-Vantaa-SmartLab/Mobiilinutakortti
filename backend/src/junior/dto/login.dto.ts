@@ -3,8 +3,8 @@ import { IsNotEmpty } from 'class-validator';
 export class LoginJuniorDto {
 
     @IsNotEmpty()
-    readonly id: string;
+    readonly id!: string;
 
     @IsNotEmpty()
-    readonly challenge: string;
+    readonly challenge!: string;
 }

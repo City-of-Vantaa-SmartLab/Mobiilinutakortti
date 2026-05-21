@@ -5,12 +5,12 @@ import { Junior } from './junior.entity';
 export class Challenge {
 
     @PrimaryGeneratedColumn('uuid')
-    id: string;
+    id!: string;
 
     @OneToOne(_ => Junior, { onDelete: 'CASCADE' })
     @JoinColumn()
-    junior: Junior;
+    junior!: Junior;
 
     @Column()
-    challenge: string;
+    challenge!: string;
 }

@@ -1,4 +1,4 @@
 export class SortDto {
-    field: string;
-    order: string;
+    field!: string;
+    order!: string;
 }

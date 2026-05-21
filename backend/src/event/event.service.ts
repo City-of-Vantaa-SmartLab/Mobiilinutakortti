@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './event.entity';
 import { CheckIn } from '../checkIn/checkIn.entity';
@@ -44,10 +44,13 @@ export class EventService {
     }
 
     async getEventById(EventId: number): Promise<Event> {
-        return (await this.eventRepo.createQueryBuilder('Event')
+        const event = await this.eventRepo.createQueryBuilder('Event')
             .leftJoinAndSelect('Event.permit', 'permit')
             .where({ id: EventId })
-            .getOne());
+            .getOne();
+
+        if (!event) { throw new BadRequestException(content.EventNotFound); }
+        return event;
     }
 
     async getEvents(): Promise<EventViewModel[]> {
@@ -78,11 +81,12 @@ export class EventService {
         if (!event) { throw new BadRequestException(content.EventNotFound); }
 
         // If event requires an entry permit, check the junior has it.
-        if (event.permit) {
+        const eventPermit = event.permit;
+        if (eventPermit) {
             const hasPermit = junior.entryPermits?.some(
-                permit => permit.entryType.id === event.permit.id
+                permit => permit.entryType.id === eventPermit.id
             );
-            return hasPermit;
+            return !!hasPermit;
         }
 
         // Event doesn't require a permit.
@@ -109,7 +113,7 @@ export class EventService {
     }
 
     async createEvent(data: CreateEventDto, userId?: string): Promise<Event> {
-        let permit: EntryType | undefined;
+        let permit: EntryType | null = null;
 
         if (data.needsPermit) {
             const permitName = this.getPermitName(data.name, data.startDate);
@@ -125,7 +129,7 @@ export class EventService {
             description: data.description,
             startDate: data.startDate,
             integrationId: data.integrationId,
-            permit: permit
+            permit
         });
 
         await this.eventRepo.save(newEvent);
@@ -139,8 +143,8 @@ export class EventService {
             relations: ['permit']
         });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
-
         const hadPermit = !!event.permit;
+        const permit = event.permit;
 
         if (!hadPermit && data.needsPermit) {
             const newPermit = this.entryTypeRepo.create({
@@ -149,8 +153,11 @@ export class EventService {
             });
             event.permit = await this.entryTypeRepo.save(newPermit);
         } else if (hadPermit && !data.needsPermit) {
+            if (!permit) {
+                throw new InternalServerErrorException(content.EventNotFound);
+            }
 
-            const permitId = event.permit.id;
+            const permitId = permit.id;
             const [extraEntriesCount, entryPermitsCount] = await Promise.all([
                 this.extraEntryRepo.count({
                     where: { entryType: { id: permitId } }
@@ -164,14 +171,17 @@ export class EventService {
                 throw new BadRequestException(content.ExtraEntryTypeInUse);
             }
 
-            const entryTypeToRemove = event.permit;
+            const entryTypeToRemove = permit;
             event.permit = null;
             await this.eventRepo.save(event);
             await this.entryTypeRepo.remove(entryTypeToRemove);
 
         } else if (hadPermit && data.needsPermit) {
-            event.permit.name = this.getPermitName(data.name, data.startDate);
-            await this.entryTypeRepo.save(event.permit);
+            if (!permit) {
+                throw new InternalServerErrorException(content.EventNotFound);
+            }
+            permit.name = this.getPermitName(data.name, data.startDate);
+            await this.entryTypeRepo.save(permit);
         }
 
         event.name = data.name;

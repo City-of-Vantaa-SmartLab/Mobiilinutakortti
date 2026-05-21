@@ -2,24 +2,24 @@ import { IsNotEmpty } from 'class-validator';
 
 export class SecurityContextDto {
   @IsNotEmpty()
-  readonly sessionIndex: string;
+  readonly sessionIndex!: string;
 
   @IsNotEmpty()
-  readonly nameId: string;
+  readonly nameId!: string;
 
   @IsNotEmpty()
-  readonly signedString: string;
+  readonly signedString!: string;
 
   // Note: there might be several names separated by a space.
   @IsNotEmpty()
-  readonly firstName: string;
+  readonly firstName!: string;
 
   @IsNotEmpty()
-  readonly lastName: string;
+  readonly lastName!: string;
 
   @IsNotEmpty()
-  readonly zipCode: string;
+  readonly zipCode!: string;
 
   @IsNotEmpty()
-  readonly expiryTime: string;
+  readonly expiryTime!: string;
 }

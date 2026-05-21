@@ -61,6 +61,11 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
+      if (!login_url) {
+        this._handleError(new Error('Login URL generation failed.'), res);
+        return;
+      }
+
       res.send({url: login_url});
     });
   }
@@ -72,20 +77,26 @@ export class SsoService {
       if (this._handleError(err, res))
         return;
 
+      if (!saml_response) {
+        this._handleError(new Error('SAML response missing.'), res);
+        return;
+      }
+
       this.logger.log('Got login response, session index: ' + saml_response.user.session_index);
+      const attributes = saml_response.user.attributes || {};
 
       // For eIDAS logins the surname comes from a different attribute.
       const user_surname =
-        this._getUserAttribute(saml_response.user.attributes, 'http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName') ||
-        this._getUserAttribute(saml_response.user.attributes, 'urn:oid:2.5.4.4');
+        this._getUserAttribute(attributes, 'http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName') ||
+        this._getUserAttribute(attributes, 'urn:oid:2.5.4.4');
 
       const acs_data = {
         sessionIndex: saml_response.user.session_index,
         nameId: saml_response.user.name_id,
         // Note: there might be several names, separated by spaces in a single string.
-        firstName: this._getUserAttribute(saml_response.user.attributes, 'http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName'),
+        firstName: this._getUserAttribute(attributes, 'http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName'),
         lastName: user_surname,
-        zipCode: this._getUserAttribute(saml_response.user.attributes, 'urn:oid:1.2.246.517.2002.2.6')
+        zipCode: this._getUserAttribute(attributes, 'urn:oid:1.2.246.517.2002.2.6')
       } as AcsDto;
 
       const sc = this.authenticationService.generateSecurityContext(acs_data);
@@ -96,25 +107,29 @@ export class SsoService {
   }
 
   getLogoutRequestUrl(req: Request, res: Response) {
-    let sc_token = {};
+    let sc_token: Partial<SecurityContextDto> | null = null;
     const token = req.headers['authorization'];
     if (token && token.startsWith('Bearer ')) {
-      const b64sc = token.slice(7, token.length);
-      const binsc = Buffer.from(b64sc, 'base64').toString();
-      sc_token = JSON.parse(binsc);
+      try {
+        const b64sc = token.slice(7, token.length);
+        const binsc = Buffer.from(b64sc, 'base64').toString();
+        sc_token = JSON.parse(binsc) as Partial<SecurityContextDto>;
+      } catch {
+        sc_token = null;
+      }
     }
-    if (!sc_token) {
+    if (!sc_token || !sc_token.sessionIndex || !sc_token.nameId || !sc_token.firstName || !sc_token.lastName || !sc_token.zipCode || !sc_token.expiryTime || !sc_token.signedString) {
       this._handleError(new Error('Security context missing.'), res);
       return;
     }
     const sc = {
-      sessionIndex: sc_token['sessionIndex'],
-      nameId: sc_token['nameId'],
-      firstName: sc_token['firstName'],
-      lastName: sc_token['lastName'],
-      zipCode: sc_token['zipCode'],
-      expiryTime: sc_token['expiryTime'],
-      signedString: sc_token['signedString']
+      sessionIndex: sc_token.sessionIndex,
+      nameId: sc_token.nameId,
+      firstName: sc_token.firstName,
+      lastName: sc_token.lastName,
+      zipCode: sc_token.zipCode,
+      expiryTime: sc_token.expiryTime,
+      signedString: sc_token.signedString
     } as SecurityContextDto;
 
     if (!this.authenticationService.validateSecurityContext(sc)) {
@@ -123,13 +138,18 @@ export class SsoService {
     }
 
     const options = {
-      name_id: sc_token['nameId'],
-      session_index: sc_token['sessionIndex']
+      name_id: sc.nameId,
+      session_index: sc.sessionIndex
     }
 
     this.sp.create_logout_request_url(this.idp, options, (err, logout_url) => {
       if (this._handleError(err, res))
         return;
+
+      if (!logout_url) {
+        this._handleError(new Error('Logout URL generation failed.'), res);
+        return;
+      }
 
       this.logger.log('Created logout request URL, session index: ' + options.session_index);
       let fixed_logout_url = '';
@@ -137,7 +157,7 @@ export class SsoService {
         fixed_logout_url = this.samlHelper.fixMissingXMLAttributes(logout_url);
       }
       catch(ex) {
-        this._handleError(ex.message, res);
+        this._handleError(ex, res);
         return;
       }
 
@@ -158,11 +178,21 @@ export class SsoService {
     // negligible in this case, so it's not worth complicating the system with backend login info.
     if (idp_initiated) {
 
-      const request_id = this.samlHelper.getSAMLRequestId(query.SAMLRequest.toString());
+      const samlRequest = Array.isArray(query.SAMLRequest) ? query.SAMLRequest[0] : query.SAMLRequest;
+      if (!samlRequest) {
+        this._handleError(new Error('SAML request missing.'), res);
+        return;
+      }
+
+      const request_id = this.samlHelper.getSAMLRequestId(samlRequest.toString());
       const options = {
         in_response_to: request_id
       }
       this.sp.create_logout_response_url(this.idp, options, (_, response_url) => {
+        if (!response_url) {
+          this._handleError(new Error('Logout response URL generation failed.'), res);
+          return;
+        }
         this.logger.log('Created logout response URL for request ID: ' + options.in_response_to);
         res.redirect(response_url);
       });
@@ -179,15 +209,18 @@ export class SsoService {
     }
   }
 
-  private _getUserAttribute(user_attributes: { [attr: string]: string | string[]; }, attribute: string): string {
-    const val = attribute in user_attributes ? user_attributes[attribute] : [''];
-    return Array.isArray(val) ? val.join(' ') : '';
+  private _getUserAttribute(user_attributes: { [attr: string]: string | string[]; } | undefined, attribute: string): string {
+    const val = user_attributes?.[attribute];
+    if (Array.isArray(val)) return val.join(' ');
+    if (typeof val === 'string') return val;
+    return '';
   }
 
-  private _handleError(err: Error, res: Response): boolean {
+  private _handleError(err: unknown, res: Response): boolean {
     if (err != null) {
-      this.logger.log('Error: ' + err.toString());
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(err);
+      const errorMessage = err instanceof Error ? err.toString() : String(err);
+      this.logger.log('Error: ' + errorMessage);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(errorMessage);
       res.end();
       return true;
     }

@@ -6,11 +6,11 @@ import { Junior } from '../../junior/entities';
 export class EntryPermit {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @ManyToOne(() => Junior, junior => junior.entryPermits, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-    junior: Junior;
+    junior!: Junior;
 
     @ManyToOne(() => EntryType)
-    entryType: EntryType;
+    entryType!: EntryType;
 }

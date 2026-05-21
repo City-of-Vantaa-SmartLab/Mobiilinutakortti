@@ -3,7 +3,7 @@ import { SecurityContextDto } from '../../authentication/dto/';
 
 export class ParentFormDto {
 
-  readonly userData: RegisterJuniorDto;
+  readonly userData!: RegisterJuniorDto;
 
-  readonly securityContext: SecurityContextDto;
+  readonly securityContext!: SecurityContextDto;
 }

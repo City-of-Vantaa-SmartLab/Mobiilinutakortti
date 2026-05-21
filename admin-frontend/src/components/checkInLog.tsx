@@ -20,7 +20,7 @@ import {
 import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
 import api from '../api';
 import useAutoLogout from '../hooks/useAutoLogout';
-import { hrefFragmentToJunior } from '../utils';
+import { hrefFragmentToJunior, throwIfErrorResponse } from '../utils';
 
 interface CheckInLogViewModel {
     targetName: string;
@@ -85,16 +85,27 @@ const CheckInLogView = () => {
                 body
             };
             resetState();
-            await httpClientWithRefresh(url, options)
-                .then((response: CheckInLogViewModel) => {
-                    if (response.juniors.length === 0) {
-                        notify("Ei kirjautumisia valitulla aikavälillä", { type: 'warning' });
-                        return;
-                    }
-                    setSearchDate(date.toLocaleDateString());
-                    setClubName(response.targetName);
-                    populateTableRowData(response.juniors);
-                });
+            try {
+                const response = await httpClientWithRefresh(url, options);
+                throwIfErrorResponse(response);
+
+                if (!response || !Array.isArray(response.juniors) || typeof response.targetName !== 'string') {
+                    notify('Virhe tietojen haussa', { type: 'error' });
+                    return;
+                }
+
+                const viewModel: CheckInLogViewModel = response;
+                if (viewModel.juniors.length === 0) {
+                    notify('Ei kirjautumisia valitulla aikavälillä', { type: 'warning' });
+                    return;
+                }
+
+                setSearchDate(date.toLocaleDateString());
+                setClubName(viewModel.targetName);
+                populateTableRowData(viewModel.juniors);
+            } catch (error: any) {
+                notify(error?.message || 'Virhe kirjautumisten haussa', { type: 'error' });
+            }
         }
     }
 

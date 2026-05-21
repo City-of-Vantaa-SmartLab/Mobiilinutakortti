@@ -74,11 +74,13 @@ export class JuniorService {
     }
 
     async getJunior(id: string): Promise<Junior> {
-        return await this.juniorRepo.findOneBy({ id });
+        const junior = await this.juniorRepo.findOneBy({ id });
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        return junior;
     }
 
     // Phone number parameter need not be standardized.
-    async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior> {
+    async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior | null> {
         return await this.juniorRepo.findOneBy({ phoneNumber: standardizePhoneNumber.to(phoneNumber) });
     }
 
@@ -86,13 +88,20 @@ export class JuniorService {
         return await this.juniorRepo.findBy({ homeYouthClub });
     }
 
-    async getUniqueJunior(phoneNumber: string, birthday?: string, firstName?: string, lastName?: string): Promise<Junior> {
-        if (!birthday) return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), firstName, lastName } });
+    async getUniqueJunior(phoneNumber: string, birthday?: string | null, firstName?: string | null, lastName?: string | null): Promise<Junior | null> {
+        if (!birthday) {
+            const whereClause: { phoneNumber: string; firstName?: string; lastName?: string } = {
+                phoneNumber: standardizePhoneNumber.to(phoneNumber),
+            };
+            if (firstName) whereClause.firstName = firstName;
+            if (lastName) whereClause.lastName = lastName;
+            return await this.juniorRepo.findOne({ where: whereClause });
+        }
         if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday } });
         return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday, firstName, lastName } });
     }
 
-    async checkLoginChallenge(challengeId: string, challenge: string): Promise<string> {
+    async checkLoginChallenge(challengeId: string, challenge: string): Promise<string | undefined> {
         const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
         // Returning false could be more benefical than providing an exception in terms of security.
         if (!entry) { return undefined; }
@@ -164,12 +173,19 @@ export class JuniorService {
             junior = new Junior();
         }
 
-        Object.keys(registrationData).map((key: string) => { junior[key] = registrationData[key] });
+        const juniorRecord = junior as unknown as Record<string, unknown>;
+        const registrationRecord = registrationData as unknown as Record<string, unknown>;
+        Object.keys(registrationRecord).forEach((key: string) => {
+            juniorRecord[key] = registrationRecord[key];
+        });
         junior.phoneNumber = standardizePhoneNumber.to(junior.phoneNumber);
         junior.parentsPhoneNumber = standardizePhoneNumber.to(junior.parentsPhoneNumber);
 
         // Make sure hidden fields have some data in them.
-        content.hiddenJuniorFields.forEach((key) => { junior[key] = junior[key] ?? '' });
+        (content.hiddenJuniorFields as Array<keyof Junior>).forEach((key) => {
+            const value = juniorRecord[key as string];
+            juniorRecord[key as string] = value ?? '';
+        });
         // Junior communicationsLanguage might be a hidden field but it is still required.
         if (!junior.communicationsLanguage) junior.communicationsLanguage = 'fi';
         junior.creationDate = new Date(Date.now()).toISOString();
@@ -185,7 +201,9 @@ export class JuniorService {
             // Creates new or updates an existing junior.
             await this.juniorRepo.save(junior);
         } catch (e) {
-            this.logger.error(`Error saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ${e.name}: ${e.message}`);
+            const errorName = e instanceof Error ? e.name : 'UnknownError';
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            this.logger.error(`Error saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ${errorName}: ${errorMessage}`);
             if (e instanceof QueryFailedError) {
                 throw new ConflictException(content.JuniorAlreadyExists);
             }
@@ -194,12 +212,13 @@ export class JuniorService {
 
         if (junior.status === Status.accepted && !noSMS) {
             const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
+            if (!newJunior) { throw new BadRequestException(content.UserNotFound); }
             const challenge = await this.setChallenge(junior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: newJunior.communicationsLanguage as content.Language,
                 name: newJunior.firstName,
                 phoneNumber: newJunior.phoneNumber,
-                homeYouthClub: newJunior.homeYouthClub,
+                homeYouthClub: newJunior.homeYouthClub ?? undefined,
             }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         }
@@ -225,7 +244,7 @@ export class JuniorService {
                 lang: junior.communicationsLanguage as content.Language,
                 name: junior.firstName,
                 phoneNumber: junior.phoneNumber,
-                homeYouthClub: junior.homeYouthClub,
+                homeYouthClub: junior.homeYouthClub ?? undefined,
             }, challenge);
             if (!messageSent)
                 throw new InternalServerErrorException(content.SmsServiceNotAvailable);
@@ -237,8 +256,8 @@ export class JuniorService {
 
     async editJunior(details: EditJuniorDto, youthWorkerUserId: string): Promise<string> {
         const junior = await this.juniorRepo.findOneBy({ id: details.id });
-        const prevStatus = junior.status;
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        const prevStatus = junior.status;
         if (junior.phoneNumber !== standardizePhoneNumber.to(details.phoneNumber)) {
             const phoneNumberReserver = await this.getJuniorByPhoneNumber(details.phoneNumber);
             if (phoneNumberReserver && phoneNumberReserver.id !== details.id) {
@@ -287,12 +306,13 @@ export class JuniorService {
         // typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
         if ((prevStatus === Status.expired || prevStatus === Status.pending || prevStatus === Status.failedCall) && details.status === Status.accepted) {
             const updatedJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
+            if (!updatedJunior) { throw new BadRequestException(content.UserNotFound); }
             const challenge = await this.setChallenge(updatedJunior.phoneNumber);
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: updatedJunior.communicationsLanguage as content.Language,
                 name: updatedJunior.firstName,
                 phoneNumber: updatedJunior.phoneNumber,
-                homeYouthClub: updatedJunior.homeYouthClub,
+                homeYouthClub: updatedJunior.homeYouthClub ?? undefined,
             }, challenge);
             if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         }
@@ -316,11 +336,14 @@ export class JuniorService {
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
+        if (!junior) { throw new BadRequestException(content.UserNotFound); }
         const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: ['junior'] });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
-        return await this.challengeRepo.findOneBy({ junior });
+        const savedChallenge = await this.challengeRepo.findOneBy({ junior });
+        if (!savedChallenge) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
+        return savedChallenge;
     }
 
     // Dummy phone numbers start with +999.
@@ -375,7 +398,7 @@ export class JuniorService {
         // NB: if SMS sending fails, the junior statuses have still been set.
         await this.smsService.sendNewSeasonSMS(recipients, expireDate);
 
-        return content.NewSeasonCreated(result.affected);
+        return content.NewSeasonCreated(result.affected ?? 0);
     }
 
     async deleteExpired(userId?: string): Promise<string> {
@@ -389,21 +412,25 @@ export class JuniorService {
 
         const extraEntryJuniorIds = expiredJuniors.filter(j => (j.extraEntries.length > 0 || j.entryPermits.length > 0 )).map(j => j.id);
 
-        const updated: UpdateResult = extraEntryJuniorIds.length === 0 ? null :
-            await this.juniorRepo.createQueryBuilder('junior')
-            .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
-            .update()
-            .set({ status: Status.extraEntriesOnly })
-            .execute();
+        let updatedAffected = 0;
+        if (extraEntryJuniorIds.length > 0) {
+            const updated: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
+                .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
+                .update()
+                .set({ status: Status.extraEntriesOnly })
+                .execute();
+            updatedAffected = updated.affected ?? 0;
+        }
 
         const deleted: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
         if (userId && ConfigHandler.detailedLogs()) {
             this.logger.log({ userId: userId }, `User deleted expired users.`);
         }
 
-        return updated?.affected ?
-            content.ExpiredUsersDeletedWithExtraEntries(deleted.affected, updated?.affected) :
-            content.ExpiredUsersDeleted(deleted.affected);
+        const deletedAffected = deleted.affected ?? 0;
+        return updatedAffected > 0 ?
+            content.ExpiredUsersDeletedWithExtraEntries(deletedAffected, updatedAffected) :
+            content.ExpiredUsersDeleted(deletedAffected);
     }
 
     // Delete juniors that are only in the extra entry registry but who have no extra entries or entry permits.
@@ -432,7 +459,9 @@ export class JuniorService {
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
-        return await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
+        const challenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
+        if (!challenge) { throw new BadRequestException(content.UserNotFound); }
+        return challenge;
     }
 
     /**
