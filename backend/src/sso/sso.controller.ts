@@ -16,28 +16,28 @@ export class SsoController {
 
   // Call this to initiate login process.
   @Get('acs')
-  getLoginRequestUrl(@Res() res: Response) {
-    this.ssoService.getLoginRequestUrl(res);
+  async getLoginRequestUrl(@Res() res: Response) {
+    await this.ssoService.getLoginRequestUrl(res);
   }
 
   // This is called by the user's browser when the user returns from Suomi.fi identification.
   @Post('acs')
-  loginResponse(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.handleLoginResponse(req, res);
+  async loginResponse(@Req() req: Request, @Res() res: Response) {
+    await this.ssoService.handleLoginResponse(req, res);
   }
 
   // Call this to initiate logout process.
   @Get('logout')
-  logout(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.getLogoutRequestUrl(req, res);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    await this.ssoService.getLogoutRequestUrl(req, res);
   }
 
   // SSO logout, redirect binding.
   // Suomi.fi will redirect the user here after SP-initiated logout: there will be a SAMLResponse in the query.
   // Suomi.fi will also call this on IdP-initiated logouts: there will be a SAMLRequest in the query.
   @Get('slo')
-  logoutRedirect(@Req() req: Request, @Res() res: Response) {
-    this.ssoService.handleLogout(req, res);
+  async logoutRedirect(@Req() req: Request, @Res() res: Response) {
+    await this.ssoService.handleLogout(req, res);
   }
 
 }

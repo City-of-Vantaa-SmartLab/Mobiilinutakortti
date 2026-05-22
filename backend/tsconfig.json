@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "declaration": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -10,6 +9,7 @@
     "outDir": "./dist",
     "removeComments": true,
     "resolveJsonModule": true,
+    "rootDir": "./src",
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
@@ -19,6 +19,7 @@
   "exclude": [
     "node_modules",
     "dist",
+    "**/*spec.ts",
     "test"
   ],
   "watchOptions": {

@@ -10,7 +10,7 @@ import { CreateExtraEntryDto } from './dto/create.dto';
 import { ConfigHandler } from '../configHandler';
 import { Junior } from '../junior/entities';
 import { getFilters } from '../common/helpers';
-import { ListControlDto } from 'src/common/dto';
+import { ListControlDto } from '../common/dto';
 import { ExtraEntryListViewModel } from './vm/extraEntryList.vm';
 import { JuniorExtraEntriesViewModel } from './vm/juniorExtraEntries.vm';
 import { JuniorService } from '../junior/junior.service';

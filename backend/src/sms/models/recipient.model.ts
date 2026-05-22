@@ -1,4 +1,4 @@
-import { Language } from 'src/content';
+import { Language } from '../../content';
 
 export interface Recipient {
     lang: Language;

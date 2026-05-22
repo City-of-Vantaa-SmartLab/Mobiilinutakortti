@@ -4,6 +4,7 @@
 .elasticbeanstalk
 
 backend/dist
+backend/tsconfig.tsbuildinfo
 backend/node_modules
 backend/public
 backend/public-admin

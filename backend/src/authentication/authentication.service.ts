@@ -20,9 +20,9 @@ import { jwtExpiryForYouthWorker, jwtExpiryForJunior, scSecret } from './authent
 import { AcsDto, SecurityContextDto } from './dto';
 import { sign, unsign } from 'cookie-signature';
 import { SessionDBService } from '../session/sessionDb.service';
-import { LoginYouthWorkerEntraDto } from 'src/youthWorker/dto/login.dto';
-import { YouthWorker } from 'src/youthWorker/entities/';
-import { EditYouthWorkerDto } from 'src/youthWorker/dto';
+import { LoginYouthWorkerEntraDto } from '../youthWorker/dto/login.dto';
+import { YouthWorker } from '../youthWorker/entities/';
+import { EditYouthWorkerDto } from '../youthWorker/dto';
 import { ConfigHandler } from '../configHandler';
 import { verify } from 'jsonwebtoken';
 
