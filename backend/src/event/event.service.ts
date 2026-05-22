@@ -63,14 +63,14 @@ export class EventService {
     async getCheckInsForEvent(eventId: number): Promise<CheckIn[]> {
         const event = await this.eventRepo.findOneBy({ id: eventId });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
-        return await this.checkInRepo.find({ where: { event }, relations: ['event', 'junior'] });
+        return await this.checkInRepo.find({ where: { event }, relations: { event: true, junior: true } });
     }
 
     async checkJuniorHasPermit(checkInData: CheckInDto): Promise<boolean> {
         const [junior, event] = await Promise.all([
             this.juniorRepo.findOne({
                 where: { id: checkInData.juniorId },
-                relations: ['entryPermits', 'entryPermits.entryType']
+                relations: { entryPermits: { entryType: true } }
             }),
             this.eventRepo.createQueryBuilder('event')
                 .leftJoinAndSelect('event.permit', 'permit')
@@ -140,7 +140,7 @@ export class EventService {
     async editEvent(data: EditEventDto, userId?: string): Promise<string> {
         const event = await this.eventRepo.findOne({
             where: { id: data.id },
-            relations: ['permit']
+            relations: { permit: true }
         });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
         const hadPermit = !!event.permit;
@@ -197,7 +197,7 @@ export class EventService {
     async deleteEvent(id: number, userId?: string): Promise<string> {
         const event = await this.eventRepo.findOne({
             where: { id },
-            relations: ['permit']
+            relations: { permit: true }
         });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
 

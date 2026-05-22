@@ -1,6 +1,6 @@
 {
   "name": "nutakortti-backend",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "description": "Backend for the Nutakortti application",
   "private": true,
   "scripts": {
@@ -25,7 +25,7 @@
     "@node-saml/node-saml": "^5.1.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "class-validator": "^0.15.1",
     "cookie-parser": "^1.4.6",
     "date-fns": "^4.1.0",
     "moment": "^2.24.0",
@@ -34,7 +34,7 @@
     "passport-jwt": "^4.0.0",
     "pg": "^8.16.0",
     "rxjs": "^7.5.5",
-    "typeorm": "^0.3.6"
+    "typeorm": "^1.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.14",
@@ -46,7 +46,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.3",
     "@types/passport-jwt": "^4.0.1",
-    "@types/supertest": "^6.0.2",
+    "@types/supertest": "^7.2.0",
     "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "pg-mem": "^3.0.5",

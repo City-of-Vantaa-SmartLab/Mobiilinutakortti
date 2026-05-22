@@ -24,9 +24,7 @@ export class RoutersMiddleware implements NestMiddleware {
             next();
         } else {
             const publicDirectory = baseUrl.includes(content.Routes.admin) ? 'public-admin' : 'public';
-            // If each part of the application (backend, frontend, admin-frontend) are run in separate containers
-            // the index.html is not found. A missing index.html might result in an error messages spamming the logs.
-            // In such a special configuration the backend is only expected to receive API calls.
+            // If backend is running just for API and for some reason another query comes, index.html is not found.
             if (fs.existsSync(`${publicDirectory}/index.html`)) {
                 res.sendFile(join('index.html'), { root: publicDirectory });
             } else {

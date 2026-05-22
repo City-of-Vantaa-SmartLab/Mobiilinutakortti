@@ -17,7 +17,7 @@ export class EventEditInterceptor implements NestInterceptor {
         const body = request.body as EditEventDto;
         const eventToEdit = await this.eventRepo.findOne({
             where: { id: body.id },
-            relations: ['permit']
+            relations: { permit: true }
         });
         if (!eventToEdit) { throw new BadRequestException(content.EventNotFound); };
 

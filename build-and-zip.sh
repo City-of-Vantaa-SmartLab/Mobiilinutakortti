@@ -62,7 +62,7 @@ echo $githash > git-commit-hash.txt
 find ./ -type d -exec chmod a+x {} \;
 chmod -R a+r *
 # Skip docker-compose.yml so that Elastic Beanstalk uses just the Dockerfile.
-zip -q -r --symlinks -x docker-compose.yml $zipfile *
+zip -q -r --symlinks $zipfile * -x docker-compose.yml
 cd -
 
 cp $tmpdir/$zipfile ~/

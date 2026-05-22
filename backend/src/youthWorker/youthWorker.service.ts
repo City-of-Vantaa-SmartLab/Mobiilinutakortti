@@ -67,7 +67,7 @@ export class YouthWorkerService {
         if (useEntraID) { return null; }
         const youthWorker = await this.getYouthWorker(youthWorkerId);
         if (!youthWorker) { throw new BadRequestException(content.UserNotFound); }
-        return await this.lockoutRepo.findOne({ where: { youthWorker }, relations: ['youthWorker'] });
+        return await this.lockoutRepo.findOne({ where: { youthWorker }, relations: { youthWorker: true } });
     }
 
     async deleteLockoutRecord(youthWorkerId: string) {

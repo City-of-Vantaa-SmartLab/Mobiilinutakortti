@@ -52,7 +52,7 @@ export class ClubService {
     async getCheckInsForClub(clubId: number): Promise<CheckIn[]> {
         const club = await this.clubRepo.findOneBy({ id: clubId });
         if (!club) { throw new BadRequestException(content.ClubNotFound); }
-        return await this.checkInRepo.find({ where: { club }, relations: ['club', 'junior'] });
+        return await this.checkInRepo.find({ where: { club }, relations: { club: true, junior: true } });
     }
 
     // Get checkins for a time period by providing the time period in unix timestamp, otherwise checkins are returned for the selected day

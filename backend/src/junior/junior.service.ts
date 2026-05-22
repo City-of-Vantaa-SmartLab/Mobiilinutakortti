@@ -102,7 +102,7 @@ export class JuniorService {
     }
 
     async checkLoginChallenge(challengeId: string, challenge: string): Promise<string | undefined> {
-        const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: ['junior'] });
+        const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: { junior: true } });
         // Returning false could be more benefical than providing an exception in terms of security.
         if (!entry) { return undefined; }
         if (challenge !== entry.challenge) { return undefined; }
@@ -337,7 +337,7 @@ export class JuniorService {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: ['junior'] });
+        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: { junior: true } });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
@@ -459,7 +459,7 @@ export class JuniorService {
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
-        const challenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: ['junior'] });
+        const challenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: { junior: true } });
         if (!challenge) { throw new BadRequestException(content.UserNotFound); }
         return challenge;
     }

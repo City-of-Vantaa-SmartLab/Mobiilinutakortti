@@ -1,13 +1,13 @@
 {
   "name": "nutakortti-admin-frontend",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "description": "Admin frontend for the Nutakortti application",
   "private": true,
   "type": "module",
   "dependencies": {
     "@azure/msal-browser": "^5.0.2",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
+    "@mui/icons-material": "^7.3.11",
+    "@mui/material": "^7.3.11",
     "@yudiel/react-qr-scanner": "^2.5.0",
     "final-form": "^5.0.0",
     "qrcode.react": "^4.2.0",
@@ -30,9 +30,9 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^6.0.2",
     "baseline-browser-mapping": "^2.9.11",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
   }
 }
