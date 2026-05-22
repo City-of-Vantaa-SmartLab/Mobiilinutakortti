@@ -7,8 +7,8 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main",
-    "test": "rm ./test/testdb.sql 2>/dev/null || true && cross-env NODE_ENV=test jest --runInBand && rm ./test/testdb.sql 2>/dev/null",
-    "test:e2e": "rm ./test/testdb.sql 2>/dev/null || true && cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --runInBand && rm ./test/testdb.sql 2>/dev/null"
+    "test": "cross-env NODE_ENV=test ENABLE_SETUP_ENDPOINTS=yes jest --runInBand",
+    "test:e2e": "cross-env NODE_ENV=test ENABLE_SETUP_ENDPOINTS=yes jest --config ./test/jest-e2e.json --runInBand"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.958.0",
@@ -49,18 +49,14 @@
     "@types/supertest": "^6.0.2",
     "cross-env": "^10.1.0",
     "jest": "^30.2.0",
+    "pg-mem": "^3.0.5",
     "prettier": "^3.3.3",
-    "sqlite3": "^5.0.2",
     "supertest": "^7.1.4",
     "ts-jest": "^29.2.4",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.8.1",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^6.0.3"
-  },
-  "overrides": {
-    "node-gyp": "^12.0.0",
-    "test-exclude": "^7.0.0"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -71,7 +67,12 @@
     "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.test.json"
+        }
+      ]
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"

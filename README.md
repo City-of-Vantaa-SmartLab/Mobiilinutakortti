@@ -109,20 +109,6 @@ In the admin-frontend there is a possibility to enable extra entry registry via 
 
 In the admin-frontend there is a possibility to enable [Kompassi](https://kompassipalvelu.fi/) integration via an environment variable (see its README.md). Kompassi integration related stuff is hidden in the UI by default. Kompassi is a system for documenting youth work, including statistics and reporting tools. It is developed and maintained by the city of Oulu.
 
-## Troubleshooting
-
-When running "docker compose up" you might get an error like this:
-
-    admin-frontend_1  | Error: ENOSPC: System limit for number of file watchers reached, watch '/admin-frontend/public'
-
-or your build may error randomly.
-
-There's a lot of files under `node_modules` and they are all being watched, reaching the system limit. Each file watcher takes up some kernel memory, and therefore they are limited to some reasonable number by default. On Ubuntu Linux the limit can be increased for example like this:
-
-    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
-Increasing memory limits for Docker might also help if for example you are using the Docker Desktop app to constrain them in the first place.
-
 ## Maintenance
 
 Normally there's only the certificates to update. TLS certificates are updated to AWS (or wherever the service is running).
@@ -167,7 +153,7 @@ Configure the EB CLI:
 
 ### Updating using a zip package
 
-In case the AWS Elastic Beanstalk environment is in a state where updates hang and timeout, or for some other reason, it is beneficial to be able to package the application yourself and just drop it in.
+In case the AWS Elastic Beanstalk environment is in a state where updates hang and timeout, or for some other reason, you might want to package the application yourself and just drop it in.
 
 The script `build-and-zip.sh` accomplishes this and creates a zip file you can upload and deploy to Elastic Beanstalk.
 
@@ -183,7 +169,7 @@ The [AWS CLI tool](https://aws.amazon.com/cli/) can be used to get [CloudWatch l
 
 There exists [a nice tool](https://github.com/jorgebastida/awslogs) to solve the problem. So, in case one needs all the logs for whatever reason, use the AWS CLI directly by scripting, or use for example the awslogs for an easy solution. To use the tool:
 
-1. Install awslogs using pip: `pip install awslogs`
-2. Set up AWS CLI (command: `aws configure`)
+1. Install awslogs.
+2. Set up AWS CLI (command: `aws configure`).
 3. Set up default region for awslogs (environment variable `AWS_REGION`) or give it as a command line parameter.
 4. Get the logs from a specific time window, e.g. `awslogs get /aws/elasticbeanstalk/nutakortti-prod/var/log/eb-docker/containers/eb-current-app/stdouterr.log --start='52 weeks' > logs_past_year.txt`

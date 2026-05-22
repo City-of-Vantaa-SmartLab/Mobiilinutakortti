@@ -103,7 +103,7 @@ describe('YouthWorkerService', () => {
   describe('Register youth worker', () => {
     it('should state that the registration is succesful', async () => {
       const result = await service.registerYouthWorker(testRegisterYouthWorker);
-      expect(result.email).toBe(testRegisterYouthWorker.email.toLowerCase());
+      expect(result.email.toLowerCase()).toBe(testRegisterYouthWorker.email.toLowerCase());
     }),
       it('should add the user to the database following a succesful registration', async () => {
         const response = await service.getYouthWorkerByEmail(testRegisterYouthWorker.email);

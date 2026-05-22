@@ -46,9 +46,10 @@ describe('AuthenticationService', () => {
     parentsPhoneNumber: '0411234567',
     gender: 'M',
     birthday: new Date().toISOString(),
-    homeYouthClub: 'Tikkurila',
+    homeYouthClub: 1,
     school: 'Test School',
     class: '5A',
+    communicationsLanguage: 'fi',
     status: 'accepted',
     photoPermission: true,
   } as RegisterJuniorDto;

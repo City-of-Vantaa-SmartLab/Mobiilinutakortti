@@ -21,6 +21,10 @@ export class SmsService {
         ) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
+        if (ConfigHandler.isTest()) {
+            return true;
+        }
+
         const settings = SMSConfig.getTeliaConfig();
 
         // check stack trace to see if sendVerificationSMS() is called from registerJunior()
@@ -51,6 +55,10 @@ export class SmsService {
     }
 
     async sendNewSeasonSMS(recipients: Recipient[], expireDate: string): Promise<boolean> {
+        if (ConfigHandler.isTest()) {
+            return true;
+        }
+
         const {
             user,
             username,

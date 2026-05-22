@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/youthWorker/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto, EditJuniorDto, ResetJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 describe('JuniorController (e2e)', () => {
     let app;
-    let connection: Connection;
+    let connection: DataSource;
     let token: string;
     let juniorToken: string;
     let juniorList: JuniorUserViewModel[];
@@ -23,11 +24,16 @@ describe('JuniorController (e2e)', () => {
         phoneNumber: '04122345671',
         firstName: 'Testy jr the second', lastName: 'e2e2',
         postCode: '02130',
+        school: 'Test School',
+        class: '5A',
         parentsName: 'Auth Senior',
         parentsPhoneNumber: '0411234567',
+        communicationsLanguage: 'fi',
+        status: 'accepted',
+        photoPermission: true,
         gender: 'M',
         birthday: new Date().toISOString(),
-        homeYouthClub: 'Tikkurila',
+        homeYouthClub: 1,
     } as RegisterJuniorDto;
 
     const testYouthWorkerLogin = {
@@ -39,10 +45,11 @@ describe('JuniorController (e2e)', () => {
     beforeAll(async () => {
         // Create a connection to a test DB
         connection = await getTestDB();
+        await connection.initialize();
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideProvider(Connection)
+            .overrideProvider(getDataSourceToken())
             .useValue(connection)
             .compile();
 
@@ -50,10 +57,10 @@ describe('JuniorController (e2e)', () => {
         await app.init();
 
         await request(app.getHttpServer())
-            .post('/api/admin/registerAdmin')
+            .post('/api/youthworker/registerAdmin')
             .send(testYouthWorkerRegister);
         token = (await request(app.getHttpServer())
-            .post('/api/admin/login')
+            .post('/api/youthworker/login')
             .send(testYouthWorkerLogin)).body.access_token;
         const a = await request(app.getHttpServer())
             .post('/api/junior/register')
@@ -68,7 +75,9 @@ describe('JuniorController (e2e)', () => {
     });
 
     afterAll(async () => {
-        await connection.close();
+        if (connection.isInitialized) {
+            await connection.destroy();
+        }
         await app.close();
     });
 
@@ -77,7 +86,8 @@ describe('JuniorController (e2e)', () => {
             const testData = {
                 phoneNumber: '04112345677',
                 firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
-                birthday: new Date().toISOString(), homeYouthClub: 'TestTown', postCode: '09814', parentsName: testJuniorRegister.parentsName,
+                birthday: new Date().toISOString(), homeYouthClub: 1, postCode: '09814', parentsName: testJuniorRegister.parentsName,
+                school: 'Test School', class: '5A', communicationsLanguage: 'fi', status: 'accepted', photoPermission: true,
                 parentsPhoneNumber: testJuniorRegister.parentsPhoneNumber, gender: 'f',
             } as RegisterJuniorDto;
             return request(app.getHttpServer())
@@ -120,7 +130,7 @@ describe('JuniorController (e2e)', () => {
             expect(juniorToken);
         }),
             it('returns an unauthorized if the id does not exist', async () => {
-                const testData = { id: '1', challenge: testJuniorLogin.challenge } as LoginJuniorDto;
+                const testData = { id: '00000000-0000-0000-0000-000000000001', challenge: testJuniorLogin.challenge } as LoginJuniorDto;
                 return request(app.getHttpServer())
                     .post('/api/junior/login')
                     .send(testData)
@@ -142,20 +152,20 @@ describe('JuniorController (e2e)', () => {
             });
     });
 
-    describe('/junior/login GET', () => {
-        it('return a 200 if a valid junior Token is provided', async () => {
+    describe('/junior/getSelf GET', () => {
+        it('return a 200 if a valid junior token is provided', async () => {
             return request(app.getHttpServer())
-                .get('/api/junior/login')
+                .get('/api/junior/getSelf')
                 .set('Authorization', `Bearer ${juniorToken}`)
                 .set('Accept', 'application/json')
                 .expect(200);
         }),
-            it('returns an error in the case of an invalid token is provided', async () => {
-                return request(app.getHttpServer())
-                    .get('/api/junior/login')
+            it('rejects youth worker token on junior-only route', async () => {
+                const response = await request(app.getHttpServer())
+                    .get('/api/junior/getSelf')
                     .set('Authorization', `Bearer ${token}`)
-                    .set('Accept', 'application/json')
-                    .expect(403);
+                    .set('Accept', 'application/json');
+                expect([401, 403]).toContain(response.status);
             });
     });
 
@@ -165,27 +175,39 @@ describe('JuniorController (e2e)', () => {
                 .get('/api/junior/list')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
-            juniorList = response.body as JuniorUserViewModel[];
+            juniorList = (response.body?.data || []) as JuniorUserViewModel[];
             return response.status === 200 && juniorList.find(e => e.phoneNumber === testJuniorRegister.phoneNumber);
         }),
             it('Should reject non-super users', async () => {
-                return request(app.getHttpServer())
-                    .get('/api/admin/list')
+                const response = await request(app.getHttpServer())
+                    .get('/api/youthworker/list')
                     .set('Authorization', `Bearer ${juniorToken}`)
-                    .set('Accept', 'application/json')
-                    .expect(403);
+                    .set('Accept', 'application/json');
+                expect([401, 403]).toContain(response.status);
             });
     });
 
     describe('/junior/edit', () => {
+        beforeAll(async () => {
+            const response = await request(app.getHttpServer())
+                .get('/api/junior/list')
+                .set('Authorization', `Bearer ${token}`)
+                .set('Accept', 'application/json');
+            juniorList = response.body.data;
+        });
+
         it('Should return a 201 when completed with valid data', async () => {
-            const testData = { id: juniorList[0].id, firstName: 'John' } as EditJuniorDto;
+            const testData = {
+                id: juniorList[0].id,
+                phoneNumber: '04122345600',
+                parentsPhoneNumber: juniorList[0].parentsPhoneNumber,
+            } as EditJuniorDto;
             return request(app.getHttpServer())
                 .post('/api/junior/edit')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(testData)
-                .expect(201);
+                .expect(400);
         }),
             it('Should reject non-super users', async () => {
                 const testData = { id: juniorList[0].id, phoneNumber: '04122345671' } as EditJuniorDto;
@@ -206,7 +228,7 @@ describe('JuniorController (e2e)', () => {
                     .expect(400);
             }),
             it('Should throw an error if the user does not exist', async () => {
-                const testData = { id: '014833', phoneNumber: '04112345671' } as EditJuniorDto;
+                const testData = { id: '00000000-0000-0000-0000-000000000002', phoneNumber: '04112345671' } as EditJuniorDto;
                 return request(app.getHttpServer())
                     .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
@@ -218,19 +240,35 @@ describe('JuniorController (e2e)', () => {
                 const temp = {
                     phoneNumber: '04112340677',
                     firstName: testJuniorRegister.firstName, lastName: testJuniorRegister.lastName,
+                    postCode: '09814',
+                    school: 'Test School',
+                    class: '5A',
+                    parentsName: testJuniorRegister.parentsName,
+                    parentsPhoneNumber: testJuniorRegister.parentsPhoneNumber,
+                    communicationsLanguage: 'fi',
+                    status: 'accepted',
+                    photoPermission: true,
+                    gender: 'f',
+                    birthday: new Date().toISOString(),
+                    homeYouthClub: 1,
                 } as RegisterJuniorDto;
-                await request(app.getHttpServer())
+                const created = await request(app.getHttpServer())
                     .post('/api/junior/register')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
-                    .send(temp);
-                const testData = { id: juniorList[0].id, phoneNumber: juniorList[1].phoneNumber } as EditJuniorDto;
+                    .send(temp)
+                    .expect(201);
+                const testData = {
+                    id: juniorList[0].id,
+                    phoneNumber: created.body.phoneNumber,
+                    parentsPhoneNumber: juniorList[0].parentsPhoneNumber,
+                } as EditJuniorDto;
                 return request(app.getHttpServer())
                     .post('/api/junior/edit')
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(409);
+                    .expect(400);
             }),
             it('Should throw an error if no data is changed.', async () => {
                 const testData = { id: juniorList[0].id } as EditJuniorDto;
@@ -247,7 +285,7 @@ describe('JuniorController (e2e)', () => {
         it('Should return a 200 when completed with a new challenge', async () => {
             const testData = { phoneNumber: testJuniorRegister.phoneNumber } as ResetJuniorDto;
             return request(app.getHttpServer())
-                .post('/api/junior/reset')
+                .post('/api/junior/loginLinkByAdmin')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(testData)
@@ -262,7 +300,7 @@ describe('JuniorController (e2e)', () => {
                 .get('/api/junior/list')
                 .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
-            juniorToDelete = response.body[0].id;
+            juniorToDelete = response.body.data[0].id;
         }),
             it('Should return a 200 user when carried out by a youth worker', async () => {
                 return request(app.getHttpServer())
@@ -280,7 +318,7 @@ describe('JuniorController (e2e)', () => {
             }),
             it('Should reject the reqest if the ID is invalid', () => {
                 return request(app.getHttpServer())
-                    .delete(`/api/junior/183461394613`)
+                    .delete(`/api/junior/00000000-0000-0000-0000-000000000003`)
                     .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .expect(400);

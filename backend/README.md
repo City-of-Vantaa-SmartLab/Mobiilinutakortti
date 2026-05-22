@@ -13,49 +13,19 @@ There are some services that rely on an in-memory "database". If the backend was
 
 Also note that the environment variables `SC_SECRET` and `JWT_SECRET` must be defined if multiple instances are used, because a randomly generated value only works for a single instance.
 
-### Accessing the NestJS/PostgreSQL Docker container
-
-1. `docker ps` : lists docker containers running
-2. `docker exec -it backend_app_1 sh` : gain access to NestJS docker container
-3.  `docker exec -it backend_db_1 sh` : gain access to PostgreSQL docker container
-    1) `psql -U postgres` : login with `postgres` user using the `psql` interactive terminal
-    2) `\l` : lists all available database in the container *(where you'll find `nuta` database for Mobiilinutakortti app)*
-    3) `\c nuta` : connects to `nuta` database
-    4) `\dt` : lists all the tables in the database
-    5) `\d club` : list schema of `club` table
-    6) `table club;` / `select * from club;` : lists all values within `club` table
-    7)  `\q` : exit PostgreSQL
-
-## Running locally
-
-**PostgreSQL**
-
-Once PostgreSQL is running locally:
-1. Run `psql` to get access to the interactive PostgreSQL terminal. On a Ubuntu default install you'll probably need `sudo -u postgres psql`.
-2. Create a new `nuta` database in PostgreSQL using `create database nuta;`
-3. `\l` : lists all available PostgreSQL database in local machine *(where you'll find `nuta` database for Mobiilinutakortti app)*
-
-To change password for a PostgreSQL user, use the psql command `\password <user>`. For example, to set the default postgres user password to `password` on a Ubuntu machine:
-
-    $ sudo -u postgres psql postgres
-    postgres=# \password postgres
-
-**Backend**
+## Running without Docker
 
 1. Run `npm install`
-2. Before running the backend, set database-related environment variables to match your system configuration (the variables beginning with `DB_`):
-    * For example: `export DB_HOST=localhost` would use a PostgreSQL install on localhost
-    * The username and password are for PostgreSQL
-    * PostgreSQL roles can be checked with psql using the command `\du`
+2. Set database-related environment variables (those that begin with `DB_`)
 3. Run `npm run dev`
 
-Once the backend and database are up and running locally  navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
+Once the backend and database are up and running locally, navigate to [http://localhost:3000/api](http://localhost:3000/api) and you'll see the message *"API is running"*.
 
 **Network configuration**
 
 Since the Suomi.fi identity provider for SSO is configured against a test environment in AWS cloud, it expects to talk with the AWS. Therefore it responds with AWS URLs. To make them work locally, the easiest way is to override the Amazon hostname in `/etc/hosts` file:
 
-  127.0.0.1 api.mobiilinuta-admin-test.com
+  127.0.0.1 the-domain-registered-to-suomi.fi
 
 Since Suomi.fi expects to communicate over HTTPS and not HTTP, we will also need to have:
 
@@ -128,15 +98,4 @@ The Swagger documentation does not document API responses.
 
 ## Tests
 
-The tests do not currently work correctly due to historical reasons.
-
-## Maintenance
-
-The SQLite package depends on a vulnerable version of tar. However, because this is only related to tests and not production use, you may safely ignore any reported vulnerabilities related to the sqlite3 and tar packages.
-
-### Dependency version constraints
-
-These overrides affect test-time dependencies only (sqlite3 uses node-gyp for native compilation):
-
-- `node-gyp` forced to `^12.0.0` to eliminate deprecation warnings from older versions (8.x)
-- `test-exclude` forced to `^7.0.0` to eliminate glob@7.x deprecation warnings
+Due to historical reasons, the tests might not be the best ones and they might be lacking in coverage. Some unit tests are a bit like e2e tests, so the distinction is not clear. Both test suites should pass, however.

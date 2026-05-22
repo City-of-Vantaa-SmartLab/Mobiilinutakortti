@@ -1,19 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { RegisterYouthWorkerDto, LoginYouthWorkerDto } from '../src/youthWorker/dto';
 import { getTestDB } from './testdb';
 import { RegisterJuniorDto, LoginJuniorDto } from '../src/junior/dto';
 import { JuniorUserViewModel } from '../src/junior/vm';
 import { ClubViewModel } from '../src/club/vm';
 import { CheckInDto } from '../src/club/dto';
-import { Check } from '../src/common/vm';
-import { CheckIn } from '../src/club/entities';
+import { CheckIn } from '../src/checkIn/checkIn.entity';
+import { getDataSourceToken } from '@nestjs/typeorm';
+import { failReason } from '../src/checkIn/vm/checkInResponse.vm';
+import { Club } from '../src/club/entities';
 
 describe('JuniorController (e2e)', () => {
     let app;
-    let connection: Connection;
+    let connection: DataSource;
     let token: string;
     let juniorToken: string;
     let juniorList: JuniorUserViewModel[];
@@ -28,11 +30,16 @@ describe('JuniorController (e2e)', () => {
         phoneNumber: '04122348888',
         firstName: 'Clubber', lastName: 'e2e2',
         postCode: '02130',
+        school: 'Test School',
+        class: '5A',
         parentsName: 'Auth Senior',
         parentsPhoneNumber: '0411234567',
+        communicationsLanguage: 'fi',
+        status: 'accepted',
+        photoPermission: true,
         gender: 'M',
         birthday: new Date().toISOString(),
-        homeYouthClub: 'Tikkurila',
+        homeYouthClub: 1,
     } as RegisterJuniorDto;
 
     const testYouthWorkerLogin = {
@@ -44,21 +51,36 @@ describe('JuniorController (e2e)', () => {
     beforeAll(async () => {
         // Create a connection to a test DB
         connection = await getTestDB();
+        await connection.initialize();
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
-            .overrideProvider(Connection)
+            .overrideProvider(getDataSourceToken())
             .useValue(connection)
             .compile();
 
         app = moduleFixture.createNestApplication();
         await app.init();
 
+        const clubRepo = connection.getRepository(Club);
+        if ((await clubRepo.count()) === 0) {
+            await clubRepo.save({
+                name: 'Test Club',
+                postCode: '01300',
+                active: true,
+                messages: {
+                    fi: 'Testiviesti',
+                    en: 'Test message',
+                    sv: 'Testmeddelande',
+                },
+            } as unknown as Club);
+        }
+
         await request(app.getHttpServer())
-            .post('/api/admin/registerAdmin')
+            .post('/api/youthworker/registerAdmin')
             .send(testYouthWorkerRegister);
         token = (await request(app.getHttpServer())
-            .post('/api/admin/login')
+            .post('/api/youthworker/login')
             .send(testYouthWorkerLogin)).body.access_token;
         await request(app.getHttpServer())
             .post('/api/junior/register')
@@ -72,7 +94,7 @@ describe('JuniorController (e2e)', () => {
         juniorList = (await request(app.getHttpServer())
             .get('/api/junior/list')
             .set('Authorization', `Bearer ${token}`)
-            .set('Accept', 'application/json')).body as JuniorUserViewModel[];
+            .set('Accept', 'application/json')).body.data as JuniorUserViewModel[];
         juniorToken = (await request(app.getHttpServer())
             .post('/api/junior/login')
             .send(testJuniorLogin)).body.access_token;
@@ -84,7 +106,9 @@ describe('JuniorController (e2e)', () => {
     });
 
     afterAll(async () => {
-        await connection.close();
+        if (connection.isInitialized) {
+            await connection.destroy();
+        }
         await app.close();
     });
 
@@ -93,54 +117,47 @@ describe('JuniorController (e2e)', () => {
             const exampleClub = clubList[0];
             const response = await request(app.getHttpServer())
                 .get('/api/club/list')
-                .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json');
             const returnedList = response.body as ClubViewModel[];
             return response.status === 200 && returnedList.find(e => e.name === exampleClub.name);
         }),
-            it('Should reject non youth workers', async () => {
+            it('Should be accessible for juniors too (public route)', async () => {
                 return request(app.getHttpServer())
                     .get('/api/club/list')
-                    .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
-                    .expect(403);
+                    .expect(200);
             });
     });
 
     describe('/club/checkIn (POST)', () => {
         it('should return a 201 and true if the check-in is successful', async () => {
-            const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
+            const exampleCheckIn = { targetId: clubList[0].id, juniorId: juniorList[0].id, securityCode: '' } as CheckInDto;
             const response = (await request(app.getHttpServer())
                 .post('/api/club/checkIn')
-                .set('Authorization', `Bearer ${token}`)
                 .set('Accept', 'application/json')
                 .send(exampleCheckIn));
-            const checkResult = response.body as Check;
-            expect(response.status === 201 && checkResult.result);
+            expect(response.status === 201 && response.body?.reason === failReason.NONE);
         }),
-            it('should reject non-youth workers', async () => {
-                const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
+            it('should return SPAM on duplicate check-in', async () => {
+                const exampleCheckIn = { targetId: clubList[0].id, juniorId: juniorList[0].id, securityCode: '' } as CheckInDto;
                 const response = (await request(app.getHttpServer())
                     .post('/api/club/checkIn')
-                    .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
-                expect(response.status === 403);
+                expect(response.status === 201 && response.body?.reason === failReason.SPAM);
             }),
             it('should throw a Bad Request if the junior does not exists', async () => {
-                const exampleCheckIn = { clubId: clubList[0].id, juniorId: '99999999' } as CheckInDto;
+                const exampleCheckIn = { targetId: clubList[0].id, juniorId: '99999999', securityCode: '' } as CheckInDto;
                 const response = (await request(app.getHttpServer())
                     .post('/api/club/checkIn')
-                    .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
                 expect(response.status === 400);
             }),
             it('should return a Bad Request if the club does not exist', async () => {
-                const exampleCheckIn = { clubId: '999999', juniorId: juniorList[0].id } as CheckInDto;
+                const exampleCheckIn = { targetId: 999999, juniorId: juniorList[0].id, securityCode: '' } as CheckInDto;
                 const response = (await request(app.getHttpServer())
                     .post('/api/club/checkIn')
-                    .set('Authorization', `Bearer ${token}`)
                     .set('Accept', 'application/json')
                     .send(exampleCheckIn));
                 expect(response.status === 400);
@@ -149,7 +166,7 @@ describe('JuniorController (e2e)', () => {
 
     describe('/club/checkIn/:id', () => {
         beforeAll(async () => {
-            const exampleCheckIn = { clubId: clubList[0].id, juniorId: juniorList[0].id } as CheckInDto;
+            const exampleCheckIn = { targetId: clubList[0].id, juniorId: juniorList[0].id, securityCode: '' } as CheckInDto;
             await request(app.getHttpServer())
                 .post('/api/club/checkIn')
                 .set('Authorization', `Bearer ${token}`)
@@ -167,9 +184,8 @@ describe('JuniorController (e2e)', () => {
             it('Should reject the user if they are not a youth worker.', async () => {
                 await request(app.getHttpServer())
                     .get(`/api/club/checkIn/${clubList[0].id}`)
-                    .set('Authorization', `Bearer ${juniorToken}`)
                     .set('Accept', 'application/json')
-                    .expect(403);
+                    .expect(401);
             }),
             it('Should return a bad request if an invalid club is provided', async () => {
                 await request(app.getHttpServer())
