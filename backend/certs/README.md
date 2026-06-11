@@ -80,4 +80,4 @@ Every other year Suomi.fi will release its new metadata file. There are two sign
 
 When a new metadata file is released, you may replace one of the certificates (e.g. tunnistus-test-1.cer or tunnistus-test-2.cer) with the new certificate from the metadata file. This way you will not have to keep track when the new certificate takes over, as both can be used. When IdP starts to use the new certificate, you may copy the new one over the old certificate.
 
-Make the certificates a single line and remove any spaces.
+Make sure the certificates have the headers around the certificate data (-----BEGIN CERTIFICATE----- and -----END CERTIFICATE-----).
