@@ -33,7 +33,7 @@ export class SsoService {
     this.idpEntityId = process.env.IDP_ENTITY_ID || 'https://testi.apro.tunnistus.fi/idp1';
 
     const samlConfig: SamlConfig = {
-      callbackUrl: process.env.SP_ASSERT_ENDPOINT || 'https://nutakortti-test.vantaa.fi/api/acs',
+      callbackUrl: process.env.SP_ASSERT_ENDPOINT || 'https://nutakortti-testi-vantaa.fi/api/acs',
       issuer: this.entity_id,
       entryPoint: process.env.SSO_LOGIN_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SSO',
       logoutUrl: process.env.SSO_LOGOUT_URL || 'https://testi.apro.tunnistus.fi/idp/profile/SAML2/Redirect/SLO',
