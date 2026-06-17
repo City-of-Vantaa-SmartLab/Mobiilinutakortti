@@ -63,7 +63,10 @@ export class EventService {
     async getCheckInsForEvent(eventId: number): Promise<CheckIn[]> {
         const event = await this.eventRepo.findOneBy({ id: eventId });
         if (!event) { throw new BadRequestException(content.EventNotFound); }
-        return await this.checkInRepo.find({ where: { event }, relations: { event: true, junior: true } });
+        return await this.checkInRepo.find({
+            where: { event: { id: event.id } },
+            relations: { event: true, junior: true },
+        });
     }
 
     async checkJuniorHasPermit(checkInData: CheckInDto): Promise<boolean> {

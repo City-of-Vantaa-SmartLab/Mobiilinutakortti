@@ -337,11 +337,17 @@ export class JuniorService {
         const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
         const junior = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        const activeChallenge = await this.challengeRepo.findOne({ where: { junior: junior }, relations: { junior: true } });
+        const activeChallenge = await this.challengeRepo.findOne({
+            where: { junior: { id: junior.id } },
+            relations: { junior: true },
+        });
         if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
         const challengeData = { junior, challenge };
         await this.challengeRepo.save(challengeData);
-        const savedChallenge = await this.challengeRepo.findOneBy({ junior });
+        const savedChallenge = await this.challengeRepo.findOne({
+            where: { junior: { id: junior.id } },
+            relations: { junior: true },
+        });
         if (!savedChallenge) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
         return savedChallenge;
     }
@@ -459,7 +465,10 @@ export class JuniorService {
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
         const user = await this.getJuniorByPhoneNumber(phoneNumber);
         if (!user) { throw new ConflictException(content.UserNotFound); }
-        const challenge = await this.challengeRepo.findOne({ where: { junior: user }, relations: { junior: true } });
+        const challenge = await this.challengeRepo.findOne({
+            where: { junior: { id: user.id } },
+            relations: { junior: true },
+        });
         if (!challenge) { throw new BadRequestException(content.UserNotFound); }
         return challenge;
     }
