@@ -1,4 +1,4 @@
-import { userTypes, userActions, userState, Status } from '../types/userTypes';
+import { userTypes, userActions, userState, Status } from '../types/userTypes'
 
 const initialState: userState = {
     id: '',
@@ -9,9 +9,9 @@ const initialState: userState = {
 const defaultExp = (state = initialState, action: userActions): userState => {
     switch (action.type) {
         case userTypes.GET_SELF_SUCCESS:
-            return { ...state, id: action.payload.id, name: action.payload.name, status: action.payload.status };
+            return { ...state, id: action.payload.id, name: action.payload.name, status: action.payload.status }
         default:
-            return state;
+            return state
     }
 }
 

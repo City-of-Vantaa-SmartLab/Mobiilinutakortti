@@ -1,86 +1,86 @@
-import { CheckIn } from '../../checkIn/checkIn.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { ExtraEntry, EntryPermit } from '../../extraEntry/entities';
-import { Length } from 'class-validator';
-import { standardizePhoneNumber, lowercase, trimString } from '../../common/transformers';
+import { CheckIn } from '../../checkIn/checkIn.entity'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, type Relation } from 'typeorm'
+import { ExtraEntry, EntryPermit } from '../../extraEntry/entities'
+import { Length } from 'class-validator'
+import { standardizePhoneNumber, lowercase, trimString } from '../../common/transformers'
 
 @Entity()
 export class Junior {
     @PrimaryGeneratedColumn('uuid')
-    id!: string;
+    id!: string
 
     @Column({ transformer: trimString })
-    firstName: string = '';
+    firstName: string = ''
 
     @Column({ transformer: trimString })
-    lastName: string = '';
+    lastName: string = ''
 
     @Column({ default: '', transformer: trimString })
-    nickName: string = '';
+    nickName: string = ''
 
     @Column({ unique: true, transformer: standardizePhoneNumber })
-    phoneNumber: string = '';
+    phoneNumber: string = ''
 
     @Column({ default: false })
-    smsPermissionJunior: boolean = false;
+    smsPermissionJunior: boolean = false
 
     @Column()
-    postCode: string = '';
+    postCode: string = ''
 
     @Column()
-    school: string = '';
+    school: string = ''
 
     @Column()
-    class: string = '';
+    class: string = ''
 
     @Column()
-    parentsName: string = '';
+    parentsName: string = ''
 
     @Column({ transformer: standardizePhoneNumber })
-    parentsPhoneNumber: string = '';
+    parentsPhoneNumber: string = ''
 
     @Column({ default: false })
-    smsPermissionParent: boolean = false;
+    smsPermissionParent: boolean = false
 
     @Column({ nullable: true  })
-    parentsEmail: string = '';
+    parentsEmail: string = ''
 
     @Column({ default: false })
-    emailPermissionParent: boolean = false;
+    emailPermissionParent: boolean = false
 
     @Column({ nullable: true  })
-    additionalContactInformation: string = '';
+    additionalContactInformation: string = ''
 
     @Column({ transformer: lowercase })
     @Length(1, 1)
-    gender: string = '';
+    gender: string = ''
 
     @Column({ type: 'date', default: new Date(), nullable: true })
-    birthday: string = '';
+    birthday: string = ''
 
     @Column({ type: 'int', nullable: true })
-    homeYouthClub: number | null = null;
+    homeYouthClub: number | null = null
 
     @Column({ default: 'fi' })
-    communicationsLanguage: string = 'fi';
+    communicationsLanguage: string = 'fi'
 
     @Column()
-    status: string = '';
+    status: string = ''
 
     @Column({ type: 'date', default: new Date(), nullable: true })
-    creationDate: string = '';
+    creationDate: string = ''
 
     @Column()
-    photoPermission: boolean = false;
+    photoPermission: boolean = false
 
     @OneToMany(() => CheckIn, checkIn => checkIn.junior)
-    checkIns!: CheckIn[];
+    checkIns!: Relation<CheckIn[]>
 
     // Extra entries are an optional feature to use the same registry of juniors for extra activities outside youth clubs, such as a permission to use a youth gym. See the environment variable VITE_ENABLE_EXTRA_ENTRIES in the admin frontend.
     @OneToMany(() => ExtraEntry, extraEntry => extraEntry.junior)
-    extraEntries!: ExtraEntry[];
+    extraEntries!: Relation<ExtraEntry[]>
 
     // The permits are meant to work as an intermediate step towards an extra entry. For example, a junior could have a parent's permit to participate in an introductory gym course. After the course, they would have the extra entry itself, indicating they are qualified to use the gym.
     @OneToMany(() => EntryPermit, permit => permit.junior)
-    entryPermits!: EntryPermit[];
+    entryPermits!: Relation<EntryPermit[]>
 }

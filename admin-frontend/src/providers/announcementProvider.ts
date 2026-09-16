@@ -1,6 +1,6 @@
-import api from '../api';
-import { newHttpErrorFromResponse } from '../utils';
-import { httpClientWithRefresh } from '../httpClients';
+import api from '../api'
+import { newHttpErrorFromResponse } from '../utils'
+import { httpClientWithRefresh } from '../httpClients'
 
 export const announcementProvider = {
     getList: async (params: any) => {
@@ -8,20 +8,20 @@ export const announcementProvider = {
             recipient: params.data.recipient,
             msgType: params.data.msgType,
             youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
-        });
+        })
 
-        const url = api.announcement.dryRun;
+        const url = api.announcement.dryRun
         const options = {
             method: 'POST',
             body: data,
             headers: { "Content-Type": "application/json" },
-        };
-
-        const response = await httpClientWithRefresh(url, options);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
         }
-        return { data: response.message };
+
+        const response = await httpClientWithRefresh(url, options)
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response)
+        }
+        return { data: response.message }
     },
 
     getOne: async (_params: any) => {
@@ -41,7 +41,7 @@ export const announcementProvider = {
                 msgType: undefined,
                 youthClub: undefined
             }
-        };
+        }
     },
 
     create: async (params: any) => {
@@ -55,7 +55,7 @@ export const announcementProvider = {
             fi: null,
             en: null,
             sv: null,
-        };
+        }
 
         const titles = params.data.title ? {
             fi: params.data.title.fi,
@@ -65,7 +65,7 @@ export const announcementProvider = {
             fi: null,
             en: null,
             sv: null,
-        };
+        }
 
         const data = JSON.stringify({
             content: contents,
@@ -73,43 +73,43 @@ export const announcementProvider = {
             recipient: params.data.recipient,
             msgType: params.data.msgType,
             youthClub: params.data.sendToAllYouthClubs ? null : params.data.youthClub
-        });
+        })
 
-        const url = api.announcement.create;
+        const url = api.announcement.create
         const options = {
             method: 'POST',
             body: data,
             headers: { "Content-Type": "application/json" },
-        };
-
-        const response = await httpClientWithRefresh(url, options);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
         }
-        return { data: { id: Date.now(), message: response.message } };
+
+        const response = await httpClientWithRefresh(url, options)
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response)
+        }
+        return { data: { id: Date.now(), message: response.message } }
     },
 
     getMany: async (_params: any) => {
-        throw new Error('GET_MANY not implemented for announcement');
+        throw new Error('GET_MANY not implemented for announcement')
     },
 
     getManyReference: async (_params: any) => {
-        throw new Error('GET_MANY_REFERENCE not implemented for announcement');
+        throw new Error('GET_MANY_REFERENCE not implemented for announcement')
     },
 
     update: async (_params: any) => {
-        throw new Error('UPDATE not implemented for announcement');
+        throw new Error('UPDATE not implemented for announcement')
     },
 
     updateMany: async (_params: any) => {
-        throw new Error('UPDATE_MANY not implemented for announcement');
+        throw new Error('UPDATE_MANY not implemented for announcement')
     },
 
     delete: async (_params: any) => {
-        throw new Error('DELETE not implemented for announcement');
+        throw new Error('DELETE not implemented for announcement')
     },
 
     deleteMany: async (_params: any) => {
-        throw new Error('DELETE_MANY not implemented for announcement');
+        throw new Error('DELETE_MANY not implemented for announcement')
     },
-};
+}

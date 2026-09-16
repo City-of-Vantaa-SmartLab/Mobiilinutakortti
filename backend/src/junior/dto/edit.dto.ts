@@ -1,39 +1,39 @@
-import { IsNotEmpty, Length, IsDateString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, Length, IsDateString } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class EditJuniorDto {
 
     @IsNotEmpty()
-    readonly id!: string;
+    readonly id!: string
 
-    phoneNumber!: string;
+    phoneNumber!: string
     @Type(() => Boolean)
-    smsPermissionJunior!: boolean;
-    firstName!: string;
-    lastName!: string;
-    nickName!: string;
-    postCode!: string;
-    school!: string;
-    class!: string;
-    parentsName!: string;
-    parentsPhoneNumber!: string;
+    smsPermissionJunior!: boolean
+    firstName!: string
+    lastName!: string
+    nickName!: string
+    postCode!: string
+    school!: string
+    class!: string
+    parentsName!: string
+    parentsPhoneNumber!: string
     @Type(() => Boolean)
-    smsPermissionParent!: boolean;
-    parentsEmail!: string;
+    smsPermissionParent!: boolean
+    parentsEmail!: string
     @Type(() => Boolean)
-    emailPermissionParent!: boolean;
-    additionalContactInformation!: string;
+    emailPermissionParent!: boolean
+    additionalContactInformation!: string
 
     @Length(1, 1)
-    gender!: string;
+    gender!: string
 
     @IsDateString()
-    birthday!: string;
+    birthday!: string
 
     @Type(() => Number)
-    homeYouthClub!: number | null;
-    communicationsLanguage!: string;
-    status!: string;
+    homeYouthClub!: number | null
+    communicationsLanguage!: string
+    status!: string
     @Type(() => Boolean)
-    photoPermission!: boolean;
+    photoPermission!: boolean
 }

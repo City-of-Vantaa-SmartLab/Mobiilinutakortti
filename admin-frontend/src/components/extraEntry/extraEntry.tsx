@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { useRefresh } from 'react-admin';
-import { MenuItem, Select, Card, CardContent, SelectChangeEvent, Button } from '@mui/material';
-import { Add, CancelOutlined } from '@mui/icons-material';
+import { useCallback, useEffect, useState, useRef } from 'react'
+import { useRefresh } from 'react-admin'
+import { MenuItem, Select, Card, CardContent, SelectChangeEvent, Button } from '@mui/material'
+import { Add, CancelOutlined } from '@mui/icons-material'
 import {
     List,
     Datagrid,
@@ -22,45 +22,52 @@ import {
     useNotify,
     ListProps,
     EditProps
-} from 'react-admin';
-import ChildCareIcon from '@mui/icons-material/ChildCare';
-import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils';
-import { ExtraEntryTable, EmptyChoicesText } from './extraEntryStyledComponents';
-import { ReturnButton } from '../styledComponents';
-import { extraEntryProvider } from '../../providers';
-import { PhoneNumberField } from '../phoneNumberField';
-import useAutoLogout from '../../hooks/useAutoLogout';
+} from 'react-admin'
+import ChildCareIcon from '@mui/icons-material/ChildCare'
+import { getEntryTypes, statusChoices, Status, hrefFragmentToJunior } from '../../utils'
+import { ExtraEntryTable, EmptyChoicesText } from './extraEntryStyledComponents'
+import { ReturnButton } from '../styledComponents'
+import { extraEntryProvider } from '../../providers'
+import { PhoneNumberField } from '../phoneNumberField'
+import useAutoLogout from '../../hooks/useAutoLogout'
+
+interface EntryTypeChoice {
+    id: number
+    name: string
+}
 
 export const ExtraEntryList = (props: ListProps) => {
-    const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState([]);
-    const [entryPermitTypeChoices, setEntryPermitTypeChoices] = useState([]);
-    const [choicesLoaded, setChoicesLoaded] = useState(false);
-    const autoFocusSource = useRef(null);
+    const [extraEntryTypeChoices, setExtraEntryTypeChoices] = useState<EntryTypeChoice[]>([])
+    const [entryPermitTypeChoices, setEntryPermitTypeChoices] = useState<EntryTypeChoice[]>([])
+    const [choicesLoaded, setChoicesLoaded] = useState(false)
+    const autoFocusSource = useRef<string | null>(null)
 
-    useAutoLogout();
+    useAutoLogout()
 
     useEffect(() => {
         const addTypesToState = async () => {
-            const entryTypes = await getEntryTypes();
-            const eeTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lisämerkintöjä"}, {id: -2, name: "Mikä tahansa lisämerkintä"}];
-            const permitTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lupia"}, {id: -2, name: "Mikä tahansa lupa"}];
-            setExtraEntryTypeChoices(eeTypesWithCustomOptions);
-            setEntryPermitTypeChoices(permitTypesWithCustomOptions);
-            setChoicesLoaded(true);
-        };
-        addTypesToState();
-    }, []);
+            const entryTypes = await getEntryTypes()
+            const eeTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lisämerkintöjä"}, {id: -2, name: "Mikä tahansa lisämerkintä"}]
+            const permitTypesWithCustomOptions = [...entryTypes, {id: -1, name: "Ei lupia"}, {id: -2, name: "Mikä tahansa lupa"}]
+            setExtraEntryTypeChoices(eeTypesWithCustomOptions)
+            setEntryPermitTypeChoices(permitTypesWithCustomOptions)
+            setChoicesLoaded(true)
+        }
+        addTypesToState()
+    }, [])
 
-    const CustomPagination = (props: any) => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />;
+    const CustomPagination = (props: any) => <Pagination rowsPerPageOptions={[5, 10, 25, 50]} {...props} />
+        const extraEntriesOnlyStatusName = statusChoices.find(s => s.id === Status.extraEntriesOnly)?.name ?? 'TEKSTI_PUUTTUU'
+    const expiredStatusName = statusChoices.find(s => s.id === Status.expired)?.name ?? 'TEKSTI_PUUTTUU'
 
     // Since React re-renders after search debounce, the input focus would always be set to the last filter input component with auto focus. Therefore we manually keep track of what was the last input the user typed in to set auto focus correctly. We use useRef and not useState to prevent re-rendering on first keypress.
     const checkAutoFocus = (source: string) => {
-        if (!autoFocusSource.current) return true;
-        return autoFocusSource.current === source;
+        if (!autoFocusSource.current) return true
+        return autoFocusSource.current === source
     }
 
     const setAutoFocus = (source: string) => {
-        autoFocusSource.current = source;
+        autoFocusSource.current = source
     }
 
     const ExtraEntryFilter = (props: any) => (
@@ -70,18 +77,18 @@ export const ExtraEntryList = (props: ListProps) => {
             <SelectInput label="Lupatyyppi" source="entryPermitType" choices={entryPermitTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} sx={{ minWidth: 250 }} />
             <SelectInput label="Lisämerkintätyyppi" source="extraEntryType" choices={extraEntryTypeChoices} alwaysOn onChange={() => setAutoFocus("none")} sx={{ minWidth: 250 }} />
         </Filter>
-    );
+    )
 
     return (<>
         <Card sx={{ marginTop: 2 }}>
-          <CardContent>
-            <p>Nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" ja joilla ei ole ainuttakaan lisämerkintää (tai lupaa), poistuvat järjestelmästä automaattisesti joka yö tehtävässä ylläpitosiivouksessa. Samalla tarkistetaan myös onko lisämerkinnän ikäraja tullut vastaan, ja merkintä poistetaan automaattisesti jos on.</p>
-            <p>Huomaa myös, että toiminto "Poista vanhat käyttäjät" siirtää "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}" -tilaan nuoret, joilla on lisämerkintöjä.</p>
-            <p>Nuorille, jotka ovat tilassa "{statusChoices.find(s => s.id === Status.expired).name}", ei voi lisätä merkintöjä.</p>
-            <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
-          </CardContent>
+            <CardContent>
+                <p>Nuoret, joiden tila on "{extraEntriesOnlyStatusName}" ja joilla ei ole ainuttakaan lisämerkintää (tai lupaa), poistuvat järjestelmästä automaattisesti joka yö tehtävässä ylläpitosiivouksessa. Samalla tarkistetaan myös onko lisämerkinnän ikäraja tullut vastaan, ja merkintä poistetaan automaattisesti jos on.</p>
+                <p>Huomaa myös, että toiminto "Poista vanhat käyttäjät" siirtää "{extraEntriesOnlyStatusName}" -tilaan nuoret, joilla on lisämerkintöjä.</p>
+                <p>Nuorille, jotka ovat tilassa "{expiredStatusName}", ei voi lisätä merkintöjä.</p>
+                <p>Lisämerkintä- ja lupatyyppisuodattimet ovat TAI-tyyppisiä, muut JA-tyyppisiä.</p>
+            </CardContent>
         </Card>
-        <List sx={{ mt: 2 }} title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : null} debounce={500} exporter={false} {...props}
+        <List sx={{ mt: 2 }} title="Lisämerkinnät" pagination={<CustomPagination />} filters={choicesLoaded ? <ExtraEntryFilter /> : undefined} debounce={500} exporter={false} {...props}
             filterDefaultValues={{ entryPermitType: -2, extraEntryType: -2 }}>
             <Datagrid bulkActionButtons={false} rowClick={false}>
                 <TextField label="Nimi" source="displayName" />
@@ -101,239 +108,239 @@ export const ExtraEntryList = (props: ListProps) => {
             </Datagrid>
         </List>
     </>)
-};
+}
 
 const CustomToolbar = ({cancel, ...others}: {cancel: () => void, [key: string]: any}) => (
     <Toolbar {...others}>
         <ReturnButton onClick={cancel} />
     </Toolbar>
-);
+)
 
 export const ExtraEntryEdit = (props: EditProps) => {
-    useAutoLogout();
-    const [newExtraEntryType, setNewExtraEntryType] = useState(-1);
-    const [newEntryPermitType, setNewEntryPermitType] = useState(-1);
-    const [entryTypeChoices, setEntryTypeChoices] = useState([]);
+    useAutoLogout()
+    const [newExtraEntryType, setNewExtraEntryType] = useState(-1)
+    const [newEntryPermitType, setNewEntryPermitType] = useState(-1)
+    const [entryTypeChoices, setEntryTypeChoices] = useState<EntryTypeChoice[]>([])
 
-    const notify = useNotify();
-    const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify]);
-    const refresh = useRefresh();
-    const redirect = useRedirect();
+    const notify = useNotify()
+    const notifyError = useCallback((msg: string) => notify(msg, { type: 'error' }), [notify])
+    const refresh = useRefresh()
+    const redirect = useRedirect()
 
     useEffect(() => {
         const addExtraEntryTypesToState = async () => {
-            const entryTypes = await getEntryTypes();
-            setEntryTypeChoices(entryTypes);
-        };
-        addExtraEntryTypesToState();
-    }, []);
+            const entryTypes = await getEntryTypes()
+            setEntryTypeChoices(entryTypes)
+        }
+        addExtraEntryTypesToState()
+    }, [])
 
     const redirectToList = () => {
-        redirect("/extraEntry");
-    };
+        redirect("/extraEntry")
+    }
 
     const handleDelete = async (eeId: string, isPermit: boolean) => {
-        const response = await extraEntryProvider.delete({data: {deletableId: eeId, isPermit: isPermit}});
+        const response = await extraEntryProvider.delete({data: {deletableId: eeId, isPermit: isPermit}})
         if (response.data.statusCode < 200 || response.data.statusCode >= 300) {
-            notifyError('Virhe merkinnän poistamisessa');
+            notifyError('Virhe merkinnän poistamisessa')
         } else {
-            notify(response.data.message, { type: 'success' });
-            refresh();
+            notify(response.data.message, { type: 'success' })
+            refresh()
         }
-    };
+    }
 
     const handleExtraEntryChange = (e: SelectChangeEvent<number>) => {
-        setNewExtraEntryType(Number(e.target.value));
-    };
+        setNewExtraEntryType(Number(e.target.value))
+    }
 
     const handlePermitChange = (e: SelectChangeEvent<number>) => {
-        setNewEntryPermitType(Number(e.target.value));
-    };
+        setNewEntryPermitType(Number(e.target.value))
+    }
 
     const handleAdd = async (juniorId: string, isPermit: boolean) => {
-        const newType = isPermit ? newEntryPermitType : newExtraEntryType;
-        const response = await extraEntryProvider.create({data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}});
-         if (response.data.statusCode < 200 || response.data.statusCode >= 300) {
-            notifyError('Virhe merkinnän lisäämisessä');
+        const newType = isPermit ? newEntryPermitType : newExtraEntryType
+        const response = await extraEntryProvider.create({data: {juniorId: juniorId, entryTypeId: newType, isPermit: isPermit}})
+        if (response.data.statusCode < 200 || response.data.statusCode >= 300) {
+            notifyError('Virhe merkinnän lisäämisessä')
         } else {
-            isPermit ? setNewEntryPermitType(-1) : setNewExtraEntryType(-1);
-            notify(response.data.message, { type: 'success' });
-            refresh();
+            isPermit ? setNewEntryPermitType(-1) : setNewExtraEntryType(-1)
+            notify(response.data.message, { type: 'success' })
+            refresh()
         }
-    };
+    }
 
     return (
         <Edit title="Muokkaa lisämerkintöjä" {...props}>
             <SimpleForm margin="normal"  toolbar={<CustomToolbar cancel={redirectToList}/>}>
                 <FormDataConsumer>
                     {({ formData }) => {
-                        const status = statusChoices.find((item) => item.id === formData.status);
-                        const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI");
+                        const status = statusChoices.find((item) => item.id === formData.status) ?? { id: formData.status, name: '' }
+                    const formattedBirthday = new Date(formData.birthday).toLocaleDateString("fi-FI")
 
-                        const selectedEeTypes = formData.extraEntries.map((entry: any) => {
-                            return entry.entryType?.id;
-                        });
-                        const availableEeChoices = entryTypeChoices.filter(item => !selectedEeTypes.includes(item.id));
+                    const selectedEeTypes = formData.extraEntries.map((entry: any) => {
+                        return entry.entryType?.id
+                    })
+                    const availableEeChoices = entryTypeChoices.filter(item => !selectedEeTypes.includes(item.id))
 
-                        const selectedPermitTypes = formData.entryPermits.map((entry: any) => {
-                            return entry.entryType?.id;
-                        });
-                        const availablePermitChoices = entryTypeChoices.filter(item => (!selectedEeTypes.includes(item.id) && !selectedPermitTypes.includes(item.id)));
+                    const selectedPermitTypes = formData.entryPermits.map((entry: any) => {
+                        return entry.entryType?.id
+                    })
+                    const availablePermitChoices = entryTypeChoices.filter(item => (!selectedEeTypes.includes(item.id) && !selectedPermitTypes.includes(item.id)))
 
-                        return <>
-                            <ExtraEntryTable>
-                                <tbody>
-                                    <tr>
-                                        <th>Nimi</th>
-                                        <td>{formData.displayName}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Puhelinnumero</th>
-                                        <td>{formData.phoneNumber}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Syntymäpäivä</th>
-                                        <td>{formattedBirthday}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Ikä vuosina</th>
-                                        <td>{formData.age}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tila</th>
-                                        <td>{status.name}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <a href={hrefFragmentToJunior(formData.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                <ChildCareIcon /> Muokkaa nuoren tietoja
-                                            </a>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </ExtraEntryTable>
+                    return <>
+                        <ExtraEntryTable>
+                            <tbody>
+                                <tr>
+                                    <th>Nimi</th>
+                                    <td>{formData.displayName}</td>
+                                </tr>
+                                <tr>
+                                    <th>Puhelinnumero</th>
+                                    <td>{formData.phoneNumber}</td>
+                                </tr>
+                                <tr>
+                                    <th>Syntymäpäivä</th>
+                                    <td>{formattedBirthday}</td>
+                                </tr>
+                                <tr>
+                                    <th>Ikä vuosina</th>
+                                    <td>{formData.age}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tila</th>
+                                    <td>{status.name}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <a href={hrefFragmentToJunior(formData.id)} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <ChildCareIcon /> Muokkaa nuoren tietoja
+                                        </a>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </ExtraEntryTable>
 
-                            <ExtraEntryTable>
-                                <thead>
-                                    <tr><th>Lisämerkinnät</th></tr>
-                                </thead>
-                                <tbody>
-                                    {formData.extraEntries.map((ee: any) => {
-                                        return <tr key={ee.id}>
-                                            <td>{ee.entryType.name}</td>
-                                            <td>
-                                                <Button
-                                                    value={ee.id}
-                                                    onClick={() => handleDelete(ee.id, false)}
-                                                    type="button"
-                                                    variant="contained"
-                                                    color="primary"
-                                                    size="small"
-                                                    startIcon={<CancelOutlined />}
-                                                    sx={{ margin: '5px' }}
-                                                >
-                                                    Poista
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    })}
-                                </tbody>
-                            </ExtraEntryTable>
-                            <ExtraEntryTable>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            {availableEeChoices.length > 0 && status.id !== Status.expired ? <Select
-                                                sx={{ width: 'fit-content', minWidth: '200px' }}
-                                                onChange={handleExtraEntryChange}
-                                                value={newExtraEntryType}
-                                            >
-                                                <MenuItem value={-1}></MenuItem>
-                                                {availableEeChoices.map(ac => (
-                                                    <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
-                                                ))}
-                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lisämerkintöjä'}</EmptyChoicesText>}
-                                        </td>
+                        <ExtraEntryTable>
+                            <thead>
+                                <tr><th>Lisämerkinnät</th></tr>
+                            </thead>
+                            <tbody>
+                                {formData.extraEntries.map((ee: any) => {
+                                    return <tr key={ee.id}>
+                                        <td>{ee.entryType.name}</td>
                                         <td>
                                             <Button
-                                                onClick={() => handleAdd(formData.id, false)}
+                                                value={ee.id}
+                                                onClick={() => handleDelete(ee.id, false)}
                                                 type="button"
-                                                disabled={newExtraEntryType === -1 || availableEeChoices.length === 0 || status.id === Status.expired}
                                                 variant="contained"
                                                 color="primary"
                                                 size="small"
-                                                startIcon={<Add />}
+                                                startIcon={<CancelOutlined />}
                                                 sx={{ margin: '5px' }}
                                             >
-                                                Lisää
+                                                Poista
                                             </Button>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </ExtraEntryTable>
+                                })}
+                            </tbody>
+                        </ExtraEntryTable>
+                        <ExtraEntryTable>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {availableEeChoices.length > 0 && status.id !== Status.expired ? <Select
+                                            sx={{ width: 'fit-content', minWidth: '200px' }}
+                                            onChange={handleExtraEntryChange}
+                                            value={newExtraEntryType}
+                                        >
+                                            <MenuItem value={-1}></MenuItem>
+                                            {availableEeChoices.map(ac => (
+                                                <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
+                                            ))}
+                                        </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lisämerkintöjä'}</EmptyChoicesText>}
+                                    </td>
+                                    <td>
+                                        <Button
+                                            onClick={() => handleAdd(formData.id, false)}
+                                            type="button"
+                                            disabled={newExtraEntryType === -1 || availableEeChoices.length === 0 || status.id === Status.expired}
+                                            variant="contained"
+                                            color="primary"
+                                            size="small"
+                                            startIcon={<Add />}
+                                            sx={{ margin: '5px' }}
+                                        >
+                                            Lisää
+                                        </Button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ExtraEntryTable>
 
-                            <ExtraEntryTable>
-                                <thead>
-                                    <tr><th>Luvat</th></tr>
-                                </thead>
-                                <tbody>
-                                    {formData.entryPermits.map((permit: any) => {
-                                        return <tr key={permit.id}>
-                                            <td>{permit.entryType.name}</td>
-                                            <td>
-                                                <Button
-                                                    value={permit.id}
-                                                    onClick={() => handleDelete(permit.id, true)}
-                                                    type="button"
-                                                    variant="contained"
-                                                    color="primary"
-                                                    size="small"
-                                                    startIcon={<CancelOutlined />}
-                                                    sx={{ margin: '5px' }}
-                                                >
-                                                    Poista
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    })}
-                                </tbody>
-                            </ExtraEntryTable>
-                            <ExtraEntryTable>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            {availablePermitChoices.length > 0 && status.id !== Status.expired ? <Select
-                                                sx={{ width: 'fit-content', minWidth: '200px' }}
-                                                onChange={handlePermitChange}
-                                                value={newEntryPermitType}
-                                            >
-                                                <MenuItem value={-1}></MenuItem>
-                                                {availablePermitChoices.map(ac => (
-                                                    <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
-                                                ))}
-                                            </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lupia'}</EmptyChoicesText>}
-                                        </td>
+                        <ExtraEntryTable>
+                            <thead>
+                                <tr><th>Luvat</th></tr>
+                            </thead>
+                            <tbody>
+                                {formData.entryPermits.map((permit: any) => {
+                                    return <tr key={permit.id}>
+                                        <td>{permit.entryType.name}</td>
                                         <td>
                                             <Button
-                                                onClick={() => handleAdd(formData.id, true)}
+                                                value={permit.id}
+                                                onClick={() => handleDelete(permit.id, true)}
                                                 type="button"
-                                                disabled={newEntryPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}
                                                 variant="contained"
                                                 color="primary"
                                                 size="small"
-                                                startIcon={<Add />}
+                                                startIcon={<CancelOutlined />}
                                                 sx={{ margin: '5px' }}
                                             >
-                                                Lisää
+                                                Poista
                                             </Button>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </ExtraEntryTable>
-                        </>
+                                })}
+                            </tbody>
+                        </ExtraEntryTable>
+                        <ExtraEntryTable>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {availablePermitChoices.length > 0 && status.id !== Status.expired ? <Select
+                                            sx={{ width: 'fit-content', minWidth: '200px' }}
+                                            onChange={handlePermitChange}
+                                            value={newEntryPermitType}
+                                        >
+                                            <MenuItem value={-1}></MenuItem>
+                                            {availablePermitChoices.map(ac => (
+                                                <MenuItem key={ac.id} value={ac.id}>{ac.name}</MenuItem>
+                                            ))}
+                                        </Select> : <EmptyChoicesText>{status.id === Status.expired ? status.name : 'Ei muita lupia'}</EmptyChoicesText>}
+                                    </td>
+                                    <td>
+                                        <Button
+                                            onClick={() => handleAdd(formData.id, true)}
+                                            type="button"
+                                            disabled={newEntryPermitType === -1 || availablePermitChoices.length === 0 || status.id === Status.expired}
+                                            variant="contained"
+                                            color="primary"
+                                            size="small"
+                                            startIcon={<Add />}
+                                            sx={{ margin: '5px' }}
+                                        >
+                                            Lisää
+                                        </Button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ExtraEntryTable>
+                    </>
                     }}
                 </FormDataConsumer>
             </SimpleForm>
         </Edit>
-    );
-};
+    )
+}

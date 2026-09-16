@@ -1,2 +1,2 @@
-export { Check } from './check.vm';
-export { Message } from './message.vm';
+export { Check } from './check.vm'
+export { Message } from './message.vm'

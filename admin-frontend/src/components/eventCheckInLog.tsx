@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useNotify, useRedirect } from 'react-admin';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect, ReactNode } from 'react'
+import { useNotify, useRedirect } from 'react-admin'
+import { useParams } from 'react-router-dom'
 import {
     Table, TableHead,
     TableRow, TableCell, TableBody,
     Link
-} from '@mui/material';
+} from '@mui/material'
 import {
     Container,
     CheckInLogCard,
@@ -13,37 +13,37 @@ import {
     CheckInLogCardContent,
     VerticalCardPadding,
     ReturnButton
-} from './styledComponents';
-import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
-import api from '../api';
-import useAutoLogout from '../hooks/useAutoLogout';
-import { hrefFragmentToJunior, throwIfErrorResponse } from '../utils';
+} from './styledComponents'
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh'
+import api from '../api'
+import useAutoLogout from '../hooks/useAutoLogout'
+import { hrefFragmentToJunior, throwIfErrorResponse } from '../utils'
 
 interface EventCheckInLogViewModel {
-    targetName: string;
-    juniors: JuniorInformation[];
+    targetName: string
+    juniors: JuniorInformation[]
 }
 
 interface JuniorInformation {
-    id: string;
-    name: string;
-    time: string;
+    id: string
+    name: string
+    time: string
 }
 
 // Lists the names of people who have checked into an event.
 const EventCheckInLogView = () => {
-    useAutoLogout();
-    const redirect = useRedirect();
-    const { eventId } = useParams<{ eventId: string }>();
+    useAutoLogout()
+    const redirect = useRedirect()
+    const { eventId } = useParams<{ eventId: string }>()
 
-    const [eventName, setEventName] = useState('');
-    const [tableRowData, setTableRowData] = useState([]);
-    const [loaded, setLoaded] = useState(false);
-    const notify = useNotify();
+    const [eventName, setEventName] = useState('')
+    const [tableRowData, setTableRowData] = useState<ReactNode[]>([])
+    const [loaded, setLoaded] = useState(false)
+    const notify = useNotify()
 
     const populateTableRowData = (juniors: JuniorInformation[]) => {
-        const rowData = [];
-        let key = 0;
+        const rowData: ReactNode[] = []
+        let key = 0
         juniors.forEach(junior => {
             rowData.push(
                 <TableRow key={key}>
@@ -55,50 +55,50 @@ const EventCheckInLogView = () => {
                     <TableCell>{junior.time}</TableCell>
                 </TableRow >
             )
-            key++;
-        });
-        setTableRowData(rowData);
+            key++
+        })
+        setTableRowData(rowData)
     }
 
     const getCheckIns = async () => {
-        const url = `${api.event.checkInLog}/${eventId}`;
+        const url = `${api.event.checkInLog}/${eventId}`
         const options = {
             method: 'GET'
-        };
+        }
         try {
-            const response = await httpClientWithRefresh(url, options);
+            const response = await httpClientWithRefresh(url, options)
             if (!response) {
-                notify('Istunto vanhentui. Kirjaudu uudelleen.', { type: 'warning' });
-                setLoaded(true);
-                return;
+                notify('Istunto vanhentui. Kirjaudu uudelleen.', { type: 'warning' })
+                setLoaded(true)
+                return
             }
 
-            throwIfErrorResponse(response);
+            throwIfErrorResponse(response)
 
             if (!Array.isArray(response.juniors)) {
-                notify('Virhe tietojen haussa', { type: 'error' });
-                setLoaded(true);
-                return;
+                notify('Virhe tietojen haussa', { type: 'error' })
+                setLoaded(true)
+                return
             }
 
-            const viewModel: EventCheckInLogViewModel = response;
-            setEventName(viewModel.targetName || 'Tapahtuma');
-            setLoaded(true);
+            const viewModel: EventCheckInLogViewModel = response
+            setEventName(viewModel.targetName || 'Tapahtuma')
+            setLoaded(true)
             if (viewModel.juniors.length === 0) {
-                notify('Ei ilmoittautuneita', { type: 'warning' });
-                return;
+                notify('Ei ilmoittautuneita', { type: 'warning' })
+                return
             }
-            populateTableRowData(viewModel.juniors);
+            populateTableRowData(viewModel.juniors)
         } catch (error: any) {
-            console.error('Error fetching check-ins:', error);
-            notify(error?.message || 'Virhe ilmoittautumisten haussa', { type: 'error' });
-            setLoaded(true);
+            console.error('Error fetching check-ins:', error)
+            notify(error?.message || 'Virhe ilmoittautumisten haussa', { type: 'error' })
+            setLoaded(true)
         }
     }
 
     useEffect(() => {
-        getCheckIns();
-    }, [eventId]);
+        getCheckIns()
+    }, [eventId])
 
     return (
         <Container>
@@ -127,4 +127,4 @@ const EventCheckInLogView = () => {
     )
 }
 
-export default EventCheckInLogView;
+export default EventCheckInLogView

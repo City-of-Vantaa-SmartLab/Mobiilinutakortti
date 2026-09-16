@@ -1,5 +1,5 @@
-import React from 'react';
-import { FieldProps, Field, FormikErrors } from 'formik';
+import React from 'react'
+import { FieldProps, Field, FormikErrors } from 'formik'
 import { Label, Description, ErrorMessage, Input, Select, SelectOption, SelectLabel, Radio, Dropdown } from '../StyledComponents'
 import { useTranslations } from '../../translations'
 import { Translations } from '../../../customizations/types'
@@ -33,20 +33,20 @@ export const InputField: React.FC<FieldProps<string, FormValues> & InputProps> =
     const t = useTranslations()
     const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (type === 'phone') {
-            const val = e.target.value.replace(/[^\d+]/g, '');
-            setFieldValue(field.name, val);
+            const val = e.target.value.replace(/[^\d+]/g, '')
+            setFieldValue(field.name, val)
         }
         handleBlur(e)
     }
-    const isTouched = touched?.[field.name as keyof FormValues];
-    const error = getFieldError(t, errors, field.name as keyof FormValues);
+    const isTouched = touched?.[field.name as keyof FormValues]
+    const error = getFieldError(t, errors, field.name as keyof FormValues)
     return (
         <div>
             <Label>{title}</Label>
             <Input placeholder={placeholder} {...field} {...props} onBlur={onBlur} />
             {isTouched && error && <ErrorMessage>{error}</ErrorMessage>}
         </div>
-    );
+    )
 }
 
 interface SelectItem {
@@ -98,7 +98,7 @@ export const SelectGroup: React.FC<GroupProps> = ({
     const t = useTranslations()
     const inputs = options.map(option => (
         <Field key={option.value} component={RadioField} name={name} data={option}/>
-    ));
+    ))
     return(
         <div>
             {title && <Label>{title}</Label>}
@@ -127,13 +127,13 @@ export const DropdownField: React.FC<DropdownProps & FieldProps> = ({
     ...props
 }) => {
     const t = useTranslations()
-    const isTouched = touched?.[field.name];
-    const error = getFieldError(t, errors, field.name as keyof FormValues);
+    const isTouched = touched?.[field.name]
+    const error = getFieldError(t, errors, field.name as keyof FormValues)
     const inputs = options.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>
-    ));
+    ))
 
-    const defaultValue = optionType && optionType === 'number' ? 0 : '';
+    const defaultValue = optionType && optionType === 'number' ? 0 : ''
 
     return(
         <div>

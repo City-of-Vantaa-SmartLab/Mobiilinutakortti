@@ -1,1 +1,1 @@
-export { Club } from './club.entity';
+export { Club } from './club.entity'

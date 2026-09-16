@@ -7,29 +7,30 @@ import {
     Inject,
     forwardRef,
     Logger
-} from '@nestjs/common';
-import * as content from '../content';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { ConfigHandler } from '../configHandler';
-import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm';
-import { Gender } from '../common/genderMapping';
-import { getFilters, obfuscate } from '../common/helpers';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Junior, Challenge } from './entities';
-import { JuniorUserViewModel, JuniorListViewModel } from './vm';
-import { ListControlDto } from '../common/dto';
-import { ParentFormDto } from '../junior/dto/';
-import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto';
-import { SmsService } from '../sms/sms.service';
-import { Status } from './enum/status.enum';
-import { validate } from 'class-validator';
-import { YouthWorker } from '../youthWorker/entities';
-import { SpamGuardService } from '../spamGuard/spamGuard.service';
-import { standardizePhoneNumber } from '../common/transformers';
+} from '@nestjs/common'
+import * as content from '../content'
+import * as AuthenticationServiceModule from '../authentication/authentication.service'
+import type { AuthenticationService } from '../authentication/authentication.service'
+import { ConfigHandler } from '../configHandler'
+import { DeleteResult, QueryFailedError, Repository, UpdateResult, SelectQueryBuilder } from 'typeorm'
+import { Gender } from '../common/genderMapping'
+import { getFilters, obfuscate } from '../common/helpers'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Junior, Challenge } from './entities'
+import { JuniorUserViewModel, JuniorListViewModel } from './vm'
+import { ListControlDto } from '../common/dto'
+import { normalizePhoneNumberValue } from '../common/transformers'
+import { ParentFormDto } from '../junior/dto/'
+import { RegisterJuniorDto, EditJuniorDto, SeasonExpiredDto } from './dto'
+import { SmsService } from '../sms/sms.service'
+import { Status } from './enum/status.enum'
+import { validate } from 'class-validator'
+import { YouthWorker } from '../youthWorker/entities'
+import { SpamGuardService } from '../spamGuard/spamGuard.service'
 
 @Injectable()
 export class JuniorService {
-    private readonly logger = new Logger('Junior Service');
+    private readonly logger = new Logger('Junior Service')
 
     constructor(
         @InjectRepository(YouthWorker)
@@ -38,7 +39,7 @@ export class JuniorService {
         private readonly juniorRepo: Repository<Junior>,
         @InjectRepository(Challenge)
         private readonly challengeRepo: Repository<Challenge>,
-        @Inject(forwardRef(() => AuthenticationService))
+        @Inject(forwardRef(() => AuthenticationServiceModule.AuthenticationService))
         private readonly authenticationService: AuthenticationService,
         private readonly smsService: SmsService,
         private readonly spamGuardService: SpamGuardService,
@@ -60,323 +61,324 @@ export class JuniorService {
     }
 
     async listAllJuniors(controls?: ListControlDto): Promise<JuniorListViewModel> {
-        const filters = getFilters(controls);
-        const juniorQueries = this.getAllJuniorsQuery(filters);
-        const total = await juniorQueries.getCount();
+        const filters = getFilters(controls)
+        const juniorQueries = this.getAllJuniorsQuery(filters)
+        const total = await juniorQueries.getCount()
 
         const response = (await juniorQueries
             .take(filters.take)
             .skip(filters.skip)
             .getMany())
-            .map(e => new JuniorUserViewModel(e));
+            .map(e => new JuniorUserViewModel(e))
 
-        return new JuniorListViewModel(response, total);
+        return new JuniorListViewModel(response, total)
     }
 
     async getJunior(id: string): Promise<Junior> {
-        const junior = await this.juniorRepo.findOneBy({ id });
-        if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        return junior;
+        const junior = await this.juniorRepo.findOneBy({ id })
+        if (!junior) { throw new BadRequestException(content.UserNotFound) }
+        return junior
     }
 
     // Phone number parameter need not be standardized.
     async getJuniorByPhoneNumber(phoneNumber: string): Promise<Junior | null> {
-        return await this.juniorRepo.findOneBy({ phoneNumber: standardizePhoneNumber.to(phoneNumber) });
+        return await this.juniorRepo.findOneBy({ phoneNumber: normalizePhoneNumberValue(phoneNumber) })
     }
 
     async getJuniorsByHomeYouthClub(homeYouthClub: number): Promise<Junior[]> {
-        return await this.juniorRepo.findBy({ homeYouthClub });
+        return await this.juniorRepo.findBy({ homeYouthClub })
     }
 
     async getUniqueJunior(phoneNumber: string, birthday?: string | null, firstName?: string | null, lastName?: string | null): Promise<Junior | null> {
         if (!birthday) {
-            const whereClause: { phoneNumber: string; firstName?: string; lastName?: string } = {
-                phoneNumber: standardizePhoneNumber.to(phoneNumber),
-            };
-            if (firstName) whereClause.firstName = firstName;
-            if (lastName) whereClause.lastName = lastName;
-            return await this.juniorRepo.findOne({ where: whereClause });
+            const whereClause: { phoneNumber: string, firstName?: string, lastName?: string } = {
+                phoneNumber: normalizePhoneNumberValue(phoneNumber)
+            }
+            if (firstName) whereClause.firstName = firstName
+            if (lastName) whereClause.lastName = lastName
+            return await this.juniorRepo.findOne({ where: whereClause })
         }
-        if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday } });
-        return await this.juniorRepo.findOne({ where: { phoneNumber: standardizePhoneNumber.to(phoneNumber), birthday, firstName, lastName } });
+        if (!firstName || !lastName ) return await this.juniorRepo.findOne({ where: { phoneNumber: normalizePhoneNumberValue(phoneNumber), birthday } })
+        return await this.juniorRepo.findOne({ where: { phoneNumber: normalizePhoneNumberValue(phoneNumber), birthday, firstName, lastName } })
     }
 
     async checkLoginChallenge(challengeId: string, challenge: string): Promise<string | undefined> {
-        const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: { junior: true } });
+        const entry = await this.challengeRepo.findOne({ where: { id: challengeId }, relations: { junior: true } })
         // Returning false could be more benefical than providing an exception in terms of security.
-        if (!entry) { return undefined; }
-        if (challenge !== entry.challenge) { return undefined; }
-        const user = entry.junior;
-        if (!user) { return undefined; }
-        await this.challengeRepo.remove(entry);
-        return user.id;
+        if (!entry) { return undefined }
+        if (challenge !== entry.challenge) { return undefined }
+        const user = entry.junior
+        if (!user) { return undefined }
+        await this.challengeRepo.remove(entry)
+        return user.id
     }
 
     async registerByParent(formData: ParentFormDto): Promise<Junior> {
-        const { userData, securityContext } = formData;
-        const nameMatches = userData.parentsName === `${securityContext.firstName} ${securityContext.lastName}`;
-        if (!nameMatches) this.logger.warn(`Parent's name doesn't match for ${obfuscate(userData.parentsName)}`);
-        if (nameMatches && this.authenticationService.validateSecurityContext(securityContext)) return await this.registerJunior(userData);
-        throw new InternalServerErrorException(content.SecurityContextNotValid);
+        const { userData, securityContext } = formData
+        const nameMatches = userData.parentsName === `${securityContext.firstName} ${securityContext.lastName}`
+        if (!nameMatches) this.logger.warn(`Parent's name doesn't match for ${obfuscate(userData.parentsName)}`)
+        if (nameMatches && this.authenticationService.validateSecurityContext(securityContext)) return await this.registerJunior(userData)
+        throw new InternalServerErrorException(content.SecurityContextNotValid)
     }
 
     // When a new season is started, all registered juniors are marked as expired. If a junior registration is not yet finished by a youth worker, the status will be pending. In both cases a parent might re-register the junior.
     // However, production use has shown that sometimes parents mistype the junior's birthday or name. In this case when they try to re-register the junior, they only get an error and try again. And again. And again, especially if the error occurred the previous year and this time around all the information is correct. Eventually they complain to the youth club youth workers, and sometimes this results in a contact to maintenance, i.e. developers.
     // Therefore it was decided that when registering a junior, it would be enough to have a matching phonenumber + either the birthday or name, so not all three are required to match for the existing junior to be considered a match.
     async registerJunior(registrationData: RegisterJuniorDto, userId?: string, noSMS: boolean = false): Promise<Junior> {
-        this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} xxxxxx${registrationData.phoneNumber.slice(-4)} ${registrationData.birthday.slice(0, 4)}-xx-xx`);
+        this.logger.log(`Registering junior ${obfuscate(registrationData.firstName + ' ' + registrationData.lastName)} xxxxxx${registrationData.phoneNumber.slice(-4)} ${registrationData.birthday.slice(0, 4)}-xx-xx`)
 
         let existingJunior = await this.getUniqueJunior(
             registrationData.phoneNumber,
             registrationData.birthday,
             registrationData.firstName,
             registrationData.lastName
-        );
+        )
         if (existingJunior) {
             this.logger.log(`Found existing junior (perfect match: phonenumber, birthday, name): ID ${existingJunior.id}, status ${existingJunior.status}`)
         } else {
-            existingJunior = await this.getUniqueJunior(registrationData.phoneNumber, registrationData.birthday);
+            existingJunior = await this.getUniqueJunior(registrationData.phoneNumber, registrationData.birthday)
             if (existingJunior) {
                 this.logger.log(`Found existing junior (partial match: phonenumber, birthday): ID ${existingJunior.id}, status ${existingJunior.status}`)
             } else {
                 existingJunior = await this.getUniqueJunior(
                     registrationData.phoneNumber, null,
                     registrationData.firstName, registrationData.lastName
-                );
+                )
                 if (existingJunior) {
                     this.logger.log(`Found existing junior (partial match: phonenumber, name): ID ${existingJunior.id}, status ${existingJunior.status}`)
                 }
             }
         }
 
-        let junior: Junior;
+        let junior: Junior
         if (existingJunior) {
             // Youth workers should edit existing juniors via the edit endpoint. Ending up here means they are accidentally trying to create a new junior with matching information of an existing junior. The existing junior would be overwritten, which is probably not what is wanted.
             if (userId) {
-                this.logger.log(`Youth worker ${userId} tried to overwrite existing junior ${existingJunior.id}.`);
-                throw new ConflictException(content.JuniorAlreadyExists);
+                this.logger.log(`Youth worker ${userId} tried to overwrite existing junior ${existingJunior.id}.`)
+                throw new ConflictException(content.JuniorAlreadyExists)
             }
 
             // Only allow account renewal if junior has certain status.
             if ([Status.expired, Status.pending, Status.extraEntriesOnly].includes(existingJunior.status as Status)) {
-                this.logger.log(`Overwriting junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}`);
-                junior = existingJunior;
+                this.logger.log(`Overwriting junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}`)
+                junior = existingJunior
             } else {
-                this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}: status is not allowed.`);
-                throw new ConflictException(content.JuniorNotExpiredOrPending);
+                this.logger.error(`Unable to overwrite existing junior with phone number xxxxxx${existingJunior.phoneNumber.slice(-4)}: status is not allowed.`)
+                throw new ConflictException(content.JuniorNotExpiredOrPending)
             }
         } else {
             if (userId && ConfigHandler.detailedLogs()) {
-                this.logger.log({ userId: userId }, `User creates new junior.`);
+                this.logger.log({ userId: userId }, `User creates new junior.`)
             }
-            this.logger.log('Existing junior not found, creating new.');
-            junior = new Junior();
+            this.logger.log('Existing junior not found, creating new.')
+            junior = new Junior()
         }
 
-        const juniorRecord = junior as unknown as Record<string, unknown>;
-        const registrationRecord = registrationData as unknown as Record<string, unknown>;
+        const juniorRecord = junior as unknown as Record<string, unknown>
+        const registrationRecord = registrationData as unknown as Record<string, unknown>
         Object.keys(registrationRecord).forEach((key: string) => {
-            juniorRecord[key] = registrationRecord[key];
-        });
-        junior.phoneNumber = standardizePhoneNumber.to(junior.phoneNumber);
-        junior.parentsPhoneNumber = standardizePhoneNumber.to(junior.parentsPhoneNumber);
+            juniorRecord[key] = registrationRecord[key]
+        })
+        junior.phoneNumber = normalizePhoneNumberValue(junior.phoneNumber)
+        junior.parentsPhoneNumber = normalizePhoneNumberValue(junior.parentsPhoneNumber)
 
         // Make sure hidden fields have some data in them.
-        (content.hiddenJuniorFields as Array<keyof Junior>).forEach((key) => {
-            const value = juniorRecord[key as string];
-            juniorRecord[key as string] = value ?? '';
-        });
+        const fields = content.hiddenJuniorFields as Array<keyof Junior>
+        fields.forEach((key: keyof Junior) => {
+            const value = juniorRecord[key as string]
+            juniorRecord[key as string] = value ?? ''
+        })
         // Junior communicationsLanguage might be a hidden field but it is still required.
-        if (!junior.communicationsLanguage) junior.communicationsLanguage = 'fi';
-        junior.creationDate = new Date(Date.now()).toISOString();
+        if (!junior.communicationsLanguage) junior.communicationsLanguage = 'fi'
+        junior.creationDate = new Date(Date.now()).toISOString()
 
-        const errors = await validate(junior);
+        const errors = await validate(junior)
         if (errors.length > 0) {
-            this.logger.error(`Validation error: ${errors}`);
-            throw new BadRequestException(errors);
+            this.logger.error(`Validation error: ${errors}`)
+            throw new BadRequestException(errors)
         }
 
         try {
-            this.logger.log(`Saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}`);
+            this.logger.log(`Saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}`)
             // Creates new or updates an existing junior.
-            await this.juniorRepo.save(junior);
+            await this.juniorRepo.save(junior)
         } catch (e) {
-            const errorName = e instanceof Error ? e.name : 'UnknownError';
-            const errorMessage = e instanceof Error ? e.message : String(e);
-            this.logger.error(`Error saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ${errorName}: ${errorMessage}`);
+            const errorName = e instanceof Error ? e.name : 'UnknownError'
+            const errorMessage = e instanceof Error ? e.message : String(e)
+            this.logger.error(`Error saving junior with phone number xxxxxx${junior.phoneNumber.slice(-4)}: ${errorName}: ${errorMessage}`)
             if (e instanceof QueryFailedError) {
-                throw new ConflictException(content.JuniorAlreadyExists);
+                throw new ConflictException(content.JuniorAlreadyExists)
             }
-            throw e;
+            throw e
         }
 
         if (junior.status === Status.accepted && !noSMS) {
-            const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
-            if (!newJunior) { throw new BadRequestException(content.UserNotFound); }
-            const challenge = await this.setChallenge(junior.phoneNumber);
+            const newJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber)
+            if (!newJunior) { throw new BadRequestException(content.UserNotFound) }
+            const challenge = await this.setChallenge(junior.phoneNumber)
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: newJunior.communicationsLanguage as content.Language,
                 name: newJunior.firstName,
                 phoneNumber: newJunior.phoneNumber,
                 homeYouthClub: newJunior.homeYouthClub ?? undefined,
-            }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
+            }, challenge)
+            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable) }
         }
 
-        this.logger.log(`Saved junior ${junior.id}`);
-        return junior;
+        this.logger.log(`Saved junior ${junior.id}`)
+        return junior
     }
 
     async requestLoginLink(phoneNumber: string, userId?: string, noSpamGuard: boolean = false): Promise<string> {
-        const junior = await this.juniorRepo.findOneBy({ phoneNumber: standardizePhoneNumber.to(phoneNumber) });
+        const junior = await this.juniorRepo.findOneBy({ phoneNumber: normalizePhoneNumberValue(phoneNumber) })
         if (junior && (junior.status === Status.accepted || junior.status === Status.expired)) {
             if (userId && ConfigHandler.detailedLogs()) {
-                this.logger.log({ userId, juniorId: junior.id }, 'Requested SMS login link for junior');
+                this.logger.log({ userId, juniorId: junior.id }, 'Requested SMS login link for junior')
             } else {
-                this.logger.log('Requested SMS login link for: xxxxxx' + junior.phoneNumber.slice(-4));
+                this.logger.log('Requested SMS login link for: xxxxxx' + junior.phoneNumber.slice(-4))
             }
 
             if (!noSpamGuard && !this.spamGuardService.loginLink(junior.id))
-                throw new ForbiddenException(content.JuniorResetLinkThrottled);
+                throw new ForbiddenException(content.JuniorResetLinkThrottled)
 
-            const challenge = await this.setChallenge(junior.phoneNumber);
+            const challenge = await this.setChallenge(junior.phoneNumber)
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: junior.communicationsLanguage as content.Language,
                 name: junior.firstName,
                 phoneNumber: junior.phoneNumber,
                 homeYouthClub: junior.homeYouthClub ?? undefined,
-            }, challenge);
+            }, challenge)
             if (!messageSent)
-                throw new InternalServerErrorException(content.SmsServiceNotAvailable);
-            return `${junior.phoneNumber} ${content.JuniorResetLinkSent}`;
+                throw new InternalServerErrorException(content.SmsServiceNotAvailable)
+            return `${junior.phoneNumber} ${content.JuniorResetLinkSent}`
         }
         else
             throw new ForbiddenException(content.JuniorAccountNotConfirmedOrFound)
     }
 
     async editJunior(details: EditJuniorDto, youthWorkerUserId: string): Promise<string> {
-        const junior = await this.juniorRepo.findOneBy({ id: details.id });
-        if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        const prevStatus = junior.status;
-        if (junior.phoneNumber !== standardizePhoneNumber.to(details.phoneNumber)) {
-            const phoneNumberReserver = await this.getJuniorByPhoneNumber(details.phoneNumber);
+        const junior = await this.juniorRepo.findOneBy({ id: details.id })
+        if (!junior) { throw new BadRequestException(content.UserNotFound) }
+        const prevStatus = junior.status
+        if (junior.phoneNumber !== normalizePhoneNumberValue(details.phoneNumber)) {
+            const phoneNumberReserver = await this.getJuniorByPhoneNumber(details.phoneNumber)
             if (phoneNumberReserver && phoneNumberReserver.id !== details.id) {
-                throw new ConflictException(content.JuniorAlreadyExists);
+                throw new ConflictException(content.JuniorAlreadyExists)
             }
         }
-        junior.phoneNumber = standardizePhoneNumber.to(details.phoneNumber);
-        junior.smsPermissionJunior = details.smsPermissionJunior;
-        junior.firstName = details.firstName;
-        junior.lastName = details.lastName;
-        junior.birthday = details.birthday;
-        junior.parentsName = details.parentsName;
-        junior.parentsPhoneNumber = standardizePhoneNumber.to(details.parentsPhoneNumber);
-        junior.smsPermissionParent = details.smsPermissionParent;
-        junior.parentsEmail = details.parentsEmail;
-        junior.emailPermissionParent = details.emailPermissionParent;
-        junior.additionalContactInformation = details.additionalContactInformation;
-        junior.school = details.school;
-        junior.class = details.class;
-        junior.postCode = details.postCode;
-        junior.homeYouthClub = details.homeYouthClub;
-        junior.communicationsLanguage = details.communicationsLanguage;
-        junior.gender = details.gender;
-        junior.nickName = details.nickName;
-        junior.status = details.status;
-        junior.photoPermission = details.photoPermission;
-        const errors = await validate(junior);
+        junior.phoneNumber = normalizePhoneNumberValue(details.phoneNumber)
+        junior.smsPermissionJunior = details.smsPermissionJunior
+        junior.firstName = details.firstName
+        junior.lastName = details.lastName
+        junior.birthday = details.birthday
+        junior.parentsName = details.parentsName
+        junior.parentsPhoneNumber = normalizePhoneNumberValue(details.parentsPhoneNumber)
+        junior.smsPermissionParent = details.smsPermissionParent
+        junior.parentsEmail = details.parentsEmail
+        junior.emailPermissionParent = details.emailPermissionParent
+        junior.additionalContactInformation = details.additionalContactInformation
+        junior.school = details.school
+        junior.class = details.class
+        junior.postCode = details.postCode
+        junior.homeYouthClub = details.homeYouthClub
+        junior.communicationsLanguage = details.communicationsLanguage
+        junior.gender = details.gender
+        junior.nickName = details.nickName
+        junior.status = details.status
+        junior.photoPermission = details.photoPermission
+        const errors = await validate(junior)
         if (errors.length > 0) {
-            throw new BadRequestException(errors);
+            throw new BadRequestException(errors)
         }
         // Only admins (not regular youth workers) can manually update status from expired or extra entries only state.
         if ((prevStatus === Status.expired || prevStatus === Status.extraEntriesOnly) && details.status !== prevStatus) {
-            const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId });
+            const youthWorker = await this.youthWorkerRepo.findOneBy({ id: youthWorkerUserId })
             if (!youthWorker?.isAdmin) {
                 // ForbiddenRequestException would be semantically more appropriate, but it would result in
                 // automatic logout in the frontend.
                 throw new BadRequestException(content.ForbiddenToChangeStatus)
             }
         }
-        await this.juniorRepo.save(junior);
+        await this.juniorRepo.save(junior)
 
         if (ConfigHandler.detailedLogs()) {
-            this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`);
+            this.logger.log({ userId: youthWorkerUserId, juniorId: details.id }, `User modified junior.`)
         }
 
         // typeorm doesn't currently return transformed values on save, have to retrieve it again to get the phone number in a correct format
         if ((prevStatus === Status.expired || prevStatus === Status.pending || prevStatus === Status.failedCall) && details.status === Status.accepted) {
-            const updatedJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber);
-            if (!updatedJunior) { throw new BadRequestException(content.UserNotFound); }
-            const challenge = await this.setChallenge(updatedJunior.phoneNumber);
+            const updatedJunior = await this.getJuniorByPhoneNumber(junior.phoneNumber)
+            if (!updatedJunior) { throw new BadRequestException(content.UserNotFound) }
+            const challenge = await this.setChallenge(updatedJunior.phoneNumber)
             const messageSent = await this.smsService.sendVerificationSMS({
                 lang: updatedJunior.communicationsLanguage as content.Language,
                 name: updatedJunior.firstName,
                 phoneNumber: updatedJunior.phoneNumber,
                 homeYouthClub: updatedJunior.homeYouthClub ?? undefined,
-            }, challenge);
-            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
+            }, challenge)
+            if (!messageSent) { throw new InternalServerErrorException(content.SmsServiceNotAvailable) }
         }
-        return `${details.phoneNumber} ${content.Updated}`;
+        return `${details.phoneNumber} ${content.Updated}`
     }
 
     /**
      * @param id the id of the user to delete.
      */
     async deleteJunior(id: string, userId?: string) {
-        const junior = await this.getJunior(id);
-        if (!junior) { throw new BadRequestException(content.UserNotFound); }
-        this.juniorRepo.remove(junior);
+        const junior = await this.getJunior(id)
+        if (!junior) { throw new BadRequestException(content.UserNotFound) }
+        this.juniorRepo.remove(junior)
         if (userId && ConfigHandler.detailedLogs()) {
-            this.logger.log({ userId: userId, juniorId: id }, `User deleted junior.`);
+            this.logger.log({ userId: userId, juniorId: id }, `User deleted junior.`)
         }
-        return `${id} ${content.Deleted}`;
+        return `${id} ${content.Deleted}`
     }
 
     // Phone number parameter need not be standardized.
     private async setChallenge(phoneNumber: string): Promise<Challenge> {
-        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString();
-        const junior = await this.getJuniorByPhoneNumber(phoneNumber);
-        if (!junior) { throw new BadRequestException(content.UserNotFound); }
+        const challenge = (Math.floor(1000 + Math.random() * 90000)).toString()
+        const junior = await this.getJuniorByPhoneNumber(phoneNumber)
+        if (!junior) { throw new BadRequestException(content.UserNotFound) }
         const activeChallenge = await this.challengeRepo.findOne({
             where: { junior: { id: junior.id } },
             relations: { junior: true },
-        });
-        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge); }
-        const challengeData = { junior, challenge };
-        await this.challengeRepo.save(challengeData);
+        })
+        if (activeChallenge) { await this.challengeRepo.remove(activeChallenge) }
+        const challengeData = { junior, challenge }
+        await this.challengeRepo.save(challengeData)
         const savedChallenge = await this.challengeRepo.findOne({
             where: { junior: { id: junior.id } },
             relations: { junior: true },
-        });
-        if (!savedChallenge) { throw new InternalServerErrorException(content.SmsServiceNotAvailable); }
-        return savedChallenge;
+        })
+        if (!savedChallenge) { throw new InternalServerErrorException(content.SmsServiceNotAvailable) }
+        return savedChallenge
     }
 
     // Dummy phone numbers start with +999.
     async getNextAvailableDummyPhoneNumber(): Promise<string> {
-        const juniors = await this.listAllJuniors();
-        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358999").map(j => j.phoneNumber);
-        const parentsPhoneNumbers = juniors.data.filter(j => j.parentsPhoneNumber.substring(0, 7) === "+358999").map(j => j.parentsPhoneNumber);
-        let next = "";
-        for (var i = 0; i < 1000000; i++) {
-            next = "+358999" + i.toString().padStart(6, '0');
+        const juniors = await this.listAllJuniors()
+        const phoneNumbers = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358999").map(j => j.phoneNumber)
+        const parentsPhoneNumbers = juniors.data.filter(j => j.parentsPhoneNumber.substring(0, 7) === "+358999").map(j => j.parentsPhoneNumber)
+        let next = ""
+        for (let i = 0; i < 1000000; i++) {
+            next = "+358999" + i.toString().padStart(6, '0')
             if (!phoneNumbers.includes(next) && !parentsPhoneNumbers.includes(next)) {
-                break;
+                break
             }
         }
-        return next;
+        return next
     }
 
     async queryNewSeasonSMSCount(): Promise<string> {
         const juniors = (await this.juniorRepo.createQueryBuilder('junior')
             .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
-            .getMany());
+            .getMany())
 
         const recipients = juniors
             .filter(j => j.parentsPhoneNumber.substring(0, 7) !== "+358777") // Skip test data numbers.
-            .filter(j => j.parentsPhoneNumber.substring(0, 7) !== "+358999"); // Skip dummy phone numbers.
+            .filter(j => j.parentsPhoneNumber.substring(0, 7) !== "+358999") // Skip dummy phone numbers.
 
-        return recipients.length.toString();
+        return recipients.length.toString()
     }
 
     async createNewSeason({ expireDate }: SeasonExpiredDto, userId?: string): Promise<string> {
@@ -384,11 +386,11 @@ export class JuniorService {
             .where('junior.status != :extraEntryStatus', { extraEntryStatus: Status.extraEntriesOnly })
             .update()
             .set({ status: Status.expired })
-            .execute();
-        const juniors = await this.juniorRepo.find();
+            .execute()
+        const juniors = await this.juniorRepo.find()
 
         if (userId && ConfigHandler.detailedLogs()) {
-            this.logger.log({ userId: userId }, `User created new season.`);
+            this.logger.log({ userId: userId }, `User created new season.`)
         }
 
         // This SMS is sent to the parents. We don't know the parent's preferred communications language, so we must use the junior's language.
@@ -399,12 +401,12 @@ export class JuniorService {
             phoneNumber: junior.parentsPhoneNumber,
         }))
         .filter(r => r.phoneNumber.substring(0, 7) !== "+358777") // Skip test data numbers.
-        .filter(r => r.phoneNumber.substring(0, 7) !== "+358999"); // Skip dummy phone numbers.
+        .filter(r => r.phoneNumber.substring(0, 7) !== "+358999") // Skip dummy phone numbers.
 
         // NB: if SMS sending fails, the junior statuses have still been set.
-        await this.smsService.sendNewSeasonSMS(recipients, expireDate);
+        await this.smsService.sendNewSeasonSMS(recipients, expireDate)
 
-        return content.NewSeasonCreated(result.affected ?? 0);
+        return content.NewSeasonCreated(result.affected ?? 0)
     }
 
     async deleteExpired(userId?: string): Promise<string> {
@@ -414,29 +416,29 @@ export class JuniorService {
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .leftJoinAndSelect('junior.entryPermits', 'entryPermit')
             .where('junior.status = :expiredStatus', { expiredStatus: Status.expired })
-            .getMany();
+            .getMany()
 
-        const extraEntryJuniorIds = expiredJuniors.filter(j => (j.extraEntries.length > 0 || j.entryPermits.length > 0 )).map(j => j.id);
+        const extraEntryJuniorIds = expiredJuniors.filter(j => (j.extraEntries.length > 0 || j.entryPermits.length > 0 )).map(j => j.id)
 
-        let updatedAffected = 0;
+        let updatedAffected = 0
         if (extraEntryJuniorIds.length > 0) {
             const updated: UpdateResult = await this.juniorRepo.createQueryBuilder('junior')
                 .where('junior.id IN (:...juniorIds)', { juniorIds: extraEntryJuniorIds })
                 .update()
                 .set({ status: Status.extraEntriesOnly })
-                .execute();
-            updatedAffected = updated.affected ?? 0;
+                .execute()
+            updatedAffected = updated.affected ?? 0
         }
 
         const deleted: DeleteResult = await this.juniorRepo.delete({ status: Status.expired })
         if (userId && ConfigHandler.detailedLogs()) {
-            this.logger.log({ userId: userId }, `User deleted expired users.`);
+            this.logger.log({ userId: userId }, `User deleted expired users.`)
         }
 
-        const deletedAffected = deleted.affected ?? 0;
+        const deletedAffected = deleted.affected ?? 0
         return updatedAffected > 0 ?
             content.ExpiredUsersDeletedWithExtraEntries(deletedAffected, updatedAffected) :
-            content.ExpiredUsersDeleted(deletedAffected);
+            content.ExpiredUsersDeleted(deletedAffected)
     }
 
     // Delete juniors that are only in the extra entry registry but who have no extra entries or entry permits.
@@ -445,16 +447,16 @@ export class JuniorService {
             .leftJoinAndSelect('junior.extraEntries', 'extraEntry')
             .leftJoinAndSelect('junior.entryPermits', 'entryPermit')
             .where('junior.status = :extraEntriesOnly', { extraEntriesOnly: Status.extraEntriesOnly })
-            .getMany();
+            .getMany()
 
-        const removeJuniorIds = extraEntryJuniors.filter(j => (j.extraEntries.length === 0 && j.entryPermits.length === 0)).map(j => j.id);
+        const removeJuniorIds = extraEntryJuniors.filter(j => (j.extraEntries.length === 0 && j.entryPermits.length === 0)).map(j => j.id)
         if (removeJuniorIds.length > 0) {
             const deleted: DeleteResult = await this.juniorRepo.createQueryBuilder()
                 .where('junior.id IN (:...removeJuniorIds)', { removeJuniorIds })
                 .delete()
-                .execute();
+                .execute()
 
-            this.logger.log(`Deleted ${deleted.affected} extra entry registry juniors with no extra entries or entry permits.`);
+            this.logger.log(`Deleted ${deleted.affected} extra entry registry juniors with no extra entries or entry permits.`)
         }
     }
 
@@ -463,32 +465,32 @@ export class JuniorService {
      * @param phoneNumber - juniors phone number
      */
     async getChallengeByPhoneNumber(phoneNumber: string): Promise<Challenge> {
-        const user = await this.getJuniorByPhoneNumber(phoneNumber);
-        if (!user) { throw new ConflictException(content.UserNotFound); }
+        const user = await this.getJuniorByPhoneNumber(phoneNumber)
+        if (!user) { throw new ConflictException(content.UserNotFound) }
         const challenge = await this.challengeRepo.findOne({
             where: { junior: { id: user.id } },
             relations: { junior: true },
-        });
-        if (!challenge) { throw new BadRequestException(content.UserNotFound); }
-        return challenge;
+        })
+        if (!challenge) { throw new BadRequestException(content.UserNotFound) }
+        return challenge
     }
 
     /**
      * This is a test method, only to be used during testing. Test phone numbers start with 777.
      */
     async createTestDataJuniors(numberOfCases: string): Promise<string> {
-        const num = parseInt(numberOfCases);
-        const first_names = ['Matti', 'Maija', 'Mervi', 'Olli', 'Riku', 'Maria', 'Juho', 'Aapeli', 'Tauno', 'Liisa', 'Jenni', 'Viola', 'Venla', 'Elias', 'Jenna'];
-        const last_names = ['Virtanen', 'Ylinen', 'Koivisto', 'Perälä', 'Niittymäki', 'Hautala', 'Arhinmäki', 'Koski', 'Mäkinen', 'Astola', 'Heikkilä', 'Marjamäki'];
-        const school_names = ['Kirkkoharjun ala-aste', 'Tuomiola', 'Mustalampaan koulu', 'Määkiälän ala-aste', 'Pikkola', 'Mordor', 'Tykkimäki', 'Ankkalampi'];
-        const class_names = ['1A', '1B', '2C', '3D', '6. luokka', '3. luokka', '1. luokka', '5. luokka'];
-        const genders = [ Gender.Male, Gender.Female, Gender.Other, Gender.Undisclosed ];
-        for (var i = 0; i < num; i++) {
-            var date =
+        const num = parseInt(numberOfCases)
+        const first_names = ['Matti', 'Maija', 'Mervi', 'Olli', 'Riku', 'Maria', 'Juho', 'Aapeli', 'Tauno', 'Liisa', 'Jenni', 'Viola', 'Venla', 'Elias', 'Jenna']
+        const last_names = ['Virtanen', 'Ylinen', 'Koivisto', 'Perälä', 'Niittymäki', 'Hautala', 'Arhinmäki', 'Koski', 'Mäkinen', 'Astola', 'Heikkilä', 'Marjamäki']
+        const school_names = ['Kirkkoharjun ala-aste', 'Tuomiola', 'Mustalampaan koulu', 'Määkiälän ala-aste', 'Pikkola', 'Mordor', 'Tykkimäki', 'Ankkalampi']
+        const class_names = ['1A', '1B', '2C', '3D', '6. luokka', '3. luokka', '1. luokka', '5. luokka']
+        const genders = [ Gender.Male, Gender.Female, Gender.Other, Gender.Undisclosed ]
+        for (let i = 0; i < num; i++) {
+            const date =
                 (Math.floor(Math.random() * 8) + 2005).toString() + '-' +
                 (Math.floor(Math.random() * 12) + 1).toString().padStart(2, '0') + '-' +
-                (Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0') + 'T00:00:00.000Z';
-            var data = {
+                (Math.floor(Math.random() * 28) + 1).toString().padStart(2, '0') + 'T00:00:00.000Z'
+            const data = {
                 phoneNumber: "+358777" + i.toString().padStart(6, '0'),
                 firstName: first_names[Math.floor(Math.random() * first_names.length)],
                 lastName: last_names[Math.floor(Math.random() * last_names.length)],
@@ -503,21 +505,21 @@ export class JuniorService {
                 homeYouthClub: (Math.floor(Math.random() * 14) + 1).toString(),
                 status: Math.random() < 0.5 ? Status.accepted : Status.pending,
                 photoPermission: Math.random() < 0.5 ? true : false
-            } as RegisterJuniorDto;
-            await this.registerJunior(data, undefined, true);
+            } as RegisterJuniorDto
+            await this.registerJunior(data, undefined, true)
         }
-        return `Created ${num.toString()} juniors.`;
+        return `Created ${num.toString()} juniors.`
     }
 
     /**
      * This is a test method, only to be used during testing.
      */
     async deleteTestDataJuniors(): Promise<string> {
-        const juniors = await this.listAllJuniors();
-        const ids = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358777").map(j => j.id);
-        for (var i = 0; i < ids.length; i++) {
-            await this.deleteJunior(ids[i]);
+        const juniors = await this.listAllJuniors()
+        const ids = juniors.data.filter(j => j.phoneNumber.substring(0, 7) === "+358777").map(j => j.id)
+        for (let i = 0; i < ids.length; i++) {
+            await this.deleteJunior(ids[i])
         }
-        return `Deleted ${ids.length.toString()} juniors.`;
+        return `Deleted ${ids.length.toString()} juniors.`
     }
 }

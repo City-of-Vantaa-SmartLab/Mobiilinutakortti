@@ -1,15 +1,15 @@
-import { IsNotEmpty } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class CreateExtraEntryDto {
 
     @IsNotEmpty()
-    juniorId!: string;
+    juniorId!: string
 
     @IsNotEmpty()
     @Type(() => Number)
-    entryTypeId!: number;
+    entryTypeId!: number
 
     @Type(() => Boolean)
-    isPermit!: boolean;
+    isPermit!: boolean
 }

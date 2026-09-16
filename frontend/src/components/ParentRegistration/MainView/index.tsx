@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from '../StyledComponents';
+import React from 'react'
+import { Button } from '../StyledComponents'
 import { useTranslations } from '../../translations'
 import { useNavigate } from 'react-router-dom'
 import LanguageSelect from '../../LanguageSelect'
@@ -20,7 +20,7 @@ const MainWrapper = styled.div`
     @media (min-width: 1150px) {
         font-size: 18px;
     }
-`;
+`
 
 const MainHeader = styled.header`
     & > h1 {
@@ -37,13 +37,13 @@ const MainHeader = styled.header`
         font-weight: 600;
         font-size: 1.1em;
     }
-`;
+`
 
 const MainContent = styled.div`
     max-width: 800px;
     margin: 0 auto;
     padding: 0 2rem 2rem;
-`;
+`
 
 export const MainDescription = styled.div`
     color: ${p => p.theme.pages.parentRedirect.description.text};
@@ -57,7 +57,7 @@ export const MainDescription = styled.div`
     & > p {
         margin: 0;
     }
-`;
+`
 
 const LogoContainer = styled.div`
     color: white;
@@ -71,7 +71,7 @@ const LogoContainer = styled.div`
         background: linear-gradient(3deg, transparent, transparent 40%, ${p => p.theme.pages.parentRedirect.stripe1} calc(40% + 1px), ${p => p.theme.pages.parentRedirect.stripe1});
         height: calc(100px + 6vw);
     }
-`;
+`
 
 const MainButton = styled(Button)`
     color: ${p => p.theme.pages.parentRedirect.description.buttonText};
@@ -108,4 +108,4 @@ const ParentRedirectView: React.FC = () => {
     )
 }
 
-export default ParentRedirectView;
+export default ParentRedirectView

@@ -2,7 +2,7 @@ export enum Gender {
     Male = 'm',
     Female = 'f',
     Other = 'o',
-    Undisclosed = '-',
+    Undisclosed = '-'
 }
 
 export const genderMapping = [
@@ -10,6 +10,6 @@ export const genderMapping = [
     { nutakortti: Gender.Male, kompassiGenderId: 2 },
     { nutakortti: Gender.Other, kompassiGenderId: 3 },
     { nutakortti: Gender.Undisclosed, kompassiGenderId: 4 }
-];
+]
 
-export default genderMapping;
+export default genderMapping

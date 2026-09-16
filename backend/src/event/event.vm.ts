@@ -1,19 +1,19 @@
-import { Event } from './event.entity';
+import { Event } from './event.entity'
 
 export class EventViewModel {
-    id: number;
-    name: string;
-    description: string | null;
-    startDate: Date | null;
-    integrationId: number | null;
-    needsPermit: boolean;
+    id: number
+    name: string
+    description: string | null
+    startDate: Date | null
+    integrationId: number | null
+    needsPermit: boolean
 
     constructor(event: Event) {
-        this.id = event.id;
-        this.name = event.name;
-        this.description = event.description;
-        this.startDate = event.startDate;
-        this.integrationId = event.integrationId;
-        this.needsPermit = !!event.permit;
+        this.id = event.id
+        this.name = event.name
+        this.description = event.description
+        this.startDate = event.startDate
+        this.integrationId = event.integrationId
+        this.needsPermit = !!event.permit
     }
 }

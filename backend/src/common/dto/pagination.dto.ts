@@ -1,8 +1,8 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 
 export class PaginationDto {
     @Type(() => Number)
-    page!: number;
+    page!: number
     @Type(() => Number)
-    perPage!: number;
+    perPage!: number
 }

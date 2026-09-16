@@ -1,7 +1,7 @@
 export class Check {
-    result: boolean;
+    result: boolean
 
     constructor(result: boolean) {
-        this.result = result;
+        this.result = result
     }
 }

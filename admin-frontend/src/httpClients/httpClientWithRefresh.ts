@@ -1,30 +1,30 @@
-import { httpClient } from './httpClient';
-import api from '../api';
-import { userTokenKey, adminUiBasePath } from '../utils';
-import { authProvider } from '../providers';
+import { httpClient } from './httpClient'
+import api from '../api'
+import { userTokenKey, adminUiBasePath } from '../utils'
+import { authProvider } from '../providers'
 
 // If url parameter evaluates to false, there will be a token refresh but no other data fetch.
-export const httpClientWithRefresh = async (url: string, options: RequestInit = {}) => {
+export const httpClientWithRefresh = async (url?: string, options: RequestInit = {}) => {
     const refreshOptions = {
         method: 'GET',
         headers: new Headers({ 'Content-Type': 'application/json' })
-    };
-    const authToken = sessionStorage.getItem(userTokenKey);
-    if (authToken) refreshOptions.headers.set('Authorization', `Bearer ${authToken}`);
+    }
+    const authToken = sessionStorage.getItem(userTokenKey)
+    if (authToken) refreshOptions.headers.set('Authorization', `Bearer ${authToken}`)
 
     return fetch(api.youthWorker.refresh, refreshOptions).then(async refreshResponse => {
-        const refreshData = await refreshResponse.json();
+        const refreshData = await refreshResponse.json()
         if (refreshData.statusCode < 200 || refreshData.statusCode >= 300) {
-            authProvider.logout({});
-            document.location.href = adminUiBasePath;
-            return Promise.resolve();
+            authProvider.logout({})
+            document.location.href = adminUiBasePath
+            return Promise.resolve()
         } else {
-            return refreshData;
+            return refreshData
         }
     }).then((data) => {
-        if (!data) return;
-        sessionStorage.setItem(userTokenKey, data.access_token);
-        if (!url) return;
-        return httpClient(url, options);
-    });
-};
+        if (!data) return
+        sessionStorage.setItem(userTokenKey, data.access_token)
+        if (!url) return
+        return httpClient(url, options)
+    })
+}

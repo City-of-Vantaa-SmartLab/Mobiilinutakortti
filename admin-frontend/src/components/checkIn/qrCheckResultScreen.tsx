@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import CheckMark from './checkMark';
-import ErrorMark from './errorMark';
+import styled from 'styled-components'
+import CheckMark from './checkMark'
+import ErrorMark from './errorMark'
 
 const Wrapper = styled.div`
   position: absolute;
@@ -14,7 +14,7 @@ const Wrapper = styled.div`
     text-align: center;
     max-width: 90vw;
   }
-`;
+`
 
 const Header = styled.span`
     color: #f9e51e;
@@ -30,9 +30,18 @@ const StyledText = styled.span`
     font-size: clamp(18px, 4vw, 28px);
 `
 
-const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string }) => (
+interface QrCheckResultScreenProps {
+    checkInName?: string | null
+    successful?: boolean | null
+    errorReason?: string
+}
+
+const QrCheckResultScreen = (props: QrCheckResultScreenProps) => {
+    const isSuccessful = props.successful ?? !!props.checkInName
+
+    return (
     <Wrapper>
-        {props.checkInName && (
+        {isSuccessful && (
           <div className={"mark-container"}>
               <Header>Tervetuloa!</Header>
               {/*
@@ -43,7 +52,7 @@ const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string 
               <StyledText>Kirjautuminen onnistui.</StyledText>
           </div>
             )}
-        {!props.checkInName && (
+        {!isSuccessful && (
           <div className={"mark-container"}>
               <Header>Jokin meni pieleen!</Header>
               <ErrorMark />
@@ -55,5 +64,7 @@ const QrCheckResultScreen = (props: { checkInName: string; errorReason?: string 
           </div>
             )}
     </Wrapper>
-);
-export default QrCheckResultScreen;
+        )
+      }
+
+export default QrCheckResultScreen

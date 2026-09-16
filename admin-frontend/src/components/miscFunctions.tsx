@@ -1,55 +1,55 @@
-import { useState } from 'react';
-import { Title, useNotify } from 'react-admin';
-import { Navigate } from 'react-router-dom';
-import { Button, Card, CardContent } from '@mui/material';
-import { httpClient } from '../httpClients/httpClient';
-import { STATE } from '../state';
-import api from '../api';
-import useAutoLogout from '../hooks/useAutoLogout';
-import ResetIcon from '@mui/icons-material/Autorenew';
-import EmptyIcon from '@mui/icons-material/Cached';
-import { getEnvConfig, ENV_VARS } from '../envConfig';
+import { useState } from 'react'
+import { Title, useNotify } from 'react-admin'
+import { Navigate } from 'react-router-dom'
+import { Button, Card, CardContent } from '@mui/material'
+import { httpClient } from '../httpClients/httpClient'
+import { STATE } from '../state'
+import api from '../api'
+import useAutoLogout from '../hooks/useAutoLogout'
+import ResetIcon from '@mui/icons-material/Autorenew'
+import EmptyIcon from '@mui/icons-material/Cached'
+import { getEnvConfig, ENV_VARS } from '../envConfig'
 
 const MiscFunctions = () => {
-  const notify = useNotify();
+  const notify = useNotify()
 
-  const [state, setState] = useState(STATE.INITIAL);
+  const [state, setState] = useState(STATE.INITIAL)
 
-  useAutoLogout();
+  useAutoLogout()
 
   const resetSpamGuard = async () => {
-    setState(STATE.LOADING);
+    setState(STATE.LOADING)
     const response = await httpClient(api.spamGuard.reset, {
       method: 'POST',
-    });
+    })
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      notify('Virhe alustaessa spam-estoa', { type: 'error' });
-      setState(STATE.INITIAL);
+      notify('Virhe alustaessa spam-estoa', { type: 'error' })
+      setState(STATE.INITIAL)
     } else {
-      notify(`Estolistalta poistettiin ${response.message} merkintää.`, { type: 'success' });
-      setState(STATE.DONE);
+      notify(`Estolistalta poistettiin ${response.message} merkintää.`, { type: 'success' })
+      setState(STATE.DONE)
     }
-  };
-
-  const resetKompassiIntegration = async () => {
-    setState(STATE.LOADING);
-    const response = await httpClient(api.kompassi.reset, {
-      method: 'POST',
-    });
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      notify('Virhe tyhjentäessä Kompassi-välimuistia', { type: 'error' });
-      setState(STATE.INITIAL);
-    } else {
-      notify('Kompassi-välimuisti tyhjennetty', { type: 'success' });
-      setState(STATE.DONE);
-    }
-  };
-
-  if (state === STATE.DONE) {
-    return <Navigate to="/" replace />;
   }
 
-  const kompassiIntegration = getEnvConfig(ENV_VARS.VITE_ENABLE_KOMPASSI_INTEGRATION);
+  const resetKompassiIntegration = async () => {
+    setState(STATE.LOADING)
+    const response = await httpClient(api.kompassi.reset, {
+      method: 'POST',
+    })
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      notify('Virhe tyhjentäessä Kompassi-välimuistia', { type: 'error' })
+      setState(STATE.INITIAL)
+    } else {
+      notify('Kompassi-välimuisti tyhjennetty', { type: 'success' })
+      setState(STATE.DONE)
+    }
+  }
+
+  if (state === STATE.DONE) {
+    return <Navigate to="/" replace />
+  }
+
+  const kompassiIntegration = getEnvConfig(ENV_VARS.VITE_ENABLE_KOMPASSI_INTEGRATION)
 
   return (
     <Card sx={{ marginTop: 2 }}>
@@ -82,7 +82,7 @@ const MiscFunctions = () => {
         </Button>
       </CardContent>)}
     </Card>
-  );
-};
+  )
+}
 
-export default MiscFunctions;
+export default MiscFunctions

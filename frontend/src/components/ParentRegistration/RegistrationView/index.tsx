@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import RegistrationForm from './Form';
-import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton } from '../StyledComponents';
-import { get, post } from '../../../apis';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react'
+import RegistrationForm from './Form'
+import { Wrapper, Header, Confirmation, SuccessIcon, Error, Button, LogoutButton } from '../StyledComponents'
+import { get, post } from '../../../apis'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslations } from '../../translations'
 import LanguageSelect from '../../LanguageSelect'
 import styled, { useTheme } from 'styled-components'
-import { Club } from '../../../customizations/types';
+import { Club } from '../../../customizations/types'
 
-const useAltErrorMessage: boolean = window.__ENV_CONFIG__?.VITE_USE_ALT_ERR_MSG || import.meta.env.VITE_USE_ALT_ERR_MSG;
+const useAltErrorMessage: boolean = window.__ENV_CONFIG__?.VITE_USE_ALT_ERR_MSG || import.meta.env.VITE_USE_ALT_ERR_MSG
 
 const ErrorButton = styled(Button)`
   color: ${p => p.theme.pages.registration.errorButtonText};
@@ -17,7 +17,7 @@ const ErrorButton = styled(Button)`
 
 export const ConfirmationLink = styled.a`
     color: ${p => p.theme.pages.registration.confirmationLink};
-`;
+`
 
 const RegistrationView: React.FC = () => {
     const location = useLocation()
@@ -25,79 +25,79 @@ const RegistrationView: React.FC = () => {
     const t = useTranslations()
     const theme = useTheme()
     const [submitted, setSubmitted] = useState(false);
-    const [clubs, setClubs] = useState([]);
-    const [error, setError] = useState(false);
-    const [auth, setAuth] = useState(false);
+    const [clubs, setClubs] = useState([])
+    const [error, setError] = useState(false)
+    const [auth, setAuth] = useState(false)
 
     const queryToSecurityContext = useCallback((encoded_sc: string) => {
-        let b64str = encoded_sc.replace(/-/g, '+').replace(/_/g, '/');
-        const pad = encoded_sc.length % 4;
+        let b64str = encoded_sc.replace(/-/g, '+').replace(/_/g, '/')
+        const pad = encoded_sc.length % 4
         if (pad) {
             if (pad === 1) {
-                setError(true);
+                setError(true)
             }
-            b64str += new Array(5-pad).join('=');
+            b64str += new Array(5-pad).join('=')
         }
         // Note: atob doesn't work right away with UTF-8 characters beyond the first 8 bits. Hence we read every character as base-16 string and percent-decode them.
         const sc = decodeURIComponent(atob(b64str).split('').map((c) => {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
         }).join(''));
-        sessionStorage.setItem('sc', sc);
+        sessionStorage.setItem('sc', sc)
         navigate('/hakemus', { replace: true })
-    }, [navigate]);
+    }, [navigate])
 
     const getSecurityContext = () => {
-        const sc = sessionStorage.getItem('sc');
-        return sc ? JSON.parse(sc) : {};
+        const sc = sessionStorage.getItem('sc')
+        return sc ? JSON.parse(sc) : {}
     }
 
     useEffect(() => {
-        const query = new URLSearchParams(location.search);
-        const encoded_sc = query.get('sc');
+        const query = new URLSearchParams(location.search)
+        const encoded_sc = query.get('sc')
         if (encoded_sc) {
-            queryToSecurityContext(encoded_sc);
+            queryToSecurityContext(encoded_sc)
         }
 
-        const sc = getSecurityContext();
+        const sc = getSecurityContext()
 
         post('/auth/validate-signature', sc)
             .then(response => {
                 if (response.valid) {
-                    setAuth(true);
+                    setAuth(true)
                 } else {
-                    sessionStorage.removeItem('sc');
+                    sessionStorage.removeItem('sc')
                     get('/acs')
                         .then(response => window.location.replace(response.url))
                         .catch(_ => setError(true))
                 }
             })
             .catch(_ => {
-                if (window.location.hostname === "localhost") console.info("If you get an error, this is because SAML needs proper private key. For testing, do setAuth(true) in code here.");
+                if (window.location.hostname === "localhost") console.info("If you get an error, this is because SAML needs proper private key. For testing, do setAuth(true) in code here.")
                 setError(true)
             })
     }, [location.search, queryToSecurityContext])
 
 
     const logout = () => {
-        const sc = getSecurityContext();
+        const sc = getSecurityContext()
         // Suomi.fi documentation says the local session should be ended before SSO logout.
-        sessionStorage.removeItem('sc');
+        sessionStorage.removeItem('sc')
 
         // Have to base64-encode the string if there are exotic characters in the user name, otherwise fetch fails to invalid headers.
         // Since btoa fails with with non-Latin1 characters we first encode them to hex and then to raw bytes.
         const b64sc = btoa(encodeURIComponent(JSON.stringify(sc)).replace(/%([0-9A-F]{2})/g,
-            (_, p1) => { return String.fromCharCode(parseInt('0x' + p1)); }
-        ));
+            (_, p1) => { return String.fromCharCode(parseInt('0x' + p1)) }
+        ))
         get('/logout', b64sc)
             .then(response => {
                 if (response.url) {
-                    window.location.replace(response.url);
+                    window.location.replace(response.url)
                 } else {
-                    setError(true);
+                    setError(true)
                 }
             })
             .catch(_ => {
-                setError(true);
+                setError(true)
             })
     }
     useEffect(() => {
@@ -105,7 +105,7 @@ const RegistrationView: React.FC = () => {
             .then(response => setClubs(response.filter((club: Club) => club.active)
             ))
             .catch(_ => setError(true))
-    }, []);
+    }, [])
 
     return (
         <Wrapper>
@@ -146,4 +146,4 @@ const RegistrationView: React.FC = () => {
     )
 }
 
-export default RegistrationView;
+export default RegistrationView

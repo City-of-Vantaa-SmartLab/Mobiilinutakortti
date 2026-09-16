@@ -1,10 +1,10 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const BG = styled.div`
     position: relative;
     width: 100%;
     height: 26%;
-`;
+`
 
 const Triangle = styled.div`
     position: absolute;
@@ -15,7 +15,7 @@ const Triangle = styled.div`
     height: 100%;
     transform: skew(0, -15deg);
     z-index: -10;
-`;
+`
 
 const CheckinBackground = () => {
     return (
@@ -23,6 +23,6 @@ const CheckinBackground = () => {
             <Triangle />
         </BG>
     )
-};
+}
 
-export default CheckinBackground;
+export default CheckinBackground

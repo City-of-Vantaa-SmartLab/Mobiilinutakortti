@@ -1,5 +1,5 @@
-import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn } from 'typeorm';
-import { YouthWorker } from './youthWorker.entity';
+import { Entity, OneToOne, JoinColumn, Column, PrimaryColumn, type Relation } from 'typeorm'
+import { YouthWorker } from './youthWorker.entity'
 
 @Entity()
 export class Lockout {
@@ -8,20 +8,20 @@ export class Lockout {
 
     @OneToOne(_ => YouthWorker, { onDelete: 'CASCADE' })
     @JoinColumn()
-    youthWorker!: YouthWorker;
+    youthWorker!: Relation<YouthWorker>
 
     @Column({ default: 0 })
-    attempts!: number;
+    attempts!: number
 
     @Column({
         type: 'timestamp with time zone',
         default: getDefaultDate(),
     })
-    expiry!: Date;
+    expiry!: Date
 }
 
 function getDefaultDate() {
-    const currentTime = new Date();
-    currentTime.setHours(currentTime.getHours() + 3, currentTime.getMinutes());
-    return currentTime;
+    const currentTime = new Date()
+    currentTime.setHours(currentTime.getHours() + 3, currentTime.getMinutes())
+    return currentTime
 }

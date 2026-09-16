@@ -1,11 +1,12 @@
 import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-} from '@nestjs/common';
-import { Request } from 'express';
-import { verify, decode, JwtPayload, TokenExpiredError } from 'jsonwebtoken';
-import { jwtSecret } from '../authentication/authentication.consts';
+    CanActivate,
+    ExecutionContext,
+    Injectable,
+} from '@nestjs/common'
+import type { Request } from 'express'
+import jsonwebtoken from 'jsonwebtoken'
+import type { JwtPayload } from 'jsonwebtoken'
+import { jwtSecret } from '../authentication/authentication.consts'
 
 // This is a guard that accepts slightly expired JWTs.
 // It's meant to mainly extract the userId from the auth token.
@@ -13,39 +14,39 @@ import { jwtSecret } from '../authentication/authentication.consts';
 @Injectable()
 export class ApiUserGuard implements CanActivate {
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) return false;
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const request = context.switchToHttp().getRequest()
+        const token = this.extractTokenFromHeader(request)
+        if (!token) return false
 
-    try {
-      verify(token, jwtSecret);
-    } catch (error) {
-      if (!(error instanceof TokenExpiredError)) return false;
+        try {
+            jsonwebtoken.verify(token, jwtSecret)
+        } catch (error) {
+            if (!(error instanceof jsonwebtoken.TokenExpiredError)) return false
+        }
+
+        try {
+            const payload = jsonwebtoken.decode(token, { json: true }) as JwtPayload | null
+            if (!payload || payload.exp === undefined) {
+                return false
+            }
+
+            // Frontend has an auto logout interval but backend issued tokens might have just expired.
+            // Allow for just expired tokens to pass e.g. for the auto logout.
+            const allowedDifferenceInSeconds = 10
+            const freshEnough = (Math.round(Date.now() / 1000) - payload.exp) < allowedDifferenceInSeconds
+            if (!freshEnough) return false
+
+            // Set the user for other guards.
+            request['user'] = { userId: payload.sub }
+        } catch {
+            return false
+        }
+        return true
     }
 
-    try {
-      const payload = decode(token, { json: true }) as JwtPayload | null;
-      if (!payload || payload.exp === undefined) {
-        return false;
-      }
-
-      // Frontend has an auto logout interval but backend issued tokens might have just expired.
-      // Allow for just expired tokens to pass e.g. for the auto logout.
-      const allowedDifferenceInSeconds = 10;
-      const freshEnough = (Math.round(Date.now() / 1000) - payload.exp) < allowedDifferenceInSeconds;
-      if (!freshEnough) return false;
-
-      // Set the user for other guards.
-      request['user'] = { userId: payload.sub };
-    } catch {
-      return false;
+    private extractTokenFromHeader(request: Request): string | undefined {
+        const [type, token] = request.headers.authorization?.split(' ') ?? []
+        return type === 'Bearer' ? token : undefined
     }
-    return true;
-  }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
-  }
 }

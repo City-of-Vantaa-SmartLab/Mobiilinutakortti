@@ -1,8 +1,8 @@
-import { Layout, AppBar, UserMenu, MenuItemLink, Notification, Logout } from 'react-admin';
-import { getEnvConfig, ENV_VARS } from './envConfig';
-import LockIcon from '@mui/icons-material/Lock';
-import styled from 'styled-components';
-import Menu from './menu';
+import { Layout, AppBar, UserMenu, MenuItemLink, Notification, Logout } from 'react-admin'
+import { getEnvConfig, ENV_VARS } from './envConfig'
+import LockIcon from '@mui/icons-material/Lock'
+import styled from 'styled-components'
+import Menu from './menu'
 
 const CustomUserMenu = (props: any) => (
     <UserMenu {...props}>
@@ -27,8 +27,8 @@ const CustomNotification = styled(Notification)`
     padding-top: 20px !important;
 `
 
-const CustomAppBar = (props: any) => <AppBar {...props} userMenu={<CustomUserMenu />} />;
+const CustomAppBar = (props: any) => <AppBar {...props} userMenu={<CustomUserMenu />} />
 
-const CustomLayout = (props: any) => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} menu={Menu} />;
+const CustomLayout = (props: any) => <Layout {...props} appBar={CustomAppBar} notification={CustomNotification} menu={Menu} />
 
-export default CustomLayout;
+export default CustomLayout

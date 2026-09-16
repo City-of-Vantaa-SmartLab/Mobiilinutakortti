@@ -1,66 +1,67 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
-import { AppModule } from './../src/app.module';
-import { DataSource } from 'typeorm';
-import { RegisterYouthWorkerDto, LoginYouthWorkerDto, EditYouthWorkerDto } from '../src/youthWorker/dto';
-import { getTestDB } from './testdb';
-import { YouthWorkerUserViewModel } from '../src/youthWorker/vm/youthWorker.vm';
-import { maximumAttempts } from '../src/authentication/authentication.consts';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { Test, TestingModule } from '@nestjs/testing'
+import request from 'supertest'
+import { AppModule } from './../src/app.module'
+import { DataSource } from 'typeorm'
+import { RegisterYouthWorkerDto, LoginYouthWorkerDto, EditYouthWorkerDto } from '../src/youthWorker/dto'
+import { getTestDB } from './testdb'
+import { YouthWorkerUserViewModel } from '../src/youthWorker/vm/youthWorker.vm'
+import { maximumAttempts } from '../src/authentication/authentication.consts'
+import { getDataSourceToken } from '@nestjs/typeorm'
+import { INestApplication } from '@nestjs/common';
 
 describe('YouthWorkerController (e2e)', () => {
-    let app;
-    let connection: DataSource;
-    let superToken: string;
-    let standardToken: string;
-    let youthWorkerList: YouthWorkerUserViewModel[];
+    let app: INestApplication<any>
+    let connection: DataSource
+    let superToken: string
+    let standardToken: string
+    let youthWorkerList: YouthWorkerUserViewModel[]
 
     const testSuperRegister = {
         email: 'anEmail@gofore.com', password: 'Password',
         firstName: 'Testy', lastName: 'McTestFace', isAdmin: true,
-    } as RegisterYouthWorkerDto;
+    } as RegisterYouthWorkerDto
 
     const testSuperLogin = {
         email: testSuperRegister.email, password: testSuperRegister.password,
-    } as LoginYouthWorkerDto;
+    } as LoginYouthWorkerDto
 
     const testYouthWorkerRegister = {
         email: 'Testy.McTestFace@gofore.com', password: 'Password',
         firstName: 'Testy', lastName: 'McTestFace', isAdmin: false,
-    } as RegisterYouthWorkerDto;
+    } as RegisterYouthWorkerDto
 
     const testYouthWorkerLogin = {
         email: testYouthWorkerRegister.email, password: testYouthWorkerRegister.password,
-    } as LoginYouthWorkerDto;
+    } as LoginYouthWorkerDto
 
     beforeAll(async () => {
         // Create a connection to a test DB
-        connection = await getTestDB();
-        await connection.initialize();
+        connection = getTestDB()
+        await connection.initialize()
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
         })
             .overrideProvider(getDataSourceToken())
             .useValue(connection)
-            .compile();
+            .compile()
 
-        app = moduleFixture.createNestApplication();
-        await app.init();
+        app = moduleFixture.createNestApplication()
+        await app.init()
 
         await request(app.getHttpServer())
             .post('/api/youthworker/registerAdmin')
-            .send(testSuperRegister);
+            .send(testSuperRegister)
         superToken = (await request(app.getHttpServer())
             .post('/api/youthworker/login')
-            .send(testSuperLogin)).body.access_token;
-    });
+            .send(testSuperLogin)).body.access_token
+    })
 
     afterAll(async () => {
         if (connection.isInitialized) {
-            await connection.destroy();
+            await connection.destroy()
         }
-        await app.close();
-    });
+        await app.close()
+    })
 
     describe('/youthworker/register', () => {
         it('returns a Created if a new user is created', async () => {
@@ -69,7 +70,7 @@ describe('YouthWorkerController (e2e)', () => {
                 .set('Authorization', `Bearer ${superToken}`)
                 .set('Accept', 'application/json')
                 .send(testYouthWorkerRegister)
-                .expect(201);
+                .expect(201)
         }),
             it('returns a Conflict if the user already exists', async () => {
                 return request(app.getHttpServer())
@@ -77,7 +78,7 @@ describe('YouthWorkerController (e2e)', () => {
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testYouthWorkerRegister)
-                    .expect(409);
+                    .expect(409)
             }),
             it('returns an Bad Request if invalid data is entered', () => {
                 return request(app.getHttpServer())
@@ -85,7 +86,7 @@ describe('YouthWorkerController (e2e)', () => {
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testYouthWorkerLogin)
-                    .expect(400);
+                    .expect(400)
             }),
             it('should reject an attempt from non-super users', async () => {
                 const testData = {
@@ -93,18 +94,18 @@ describe('YouthWorkerController (e2e)', () => {
                     firstName: testYouthWorkerRegister.firstName,
                     lastName: testYouthWorkerRegister.lastName,
                     password: testYouthWorkerRegister.password, isAdmin: false,
-                } as RegisterYouthWorkerDto;
+                } as RegisterYouthWorkerDto
                 standardToken = (await request(app.getHttpServer())
                     .post('/api/youthworker/login')
-                    .send(testYouthWorkerLogin)).body.access_token;
+                    .send(testYouthWorkerLogin)).body.access_token
                 return request(app.getHttpServer())
                     .post('/api/youthworker/register')
                     .set('Authorization', `Bearer ${standardToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(403);
-            });
-    });
+                    .expect(403)
+            })
+    })
 
     describe('/youthworker/login (POST)', () => {
         it('returns a JWT token on a succesful login', () => {
@@ -113,53 +114,53 @@ describe('YouthWorkerController (e2e)', () => {
                 .send(testYouthWorkerLogin)
                 .expect('Content-Type', /json/)
                 .expect(201).then(response => {
-                    expect(response !== null);
-                });
+                    expect(response !== null)
+                })
         }),
             it('returns a Bad Request if the email does not exist', () => {
-                const testData = { email: 'boaty.mcboatface@gofore.com', password: testYouthWorkerLogin.password } as LoginYouthWorkerDto;
+                const testData = { email: 'boaty.mcboatface@gofore.com', password: testYouthWorkerLogin.password } as LoginYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/login')
                     .send(testData)
-                    .expect(400);
+                    .expect(400)
             }),
             it('returns Unauthorized if an invalid password is provided', () => {
-                const testData = { email: testYouthWorkerLogin.email, password: 'wordswordswords' } as LoginYouthWorkerDto;
+                const testData = { email: testYouthWorkerLogin.email, password: 'wordswordswords' } as LoginYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/login')
                     .send(testData)
-                    .expect(401);
+                    .expect(401)
             }),
             it('returns a Bad Request if invalid data is entered', () => {
-                const testData = { email: testYouthWorkerLogin.email };
+                const testData = { email: testYouthWorkerLogin.email }
                 return request(app.getHttpServer())
                     .post('/api/youthworker/login')
                     .send(testData)
-                    .expect(400);
+                    .expect(400)
             }),
             it('Should lockout a user if they make 5 incorrect attempts', async () => {
                 const lockoutRegister = {
                     email: 'LockoutTest@test.com', password: 'Password',
                     firstName: 'Testy', lastName: 'McTestFace', isAdmin: false,
-                } as RegisterYouthWorkerDto;
-                const lockoutLogin = { email: lockoutRegister.email, password: lockoutRegister.password } as LoginYouthWorkerDto;
-                const lockoutLoginWrong = { email: lockoutRegister.email, password: '12345' };
+                } as RegisterYouthWorkerDto
+                const lockoutLogin = { email: lockoutRegister.email, password: lockoutRegister.password } as LoginYouthWorkerDto
+                const lockoutLoginWrong = { email: lockoutRegister.email, password: '12345' }
                 await request(app.getHttpServer())
                     .post('/api/youthworker/register')
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
-                    .send(lockoutRegister);
+                    .send(lockoutRegister)
                 for (let i = 0; i < maximumAttempts; i++) {
                     await request(app.getHttpServer())
                         .post('/api/youthworker/login')
-                        .send(lockoutLoginWrong);
+                        .send(lockoutLoginWrong)
                 }
                 return request(app.getHttpServer())
                     .post('/api/youthworker/login')
                     .send(lockoutLogin)
-                    .expect(403);
-            });
-    });
+                    .expect(403)
+            })
+    })
 
     describe('/youthworker/getSelf (GET)', () => {
         it('return a 200 if a valid user token is provided', async () => {
@@ -167,131 +168,132 @@ describe('YouthWorkerController (e2e)', () => {
                 .get('/api/youthworker/getSelf')
                 .set('Authorization', `Bearer ${standardToken}`)
                 .set('Accept', 'application/json')
-                .expect(200);
+                .expect(200)
         }),
             it('returns unauthorized if an invalid token is provided', async () => {
                 return request(app.getHttpServer())
                     .get('/api/youthworker/getSelf')
                     .set('Authorization', `Bearer ${standardToken}1`)
                     .set('Accept', 'application/json')
-                    .expect(401);
-            });
-    });
+                    .expect(401)
+            })
+    })
 
     describe('/youthworker/list', () => {
         it('Should return a list containing details of all youth workers', async () => {
             const response = await request(app.getHttpServer())
                 .get('/api/youthworker/list')
                 .set('Authorization', `Bearer ${superToken}`)
-                .set('Accept', 'application/json');
-            youthWorkerList = response.body as YouthWorkerUserViewModel[];
+                .set('Accept', 'application/json')
+            youthWorkerList = response.body as YouthWorkerUserViewModel[]
             return response.status === 200 && youthWorkerList.find(e => e.email === testYouthWorkerLogin.email.toLowerCase()) &&
-                youthWorkerList.find(e => e.email === testYouthWorkerLogin.email.toLowerCase());
+                youthWorkerList.find(e => e.email === testYouthWorkerLogin.email.toLowerCase())
         }),
             it('Should reject non-super users', async () => {
                 return request(app.getHttpServer())
                     .get('/api/youthworker/list')
                     .set('Authorization', `Bearer ${standardToken}`)
                     .set('Accept', 'application/json')
-                    .expect(403);
-            });
-    });
+                    .expect(403)
+            })
+    })
 
     describe('/youthworker/edit', () => {
         it('Should return a 201 when completed with valid data', async () => {
-            const testData = { id: youthWorkerList[0].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto;
+            const testData = { id: youthWorkerList[0].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto
             return request(app.getHttpServer())
                 .post('/api/youthworker/edit')
                 .set('Authorization', `Bearer ${superToken}`)
                 .set('Accept', 'application/json')
                 .send(testData)
-                .expect(201);
+                .expect(201)
         }),
             it('Should reject non-super users', async () => {
-                const testData = { id: youthWorkerList[0].id, email: 'SuperCoolNewEmail@anEmail.fi' } as EditYouthWorkerDto;
+                const testData = { id: youthWorkerList[0].id, email: 'SuperCoolNewEmail@anEmail.fi' } as EditYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/edit')
                     .set('Authorization', `Bearer ${standardToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(403);
+                    .expect(403)
             }),
             it('Should throw an error if invalid data is provided.', async () => {
-                const testData = { id: youthWorkerList[0].id, email: 'NotAnEmail' } as EditYouthWorkerDto;
+                const testData = { id: youthWorkerList[0].id, email: 'NotAnEmail' } as EditYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/edit')
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(400);
+                    .expect(400)
             }),
             it('Should throw an error if the user does not exist', async () => {
-                const testData = { id: '00000000-0000-0000-0000-000000000001', email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto;
+                const testData = { id: '00000000-0000-0000-0000-000000000001', email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/edit')
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(400);
+                    .expect(400)
             }),
             it('Should throw an error if the an email change is request, but the email is in use.', async () => {
-                const testData = { id: youthWorkerList[1].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto;
+                const testData = { id: youthWorkerList[1].id, email: 'SuperCoolNewEmail@anEmail.com' } as EditYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/edit')
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(409);
+                    .expect(409)
             }),
             it('Should throw an error if no data is changed.', async () => {
-                const testData = { id: youthWorkerList[0].id } as EditYouthWorkerDto;
+                const testData = { id: youthWorkerList[0].id } as EditYouthWorkerDto
                 return request(app.getHttpServer())
                     .post('/api/youthworker/edit')
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
                     .send(testData)
-                    .expect(201);
-            });
-    });
+                    .expect(201)
+            })
+    })
 
     describe('/youthworker/delete', () => {
-        let youthWorkerToDelete;
+        let youthWorkerToDeleteId: string | undefined
         beforeAll(async () => {
             const newYouthWorkerToDelete = {
                 email: 'delete@me.com', password: 'pwordsprhg',
                 firstName: 'qegqegqeg', lastName: 'paejq', isAdmin: false,
-            } as RegisterYouthWorkerDto;
+            } as RegisterYouthWorkerDto
             await request(app.getHttpServer())
                 .post('/api/youthworker/register')
                 .set('Authorization', `Bearer ${superToken}`)
                 .set('Accept', 'application/json')
-                .send(newYouthWorkerToDelete);
+                .send(newYouthWorkerToDelete)
             const response = (await request(app.getHttpServer())
                 .get('/api/youthworker/list')
                 .set('Authorization', `Bearer ${superToken}`)
-                .set('Accept', 'application/json')).body as YouthWorkerUserViewModel[];
-            youthWorkerToDelete = response.find(i => i.email === newYouthWorkerToDelete?.email).id;
+                .set('Accept', 'application/json')).body as YouthWorkerUserViewModel[]
+            youthWorkerToDeleteId = response.find(i => i.email === newYouthWorkerToDelete?.email)?.id
+            if (!youthWorkerToDeleteId) throw new Error("Youth worker not found.")
         }),
             it('Should return a 200 user when carried out by a SuperAdmin', async () => {
                 return request(app.getHttpServer())
-                    .delete(`/api/youthworker/${youthWorkerToDelete}`)
+                    .delete(`/api/youthworker/${youthWorkerToDeleteId}`)
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
-                    .expect(200);
+                    .expect(200)
             }),
             it('Should reject the request for non-youth workers', () => {
                 return request(app.getHttpServer())
-                    .delete(`/api/youthworker/${youthWorkerToDelete}`)
+                    .delete(`/api/youthworker/${youthWorkerToDeleteId}`)
                     .set('Authorization', `Bearer ${standardToken}`)
                     .set('Accept', 'application/json')
-                    .expect(403);
+                    .expect(403)
             }),
             it('Should reject the reqest if the ID is invalid', () => {
                 return request(app.getHttpServer())
                     .delete(`/api/youthworker/00000000-0000-0000-0000-000000000002`)
                     .set('Authorization', `Bearer ${superToken}`)
                     .set('Accept', 'application/json')
-                    .expect(400);
-            });
-    });
-});
+                    .expect(400)
+            })
+    })
+})

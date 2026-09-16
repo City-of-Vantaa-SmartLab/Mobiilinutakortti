@@ -1,35 +1,34 @@
 {
   "name": "nutakortti-backend",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "Backend for the Nutakortti application",
   "private": true,
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main",
-    "test": "cross-env NODE_ENV=test ENABLE_SETUP_ENDPOINTS=yes jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test ENABLE_SETUP_ENDPOINTS=yes jest --config ./test/jest-e2e.json --runInBand"
+    "test": "cross-env ENABLE_SETUP_ENDPOINTS=yes SMS_MOCK=true NODE_OPTIONS=--experimental-vm-modules node ./node_modules/jest/bin/jest.js --runInBand",
+    "test:e2e": "cross-env ENABLE_SETUP_ENDPOINTS=yes SMS_MOCK=true NODE_OPTIONS=--experimental-vm-modules node ./node_modules/jest/bin/jest.js --config ./test/jest-e2e.json --runInBand"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.958.0",
-    "@nestjs/axios": "^4.0.1",
-    "@nestjs/common": "^11.1.10",
-    "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.10",
-    "@nestjs/jwt": "^11.0.2",
-    "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.1.10",
-    "@nestjs/schedule": "^6.1.0",
-    "@nestjs/swagger": "^11.2.3",
-    "@nestjs/typeorm": "^11.0.0",
+    "@aws-sdk/client-ses": "^3.1134.0",
+    "@nestjs/axios": "^12.0.1",
+    "@nestjs/common": "^12.0.3",
+    "@nestjs/config": "^12.0.0",
+    "@nestjs/core": "^12.0.3",
+    "@nestjs/jwt": "^12.0.2",
+    "@nestjs/passport": "^12.0.0",
+    "@nestjs/platform-express": "^12.0.3",
+    "@nestjs/schedule": "^12.0.2",
+    "@nestjs/swagger": "^12.0.1",
+    "@nestjs/typeorm": "^12.0.1",
     "@node-saml/node-saml": "^5.1.0",
-    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "cookie-parser": "^1.4.6",
     "date-fns": "^4.1.0",
     "moment": "^2.24.0",
-    "nestjs-pino": "^4.5.0",
+    "nestjs-pino": "^5.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.16.0",
@@ -37,18 +36,18 @@
     "typeorm": "^1.0.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.14",
-    "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.10",
-    "@types/bcrypt": "^6.0.0",
+    "@nestjs/cli": "^12.0.3",
+    "@nestjs/schematics": "^12.0.3",
+    "@nestjs/testing": "^12.0.3",
     "@types/cookie-parser": "^1.4.7",
     "@types/cookie-signature": "^1.1.2",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.0.3",
+    "@types/node": "^26.6.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.2.0",
     "cross-env": "^10.1.0",
-    "jest": "^30.2.0",
+    "jest": "^30.5.1",
+    "jest-util": "^30.5.1",
     "pg-mem": "^3.0.5",
     "prettier": "^3.3.3",
     "supertest": "^7.1.4",
@@ -66,15 +65,28 @@
     ],
     "rootDir": "src",
     "testRegex": ".spec.ts$",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^nestjs-pino$": "<rootDir>/../test/jest/nestjs-pino.mock.ts",
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
     "transform": {
       "^.+\\.(t|j)s$": [
         "ts-jest",
         {
-          "tsconfig": "tsconfig.test.json"
+          "tsconfig": "tsconfig.test.json",
+          "useESM": true
         }
       ]
     },
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "@scarf/scarf@1.4.0": true,
+    "unrs-resolver@1.12.2": true
   }
 }

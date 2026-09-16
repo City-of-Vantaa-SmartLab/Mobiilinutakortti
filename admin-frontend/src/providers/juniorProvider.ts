@@ -1,6 +1,6 @@
-import api from '../api';
-import { newHttpErrorFromResponse } from '../utils';
-import { httpClientWithRefresh } from '../httpClients';
+import api from '../api'
+import { newHttpErrorFromResponse } from '../utils'
+import { httpClientWithRefresh } from '../httpClients'
 
 export const juniorProvider = {
     getList: async (params: any) => {
@@ -20,27 +20,27 @@ export const juniorProvider = {
                 field: params.sort.field,
                 order: params.sort.order
             }
-        };
-
-        const url = api.junior.list + `?controls=${encodeURIComponent(JSON.stringify(controls))}`;
-        const options = { method: 'GET' };
-
-        const response = await httpClientWithRefresh(url, options);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
         }
-        return response;
+
+        const url = api.junior.list + `?controls=${encodeURIComponent(JSON.stringify(controls))}`
+        const options = { method: 'GET' }
+
+        const response = await httpClientWithRefresh(url, options)
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response)
+        }
+        return response
     },
 
     getOne: async (params: any) => {
-        const url = api.junior.base + params.id;
-        const options = { method: 'GET' };
+        const url = api.junior.base + params.id
+        const options = { method: 'GET' }
 
-        const response = await httpClientWithRefresh(url, options);
+        const response = await httpClientWithRefresh(url, options)
         if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
+            throw newHttpErrorFromResponse(response)
         }
-        return { data: response };
+        return { data: response }
     },
 
     create: async (params: any) => {
@@ -65,20 +65,20 @@ export const juniorProvider = {
             additionalContactInformation: params.data.additionalContactInformation,
             status: params.data.status,
             photoPermission: params.data.photoPermission
-        });
+        })
 
-        const url = api.junior.create;
+        const url = api.junior.create
         const options = {
             method: 'POST',
             body: data,
             headers: { "Content-Type": "application/json" },
-        };
-
-        const response = await httpClientWithRefresh(url, options);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
         }
-        return { data: response };
+
+        const response = await httpClientWithRefresh(url, options)
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response)
+        }
+        return { data: response }
     },
 
     update: async (params: any) => {
@@ -104,47 +104,47 @@ export const juniorProvider = {
             additionalContactInformation: params.data.additionalContactInformation,
             status: params.data.status,
             photoPermission: params.data.photoPermission
-        };
+        }
 
-        const jsonData = JSON.stringify(data);
-        const url = api.junior.edit;
+        const jsonData = JSON.stringify(data)
+        const url = api.junior.edit
         const options = {
             method: 'POST',
             body: jsonData,
             headers: { "Content-Type": "application/json" },
-        };
-
-        const response = await httpClientWithRefresh(url, options);
-        if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
         }
-        return { data }; // React-admin expects this format from UPDATE
+
+        const response = await httpClientWithRefresh(url, options)
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            throw newHttpErrorFromResponse(response)
+        }
+        return { data } // React-admin expects this format from UPDATE
     },
 
     getMany: async (_params: any) => {
-        throw new Error('GET_MANY not implemented for junior');
+        throw new Error('GET_MANY not implemented for junior')
     },
 
     getManyReference: async (_params: any) => {
-        throw new Error('GET_MANY_REFERENCE not implemented for junior');
+        throw new Error('GET_MANY_REFERENCE not implemented for junior')
     },
 
     updateMany: async (_params: any) => {
-        throw new Error('UPDATE_MANY not implemented for junior');
+        throw new Error('UPDATE_MANY not implemented for junior')
     },
 
     delete: async (params: any) => {
-        const url = api.junior.base + params.id;
-        const options = { method: 'DELETE' };
+        const url = api.junior.base + params.id
+        const options = { method: 'DELETE' }
 
-        const response = await httpClientWithRefresh(url, options);
+        const response = await httpClientWithRefresh(url, options)
         if (response.statusCode < 200 || response.statusCode >= 300) {
-            throw newHttpErrorFromResponse(response);
+            throw newHttpErrorFromResponse(response)
         }
-        return { data: { id: params.id } };
+        return { data: { id: params.id } }
     },
 
     deleteMany: async (_params: any) => {
-        throw new Error('DELETE_MANY not implemented for junior');
+        throw new Error('DELETE_MANY not implemented for junior')
     },
-};
+}

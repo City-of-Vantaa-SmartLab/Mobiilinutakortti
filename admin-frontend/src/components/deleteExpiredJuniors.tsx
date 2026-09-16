@@ -1,105 +1,107 @@
-import { useState, useEffect } from 'react';
-import { Title, useNotify } from 'react-admin';
-import { Navigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
-import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material';
-import { juniorProvider } from '../providers/juniorProvider';
-import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
-import { STATE } from '../state';
-import api from '../api';
-import { Status, statusChoices } from '../utils';
-import useAutoLogout from '../hooks/useAutoLogout';
-import { getEnvConfig, ENV_VARS } from '../envConfig';
+import { useState, useEffect } from 'react'
+import { Title, useNotify } from 'react-admin'
+import { Navigate } from 'react-router-dom'
+import DeleteIcon from '@mui/icons-material/DeleteForever'
+import { Button, Card, CardContent, Checkbox, FormControlLabel } from '@mui/material'
+import { juniorProvider } from '../providers/juniorProvider'
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh'
+import { STATE } from '../state'
+import api from '../api'
+import { Status, statusChoices } from '../utils'
+import useAutoLogout from '../hooks/useAutoLogout'
+import { getEnvConfig, ENV_VARS } from '../envConfig'
 
-const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
+const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES)
+const expiredStatusName = statusChoices.find(s => s.id === Status.expired)?.name ?? 'TEKSTI_PUUTTUU'
+const extraEntriesOnlyStatusName = statusChoices.find(s => s.id === Status.extraEntriesOnly)?.name ?? 'TEKSTI_PUUTTUU'
 
 const DeleteExpiredJuniors = () => {
-  const notify = useNotify();
+    const notify = useNotify()
 
-  const [state, setState] = useState(STATE.INITIAL);
-  const [expiredUserCount, setExpiredUserCount] = useState(0);
-  const [checkboxState, setCheckboxState] = useState(false);
+    const [state, setState] = useState(STATE.INITIAL)
+    const [expiredUserCount, setExpiredUserCount] = useState(0)
+    const [checkboxState, setCheckboxState] = useState(false)
 
-  const onCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCheckboxState(!!event.target.checked);
-  };
-
-  useAutoLogout();
-
-  useEffect(() => {
-    const getExpiredUserCount = async () => {
-      setState(STATE.LOADING);
-
-      try {
-        const { total } = await juniorProvider.getList(
-          {
-            filter: { status: Status.expired },
-            pagination: { page: 1, perPage: 1 },
-            sort: { field: 'id', order: 'ASC' },
-          },
-        );
-        setExpiredUserCount(total);
-      } catch (error) {
-        notify('Käyttäjien haku epäonnistui', { type: 'error' });
-        setExpiredUserCount(0);
-      }
-
-      setState(STATE.INITIAL);
-    };
-
-    getExpiredUserCount();
-  }, [notify]);
-
-  const deleteExpiredJuniors = async () => {
-    const response = await httpClientWithRefresh(api.junior.deleteExpired, {
-      method: 'DELETE',
-    });
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      notify('Virhe poistettaessa käyttäjiä', { type: 'error' });
-      setState(STATE.INITIAL);
-    } else {
-      notify(response.message, { type: 'success' });
-      setState(STATE.DONE);
+    const onCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCheckboxState(!!event.target.checked)
     }
-  };
 
-  const handleClick = async () => {
-    setState(STATE.LOADING);
-    deleteExpiredJuniors();
-  };
+    useAutoLogout()
 
-  if (state === STATE.DONE) {
-    return <Navigate to="/" replace />;
-  }
+    useEffect(() => {
+        const getExpiredUserCount = async () => {
+            setState(STATE.LOADING)
 
-  return (
-    <Card sx={{ marginTop: 2 }}>
-      <Title title="Poista vanhat käyttäjät"></Title>
-      <CardContent>
-        <p>
-          Tämä toiminto poistaa järjestelmästä nuoret, joiden tila on "{statusChoices.find(s => s.id === Status.expired).name}".
-        </p>
-        {showExtraEntries && <p>
-          Mikäli poistettavalla nuorella on lisämerkintöjä häntä ei poisteta, mutta tilakseen muutetaan "{statusChoices.find(s => s.id === Status.extraEntriesOnly).name}". Viimeisten lisämerkintöjensä vanhentuessa nuoret poistetaan järjestelmästä automaattisesti vuorokauden sisällä.
-        </p>}
-        <p>
-          Toiminto vaikuttaa {expiredUserCount} nuoreen.
-        </p>
-        <FormControlLabel label="Ymmärrän yllä esitetyn tekstin sisällön ja haluan poistaa toimintoa koskevat nuoret." control={<Checkbox onChange={(event) => onCheckboxChange(event)} color="primary"/>}/>
+            try {
+                const { total } = await juniorProvider.getList(
+                    {
+                        filter: { status: Status.expired },
+                        pagination: { page: 1, perPage: 1 },
+                        sort: { field: 'id', order: 'ASC' },
+                    },
+                )
+                setExpiredUserCount(total)
+            } catch (error) {
+                notify('Käyttäjien haku epäonnistui', { type: 'error' })
+                setExpiredUserCount(0)
+            }
 
-        <Button
-          onClick={handleClick}
-          variant="contained"
-          disabled={state !== STATE.INITIAL || !checkboxState}
-          color="primary"
-          startIcon={<DeleteIcon />}
-          size="large"
-        >
-          {state === STATE.INITIAL ? 'Suorita poisto' : 'Odota'}
-        </Button>
-      </CardContent>
-    </Card>
-  );
-};
+            setState(STATE.INITIAL)
+        }
 
-export default DeleteExpiredJuniors;
+        getExpiredUserCount()
+    }, [notify])
+
+    const deleteExpiredJuniors = async () => {
+        const response = await httpClientWithRefresh(api.junior.deleteExpired, {
+            method: 'DELETE',
+        })
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+            notify('Virhe poistettaessa käyttäjiä', { type: 'error' })
+            setState(STATE.INITIAL)
+        } else {
+            notify(response.message, { type: 'success' })
+            setState(STATE.DONE)
+        }
+    }
+
+    const handleClick = async () => {
+        setState(STATE.LOADING)
+        deleteExpiredJuniors()
+    }
+
+    if (state === STATE.DONE) {
+        return <Navigate to="/" replace />
+    }
+
+    return (
+        <Card sx={{ marginTop: 2 }}>
+            <Title title="Poista vanhat käyttäjät"></Title>
+            <CardContent>
+                <p>
+                    Tämä toiminto poistaa järjestelmästä nuoret, joiden tila on "{expiredStatusName}".
+                </p>
+                {showExtraEntries && <p>
+                    Mikäli poistettavalla nuorella on lisämerkintöjä häntä ei poisteta, mutta tilakseen muutetaan "{extraEntriesOnlyStatusName}". Viimeisten lisämerkintöjensä vanhentuessa nuoret poistetaan järjestelmästä automaattisesti vuorokauden sisällä.
+                </p>}
+                <p>
+                    Toiminto vaikuttaa {expiredUserCount} nuoreen.
+                </p>
+                <FormControlLabel label="Ymmärrän yllä esitetyn tekstin sisällön ja haluan poistaa toimintoa koskevat nuoret." control={<Checkbox onChange={(event) => onCheckboxChange(event)} color="primary"/>}/>
+
+                <Button
+                    onClick={handleClick}
+                    variant="contained"
+                    disabled={state !== STATE.INITIAL || !checkboxState}
+                    color="primary"
+                    startIcon={<DeleteIcon />}
+                    size="large"
+                >
+                    {state === STATE.INITIAL ? 'Suorita poisto' : 'Odota'}
+                </Button>
+            </CardContent>
+        </Card>
+    )
+}
+
+export default DeleteExpiredJuniors

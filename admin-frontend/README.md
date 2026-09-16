@@ -52,3 +52,5 @@ When logging in using dev server, you might get an error:
         at dispatchEvent (react-dom-client.development.js:23585:11)
 
 The error comes from MUI/react-admin and React 19 issues, but is not a fatal one. On the production build you will get the error twice: first when opening the login page, then when logging in.
+
+Running npm audit finds a vulnerability: `react-admin` depends on `query-string`, which depends on `decode-uri-component`. The audit finding can be solved by overriding with version `0.5.x`, but doing so breaks any list filters at runtime with `decodeComponent is not a function`.

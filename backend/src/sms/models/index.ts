@@ -1,3 +1,3 @@
-export { Recipient } from './recipient.model';
-export { TeliaSettings } from './teliaSettings.model';
-export { TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './teliaMessageRequest.model';
+export { Recipient } from './recipient.model'
+export { SmsSettings } from './smsSettings.model'
+export { TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './teliaMessageRequest.model'

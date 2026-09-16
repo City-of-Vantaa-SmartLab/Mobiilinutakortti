@@ -8,6 +8,6 @@ export const statisticsAgeGroups = [
     { kompassiId: 6, range: "18-24" },
     //{ kompassiId: 7, range: "OVER_30" }
     { kompassiId: 8, range: "25-29" }
-];
+]
 
-export default statisticsAgeGroups;
+export default statisticsAgeGroups

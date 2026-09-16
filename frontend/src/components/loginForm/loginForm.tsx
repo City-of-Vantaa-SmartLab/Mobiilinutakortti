@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { validPhoneNumber } from '../../utils';
-import { useTranslations } from '../translations';
+import React, { useState } from 'react'
+import styled from 'styled-components'
+import { validPhoneNumber } from '../../utils'
+import { useTranslations } from '../translations'
 
 const Form = styled.form`
     display: flex;
     flex-direction: column;
     z-index: 10;
-`;
+`
 
 const Input = styled.input`
     outline: none;
@@ -20,7 +20,7 @@ const Input = styled.input`
     &:focus {
         box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
     }
-`;
+`
 
 const Button = styled.button`
     font-family: ${p => p.theme.fonts.body};
@@ -34,11 +34,11 @@ const Button = styled.button`
     &:focus {
         outline: None;
     }
-`;
+`
 
 const FormHeader = styled.label`
     color: ${p => p.theme.pages.login.labelText};
-`;
+`
 
 interface LoginFormI {
     onSubmit: (phone: string, error: boolean) => void,
@@ -47,7 +47,7 @@ interface LoginFormI {
 
 const LoginForm: React.FC<LoginFormI> = (props) => {
     const t = useTranslations()
-    const [phone, setPhone] = useState('');
+    const [phone, setPhone] = useState('')
 
     const handleSubmit = () => {
         if (phone.match(validPhoneNumber)) {
@@ -55,7 +55,7 @@ const LoginForm: React.FC<LoginFormI> = (props) => {
         } else {
             props.onSubmit('', true)
         }
-        setPhone('');
+        setPhone('')
     }
 
     return (
@@ -74,7 +74,7 @@ const LoginForm: React.FC<LoginFormI> = (props) => {
                 disabled={props.disabled} />
             <Button type='submit' disabled={props.disabled}>{t.login.submit}</Button>
         </Form>
-    );
+    )
 }
 
-export default LoginForm;
+export default LoginForm

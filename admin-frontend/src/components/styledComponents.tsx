@@ -1,14 +1,14 @@
-import { Card, CardContent, CardHeader, TextField, DialogTitle, Button as MuiButton } from '@mui/material';
-import styled from 'styled-components';
-import { Field } from 'react-final-form';
-import React, { useState } from 'react';
-import { CalendarHelper } from './calendarHelper';
-import { Button, Toolbar, SaveButton, DeleteButton, useRedirect } from 'react-admin';
-import { useFormState } from 'react-hook-form';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CheckIcon from '@mui/icons-material/Check';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { Box, Paper } from '@mui/material';
+import { Card, CardContent, CardHeader, TextField, DialogTitle, Button as MuiButton } from '@mui/material'
+import styled from 'styled-components'
+import { Field } from 'react-final-form'
+import React, { useState } from 'react'
+import { CalendarHelper } from './calendarHelper'
+import { Button, Toolbar, SaveButton, DeleteButton, useRedirect } from 'react-admin'
+import { useFormState } from 'react-hook-form'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import CheckIcon from '@mui/icons-material/Check'
+import CancelIcon from '@mui/icons-material/Cancel'
+import { Box, Paper } from '@mui/material'
 
 export const Container = styled.div`
     height: 100%;
@@ -18,43 +18,43 @@ export const Container = styled.div`
     justify-content: flex-start;
     flex-direction: column;
     padding-top: 40px;
-`;
+`
 
 export const VerticalCardPadding = styled.div`
     padding-top: 40px;
-`;
+`
 
 export const StyledDialogTitle = styled(DialogTitle)`
     padding-left: 0px !important;
-`;
+`
 
 export const CheckInLogTextFieldContainer = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
-`;
+`
 
 export const CheckInLogCard = styled(Card)`
     width: 100%;
     max-width: 800px;
-`;
+`
 
 export const CheckInLogCardHeader = styled(CardHeader)`
     text-align: center;
-`;
+`
 
 export const CheckInLogCardContent = styled(CardContent)`
     margin: 0px 30px;
-`;
+`
 
 export const CheckInLogCardContentSelect = styled(CheckInLogCardContent)`
     display: flex;
     justify-content: center;
-`;
+`
 
 export const CheckInLogTextField = styled(TextField)`
     width:100px;
-`;
+`
 
 export const QueryDatePickerField: React.FC = () => (
     <Field name="queryDate" defaultValue={new Date().toISOString().split('T')[0]}>
@@ -69,17 +69,17 @@ export const QueryDatePickerField: React.FC = () => (
             />
         )}
     </Field>
-);
+)
 
 // Common button component for returning to list view
 export const ReturnButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
     <Button label="Takaisin" onClick={onClick} alignIcon="left" sx={{ mr: 1 }}>
         <ArrowBackIcon />
     </Button>
-);
+)
 
 // Modal backdrop component - reusable overlay for modals and dialogs
-export const ModalBackdrop: React.FC<{ children: React.ReactNode; zIndex?: number; paddingTop?: string }> = ({
+export const ModalBackdrop: React.FC<{ children: React.ReactNode, zIndex?: number, paddingTop?: string }> = ({
     children,
     zIndex = 1300,
     paddingTop = '80px'
@@ -102,10 +102,10 @@ export const ModalBackdrop: React.FC<{ children: React.ReactNode; zIndex?: numbe
     >
         {children}
     </Box>
-);
+)
 
 // Modal content container - reusable Paper wrapper for modal content
-export const ModalContent: React.FC<{ children: React.ReactNode; maxWidth?: string }> = ({
+export const ModalContent: React.FC<{ children: React.ReactNode, maxWidth?: string }> = ({
     children,
     maxWidth = '500px'
 }) => (
@@ -120,7 +120,7 @@ export const ModalContent: React.FC<{ children: React.ReactNode; maxWidth?: stri
     >
         {children}
     </Paper>
-);
+)
 
 // Modal buttons container - reusable button layout
 export const ModalButtonsContainer: React.FC<{ children: React.ReactNode; justifyContent?: string }> = ({
@@ -138,7 +138,7 @@ export const ModalButtonsContainer: React.FC<{ children: React.ReactNode; justif
     >
         {children}
     </Box>
-);
+)
 
 // Confirmation dialog component
 const ConfirmationDialog: React.FC<{ onConfirm: () => void; onCancel: () => void }> = ({ onConfirm, onCancel }) => (
@@ -168,31 +168,31 @@ const ConfirmationDialog: React.FC<{ onConfirm: () => void; onCancel: () => void
             </ModalButtonsContainer>
         </ModalContent>
     </ModalBackdrop>
-);
+)
 
 // Generic toolbar with return, save and optional delete buttons
-export const CustomBasicToolbar: React.FC<{ listPath: string; showDelete?: boolean }> = (props) => {
-    const { listPath, showDelete = false } = props as any;
-    const redirect = useRedirect();
-    const { isDirty } = useFormState();
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+export const CustomBasicToolbar: React.FC<{ listPath: string, showDelete?: boolean }> = (props) => {
+    const { listPath, showDelete = false } = props as any
+    const redirect = useRedirect()
+    const { isDirty } = useFormState()
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
     const handleBack = () => {
         if (isDirty) {
-            setShowConfirmDialog(true);
+            setShowConfirmDialog(true)
         } else {
-            redirect(listPath);
+            redirect(listPath)
         }
-    };
+    }
 
     const handleConfirm = () => {
-        setShowConfirmDialog(false);
-        redirect(listPath);
-    };
+        setShowConfirmDialog(false)
+        redirect(listPath)
+    }
 
     const handleCancel = () => {
-        setShowConfirmDialog(false);
-    };
+        setShowConfirmDialog(false)
+    }
 
     return (
         <>
@@ -205,8 +205,8 @@ export const CustomBasicToolbar: React.FC<{ listPath: string; showDelete?: boole
                 {showDelete && <DeleteButton />}
             </Toolbar>
         </>
-    );
-};
+    )
+}
 
 const StyledLoadingContainer = styled.div`
     display: flex;
@@ -216,8 +216,8 @@ const StyledLoadingContainer = styled.div`
     margin: 40px;
     font-size: 16px;
     color: #666;
-`;
+`
 
 export const LoadingMessage: React.FC = () => (
     <StyledLoadingContainer>Ladataan...</StyledLoadingContainer>
-);
+)

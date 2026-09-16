@@ -20,7 +20,7 @@ export interface userState {
 
 export interface getSelfSuccess {
     type: userTypes.GET_SELF_SUCCESS,
-    payload: { id: string, name: string; status: Status },
+    payload: { id: string, name: string, status: Status },
 }
 
 export interface getSelfFail {
@@ -33,4 +33,4 @@ export interface getUser {
     payload: string,
 }
 
-export type userActions = getSelfSuccess | getSelfFail | getUser;
+export type userActions = getSelfSuccess | getSelfFail | getUser

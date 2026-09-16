@@ -1,12 +1,12 @@
-import React from 'react';
-import { ThemeProvider } from 'styled-components';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import React from 'react'
+import { ThemeProvider } from 'styled-components'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
-import LoginPage from './loginPage/loginPage';
-import QRPage from './QRPage/QRPage';
-const ParentRedirectView = React.lazy(() => import('./ParentRegistration/MainView'));
-const RegistrationView = React.lazy(() => import('./ParentRegistration/RegistrationView'));
-const LogoutView = React.lazy(() => import('./ParentRegistration/LogoutView'));
+import LoginPage from './loginPage/loginPage'
+import QRPage from './QRPage/QRPage'
+const ParentRedirectView = React.lazy(() => import('./ParentRegistration/MainView'))
+const RegistrationView = React.lazy(() => import('./ParentRegistration/RegistrationView'))
+const LogoutView = React.lazy(() => import('./ParentRegistration/LogoutView'))
 import { theme } from '../customizations'
 import { useTranslationsLoaded } from './translations'
 import { useAppSelector } from "../store/getStore"
@@ -30,7 +30,7 @@ export default function App() {
         ) : null}
       </section>
     </ThemeProvider>
-  );
+  )
 }
 
 const LoginRequired = React.memo(function LoginRequired({ children, }: { children: React.JSX.Element }) {

@@ -1,22 +1,22 @@
 // Attempt to cache the token to the service worker, see src/public/sw.js
 const cacheToken = async (token: string | null) => {
     try {
-        await fetch('/swTokenCache', { method: "POST", body: JSON.stringify({ token: token }) });
+        await fetch('/swTokenCache', { method: "POST", body: JSON.stringify({ token: token }) })
     } catch (err) {
         // Service worker not available
     }
 }
 
 export const saveToken = async (token: string, useCache = true) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', token)
     if (useCache) {
-        await cacheToken(token);
+        await cacheToken(token)
     }
 }
 
 export const deleteToken = async () => {
-    localStorage.removeItem('token');
-    await cacheToken(null);
+    localStorage.removeItem('token')
+    await cacheToken(null)
 }
 
-export const validPhoneNumber = /(^(\+|0)\d{9,13}$)/;
+export const validPhoneNumber = /(^(\+|0)\d{9,13}$)/

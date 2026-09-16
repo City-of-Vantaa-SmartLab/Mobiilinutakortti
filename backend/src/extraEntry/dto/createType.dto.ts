@@ -1,12 +1,12 @@
-import { IsNotEmpty } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class CreateEntryTypeDto {
 
     @IsNotEmpty()
-    name!: string;
+    name!: string
 
     @IsNotEmpty()
     @Type(() => Number)
-    expiryAge!: number;
+    expiryAge!: number
 }

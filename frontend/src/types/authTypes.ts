@@ -1,4 +1,4 @@
-//action types
+// action types
 
 export enum authTypes {
     AUTH_ATTEMPT = "AUTH_ATTEMPT",
@@ -11,21 +11,21 @@ export enum authTypes {
     AUTH_WITH_CACHE = "AUTH_WITH_CACHE"
 }
 
-//action interfaces
+// action interfaces
 
 export interface AuthAttempt {
     type: authTypes.AUTH_ATTEMPT,
-    payload: { challenge: string, id: string },
+    payload: { challenge: string, id: string }
 }
 
 export interface AuthSuccess {
     type: authTypes.AUTH_SUCCESS,
-    payload: string,
+    payload: string
 }
 
 export interface AuthFail {
     type: authTypes.AUTH_FAIL,
-    payload: string,
+    payload: string
 }
 
 export interface AuthWithCache {
@@ -33,33 +33,33 @@ export interface AuthWithCache {
 }
 
 export interface Logout {
-    type: authTypes.LOGOUT,
+    type: authTypes.LOGOUT
 }
 
 
 export interface LinkRequest {
     type: authTypes.AUTH_LINK_REQUEST,
-    payload: { phoneNumber: string },
+    payload: { phoneNumber: string }
 }
 
 export interface LinkRequestSuccess {
     type: authTypes.LINK_REQUEST_SUCCESS,
-    payload: string,
+    payload: string
 }
 
 export interface LinkRequestFail {
     type: authTypes.LINK_REQUEST_FAIL,
-    payload: string,
+    payload: string
 }
 
-export type authActions = AuthAttempt | AuthSuccess | AuthFail | LinkRequest | LinkRequestSuccess | LinkRequestFail | Logout | AuthWithCache;
+export type authActions = AuthAttempt | AuthSuccess | AuthFail | LinkRequest | LinkRequestSuccess | LinkRequestFail | Logout | AuthWithCache
 
-//reducer interfaces
+// reducer interfaces
 
 export interface authState {
     loggingIn: boolean,
     loggedIn: boolean,
     token: string,
     error: boolean,
-    message: 'authFail' | 'linkRequestSuccess' | 'linkRequestFail' | null,
+    message: 'authFail' | 'linkRequestSuccess' | 'linkRequestFail' | null
 }

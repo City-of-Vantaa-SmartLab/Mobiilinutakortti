@@ -1,5 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { SessionDBService } from './sessionDb.service';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
+import { SessionDBService } from './sessionDb.service'
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -8,10 +8,10 @@ export class SessionGuard implements CanActivate {
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest();
-        const authToken = (request?.headers?.authorization || '').substring('Bearer '.length);
-        const userId = request.user.userId;
-        if (!userId || !authToken) { return false; }
-        return this.sessionDBService.checkValidity(userId, authToken);
+        const request = context.switchToHttp().getRequest()
+        const authToken = (request?.headers?.authorization || '').substring('Bearer '.length)
+        const userId = request.user.userId
+        if (!userId || !authToken) { return false }
+        return this.sessionDBService.checkValidity(userId, authToken)
     }
 }

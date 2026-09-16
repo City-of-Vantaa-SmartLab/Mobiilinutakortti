@@ -3,6 +3,6 @@ import { authSaga } from './authActions'
 import { langSaga } from './langActions'
 
 export function* rootSaga() {
-  yield fork(authSaga)
-  yield fork(langSaga)
+    yield fork(authSaga)
+    yield fork(langSaga)
 }

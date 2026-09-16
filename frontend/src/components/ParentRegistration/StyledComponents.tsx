@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 // Registration view components
 
@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
     @media (min-height: 1150px) {
         font-size: 19px;
     }
-`;
+`
 
 export const Header = styled.h1`
     font-family: ${p => p.theme.fonts.heading};
@@ -22,7 +22,7 @@ export const Header = styled.h1`
     color: ${p => p.theme.pages.registration.headingText};
     font-size: 3em;
     margin: 1.5em 0.5em 0;
-`;
+`
 
 export const Confirmation = styled.div`
     margin: auto;
@@ -38,7 +38,7 @@ export const Confirmation = styled.div`
             color: ${p => p.theme.pages.registration.confirmationTitle};
         }
     }
-`;
+`
 
 export const SuccessIcon = styled.div`
     margin: 2em 0;
@@ -50,7 +50,7 @@ export const SuccessIcon = styled.div`
         font-size: 10em;
         text-align: center;
     }
-`;
+`
 
 export const Error = styled.div`
     margin: auto;
@@ -66,7 +66,7 @@ export const Error = styled.div`
             color: #0042a5;
         }
     }
-`;
+`
 
 export const Button = styled.button`
     font-family: ${p => p.theme.fonts.body};
@@ -110,11 +110,11 @@ export const Button = styled.button`
     &:disabled {
         opacity: 0.8;
     }
-`;
+`
 
 export const LogoutButton = styled(Button)`
     margin: 1em;
-`;
+`
 
 // Form components
 
@@ -125,7 +125,7 @@ export const Form = styled.form`
     margin: 0 auto;
     justify-content: center;
     width: 100%;
-`;
+`
 
 export const Column = styled.div`
     flex-basis: 50%;
@@ -140,7 +140,7 @@ export const Column = styled.div`
         flex-basis: 100%;
         padding: 0;
     }
-`;
+`
 
 export const Fieldset = styled.div`
     box-sizing: border-box;
@@ -159,18 +159,18 @@ export const Fieldset = styled.div`
         flex-basis: 100%;
         margin: 1em 1em 0;
     }
-`;
+`
 
 export const FieldTitle = styled.h2`
     color: ${p => p.theme.pages.registration.formTitleText};
     margin: 0;
     font-weight: 600;
-`;
+`
 
 export const FieldInfoText = styled.p`
     font-family: inherit;
     font-size: 1em;
-`;
+`
 
 export const FormFooter = styled.div`
     width: 100%;
@@ -185,7 +185,7 @@ export const FormFooter = styled.div`
         display: block;
         font-size: 0.8em;
     }
-`;
+`
 
 // Field components
 
@@ -194,19 +194,18 @@ export const Label = styled.label`
     font-size: 1em;
     display: inline-block;
     padding: 1em 0 0.3em;
-`;
+`
 
 export const ErrorMessage = styled.div`
     color: red;
     padding-top: 0.3em;
     font-size: 0.8em;
-`;
+`
 
 export const Description = styled.div`
     font-size: 0.8em;
     white-space: pre-wrap;
 `
-
 export const Input = styled.input`
     display: block;
     width: 100%;
@@ -220,18 +219,18 @@ export const Input = styled.input`
     &:focus {
         outline: none;
     }
-`;
+`
 
 export const Select = styled.div`
     width: 100%;
     display: flex;
     padding: 1em 0 0.5em;
-`;
+`
 
 export const SelectOption = styled.div`
     display: inline-block;
     margin-right: 0.3em;
-`;
+`
 
 export const Radio = styled.input.attrs({type: 'radio'})`
     &:checked, &:not(:checked) {
@@ -274,12 +273,12 @@ export const Radio = styled.input.attrs({type: 'radio'})`
     &:not(:checked) + label:after {
         opacity: 0;
     }
-`;
+`
 
 export const SelectLabel = styled.label`
     display: inline-block;
     font-size: 0.8em;
-`;
+`
 
 export const Dropdown = styled.div`
     position: relative;
@@ -322,7 +321,7 @@ export const Dropdown = styled.div`
         -o-transition: .25s all ease;
         transition: .25s all ease;
     }
-`;
+`
 
 export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 
@@ -372,4 +371,4 @@ export const Checkbox = styled.input.attrs({type: 'checkbox'})`
 &:not(:checked) + label:after {
     opacity: 0;
 }
-`;
+`

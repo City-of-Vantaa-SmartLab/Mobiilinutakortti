@@ -8,9 +8,9 @@
  */
 
 export interface TeliaMessageRequestBase {
-    username: string;
-    password: string;
-    from: string;
+    username: string
+    password: string
+    from: string
 }
 
 /**
@@ -19,8 +19,8 @@ export interface TeliaMessageRequestBase {
  * https://secure.lekab.com/restsms/swagger.html#/send/sendPost
  */
 export interface TeliaMessageRequest extends TeliaMessageRequestBase {
-    message: string;
-    to: string[];
+    message: string
+    to: string[]
 }
 
 /**
@@ -29,7 +29,7 @@ export interface TeliaMessageRequest extends TeliaMessageRequestBase {
  * https://secure.lekab.com/restsms/swagger.html#/batchsend/batchsendJson
  */
 export interface TeliaBatchMessageRequest extends TeliaMessageRequestBase {
-    batch: BatchItem[];
+    batch: BatchItem[]
 }
 
 export interface BatchItem{

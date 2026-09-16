@@ -1,24 +1,24 @@
-import { Route } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { Route } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 
-const ChangePasswordView = lazy(() => import('./components/changePassword'));
+const ChangePasswordView = lazy(() => import('./components/changePassword'))
 
-const CheckInView = lazy(() => import('./components/checkIn/checkIn'));
-const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'));
-const CheckInLogView = lazy(() => import('./components/checkInLog'));
-const EventCheckInLogView = lazy(() => import('./components/eventCheckInLog'));
+const CheckInView = lazy(() => import('./components/checkIn/checkIn'))
+const CheckInStatisticsView = lazy(() => import('./components/checkInStatistics'))
+const CheckInLogView = lazy(() => import('./components/checkInLog'))
+const EventCheckInLogView = lazy(() => import('./components/eventCheckInLog'))
 
-const NewSeason = lazy(() => import('./components/newSeason'));
-const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'));
-const MiscFunctions = lazy(() => import('./components/miscFunctions'));
+const NewSeason = lazy(() => import('./components/newSeason'))
+const DeleteExpiredJuniors = lazy(() => import('./components/deleteExpiredJuniors'))
+const MiscFunctions = lazy(() => import('./components/miscFunctions'))
 
-const QuickSearch = lazy(() => import('./components/quickSearch'));
+const QuickSearch = lazy(() => import('./components/quickSearch'))
 
-const Loading = () => <div>Ladataan...</div>;
+const Loading = () => <div>Ladataan...</div>
 
 export const checkInRoute = [
     <Route path="/checkIn" element={<Suspense fallback={<Loading />}><CheckInView /></Suspense>} />
-];
+]
 
 export const normalRoutes = [
     <Route path="/statistics/:youthClubId" element={<Suspense fallback={<Loading />}><CheckInStatisticsView /></Suspense>} />,
@@ -26,10 +26,10 @@ export const normalRoutes = [
     <Route path="/eventLog/:eventId" element={<Suspense fallback={<Loading />}><EventCheckInLogView /></Suspense>} />,
     <Route path="/password" element={<ChangePasswordView />} />,
     <Route path="/quickSearch" element={<Suspense fallback={<Loading />}><QuickSearch /></Suspense>} />,
-];
+]
 
 export const adminRoutes = [
     <Route path="/newSeason" element={<Suspense fallback={<Loading />}><NewSeason /></Suspense>} />,
     <Route path="/deleteExpiredJuniors" element={<Suspense fallback={<Loading />}><DeleteExpiredJuniors /></Suspense>} />,
     <Route path="/miscFunctions" element={<Suspense fallback={<Loading />}><MiscFunctions /></Suspense>} />
-];
+]

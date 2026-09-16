@@ -1,1 +1,1 @@
-export { ContextValidViewModel } from './securityContext';
+export { ContextValidViewModel } from './securityContext'

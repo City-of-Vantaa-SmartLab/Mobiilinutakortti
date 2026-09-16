@@ -1,22 +1,22 @@
-import { AnnouncementData } from './classes/announcementData';
-import { AnnouncementLanguageVersions } from './classes/announcementLanguageVersions';
-import * as content from '../content';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { BatchItem, TeliaBatchMessageRequest } from '../sms/models';
-import { ClubService } from '../club/club.service';
-import { EmailAnnouncement } from '../email/emailModels.interfaces';
-import { EmailConfig } from '../email/emailConfigHandler';
-import { EmailService } from '../email/email.service';
-import { Junior } from '../junior/entities';
-import { JuniorService } from '../junior/junior.service';
-import { SMSConfig } from '../sms/smsConfigHandler';
-import { SmsService } from '../sms/sms.service';
+import { AnnouncementData } from './classes/announcementData'
+import { AnnouncementLanguageVersions } from './classes/announcementLanguageVersions'
+import * as content from '../content'
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
+import { BatchItem, TeliaBatchMessageRequest } from '../sms/models'
+import { ClubService } from '../club/club.service'
+import { EmailAnnouncement } from '../email/emailModels.interfaces'
+import { EmailConfig } from '../email/emailConfigHandler'
+import { EmailService } from '../email/email.service'
+import { Junior } from '../junior/entities'
+import { JuniorService } from '../junior/junior.service'
+import { SMSConfig } from '../sms/smsConfigHandler'
+import { SmsService } from '../sms/sms.service'
 
 @Injectable()
 export class AnnouncementService {
 
-    private readonly logger = new Logger('Announcement Service');
-    private readonly supportedLanguages: Array<keyof AnnouncementLanguageVersions> = ['fi', 'en', 'sv'];
+    private readonly logger = new Logger('Announcement Service')
+    private readonly supportedLanguages: Array<keyof AnnouncementLanguageVersions> = ['fi', 'en', 'sv']
 
     constructor(
         private readonly clubService: ClubService,
@@ -28,57 +28,58 @@ export class AnnouncementService {
     private getLanguageKey(langCode: string): keyof AnnouncementLanguageVersions {
         return this.supportedLanguages.includes(langCode as keyof AnnouncementLanguageVersions)
             ? langCode as keyof AnnouncementLanguageVersions
-            : 'fi';
+            : 'fi'
     }
 
-    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions, langCode: string): string {
-        const language = this.getLanguageKey(langCode);
-        return content[language] ?? content.fi ?? '';
-    };
+    private getAnnouncementWithLanguage(content: AnnouncementLanguageVersions | null | undefined, langCode: string): string {
+        const language = this.getLanguageKey(langCode)
+        return content?.[language] ?? content?.fi ?? ''
+    }
 
     private async getRecipientsByYouthClub(youthClubId: number): Promise<Junior[]> {
-        const twoWeeksInSeconds = 1209600;
-        const checkIns = await this.clubService.getCheckIns({targetId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds);
+        const twoWeeksInSeconds = 1209600
+        const checkIns = await this.clubService.getCheckIns({targetId: youthClubId, date: new Date().toString()}, twoWeeksInSeconds)
         const checkedInJuniors = checkIns.map((checkIn) => {
-            return checkIn.junior;
-        });
+            return checkIn.junior
+        })
 
-        const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClubId);
-        const allRecipients = checkedInJuniors.concat(juniorsByHomeClub);
-        const uniqueRecipients = new Set<Junior>(allRecipients);
-        return Array.from(uniqueRecipients);
+        const juniorsByHomeClub = await this.juniorService.getJuniorsByHomeYouthClub(youthClubId)
+        const allRecipients = checkedInJuniors.concat(juniorsByHomeClub)
+        const uniqueRecipients = new Set<Junior>(allRecipients)
+        return Array.from(uniqueRecipients)
     }
 
     // NB: this leaves out juniors that have no home youth club unless they have visited some youth club recently.
     private async getRecipientsForAllYouthClubs(): Promise<Junior[]> {
-        const activeClubs = (await this.clubService.getClubs()).filter(club => club.active);
-        const recipientsByClub = await Promise.all(activeClubs.map(async(club) => await this.getRecipientsByYouthClub(club.id)));
-        const recipients = recipientsByClub.reduce((a, b) => a.concat(b), []);
-        return recipients;
+        const activeClubs = (await this.clubService.getClubs()).filter(club => club.active)
+        const recipientsByClub = await Promise.all(activeClubs.map(async(club) => await this.getRecipientsByYouthClub(club.id)))
+        const recipients = recipientsByClub.reduce((a, b) => a.concat(b), [])
+        const uniqueRecipients = new Set<Junior>(recipients)
+        return Array.from(uniqueRecipients)
     }
 
     private getEmailRecipientsByLanguage(recipients: Junior[], langCode: string): string[] {
         const filteredArray = recipients.filter((r: Junior) => r.communicationsLanguage === langCode)
                 .filter((r: Junior) => r.emailPermissionParent)
                 .map((r: Junior) => r.parentsEmail)
-                .filter((email: string) => /^\S+@\S+\.\S+$/.test(email));
-        const uniqueRecipients = new Set<string>(filteredArray);
-        return Array.from(uniqueRecipients);
-    };
+                .filter((email: string) => /^\S+@\S+\.\S+$/.test(email))
+        const uniqueRecipients = new Set<string>(filteredArray)
+        return Array.from(uniqueRecipients)
+    }
 
     private createEmailDataForLanguage(announcementData: AnnouncementData, recipients: string[], lang: string): EmailAnnouncement {
-        const language = this.getLanguageKey(lang);
+        const language = this.getLanguageKey(lang)
         return {
             to: recipients,
-            title: announcementData.title[language] || announcementData.title.fi,
-            message: announcementData.content[language] || announcementData.content.fi
-        };
-    };
+            title: announcementData.title?.[language] || announcementData.title?.fi || '',
+            message: announcementData.content?.[language] || announcementData.content?.fi || ''
+        }
+    }
 
     async clubAnnouncementSms(announcementData: AnnouncementData, userId: string): Promise<string> {
         const selectedRecipients = announcementData.youthClub ?
             await this.getRecipientsByYouthClub(announcementData.youthClub) :
-            await this.getRecipientsForAllYouthClubs();
+            await this.getRecipientsForAllYouthClubs()
 
         const parentBatch: BatchItem[] = announcementData.recipient.includes("parents") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionParent)
@@ -88,7 +89,7 @@ export class AnnouncementService {
                 t: recipient.parentsPhoneNumber,
                 m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
             })
-        ) : [];
+        ) : []
 
         const juniorBatch: BatchItem[] = announcementData.recipient.includes("juniors") ?
             selectedRecipients.filter((recipient: Junior) => recipient.smsPermissionJunior)
@@ -98,70 +99,70 @@ export class AnnouncementService {
                     t: recipient.phoneNumber,
                     m: this.getAnnouncementWithLanguage(announcementData.content, recipient.communicationsLanguage),
                 })
-        ) : [];
+        ) : []
 
-        const batch: BatchItem[] = parentBatch.concat(juniorBatch);
+        const batch: BatchItem[] = parentBatch.concat(juniorBatch)
 
         if (announcementData.dryRun) {
-            return batch.length.toString();
+            return batch.length.toString()
         }
 
-        const settings = SMSConfig.getTeliaConfig();
+        const settings = SMSConfig.getSmsConfig()
 
         if (batch.length < 1) {
-            throw new BadRequestException(content.RecipientsNotFound);
-        };
+            throw new BadRequestException(content.RecipientsNotFound)
+        }
 
         const messageRequest = {
             username: settings.username,
             password: settings.password,
-            from: settings.user,
+            from: settings.sender,
             batch,
-        } as TeliaBatchMessageRequest;
+        } as TeliaBatchMessageRequest
 
-        this.logger.log(`User ${userId} is sending ${batch.length} SMS messages.`);
-        const attemptMessage = await this.smsService.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint);
+        this.logger.log(`User ${userId} is sending ${batch.length} SMS messages.`)
+        const attemptMessage = await this.smsService.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint)
         if (attemptMessage) {
-            return content.SmsBatchSent;
+            return content.SmsBatchSent
         } else {
-            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
-        };
-    };
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable)
+        }
+    }
 
     async clubAnnouncementEmail(announcementData: AnnouncementData, userId: string): Promise<string> {
         const selectedRecipients = announcementData.youthClub ?
             await this.getRecipientsByYouthClub(announcementData.youthClub) :
-            await this.getRecipientsForAllYouthClubs();
+            await this.getRecipientsForAllYouthClubs()
 
-        const recipientsEn: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "en");
-        const recipientsSv: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "sv");
-        const recipientsFi: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "fi");
+        const recipientsEn: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "en")
+        const recipientsSv: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "sv")
+        const recipientsFi: string[] = this.getEmailRecipientsByLanguage(selectedRecipients, "fi")
 
-        const totalAmount = recipientsEn.length + recipientsSv.length + recipientsFi.length;
+        const totalAmount = recipientsEn.length + recipientsSv.length + recipientsFi.length
 
         if (announcementData.dryRun) {
-            return totalAmount.toString();
+            return totalAmount.toString()
         }
 
-        const settings = EmailConfig.getEmailConfig();
+        const settings = EmailConfig.getEmailConfig()
 
         if (totalAmount === 0) {
-            throw new BadRequestException(content.RecipientsNotFound);
-        };
+            throw new BadRequestException(content.RecipientsNotFound)
+        }
 
         const emails = [
             this.createEmailDataForLanguage(announcementData, recipientsEn, "en"),
             this.createEmailDataForLanguage(announcementData, recipientsSv, "sv"),
             this.createEmailDataForLanguage(announcementData, recipientsFi, "fi")
-        ];
+        ]
 
-        this.logger.log(`User ${userId} is sending ${totalAmount} email messages.`);
+        this.logger.log(`User ${userId} is sending ${totalAmount} email messages.`)
         // The way email works we have no real idea whether the messages have been sent or not, as a message might bounce hours after
         // delivery attempt. Therefore we just always say emails sent and use the bounce address (configured in SES) to catch actual problems.
         // If there are other technical problems they are logged in the email service. If there are hundreds of emails to send we
         // aren't going to wait for them to finish anyway before acknowledging the frontend.
-        emails.map(async (ea: EmailAnnouncement) => this.emailService.sendEmailsToUsers(ea, settings));
+        emails.map(async (ea: EmailAnnouncement) => this.emailService.sendEmailsToUsers(ea, settings))
 
-        return content.EmailAnnouncementSent;
-    };
-};
+        return content.EmailAnnouncementSent
+    }
+}

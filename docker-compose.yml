@@ -5,7 +5,7 @@ volumes:
 
 services:
   backend:
-    image: node:24.15-alpine
+    image: node:26.8.2-alpine
     working_dir: /backend
     depends_on:
       db:
@@ -21,42 +21,43 @@ services:
       AWS_SES_KEY_VALUE:
       AWS_SES_REGION:
       CERT_SELECTION:
+      EMAIL_MOCK: true
       EMAIL_SOURCE:
       EMAIL_RETURN_PATH:
       ENABLE_SETUP_ENDPOINTS: yes
       ENTRA_ADMIN_ROLE:
       ENTRA_APP_KEY_DISCOVERY_URL:
-      DB_HOST: db # In case a local postgres exists and env variable is already set.
-      DB_NAME:
-      DB_PASSWORD: password # In case a local postgres exists and env variable is already set.
+      DB_HOST: db
+      DB_NAME: nuta
+      DB_PASSWORD: password
       DB_POOL_SIZE:
       DB_PORT:
       DB_USE_SSL:
-      DB_USERNAME: postgres # In case a local postgres exists and env variable is already set.
+      DB_USERNAME: postgres
       FRONTEND_URL:
       HTTP_LOG_LEVEL: debug
       IDP_ENTITY_ID:
       JWT_SECRET:
       KOMPASSI_API_KEY:
       KOMPASSI_API_URL:
-      NODE_ENV:
       SC_SECRET:
       SP_ASSERT_ENDPOINT:
       SP_ENTITY_ID:
       SP_PKEY:
       SSO_LOGIN_URL:
       SSO_LOGOUT_URL:
-      TELIA_BATCH_ENDPOINT:
-      TELIA_ENDPOINT:
-      TELIA_PASSWORD:
-      TELIA_USER:
-      TELIA_USERNAME:
+      SMS_BATCH_ENDPOINT:
+      SMS_ENDPOINT:
+      SMS_MOCK: true
+      SMS_PASSWORD:
+      SMS_SENDER:
+      SMS_USERNAME:
       USE_DETAILED_LOGS: true
       USE_JSON_LOGS:
     command: sh -c "npm i && npm run dev"
 
   frontend:
-    image: node:24.15-alpine
+    image: node:26.8.2-alpine
     working_dir: /frontend
     depends_on:
       backend:
@@ -73,7 +74,7 @@ services:
     command: sh -c "npm i && npm run dev"
 
   admin-frontend:
-    image: node:24.15-alpine
+    image: node:26.8.2-alpine
     working_dir: /admin-frontend
     depends_on:
       backend:

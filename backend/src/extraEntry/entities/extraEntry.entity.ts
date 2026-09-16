@@ -1,16 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { EntryType } from './entryType.entity';
-import { Junior } from '../../junior/entities';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, type Relation } from 'typeorm'
+import { EntryType } from './entryType.entity'
+import { Junior } from '../../junior/entities'
 
 @Entity()
 export class ExtraEntry {
 
     @PrimaryGeneratedColumn()
-    id!: number;
+    id!: number
 
     @ManyToOne(() => Junior, junior => junior.extraEntries, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-    junior!: Junior;
+    junior!: Relation<Junior>
 
     @ManyToOne(() => EntryType)
-    entryType!: EntryType;
+    entryType!: Relation<EntryType>
 }

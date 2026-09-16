@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsEmail } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsEmail } from 'class-validator'
+import { Type } from 'class-transformer'
 
 /**
  * The dto to be used when editing a youth worker.
@@ -7,15 +7,15 @@ import { Type } from 'class-transformer';
 export class EditYouthWorkerDto {
 
     @IsNotEmpty()
-    readonly id!: string;
+    readonly id!: string
 
     @IsEmail()
-    email!: string;
+    email!: string
 
-    firstName!: string;
-    lastName!: string;
+    firstName!: string
+    lastName!: string
     @Type(() => Boolean)
-    isAdmin!: boolean;
+    isAdmin!: boolean
     @Type(() => Number)
-    mainYouthClub!: number;
+    mainYouthClub!: number
 }

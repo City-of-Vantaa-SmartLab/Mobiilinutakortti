@@ -1,17 +1,17 @@
-import { Module } from '@nestjs/common';
-import { ClubService } from './club.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Junior } from '../junior/entities';
-import { Club } from './entities';
-import { CheckIn } from '../checkIn/checkIn.entity';
-import { ClubController } from './club.controller';
-import { jwtSecret } from '../authentication/authentication.consts';
-import { JwtModule } from '@nestjs/jwt';
-import { SessionDBModule } from '../session/sessionDb.module';
-import { RolesModule } from '../roles/roles.module';
-import { SessionModule } from '../session/session.module';
-import { KompassiModule } from '../kompassi/kompassi.module';
-import { SpamGuardModule } from '../spamGuard/spamGuard.module';
+import { Module } from '@nestjs/common'
+import { ClubService } from './club.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Junior } from '../junior/entities'
+import { Club } from './entities'
+import { CheckIn } from '../checkIn/checkIn.entity'
+import { ClubController } from './club.controller'
+import { jwtSecret } from '../authentication/authentication.consts'
+import { JwtModule } from '@nestjs/jwt'
+import { SessionDBModule } from '../session/sessionDb.module'
+import { RolesModule } from '../roles/roles.module'
+import { SessionModule } from '../session/session.module'
+import { KompassiModule } from '../kompassi/kompassi.module'
+import { SpamGuardModule } from '../spamGuard/spamGuard.module'
 
 @Module({
   imports: [

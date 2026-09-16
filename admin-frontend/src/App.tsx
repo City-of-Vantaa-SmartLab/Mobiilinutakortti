@@ -1,34 +1,34 @@
-import { Admin, Resource, Login, CustomRoutes, defaultLightTheme, defaultDarkTheme } from 'react-admin';
-import { lazy } from 'react';
-import finnishMessages from 'ra-language-finnish';
-import { createTheme } from '@mui/material/styles';
-import { authProvider, dataProvider } from './providers';
-import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior';
-import { YouthClubList } from './components/youthClub';
-import { EditYouthClub, EditYouthClubList} from './components/editYouthClub';
-import { LandingPage } from './components/landingPage';
-import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker';
-import { normalRoutes, adminRoutes, checkInRoute } from './customRoutes';
-import ChildCareIcon from '@mui/icons-material/ChildCare';
-import CustomLayout from './customLayout';
-import polyglotI18nProvider from 'ra-i18n-polyglot';
-import useAdminPermission from './hooks/useAdminPermission';
-import { AnnouncementCreate } from './components/announcement';
-import EntraLogin from './components/entraLoginPage';
-import { EventList, EventCreate, EventEdit } from './components/event';
-import { getEnvConfig, ENV_VARS } from './envConfig';
+import { Admin, Resource, Login, CustomRoutes, defaultLightTheme, defaultDarkTheme } from 'react-admin'
+import { lazy } from 'react'
+import finnishMessages from 'ra-language-finnish'
+import { createTheme } from '@mui/material/styles'
+import { authProvider, dataProvider } from './providers'
+import { JuniorList, JuniorCreate, JuniorEdit } from './components/junior'
+import { YouthClubList } from './components/youthClub'
+import { EditYouthClub, EditYouthClubList} from './components/editYouthClub'
+import { LandingPage } from './components/landingPage'
+import { YouthWorkerList, YouthWorkerCreate, YouthWorkerEdit } from './components/youthWorker'
+import { normalRoutes, adminRoutes, checkInRoute } from './customRoutes'
+import ChildCareIcon from '@mui/icons-material/ChildCare'
+import CustomLayout from './customLayout'
+import polyglotI18nProvider from 'ra-i18n-polyglot'
+import useAdminPermission from './hooks/useAdminPermission'
+import { AnnouncementCreate } from './components/announcement'
+import EntraLogin from './components/entraLoginPage'
+import { EventList, EventCreate, EventEdit } from './components/event'
+import { getEnvConfig, ENV_VARS } from './envConfig'
 
-const ExtraEntryTypeList = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeList })));
-const ExtraEntryTypeCreate = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeCreate })));
-const ExtraEntryEdit = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryEdit })));
-const ExtraEntryList = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryList })));
+const ExtraEntryTypeList = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeList })))
+const ExtraEntryTypeCreate = lazy(() => import('./components/extraEntry/extraEntryType').then(m => ({ default: m.ExtraEntryTypeCreate })))
+const ExtraEntryEdit = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryEdit })))
+const ExtraEntryList = lazy(() => import('./components/extraEntry/extraEntry').then(m => ({ default: m.ExtraEntryList })))
 
 const CustomLoginPage = () =>
   !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) ? (
     <EntraLogin />
   ) : (
     <Login backgroundImage="/nuta-admin-bg.jpg" />
-  );
+  )
 
 const messages = {
   'fi': {
@@ -46,9 +46,9 @@ const messages = {
       }
     }
   },
-};
+}
 
-const i18nProvider = polyglotI18nProvider(locale => messages[locale], 'fi');
+const i18nProvider = polyglotI18nProvider(locale => messages[locale as keyof typeof messages] ?? messages.fi, 'fi')
 
 const lightTheme = createTheme({
   ...defaultLightTheme,
@@ -61,7 +61,7 @@ const lightTheme = createTheme({
       main: '#3c8fde' // Navigation bar in light theme
     },
   },
-});
+})
 
 const darkTheme = createTheme({
   ...defaultDarkTheme,
@@ -71,12 +71,12 @@ const darkTheme = createTheme({
       main: '#64b5f6'
     }
   },
-});
+})
 
 const App = () => {
-  const { isAdmin } = useAdminPermission();
-  const routes = normalRoutes.concat(...isAdmin ? adminRoutes : []);
-  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
+  const { isAdmin } = useAdminPermission()
+  const routes = normalRoutes.concat(...isAdmin ? adminRoutes : [])
+  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES)
 
   // Since MSAL redirect URI call has the token exchange code as a URL fragment ("#code="), we have to do this
   // outside react-admin and routing. Otherwise the fragment indicator (#) is interpreted as a route and MSAL login fails.
@@ -114,4 +114,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App

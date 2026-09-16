@@ -1,19 +1,19 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
-import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem } from './models';
-import { Challenge } from '../junior/entities';
-import { SMSConfig } from './smsConfigHandler';
-import { ClubService } from '../club/club.service';
-import * as content from '../content';
-import { ConfigHandler } from '../configHandler';
-import { standardizePhoneNumber } from '../common/transformers';
-import moment from 'moment';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
+import { Recipient, TeliaMessageRequest, TeliaBatchMessageRequest, BatchItem, SmsSettings } from './models'
+import { Challenge } from '../junior/entities'
+import { SMSConfig } from './smsConfigHandler'
+import { ClubService } from '../club/club.service'
+import * as content from '../content'
+import { ConfigHandler } from '../configHandler'
+import { normalizePhoneNumberValue } from '../common/transformers'
+import moment from 'moment'
 
 @Injectable()
 export class SmsService {
 
-    private readonly logger = new Logger('SMS Service');
+    private readonly logger = new Logger('SMS Service')
 
     constructor(
         private readonly clubService: ClubService,
@@ -21,68 +21,65 @@ export class SmsService {
         ) { }
 
     async sendVerificationSMS(recipient: Recipient, challenge: Challenge): Promise<boolean> {
-        if (ConfigHandler.isTest()) {
-            return true;
+        if (ConfigHandler.useMockSms()) {
+            this.logger.log(`Mock SMS: sending message to xxxxxx${recipient.phoneNumber.slice(-4)}`)
+            return true
         }
 
-        const settings = SMSConfig.getTeliaConfig();
+        const settings: SmsSettings = SMSConfig.getSmsConfig()
 
         // check stack trace to see if sendVerificationSMS() is called from registerJunior()
-        const stackLine = new Error().stack?.split('at ')[2] || '';
-        const checkRegisterJuniorCalls = stackLine.includes('registerJunior');
+        const stackLine = new Error().stack?.split('at ')[2] || ''
+        const checkRegisterJuniorCalls = stackLine.includes('registerJunior')
 
         if (!settings) {
             throw new InternalServerErrorException(
                 checkRegisterJuniorCalls ?
                 content.SMSNotAvailableButUserCreated :
                 content.SmsServiceNotAvailable
-            );
+            )
         }
 
-        const message = await this.getRegisteredMessage(recipient.lang, challenge, recipient.homeYouthClub);
+        const message = await this.getRegisteredMessage(recipient.lang, challenge, recipient.homeYouthClub)
 
         const messageRequest = {
             username: settings.username, password: settings.password,
-            from: settings.user, to: [recipient.phoneNumber], message,
-        } as TeliaMessageRequest;
+            from: settings.sender, to: [recipient.phoneNumber], message,
+        } as TeliaMessageRequest
 
-        const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint);
+        const attemptMessage = await this.sendMessageToUser(messageRequest, settings.endPoint)
         if (attemptMessage) {
-            return true;
+            return true
         } else {
-            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable)
         }
     }
 
     async sendNewSeasonSMS(recipients: Recipient[], expireDate: string): Promise<boolean> {
-        if (ConfigHandler.isTest()) {
-            return true;
+        if (ConfigHandler.useMockSms()) {
+            this.logger.log(`Mock SMS: batch sending messages (${recipients.length})`)
+            return true
         }
 
-        const {
-            user,
-            username,
-            password,
-            batchEndPoint,
-        } = SMSConfig.getTeliaConfig();
+        const settings: SmsSettings = SMSConfig.getSmsConfig()
 
         // NB: not sending recipient names anymore because sometimes the parents' phone numbers have typos in them. This apparently created unnecessary security risks. The phone numbers used here are for the parents.
         const batch: BatchItem[] = recipients.map(recipient => ({
             t: recipient.phoneNumber,
             m: this.getExpiredMessage(recipient.lang, expireDate),
-        }));
+        }))
 
         const messageRequest = {
-            username: username,
-            password: password,
-            from: user,
+            username: settings.username,
+            password: settings.password,
+            from: settings.sender,
             batch,
-        } as TeliaBatchMessageRequest;
-        const attemptMessage = await this.batchSendMessagesToUsers(messageRequest, batchEndPoint);
+        } as TeliaBatchMessageRequest
+        const attemptMessage = await this.batchSendMessagesToUsers(messageRequest, settings.batchEndPoint)
         if (attemptMessage) {
-            return true;
+            return true
         } else {
-            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable)
         }
     }
 
@@ -92,24 +89,30 @@ export class SmsService {
      */
     async batchSendMessagesToUsers(messageRequest: TeliaBatchMessageRequest, endpoint: string): Promise<boolean> {
         if (messageRequest.batch.length === 0) {
-            this.logger.log('SMS batch size is zero, not sending anything.');
-            return true;
+            this.logger.log('SMS batch size is zero, not sending anything.')
+            return true
         }
-        this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`);
+
+        if (ConfigHandler.useMockSms()) {
+            this.logger.log(`Mock SMS: batch sending messages (${messageRequest.batch.length})`)
+            return true
+        }
+
+        this.logger.log(`Batch sending ${messageRequest.batch.length} SMSs.`)
 
         try {
-            const response = await lastValueFrom(this.httpService.post(endpoint, messageRequest));
-            const { batchid, batchstatuscode, batchstatusdescription } = response.data;
+            const response = await lastValueFrom(this.httpService.post(endpoint, messageRequest))
+            const { batchid, batchstatuscode, batchstatusdescription } = response.data
             if (batchstatuscode === 1) {
-                this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`);
-                return true;
+                this.logger.log(`Batch ID ${batchid} received successfully: ${batchstatusdescription}, code ${batchstatuscode}`)
+                return true
             } else {
-                this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`);
-                return false;
+                this.logger.log(`Batch ID ${batchid} failed: ${batchstatusdescription}, code ${batchstatuscode}`)
+                return false
             }
         } catch {
-            this.logger.log('Batch send failed: endpoint responded with a non 200 status.');
-            return false;
+            this.logger.log('Batch send failed: endpoint responded with a non 200 status.')
+            return false
         }
     }
 
@@ -123,28 +126,28 @@ export class SmsService {
      * to send individual messages to multiple users.
      */
     private async sendMessageToUser(messageRequest: TeliaMessageRequest, teliaEndPoint: string): Promise<boolean> {
-        this.logger.log(`Sending SMS to xxxxxx${messageRequest.to[0].slice(-4)}`);
+        this.logger.log(`Sending SMS to xxxxxx${messageRequest.to[0].slice(-4)}`)
 
         try {
-            const response = await lastValueFrom(this.httpService.post(teliaEndPoint, messageRequest));
+            const response = await lastValueFrom(this.httpService.post(teliaEndPoint, messageRequest))
             // The accepted list of phone numbers does not seem to include the '+' sign, so standardize before comparison.
-            if (standardizePhoneNumber.to(response.data.accepted[0].to) === messageRequest.to[0]) {
-                this.logger.log(`SMS sent to xxxxxx${messageRequest.to[0].slice(-4)}`);
-                return true;
+            if (normalizePhoneNumberValue(response.data.accepted[0].to) === messageRequest.to[0]) {
+                this.logger.log(`SMS sent to xxxxxx${messageRequest.to[0].slice(-4)}`)
+                return true
             } else {
-                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response?.statusText}.`);
-                return false;
+                this.logger.log(`Failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}: ${response?.statusText}.`)
+                return false
             }
         } catch {
-            this.logger.log(`POST error: failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`);
-            return false;
+            this.logger.log(`POST error: failed to send SMS to xxxxxx${messageRequest.to[0].slice(-4)}.`)
+            return false
         }
     }
 
     private async getRegisteredMessage(lang: content.Language, challenge: Challenge, homeYouthClub?: number) {
-        const oneTimeLink = `${ConfigHandler.getFrontendUrl()}/login?challenge=${challenge.challenge}&id=${challenge.id}`;
-        const clubSpecificMessage = homeYouthClub ? (await this.clubService.getClubById(homeYouthClub))?.messages[lang] : '';
-        return content.RegisteredSmsContent[lang](oneTimeLink, clubSpecificMessage);
+        const oneTimeLink = `${ConfigHandler.getFrontendUrl()}/login?challenge=${challenge.challenge}&id=${challenge.id}`
+        const clubSpecificMessage = homeYouthClub ? (await this.clubService.getClubById(homeYouthClub))?.messages[lang] : ''
+        return content.RegisteredSmsContent[lang](oneTimeLink, clubSpecificMessage)
     }
 
     private getExpiredMessage(lang: content.Language, expiredDate: string): string {

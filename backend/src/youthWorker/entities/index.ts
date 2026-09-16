@@ -1,2 +1,2 @@
-export { YouthWorker } from './youthWorker.entity';
-export { Lockout } from './lockout.entity';
+export { YouthWorker } from './youthWorker.entity'
+export { Lockout } from './lockout.entity'

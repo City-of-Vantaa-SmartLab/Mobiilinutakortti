@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { SessionDBModule } from './sessionDb.module';
-import { SessionGuard } from './session.guard';
+import { Module } from '@nestjs/common'
+import { SessionDBModule } from './sessionDb.module'
+import { SessionGuard } from './session.guard'
 
 @Module({
     imports: [SessionDBModule],

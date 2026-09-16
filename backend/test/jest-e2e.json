@@ -5,13 +5,21 @@
     "ts"
   ],
   "rootDir": ".",
+  "extensionsToTreatAsEsm": [
+    ".ts"
+  ],
+  "moduleNameMapper": {
+    "^nestjs-pino$": "<rootDir>/jest/nestjs-pino.mock.ts",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": [
       "ts-jest",
       {
-        "tsconfig": "tsconfig.test.json"
+        "tsconfig": "tsconfig.test.json",
+        "useESM": true
       }
     ]
   }

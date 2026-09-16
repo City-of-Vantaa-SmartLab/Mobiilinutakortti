@@ -1,13 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { EmailAnnouncement, EmailData } from './emailModels.interfaces';
-import { EmailSettings } from './emailSettings.interfaces';
-import { EmailConfig } from './emailConfigHandler';
+import { Injectable, Logger } from '@nestjs/common'
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
+import { EmailAnnouncement, EmailData } from './emailModels.interfaces'
+import { EmailSettings } from './emailSettings.interfaces'
+import { EmailConfig } from './emailConfigHandler'
+import { ConfigHandler } from '../configHandler'
 
 @Injectable()
 export class EmailService {
 
-    private readonly logger = new Logger('Email Service');
+    private readonly logger = new Logger('Email Service')
 
     constructor() { }
 
@@ -16,7 +17,7 @@ export class EmailService {
     // messages if too many people received the message with the same Message-ID.
     // Therefore we will always sent the message to each recipient separately using the To field and not Bcc.
     private getMessages(announcement: EmailAnnouncement, settings: EmailSettings): EmailData[] {
-        const messages = new Array<EmailData>;
+        const messages = new Array<EmailData>
         for (const recipient of announcement.to) {
             messages.push({
                 Source: settings.source,
@@ -34,30 +35,35 @@ export class EmailService {
                     },
                 },
                 ReturnPath: settings.returnPath
-            });
+            })
         }
-        return messages;
+        return messages
     }
 
     async sendEmailsToUsers(announcement: EmailAnnouncement, settings: EmailSettings): Promise<void> {
-        if (announcement.to.length < 1) return;
+        if (announcement.to.length < 1) return
 
-        const sesSettings = EmailConfig.getSesConfig();
-        const client = new SESClient(sesSettings);
-        const messages = this.getMessages(announcement, settings);
+        if (ConfigHandler.useMockEmail()) {
+            this.logger.log(`Mock email: sending ${announcement.to.length} messages.`)
+            return
+        }
+
+        const sesSettings = EmailConfig.getSesConfig()
+        const client = new SESClient(sesSettings)
+        const messages = this.getMessages(announcement, settings)
 
         for (const message of messages) {
-            const command = new SendEmailCommand(message);
+            const command = new SendEmailCommand(message)
             client.send(command).then(response => {
-                const { httpStatusCode, requestId } = response.$metadata;
+                const { httpStatusCode, requestId } = response.$metadata
                 if ((httpStatusCode !== undefined) && (httpStatusCode >= 200) && (httpStatusCode < 300)) {
-                    this.logger.log(`Request ${requestId} OK`);
+                    this.logger.log(`Request ${requestId} OK`)
                 } else {
-                    this.logger.log(`Request ${requestId} failed with code: ${httpStatusCode}`);
-                };
+                    this.logger.log(`Request ${requestId} failed with code: ${httpStatusCode}`)
+                }
             }).catch((error) => {
-                this.logger.log('Email error: ', error);
-            });
+                this.logger.log('Email error: ', error)
+            })
         }
     }
-};
+}

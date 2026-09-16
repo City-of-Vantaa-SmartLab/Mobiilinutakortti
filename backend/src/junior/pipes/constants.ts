@@ -1,1 +1,1 @@
-export const allowedPhoneNumber = /(^(\+|0)\d{9,13}$)/;
+export const allowedPhoneNumber = /(^(\+|0)\d{9,13}$)/

@@ -1,39 +1,39 @@
-import { useState } from 'react';
-import { Title, useNotify } from 'react-admin';
-import { Button, Card, CardContent, TextField, Table, TableBody, TableCell, TableHead, TableRow, Box, InputAdornment } from '@mui/material';
-import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
-import api from '../api';
-import useAutoLogout from '../hooks/useAutoLogout';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
-import { juniorProvider } from '../providers/juniorProvider';
-import { Status } from '../utils';
+import { useState } from 'react'
+import { Title, useNotify } from 'react-admin'
+import { Button, Card, CardContent, TextField, Table, TableBody, TableCell, TableHead, TableRow, Box, InputAdornment } from '@mui/material'
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh'
+import api from '../api'
+import useAutoLogout from '../hooks/useAutoLogout'
+import SearchIcon from '@mui/icons-material/Search'
+import ClearIcon from '@mui/icons-material/Clear'
+import { juniorProvider } from '../providers/juniorProvider'
+import { Status } from '../utils'
 
 interface Junior {
-  id: string;
-  displayName: string;
-  phoneNumber: string;
-  status: string;
+  id: string
+  displayName: string
+  phoneNumber: string
+  status: string
 }
 
 // The quick search is meant to help use with mobile phone.
 // To do the most common simple tasks in youth clubs without anything unnecessary going on.
 const QuickSearch = () => {
-  const notify = useNotify();
-  const [phoneSearch, setPhoneSearch] = useState('');
-  const [nameSearch, setNameSearch] = useState('');
-  const [results, setResults] = useState<Junior[]>([]);
-  const [searching, setSearching] = useState(false);
+  const notify = useNotify()
+  const [phoneSearch, setPhoneSearch] = useState('')
+  const [nameSearch, setNameSearch] = useState('')
+  const [results, setResults] = useState<Junior[]>([])
+  const [searching, setSearching] = useState(false)
 
-  useAutoLogout();
+  useAutoLogout()
 
   const handleSearch = async () => {
     if (!phoneSearch.trim() && !nameSearch.trim()) {
-      notify('Anna ainakin yksi hakuehto', { type: 'warning' });
-      return;
+      notify('Anna ainakin yksi hakuehto', { type: 'warning' })
+      return
     }
 
-    setSearching(true);
+    setSearching(true)
     try {
       const response = await juniorProvider.getList({
         filter: {
@@ -42,42 +42,42 @@ const QuickSearch = () => {
         },
         pagination: { page: 1, perPage: 100 },
         sort: { field: 'firstName', order: 'ASC' },
-      });
+      })
 
-      setResults(response.data || []);
+      setResults(response.data || [])
       if (response.data?.length === 0) {
-        notify('Ei hakutuloksia', { type: 'info' });
+        notify('Ei hakutuloksia', { type: 'info' })
       }
     } catch (error) {
-      notify('Virhe haettaessa nuoria', { type: 'error' });
-      console.error(error);
+      notify('Virhe haettaessa nuoria', { type: 'error' })
+      console.error(error)
     } finally {
-      setSearching(false);
+      setSearching(false)
     }
-  };
+  }
 
   const handleClear = () => {
-    setPhoneSearch('');
-    setNameSearch('');
-    setResults([]);
-  };
+    setPhoneSearch('')
+    setNameSearch('')
+    setResults([])
+  }
 
   const sendSMS = async (phoneNumber: string) => {
-    const url = api.junior.loginLink;
-    const body = JSON.stringify({ phoneNumber });
-    const options = { method: 'POST', body };
+    const url = api.junior.loginLink
+    const body = JSON.stringify({ phoneNumber })
+    const options = { method: 'POST', body }
 
     try {
-      const response = await httpClientWithRefresh(url, options);
+      const response = await httpClientWithRefresh(url, options)
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        notify(response.message, { type: 'warning' });
+        notify(response.message, { type: 'warning' })
       } else {
-        notify(response.message);
+        notify(response.message)
       }
     } catch (error) {
-      notify('Virhe lähetettäessä tekstiviestiä', { type: 'error' });
+      notify('Virhe lähetettäessä tekstiviestiä', { type: 'error' })
     }
-  };
+  }
 
   return (
     <Card sx={{ marginTop: 2 }}>
@@ -170,7 +170,7 @@ const QuickSearch = () => {
         </Box>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default QuickSearch;
+export default QuickSearch

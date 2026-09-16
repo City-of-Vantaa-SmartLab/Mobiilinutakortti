@@ -1,34 +1,34 @@
-import { CheckIn } from '../checkIn.entity';
-import { formatName } from '../../common/helpers';
+import { CheckIn } from '../checkIn.entity'
+import { formatName } from '../../common/helpers'
 
 export class CheckInLogViewModel {
-    targetName: string;
-    juniors: JuniorInformation[];
+    targetName: string
+    juniors: JuniorInformation[]
 
     constructor(targetName: string, checkIns: CheckIn[]) {
-        this.targetName = targetName;
+        this.targetName = targetName
 
         checkIns.sort((a, b) => {
-            return a.checkInTime.getTime() - b.checkInTime.getTime();
-        });
+            return a.checkInTime.getTime() - b.checkInTime.getTime()
+        })
 
         this.juniors = checkIns.map(checkIn => {
-            const dateTime = new Date(checkIn.checkInTime);
-            let hours = dateTime.getHours().toString();
-            let minutes = dateTime.getMinutes().toString();
-            if (hours.length < 2) hours = `0${hours}`;
-            if (minutes.length < 2) minutes = `0${minutes}`;
+            const dateTime = new Date(checkIn.checkInTime)
+            let hours = dateTime.getHours().toString()
+            let minutes = dateTime.getMinutes().toString()
+            if (hours.length < 2) hours = `0${hours}`
+            if (minutes.length < 2) minutes = `0${minutes}`
             return {
                 name: formatName(checkIn.junior.firstName, checkIn.junior.lastName, checkIn.junior.nickName),
                 id: checkIn.junior.id,
                 time: `${hours}:${minutes}`,
-            } as JuniorInformation;
-        });
+            } as JuniorInformation
+        })
     }
 }
 
 interface JuniorInformation {
-    id: string;
-    name: string;
-    time: string;
+    id: string
+    name: string
+    time: string
 }

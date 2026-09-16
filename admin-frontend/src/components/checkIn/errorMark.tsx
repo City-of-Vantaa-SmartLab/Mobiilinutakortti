@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const CheckMarkContainer = styled.div`
   display: block;
@@ -71,6 +71,6 @@ const ErrorMark = () =>  (
       </g>
     </svg>
   </CheckMarkContainer>
-);
+)
 
-export default ErrorMark;
+export default ErrorMark

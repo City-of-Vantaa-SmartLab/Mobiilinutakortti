@@ -1,14 +1,14 @@
-import { Field, FormikProps, withFormik, FieldProps } from 'formik';
-import { string, object, boolean, Schema, number } from 'yup';
-import { post } from '../../../apis';
-import { InputField, DropdownField, SelectGroup } from './FormFields';
-import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage, FieldInfoText } from '../StyledComponents';
+import { Field, FormikProps, withFormik, FieldProps } from 'formik'
+import { string, object, boolean, Schema, number } from 'yup'
+import { post } from '../../../apis'
+import { InputField, DropdownField, SelectGroup } from './FormFields'
+import { Form, Column, Fieldset, FieldTitle, Checkbox, FormFooter, Button, ErrorMessage, FieldInfoText } from '../StyledComponents'
 import { useTranslations } from '../../translations'
-import { CustomizableFormField, Translations } from "../../../customizations/types";
+import { CustomizableFormField, Translations } from "../../../customizations/types"
 import { hiddenFormFields, languages } from '../../../customizations'
 import styled, { useTheme } from 'styled-components'
-import { Status } from '../../../types/userTypes';
-import { validPhoneNumber } from '../../../utils';
+import { Status } from '../../../types/userTypes'
+import { validPhoneNumber } from '../../../utils'
 
 export interface Club {
     id: number
@@ -42,14 +42,14 @@ export interface FormValues {
 export type ErrorKey = keyof Translations['parentRegistration']['errors']
 
 const SubmitButton = styled(Button)`
-    color: ${p => p.theme.pages.registration.submitButtonText};
-    background: ${p => p.theme.pages.registration.submitButtonBackground};
+    color: ${p => p.theme.pages.registration.submitButtonText}
+    background: ${p => p.theme.pages.registration.submitButtonBackground}
 `
 
 const InnerForm = (props: FormikProps<FormValues>) => {
     const t = useTranslations()
     const theme = useTheme()
-    const { handleSubmit, handleReset, touched, errors, status } = props;
+    const { handleSubmit, handleReset, touched, errors, status } = props
     return (
             <Form onReset={handleReset} onSubmit={handleSubmit} autoComplete={`off-random-${Math.random()}`}>
                 <Column>
@@ -193,9 +193,9 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 }
 
 const getParsedBirthday = (value: any) => {
-    const birthday = value.split('.');
-    const parsedDate = new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0]));
-    return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), parsedDate.getHours(), parsedDate.getMinutes()));
+    const birthday = value.split('.')
+    const parsedDate = new Date(parseInt(birthday[2]), parseInt(birthday[1])-1, parseInt(birthday[0]))
+    return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate(), parsedDate.getHours(), parsedDate.getMinutes()))
 }
 
 const submitForm = async (values: FormValues, securityContext: any) => {
@@ -223,8 +223,8 @@ const submitForm = async (values: FormValues, securityContext: any) => {
             photoPermission: values.photoPermission === 'y'
         },
         securityContext: securityContext
-    };
-    return await post('/junior/parent-register', data);
+    }
+    return await post('/junior/parent-register', data)
 }
 
 interface Props {
@@ -294,18 +294,18 @@ const RegistrationForm = withFormik<Props, FormValues>({
     handleSubmit: (values, formikBag) => {
         submitForm(values, formikBag.props.securityContext)
             .then(formikBag.props.onSubmit)
-            .catch(formikBag.props.onError);
+            .catch(formikBag.props.onError)
     },
     validateOnBlur: false,
     validateOnChange: false
-})(InnerForm);
+})(InnerForm)
 
 function valueOr<T>(name: CustomizableFormField, visibleValue: T, hiddenValue: T): T {
-  return hiddenFormFields.includes(name) ? hiddenValue : visibleValue;
+    return hiddenFormFields.includes(name) ? hiddenValue : visibleValue
 }
 
 function valueOrNull<T>(name: CustomizableFormField, visibleValue: T): T | null {
-  return valueOr(name, visibleValue, null)
+    return valueOr(name, visibleValue, null)
 }
 
-export default RegistrationForm;
+export default RegistrationForm

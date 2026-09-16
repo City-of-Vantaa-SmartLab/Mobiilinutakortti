@@ -62,6 +62,7 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `DB_PORT`: Database port.
 * `DB_USE_SSL`: If evaluates to true, database uses SSL. Defaults to empty (evaluates to false).
 * `DB_USERNAME`: Database user name.
+* `EMAIL_MOCK`: If evaluates to true, use a mock email service that only prints to logs and returns stub email and SES config.
 * `EMAIL_SOURCE`: Email address to be shown as sender address when seding emails from Amazon SES.
 * `EMAIL_RETURN_PATH`: Email where AWS error notifications/bounces are sent, such as invalid email addresses tms.
 * `ENABLE_SETUP_ENDPOINTS`: If "yes", allows creating a new admin via _registerAdmin_ endpoint and enables creating test junior data via endpoints. See the project root readme for details.
@@ -73,18 +74,18 @@ In the following list the terms "IdP metadata XML" and "metadata XML" are used. 
 * `JWT_SECRET`: Secret string used for JWTs. Arbitrary. Optional if only single backend instance is in use.
 * `KOMPASSI_API_KEY`: API key for Kompassi integration, if integration enabled in admin-frontend.
 * `KOMPASSI_API_URL`: URL to use for Kompassi integration.
-* `NODE_ENV`: used to check if running tests (value = 'test') or not.
 * `SC_SECRET`: Secret string used to sign and validate security context tokens. Arbitrary. Optional if only single backend instance is in use.
 * `SP_ASSERT_ENDPOINT`: Endpoint address for Assertion Consumer Service in SAML2.0 communication. Defined in metadata XML.
 * `SP_ENTITY_ID`: Entity ID of the service. Defined in metadata XML.
 * `SP_PKEY`: Private key of the service for SAML2.0 communication with Suomi.fi. Note: not the TLS private key. If entering this as an environment variable, separate new lines using "\n" - they are converted to real newline characters while reading the key.
 * `SSO_LOGIN_URL`: Identity provider's login URL. Defined in the IdP metadata XML.
 * `SSO_LOGOUT_URL`: Identity provider's logout URL. Defined in the IdP metadata XML.
-* `TELIA_BATCH_ENDPOINT`: Telia SMS service batch endpoint URL. NB: your Telia credentials must have a separate permit to use the end point.
-* `TELIA_ENDPOINT`: Telia SMS service endpoint URL.
-* `TELIA_PASSWORD`: Telia SMS service password.
-* `TELIA_USER`: The name of the sender as it appears on SMS messages.
-* `TELIA_USERNAME`: Telia SMS service user name.
+* `SMS_BATCH_ENDPOINT`: SMS service batch endpoint URL. NB: with Telia, your credentials must have a separate permit to use the end point.
+* `SMS_ENDPOINT`: SMS service endpoint URL.
+* `SMS_MOCK`: If evaluates to true, use a mock SMS service that only prints to logs and returns a stub SMS config.
+* `SMS_PASSWORD`: SMS service password.
+* `SMS_SENDER`: The name of the sender as it appears on SMS messages.
+* `SMS_USERNAME`: SMS service user name.
 * `USE_DETAILED_LOGS`: If evaluates to true, use detailed logs. This basically prints ids of objects being operated on, for almost every operation. This might result in a lot of logs, so off by default.
 * `USE_JSON_LOGS`: If evaluates to true, use JSON log format.
 
@@ -98,4 +99,4 @@ The Swagger documentation does not document API responses.
 
 ## Tests
 
-Due to historical reasons, the tests might not be the best ones and they might be lacking in coverage. Some unit tests are a bit like e2e tests, so the distinction is not clear. Both test suites should pass, however.
+Test coverage is not the best and the tests might be using quite optimistic type casting or have some other historical burden. Both `npm run test` and `npm run test:e2e` should fully pass, however.

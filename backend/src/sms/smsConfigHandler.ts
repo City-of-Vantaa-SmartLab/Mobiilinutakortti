@@ -1,35 +1,46 @@
-import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { TeliaSettings } from './models';
-import * as content from '../content';
+import { InternalServerErrorException, Logger } from '@nestjs/common'
+import { SmsSettings } from './models'
+import * as content from '../content'
+import { ConfigHandler } from '../configHandler'
 
 export class SMSConfig {
     /**
-     * A method that returns Telia settings, or throws an error if they do not exist.
+     * A method that returns SMS settings, or throws an error if they do not exist.
     *
-    * @returns TeliaSettings
+    * @returns SmsSettings
     */
-   public static getTeliaConfig(): TeliaSettings {
-        const logger = new Logger('SMS confighandler');
+   public static getSmsConfig(): SmsSettings {
+        const logger = new Logger('SMS confighandler')
 
-        const username = process.env.TELIA_USERNAME;
-        const password = process.env.TELIA_PASSWORD;
-        const user = process.env.TELIA_USER;
-        const endPoint = process.env.TELIA_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/send';
-        const batchEndPoint = process.env.TELIA_BATCH_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/batchsend/json';
+        if (ConfigHandler.useMockSms()) {
+            return {
+                username: 'mock-user',
+                password: 'mock-password',
+                sender: 'MockSender',
+                endPoint: 'http://localhost/mock-sms/send',
+                batchEndPoint: 'http://localhost/mock-sms/batch',
+            }
+        }
 
-        if (!username || !password || !user || !endPoint || !batchEndPoint) {
-            logger.error("Unable to find Telia config");
-            throw new InternalServerErrorException(content.SmsServiceNotAvailable);
-        };
+        const username = process.env.SMS_USERNAME
+        const password = process.env.SMS_PASSWORD
+        const sender = process.env.SMS_SENDER
+        const endPoint = process.env.SMS_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/send'
+        const batchEndPoint = process.env.SMS_BATCH_ENDPOINT || 'https://ws.mkv.telia.fi/restsms/lekabrest/batchsend/json'
+
+        if (!username || !password || !sender || !endPoint || !batchEndPoint) {
+            logger.error("Unable to find SMS config")
+            throw new InternalServerErrorException(content.SmsServiceNotAvailable)
+        }
 
         const config = {
             username,
             password,
-            user,
+            sender,
             endPoint,
             batchEndPoint,
-        } as TeliaSettings;
+        } as SmsSettings
 
-        return config;
+        return config
     }
 }

@@ -1,7 +1,7 @@
 export class ContextValidViewModel {
-  valid: boolean;
+  valid: boolean
 
   constructor(valid: boolean) {
-    this.valid = valid;
+    this.valid = valid
   }
 }

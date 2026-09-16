@@ -1,27 +1,27 @@
-import { MenuItemLink } from 'react-admin';
-import styled from 'styled-components';
-import ChildCareIcon from '@mui/icons-material/ChildCare';
-import NewSeasonIcon from '@mui/icons-material/Autorenew';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
-import EditLocationIcon from '@mui/icons-material/EditLocation';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import BoltIcon from '@mui/icons-material/Bolt';
-import EventIcon from '@mui/icons-material/Event';
-import useAdminPermission from './hooks/useAdminPermission';
-import { getEnvConfig, ENV_VARS } from './envConfig';
+import { MenuItemLink } from 'react-admin'
+import styled from 'styled-components'
+import ChildCareIcon from '@mui/icons-material/ChildCare'
+import NewSeasonIcon from '@mui/icons-material/Autorenew'
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
+import DeleteIcon from '@mui/icons-material/DeleteForever'
+import MailOutlineIcon from '@mui/icons-material/MailOutline'
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
+import EditLocationIcon from '@mui/icons-material/EditLocation'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
+import BoltIcon from '@mui/icons-material/Bolt'
+import EventIcon from '@mui/icons-material/Event'
+import useAdminPermission from './hooks/useAdminPermission'
+import { getEnvConfig, ENV_VARS } from './envConfig'
 
 const MenuContainer = styled.div`
   margin-top: 1.5em;
-`;
+`
 
 const Menu = () => {
-  const { isAdmin, isSignedIn } = useAdminPermission();
-  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
+  const { isAdmin, isSignedIn } = useAdminPermission()
+  const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES)
 
   return !isSignedIn ? null : (
     <MenuContainer>
@@ -96,7 +96,7 @@ const Menu = () => {
         leftIcon={<BoltIcon/>}
       />
     </MenuContainer>
-  );
-};
+  )
+}
 
-export default Menu;
+export default Menu

@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
-import { authProvider } from '../providers';
-import { getEnvConfig, ENV_VARS } from '../envConfig';
+import { useEffect } from 'react'
+import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils'
+import { authProvider } from '../providers'
+import { getEnvConfig, ENV_VARS } from '../envConfig'
 
 // NB:
 // * So that page changes trigger the useEffect, use auto logout in each relevant component, not just on App level.
@@ -12,36 +12,33 @@ export const useAutoLogout = () => {
     useEffect(() => {
         const isEntraLoginPage =
             getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID) &&
-            (window.location.href + '/').includes(getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI));
-        if (isEntraLoginPage) {
-            return;
-        }
+            (window.location.href + '/').includes(getEnvConfig(ENV_VARS.VITE_ENTRA_REDIRECT_URI))
+        if (isEntraLoginPage) return
 
         // NB: during manual logout, this message is shown even though interval is cleared immediately.
-        console.debug(`Set auto logout of ${autoLogoutTimeoutMinutes} minutes.`);
+        console.debug(`Set auto logout of ${autoLogoutTimeoutMinutes} minutes.`)
 
-        let logoutUser = setTimeout(async () => {
+        const logoutUser = setTimeout(async () => {
             // The hash may change due to routing, so we check these inside the interval function.
             // We should never end up here outside a component using auto logout, this is just in case.
             const isLoggedOutPage =
                 isEntraLoginPage ||
                 window.location.hash?.includes('login') || // non-Entra ID login page
-                window.location.hash?.includes('checkIn'); // QR code reader page
+                window.location.hash?.includes('checkIn') // QR code reader page
 
             if (!isLoggedOutPage) {
-                console.info('Logging out user automatically.');
-                authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
+                console.info('Logging out user automatically.')
+                authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) })
             } else
                 // Remove the local session token in case the user has somehow reached this logged out page being logged in.
-                sessionStorage.removeItem(userTokenKey);
-        }, autoLogoutTimeoutMinutes * 60000);
+                sessionStorage.removeItem(userTokenKey)
+        }, autoLogoutTimeoutMinutes * 60000)
 
         return () => {
-            clearTimeout(logoutUser);
-            console.debug(`Cleared auto logout timeout.`);
-            logoutUser = null;
+            clearTimeout(logoutUser)
+            console.debug(`Cleared auto logout timeout.`)
         }
-    }, []);
+    }, [])
 }
 
-export default useAutoLogout;
+export default useAutoLogout

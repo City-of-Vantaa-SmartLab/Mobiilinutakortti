@@ -1,3 +1,3 @@
 export interface JWTToken {
-    access_token: string;
+    access_token: string
 }

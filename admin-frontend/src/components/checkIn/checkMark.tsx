@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const CheckMarkContainer = styled.div`
   display: block;
@@ -54,6 +54,6 @@ const CheckMark = () =>  (
         </g>
       </svg>
     </CheckMarkContainer>
-);
+)
 
-export default CheckMark;
+export default CheckMark

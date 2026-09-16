@@ -1,7 +1,7 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { httpClientWithRefresh } from '../httpClients';
-import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils';
-import { authProvider } from '../providers';
+import { useEffect, useRef, useCallback } from 'react'
+import { httpClientWithRefresh } from '../httpClients'
+import { userTokenKey, autoLogoutTimeoutMinutes } from '../utils'
+import { authProvider } from '../providers'
 
 // A sliding time window (hence "smart") auto logout.
 // Returns a refresh function to use in a component's onFocus, so e.g. in a form's input field.
@@ -11,37 +11,37 @@ import { authProvider } from '../providers';
 
 export function useSmartAutoLogout() {
 
-    const timeoutRef = useRef(null);
+    const timeoutRef: React.RefObject<number | null> = useRef(null)
 
     const start = useCallback(() => {
-        timeoutRef.current = logout();
-    }, []);
+        timeoutRef.current = logout()
+    }, [])
 
     const smartRefresh = useCallback(() => {
-        httpClientWithRefresh(null);
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        start();
-    }, [start]);
+        httpClientWithRefresh()
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        start()
+    }, [start])
 
     useEffect(() => {
-        start();
+        start()
 
         return () => {
             if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                console.debug(`Cleared smart auto logout timeout.`);
+                clearTimeout(timeoutRef.current)
+                console.debug(`Cleared smart auto logout timeout.`)
             }
-        };
-    }, [start]);
+        }
+    }, [start])
 
-    return smartRefresh;
+    return smartRefresh
 }
 
 const logout = () => {
     const timeoutId = setTimeout(async () => {
-        console.info('Logging out user by smart auto logout.');
-        authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) });
-    }, autoLogoutTimeoutMinutes * 60000);
-    console.debug(`Set smart auto logout of ${autoLogoutTimeoutMinutes} minutes.`);
-    return timeoutId;
+        console.info('Logging out user by smart auto logout.')
+        authProvider.logout({ automatic: true, auth_token: sessionStorage.getItem(userTokenKey) })
+    }, autoLogoutTimeoutMinutes * 60000)
+    console.debug(`Set smart auto logout of ${autoLogoutTimeoutMinutes} minutes.`)
+    return timeoutId
 }

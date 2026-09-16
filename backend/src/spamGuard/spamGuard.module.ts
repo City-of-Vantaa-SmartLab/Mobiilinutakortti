@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { SpamGuardService } from './spamGuard.service';
+import { Module } from '@nestjs/common'
+import { SpamGuardService } from './spamGuard.service'
 
 @Module({
     imports: [],

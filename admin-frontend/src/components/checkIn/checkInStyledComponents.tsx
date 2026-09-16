@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export const Container = styled.div<{ $isPopup?: boolean }>`
   height: 100%;
@@ -10,9 +10,9 @@ export const Container = styled.div<{ $isPopup?: boolean }>`
     position: relative;
     z-index: 1;
   ` : ''}
-`;
+`
 
-export const cameraSize = '38em';
+export const cameraSize = '38em'
 
 /* The video is mirrored horizontally for easier QR code positioning (except for mobile back camera). */
 export const QrReaderContainer = styled.div<{ $shouldFlip: boolean }>`
@@ -35,4 +35,4 @@ export const QrReaderContainer = styled.div<{ $shouldFlip: boolean }>`
     object-fit: cover;
     transform: ${props => props.$shouldFlip ? 'scaleX(-1)' : 'none'};
   }
-`;
+`

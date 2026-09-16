@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { SessionDBService } from './sessionDb.service';
+import { Module } from '@nestjs/common'
+import { SessionDBService } from './sessionDb.service'
 
 @Module({
     imports: [],

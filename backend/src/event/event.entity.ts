@@ -1,24 +1,24 @@
-import { EntryType } from '../extraEntry/entities';
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm';
+import { EntryType } from '../extraEntry/entities'
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from 'typeorm'
 
 @Entity()
 export class Event {
     @PrimaryGeneratedColumn()
-    id!: number;
+    id!: number
 
     @Column()
-    name!: string;
+    name!: string
 
     @Column({ type: 'varchar', nullable: true })
-    description!: string | null;
+    description!: string | null
 
     @Column({ type: 'timestamp with time zone', nullable: true })
-    startDate!: Date | null;
+    startDate!: Date | null
 
     @Column({ type: 'int', nullable: true })
-    integrationId!: number | null;
+    integrationId!: number | null
 
     @OneToOne(_ => EntryType, { cascade: true, nullable: true })
     @JoinColumn()
-    permit!: EntryType | null;
+    permit!: EntryType | null
 }

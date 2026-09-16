@@ -1,16 +1,16 @@
-import { Entity, Column, OneToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { Junior } from './junior.entity';
+import { Entity, Column, OneToOne, JoinColumn, PrimaryGeneratedColumn, type Relation } from 'typeorm'
+import { Junior } from './junior.entity'
 
 @Entity()
 export class Challenge {
 
     @PrimaryGeneratedColumn('uuid')
-    id!: string;
+    id!: string
 
     @OneToOne(_ => Junior, { onDelete: 'CASCADE' })
     @JoinColumn()
-    junior!: Junior;
+    junior!: Relation<Junior>
 
     @Column()
-    challenge!: string;
+    challenge!: string
 }

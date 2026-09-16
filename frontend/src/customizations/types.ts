@@ -10,114 +10,114 @@ export type CustomizableFormField =
   | 'communicationsLanguage'
 
 interface Messages {
-  fi: string
-  en: string
+  fi: string,
+  en: string,
   sv: string
 }
 
 export interface Club {
-  active: boolean
-  id: number
-  messages: Messages
-  name: string
+  active: boolean,
+  id: number,
+  messages: Messages,
+  name: string,
   postCode: number
 }
 
 export interface Theme {
   pages: {
     login: {
-      logo: ReactNode | null
-      stripe1: string
-      stripe2: string
-      background: string
-      languageSelectText: string
-      headingText: string
-      messageText: string
-      errorText: string
-      labelText: string
-      buttonText: string
-      buttonBackground: string
+      logo: ReactNode | null,
+      stripe1: string,
+      stripe2: string,
+      background: string,
+      languageSelectText: string,
+      headingText: string,
+      messageText: string,
+      errorText: string,
+      labelText: string,
+      buttonText: string,
+      buttonBackground: string,
       bottomLogo: ReactNode | null
-    }
+    },
     qr: {
-      stripe: string
-      background: string
-      languageSelectText: string
-      headingText: string
-      qrBorder: string
+      stripe: string,
+      background: string,
+      languageSelectText: string,
+      headingText: string,
+      qrBorder: string,
       footerText: string
-    }
+    },
     parentRedirect: {
-      logo: ReactNode
-      stripe1: string
-      stripe2: string
-      languageSelectText: string
-      background: string
+      logo: ReactNode,
+      stripe1: string,
+      stripe2: string,
+      languageSelectText: string,
+      background: string,
       headingText: string,
       ingressText: string,
       description: {
-        background: string
-        text: string
-        buttonBackground: string
-        buttonText: string
+        background: string,
+        text: string,
+        buttonBackground: string,
+        buttonText: string,
         bottomLogo: ReactNode | null
       }
-    }
+    },
     registration: {
-      stripe: string
-      background: string
-      languageSelectText: string
-      headingText: string
-      formTitleText: string
-      footerBackground: string
-      submitButtonBackground: string
-      submitButtonText: string
-      errorButtonBackground: string
-      errorButtonText: string
-      confirmationBackground: string
-      confirmationTitle: string
-      confirmationLink: string
+      stripe: string,
+      background: string,
+      languageSelectText: string,
+      headingText: string,
+      formTitleText: string,
+      footerBackground: string,
+      submitButtonBackground: string,
+      submitButtonText: string,
+      errorButtonBackground: string,
+      errorButtonText: string,
+      confirmationBackground: string,
+      confirmationTitle: string,
+      confirmationLink: string,
       bottomLogo: ReactNode | null
     }
-  }
+  },
   fonts: {
-    heading: string
+    heading: string,
     body: string
   }
 }
 
 export interface Translations {
-  addToHomescreen: ReactNode
+  addToHomescreen: ReactNode,
   login: {
-    title: ReactNode
-    label: ReactNode
-    placeholder: string
-    submit: ReactNode
-    errorMessage: string
+    title: ReactNode,
+    label: ReactNode,
+    placeholder: string,
+    submit: ReactNode,
+    errorMessage: string,
     authMessages: {
-      authFail: string
-      linkRequestSuccess: string
+      authFail: string,
+      linkRequestSuccess: string,
       linkRequestFail: string
     }
-  }
+  },
   logout: {
-    title: ReactNode
-    heading: ReactNode
+    title: ReactNode,
+    heading: ReactNode,
     message: ReactNode
-  }
+  },
   parentRedirect: {
-    title: ReactNode
-    ingress: ReactNode
-    description: ReactNode
-    submit: ReactNode
+    title: ReactNode,
+    ingress: ReactNode,
+    description: ReactNode,
+    submit: ReactNode,
     privacyPolicy: {
-      title: ReactNode
+      title: ReactNode,
       href: string
     }
-  }
+  },
   parentRegistration: {
-    logout: ReactNode
-    title: ReactNode
+    logout: ReactNode,
+    title: ReactNode,
     form: {
       juniorHeading: string,
       juniorFirstName: string,
@@ -134,13 +134,13 @@ export interface Translations {
         f: string,
         m: string,
         o: string,
-        '-': string,
+        '-': string
       },
       photoPermission: string,
       photoPermissionDescription: string,
       photoPermissionOptions: {
         y: string,
-        n: string,
+        n: string
       },
 
       parentHeading: string,
@@ -160,8 +160,8 @@ export interface Translations {
         smsPermissionParent: string,
         permissionOptions: {
           ok: string,
-          notOk: string,
-        },
+          notOk: string
+        }
       },
 
       youthClubHeading: string,
@@ -177,7 +177,7 @@ export interface Translations {
       submit: ReactNode,
       privacyPolicy: {
         title: ReactNode,
-        href: string,
+        href: string
       }
     },
     errors: {
@@ -188,21 +188,21 @@ export interface Translations {
       emailFormat: string,
       selectYouthClub: string,
       selectLanguage: string,
-      acceptTermsOfUse: string,
+      acceptTermsOfUse: string
     },
     confirmation: {
-      heading: ReactNode
+      heading: ReactNode,
       message: (logoutLink: (text: ReactNode) => ReactNode, startOverLink: (text: ReactNode) => ReactNode) => ReactNode,
     }
     error: {
       message: ReactNode,
-      alternativeMessage: ReactNode
+      alternativeMessage: ReactNode,
       back: ReactNode
     }
   },
   qrPage: {
-    codeExpired: string;
-    codeValid: string;
+    codeExpired: string,
+    codeValid: string,
     login: string,
     loginSubtitle: string,
     instruction: ReactNode

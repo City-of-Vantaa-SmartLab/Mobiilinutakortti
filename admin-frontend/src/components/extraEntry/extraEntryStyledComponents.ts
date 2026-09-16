@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export const ExtraEntryTable = styled.table`
     margin-bottom: 40px;
@@ -14,12 +14,12 @@ export const ExtraEntryTable = styled.table`
     a:hover {
         text-decoration: underline;
     }
-`;
+`
 
 export const EmptyChoicesText = styled.p`
     font-style: italic;
     color: rgba(0, 0, 0, 0.54);
-`;
+`
 
 export const ExtraEntryLink = styled.a`
     text-decoration: none;
@@ -27,4 +27,4 @@ export const ExtraEntryLink = styled.a`
     :hover {
         text-decoration: underline;
     }
-`;
+`

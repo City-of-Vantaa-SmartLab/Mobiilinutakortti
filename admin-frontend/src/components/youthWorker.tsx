@@ -1,130 +1,130 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import {
-  List,
-  Datagrid,
-  TextField,
-  FunctionField,
-  BooleanField,
-  BooleanInput,
-  Create,
-  SimpleForm,
-  TextInput,
-  SelectInput,
-  required,
-  EditButton,
-  Edit,
-  SelectField,
-  ListProps,
-  CreateProps,
-  EditProps,
-  TopToolbar,
-  CreateButton
-} from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils';
-import useAutoLogout from '../hooks/useAutoLogout';
-import { CustomBasicToolbar } from './styledComponents';
-import { getEnvConfig, ENV_VARS } from '../envConfig';
+    List,
+    Datagrid,
+    TextField,
+    FunctionField,
+    BooleanField,
+    BooleanInput,
+    Create,
+    SimpleForm,
+    TextInput,
+    SelectInput,
+    required,
+    EditButton,
+    Edit,
+    SelectField,
+    ListProps,
+    CreateProps,
+    EditProps,
+    TopToolbar,
+    CreateButton
+} from 'react-admin'
+import { getYouthClubOptions, getActiveYouthClubOptions, getAlertDialogObserver } from '../utils'
+import useAutoLogout from '../hooks/useAutoLogout'
+import { CustomBasicToolbar } from './styledComponents'
+import { getEnvConfig, ENV_VARS } from '../envConfig'
 
-const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID);
+const useEntraID = !!getEnvConfig(ENV_VARS.VITE_ENTRA_TENANT_ID)
 
 // If using Entra ID, adding youth workers is done automatically when they sign in.
 const YouthWorkerListActions = () => (
-  <TopToolbar>
-    {!useEntraID && <CreateButton />}
-  </TopToolbar>
-);
+    <TopToolbar>
+        {!useEntraID && <CreateButton />}
+    </TopToolbar>
+)
 
 export const YouthWorkerList = (props: ListProps) => {
-  const [youthClubs, setYouthClubs] = useState([]);
-  useEffect(() => {
-    const addYouthClubsToState = async () => {
-      const youthClubOptions = await getYouthClubOptions();
-      setYouthClubs(youthClubOptions);
-    };
-    addYouthClubsToState();
-  }, []);
+    const [youthClubs, setYouthClubs] = useState([])
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const youthClubOptions = await getYouthClubOptions()
+            setYouthClubs(youthClubOptions)
+        }
+        addYouthClubsToState()
+    }, [])
 
-  useAutoLogout();
+    useAutoLogout()
 
-  if (youthClubs.length === 0) {
-    return null
-  }
+    if (youthClubs.length === 0) {
+        return null
+    }
 
-  return (
-    <List title="Nuorisotyöntekijät" exporter={false} pagination={false} actions={<YouthWorkerListActions />} {...props}>
-      <Datagrid bulkActionButtons={false} rowClick={false}>
-        <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
-        <TextField label="Sähköposti" source="email" />
-        <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
-        <BooleanField label="Ylläpitäjä" source="isAdmin" />
-        <EditButton />
-      </Datagrid>
-    </List>
-  );
+    return (
+        <List title="Nuorisotyöntekijät" exporter={false} pagination={false} actions={<YouthWorkerListActions />} {...props}>
+            <Datagrid bulkActionButtons={false} rowClick={false}>
+                <FunctionField label="Nimi" render={record => `${record.firstName}${useEntraID ? '' : (' ' + record.lastName)}`} />
+                <TextField label="Sähköposti" source="email" />
+                <SelectField label="Kotinuorisotila" source="mainYouthClub" choices={youthClubs} />
+                <BooleanField label="Ylläpitäjä" source="isAdmin" />
+                <EditButton />
+            </Datagrid>
+        </List>
+    )
 }
 
 export const YouthWorkerCreate = (props: CreateProps) => {
-  const [youthClubs, setYouthClubs] = useState([]);
+    const [youthClubs, setYouthClubs] = useState([])
 
-  useEffect(() => {
-    const addYouthClubsToState = async () => {
-      const youthClubOptions = await getActiveYouthClubOptions();
-      setYouthClubs(youthClubOptions);
-    };
-    addYouthClubsToState();
-  }, []);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const youthClubOptions = await getActiveYouthClubOptions()
+            setYouthClubs(youthClubOptions)
+        }
+        addYouthClubsToState()
+    }, [])
 
-  useAutoLogout();
+    useAutoLogout()
 
-  return (
-    <Create title="Rekisteröi nuorisotyöntekijä" redirect="list" {...props}>
-      <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" />}>
-        <TextInput label="Sähköposti" source="email" type="email" validate={required()} sx={{ width: 400 }} />
-        <TextInput label="Salasana" source="password" type="password" validate={required()} sx={{ width: 400 }} />
-        <TextInput label="Etunimi" source="firstName" validate={required()} sx={{ width: 400 }} />
-        <TextInput label="Sukunimi" source="lastName" validate={required()} sx={{ width: 400 }} />
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
-        <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
-      </SimpleForm>
-    </Create>
-  );
-};
+    return (
+        <Create title="Rekisteröi nuorisotyöntekijä" redirect="list" {...props}>
+            <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" />}>
+                <TextInput label="Sähköposti" source="email" type="email" validate={required()} sx={{ width: 400 }} />
+                <TextInput label="Salasana" source="password" type="password" validate={required()} sx={{ width: 400 }} />
+                <TextInput label="Etunimi" source="firstName" validate={required()} sx={{ width: 400 }} />
+                <TextInput label="Sukunimi" source="lastName" validate={required()} sx={{ width: 400 }} />
+                <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
+                <BooleanInput label="Ylläpitäjä" source="isAdmin" defaultValue={false} />
+            </SimpleForm>
+        </Create>
+    )
+}
 
 export const YouthWorkerEdit = (props: EditProps) => {
-  const [youthClubs, setYouthClubs] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [youthClubs, setYouthClubs] = useState([])
+    const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const addYouthClubsToState = async () => {
-      const youthClubOptions = await getYouthClubOptions();
-      setYouthClubs(youthClubOptions.map((yc: any) => {return {...yc, disabled: !yc.active}}))
-      setLoading(false);
-    };
-    addYouthClubsToState();
-  }, []);
+    useEffect(() => {
+        const addYouthClubsToState = async () => {
+            const youthClubOptions = await getYouthClubOptions()
+            setYouthClubs(youthClubOptions.map((yc: any) => {return {...yc, disabled: !yc.active}}))
+            setLoading(false)
+        }
+        addYouthClubsToState()
+    }, [])
 
-  useAutoLogout();
+    useAutoLogout()
 
-  useEffect(() => {
-    const observer = getAlertDialogObserver('Poista nuorisotyöntekijä');
-    return () => {
-      observer.disconnect();
+    useEffect(() => {
+        const observer = getAlertDialogObserver('Poista nuorisotyöntekijä')
+        return () => {
+            observer.disconnect()
+        }
+    }, [])
+
+    if (loading) {
+        return null
     }
-  }, [])
 
-  if (loading) {
-    return null;
-  }
-
-  return (
-    <Edit title="Muokkaa nuorisotyöntekijää" redirect="list" {...props} mutationMode="pessimistic">
-      <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" showDelete={true} />}>
-        <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} sx={{ width: 400 }} />
-        <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} sx={{ width: 400 }} />
-        {!useEntraID && (<TextInput label="Sukunimi" source="lastName" sx={{ width: 400 }} />)}
-        <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
-        <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
-      </SimpleForm>
-    </Edit >
-  );
-};
+    return (
+        <Edit title="Muokkaa nuorisotyöntekijää" redirect="list" {...props} mutationMode="pessimistic">
+            <SimpleForm toolbar={<CustomBasicToolbar listPath="/youthWorker" showDelete={true} />}>
+                <TextInput label="Sähköposti" source="email" type="email" disabled={useEntraID} sx={{ width: 400 }} />
+                <TextInput label={useEntraID ? "Nimi" : "Etunimi"} source="firstName" disabled={useEntraID} sx={{ width: 400 }} />
+                {!useEntraID && (<TextInput label="Sukunimi" source="lastName" sx={{ width: 400 }} />)}
+                <SelectInput label="Kotinuorisotila" source="mainYouthClub" parse={v => v === '' ? null : v} choices={youthClubs} sx={{ width: 400 }} />
+                <BooleanInput label="Ylläpitäjä" source="isAdmin" disabled={useEntraID} />
+            </SimpleForm>
+        </Edit >
+    )
+}

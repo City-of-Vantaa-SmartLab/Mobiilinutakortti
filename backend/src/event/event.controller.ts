@@ -8,24 +8,24 @@ import {
     Post,
     Body,
     UseInterceptors
-} from '@nestjs/common';
-import { EventService } from './event.service';
-import { SpamGuardService } from '../spamGuard/spamGuard.service';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../roles/roles.guard';
-import { SessionGuard } from '../session/session.guard';
-import { AllowedRoles } from '../roles/roles.decorator';
-import { Roles } from '../roles/roles.enum';
-import { EventEditInterceptor } from './edit.interceptor';
-import { EditEventDto } from './edit.dto';
-import { EventViewModel } from './event.vm';
-import { CheckInResponseViewModel, CheckInLogViewModel, failReason } from '../checkIn/vm';
-import { CheckInDto } from '../checkIn/checkIn.dto';
-import { Message } from '../common/vm';
-import { CreateEventDto } from './create.dto';
-import * as content from '../content';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { YouthWorker } from '../youthWorker/youthWorker.decorator';
+} from '@nestjs/common'
+import { EventService } from './event.service'
+import { SpamGuardService } from '../spamGuard/spamGuard.service'
+import { AuthGuard } from '@nestjs/passport'
+import { RolesGuard } from '../roles/roles.guard'
+import { SessionGuard } from '../session/session.guard'
+import { AllowedRoles } from '../roles/roles.decorator'
+import { Roles } from '../roles/roles.enum'
+import { EventEditInterceptor } from './edit.interceptor'
+import { EditEventDto } from './edit.dto'
+import { EventViewModel } from './event.vm'
+import { CheckInResponseViewModel, CheckInLogViewModel, failReason } from '../checkIn/vm'
+import { CheckInDto } from '../checkIn/checkIn.dto'
+import { Message } from '../common/vm'
+import { CreateEventDto } from './create.dto'
+import * as content from '../content'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { YouthWorker } from '../youthWorker/youthWorker.decorator'
 
 @Controller(`${content.Routes.api}/event`)
 @ApiTags('Event')
@@ -42,7 +42,7 @@ export class EventController {
     @Get('list')
     @ApiBearerAuth('youthWorker')
     async getEvents(): Promise<EventViewModel[]> {
-        return await this.eventService.getEvents();
+        return await this.eventService.getEvents()
     }
 
     // Youth worker has logged out, so security code is needed.
@@ -50,10 +50,10 @@ export class EventController {
     @Post('checkInWithCode')
     async checkInForEventWithCode(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
         if (!this.spamGuardService.checkSecurityCode(checkInData.targetId, checkInData.securityCode, true)) {
-            return new CheckInResponseViewModel('', failReason.CODE);
+            return new CheckInResponseViewModel('', failReason.CODE)
         }
 
-        return this.doCheckIn(checkInData);
+        return this.doCheckIn(checkInData)
     }
 
     // Youth worker is still logged in, no security code is needed.
@@ -63,21 +63,21 @@ export class EventController {
     @Post('checkIn')
     @ApiBearerAuth('youthWorker')
     async checkInForEvent(@Body() checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
-        return this.doCheckIn(checkInData);
+        return this.doCheckIn(checkInData)
     }
 
     private async doCheckIn(checkInData: CheckInDto): Promise<CheckInResponseViewModel> {
         if (!this.spamGuardService.checkIn(checkInData.juniorId, checkInData.targetId, true)) {
-            return new CheckInResponseViewModel('', failReason.SPAM);
+            return new CheckInResponseViewModel('', failReason.SPAM)
         }
 
-        const hasPermit = await this.eventService.checkJuniorHasPermit(checkInData);
+        const hasPermit = await this.eventService.checkJuniorHasPermit(checkInData)
         if (!hasPermit) {
-            return new CheckInResponseViewModel('', failReason.PERMIT);
+            return new CheckInResponseViewModel('', failReason.PERMIT)
         }
 
-        const name = await this.eventService.checkInJunior(checkInData);
-        return new CheckInResponseViewModel(name);
+        const name = await this.eventService.checkInJunior(checkInData)
+        return new CheckInResponseViewModel(name)
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -88,7 +88,7 @@ export class EventController {
     async getEventCheckIns(@Param('id') id: number): Promise<CheckInLogViewModel> {
         return new CheckInLogViewModel(
             (await this.eventService.getEventById(id)).name,
-            await this.eventService.getCheckInsForEvent(id));
+            await this.eventService.getCheckInsForEvent(id))
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -97,8 +97,8 @@ export class EventController {
     @Post('create')
     @ApiBearerAuth('youthWorker')
     async create(@YouthWorker() youthWorker: { userId: string }, @Body() eventData: CreateEventDto): Promise<EventViewModel> {
-        const createdEvent = await this.eventService.createEvent(eventData, youthWorker.userId);
-        return new EventViewModel(createdEvent);
+        const createdEvent = await this.eventService.createEvent(eventData, youthWorker.userId)
+        return new EventViewModel(createdEvent)
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -107,7 +107,7 @@ export class EventController {
     @Get(':id')
     @ApiBearerAuth('youthWorker')
     async getOneEvent(@Param('id') id: number): Promise<EventViewModel> {
-        return new EventViewModel(await this.eventService.getEventById(id));
+        return new EventViewModel(await this.eventService.getEventById(id))
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -117,7 +117,7 @@ export class EventController {
     @Post('edit')
     @ApiBearerAuth('youthWorker')
     async edit(@YouthWorker() youthWorker: { userId: string }, @Body() EventData: EditEventDto): Promise<Message> {
-        return new Message(await this.eventService.editEvent(EventData, youthWorker.userId));
+        return new Message(await this.eventService.editEvent(EventData, youthWorker.userId))
     }
 
     @UsePipes(new ValidationPipe({ transform: true }))
@@ -126,6 +126,6 @@ export class EventController {
     @Post('delete')
     @ApiBearerAuth('youthWorker')
     async delete(@YouthWorker() youthWorker: { userId: string }, @Body() data: { id: number }): Promise<Message> {
-        return new Message(await this.eventService.deleteEvent(data.id, youthWorker.userId));
+        return new Message(await this.eventService.deleteEvent(data.id, youthWorker.userId))
     }
 }

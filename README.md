@@ -13,7 +13,7 @@ Note that currently for some services the backend keeps a small in-memory "datab
 
 ## Prerequisites
 
-- Node.js: v24.15.0 preferred
+- Node.js: v26.8.2 preferred
 - PostgreSQL: v18 preferred
 - Docker: optional
 
@@ -28,10 +28,9 @@ For production use, Telia SMS service is required. Note that there are two endpo
 
 ## Running the app
 
-Each subproject may be run individually, with or without Docker - see README.md files of the projects.
-To start up everything using Docker compose, run `docker compose up`.
+Each subproject may be run individually, with or without Docker - see README.md files of the projects. To start up everything using Docker compose, run `docker compose up`. The Docker setup uses mock SMS and email services.
 
-Without Docker, the services are meant to be run in this order: backend, frontend, admin-frontend.
+Without Docker, the subprojects are meant to be run in this order: backend, frontend, admin-frontend.
 
 To make sure everything is working, navigate to:
 - [http://localhost:3000/api](http://localhost:3000/api) - backend

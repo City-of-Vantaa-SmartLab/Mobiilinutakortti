@@ -1,8 +1,8 @@
-import { Language } from '../../content';
+import { Language } from '../../content'
 
 export interface Recipient {
-    lang: Language;
-    name: string;
-    phoneNumber: string;
-    homeYouthClub?: number;
+    lang: Language
+    name: string
+    phoneNumber: string
+    homeYouthClub?: number
 }

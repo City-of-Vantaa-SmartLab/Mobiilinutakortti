@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNotify, useRedirect } from 'react-admin';
-import { useParams } from 'react-router-dom';
-import { Form } from 'react-final-form';
-import { Button, Divider } from '@mui/material';
+import { useState } from 'react'
+import { useNotify, useRedirect } from 'react-admin'
+import { useParams } from 'react-router-dom'
+import { Form } from 'react-final-form'
+import { Button, Divider } from '@mui/material'
 import {
     Container,
     CheckInLogCard,
@@ -15,93 +15,93 @@ import {
     StyledDialogTitle,
     QueryDatePickerField,
     ReturnButton
-} from './styledComponents';
-import { Typography } from '@mui/material';
-import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh';
-import api from '../api';
-import useAutoLogout from '../hooks/useAutoLogout';
-import { throwIfErrorResponse } from '../utils';
+} from './styledComponents'
+import { Typography } from '@mui/material'
+import { httpClientWithRefresh } from '../httpClients/httpClientWithRefresh'
+import api from '../api'
+import useAutoLogout from '../hooks/useAutoLogout'
+import { throwIfErrorResponse } from '../utils'
 
 const labelForGender = (genderSymbol: string): string => {
     switch (genderSymbol) {
         case ('m'):
-            return "Pojat";
+            return "Pojat"
         case ('f'):
-            return "Tytöt";
+            return "Tytöt"
         case ('o'):
-            return "Muunsukupuoliset";
+            return "Muunsukupuoliset"
         case ('-'):
-            return "Ei halua määritellä";
+            return "Ei halua määritellä"
         default:
-            throw new Error("Tuntematon sukupuoli");
+            throw new Error("Tuntematon sukupuoli")
     }
 }
 
 interface CheckInStatsViewModel {
-  clubName: string;
-  statistics: CheckInStatistics[];
+  clubName: string
+  statistics: CheckInStatistics[]
 }
 
 interface CheckInStatistics {
-  gender: string;
-  count: number;
+  gender: string
+  count: number
   ageRanges: {
-    ageRange: string;
-    count: number;
-  }[];
+    ageRange: string
+    count: number
+  }[]
 }
 
 // Similar to CheckInLogView, but displays general statistics, not names.
 const CheckInStatisticsView = () => {
-    useAutoLogout();
-    const redirect = useRedirect();
+    useAutoLogout()
+    const redirect = useRedirect()
 
-    const { youthClubId } = useParams<{ youthClubId: string }>();
+    const { youthClubId } = useParams<{ youthClubId: string }>()
 
-    const [clubName, setClubName] = useState('');
-    const [data, setData] = useState([]);
-    const [searchDate, setSearchDate] = useState('');
-    const notify = useNotify();
+    const [clubName, setClubName] = useState('')
+    const [data, setData] = useState<CheckInStatistics[]>([])
+    const [searchDate, setSearchDate] = useState('')
+    const notify = useNotify()
 
     const resetState = () => {
-        setClubName('');
-        setData([]);
-        setSearchDate('');
+        setClubName('')
+        setData([])
+        setSearchDate('')
     }
 
     const getCheckInStats = async (data: { queryDate: string }) => {
-        const date = new Date(data.queryDate);
+        const date = new Date(data.queryDate)
         if (!isNaN(date.getTime())) {
-            const url = api.youthClub.checkInStats;
+            const url = api.youthClub.checkInStats
             const body = JSON.stringify({
                 targetId: youthClubId,
                 date: date
-            });
+            })
             const options = {
                 method: 'POST',
                 body
-            };
-            resetState();
+            }
+            resetState()
             try {
-                const response = await httpClientWithRefresh(url, options);
-                throwIfErrorResponse(response);
+                const response = await httpClientWithRefresh(url, options)
+                throwIfErrorResponse(response)
 
                 if (!response || !Array.isArray(response.statistics) || typeof response.clubName !== 'string') {
-                    notify('Virhe tietojen haussa', { type: 'error' });
-                    return;
+                    notify('Virhe tietojen haussa', { type: 'error' })
+                    return
                 }
 
-                const viewModel: CheckInStatsViewModel = response;
+                const viewModel: CheckInStatsViewModel = response
                 if (viewModel.statistics.map((s: CheckInStatistics) => s.count).reduce((x, y) => x + y, 0) === 0) {
-                    notify('Ei kirjautumisia valitulla aikavälillä', { type: 'warning' });
-                    return;
+                    notify('Ei kirjautumisia valitulla aikavälillä', { type: 'warning' })
+                    return
                 }
 
-                setSearchDate(date.toLocaleDateString());
-                setClubName(viewModel.clubName);
-                setData(viewModel.statistics);
+                setSearchDate(date.toLocaleDateString())
+                setClubName(viewModel.clubName)
+                setData(viewModel.statistics)
             } catch (error: any) {
-                notify(error?.message || 'Virhe tilastojen haussa', { type: 'error' });
+                notify(error?.message || 'Virhe tilastojen haussa', { type: 'error' })
             }
         }
     }
@@ -166,4 +166,4 @@ const CheckInStatisticsView = () => {
     )
 }
 
-export default CheckInStatisticsView;
+export default CheckInStatisticsView

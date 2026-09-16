@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
-import { Messages } from '../classes/messages';
-import { KompassiIntegration } from '../../kompassi/kompassiIntegration.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, type Relation } from 'typeorm'
+import { Messages } from '../classes/messages'
+import { KompassiIntegration } from '../../kompassi/kompassiIntegration.entity'
 
 @Entity()
 export class Club {
     @PrimaryGeneratedColumn()
-    id!: number;
+    id!: number
 
     @Column({ unique: true })
-    name!: string;
+    name!: string
 
     @Column({ nullable: true })
-    postCode!: string;
+    postCode!: string
 
     @Column({ default: true })
-    active!: boolean;
+    active!: boolean
 
     @Column(() => Messages)
-    messages!: Messages;
+    messages!: Messages
 
     @OneToOne(() => KompassiIntegration, kompassiIntegration => kompassiIntegration.club, { cascade: true })
-    kompassiIntegration!: KompassiIntegration
+    kompassiIntegration!: Relation<KompassiIntegration>
 }

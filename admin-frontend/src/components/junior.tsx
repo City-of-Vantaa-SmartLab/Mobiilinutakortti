@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, CSSProperties, lazy, Suspense } from 'react';
-import { getEnvConfig, ENV_VARS } from '../envConfig';
-import { createRoot } from 'react-dom/client';
-import { Button } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import React, { useState, useEffect, useRef, CSSProperties, lazy, Suspense } from 'react'
+import { getEnvConfig, ENV_VARS } from '../envConfig'
+import { createRoot } from 'react-dom/client'
+import { Button } from '@mui/material'
+import { useFormContext } from 'react-hook-form'
 import { QRCodeSVG } from 'qrcode.react'
 import {
     List,
@@ -29,67 +29,73 @@ import {
     CreateProps,
     EditProps,
     useRecordContext
-} from 'react-admin';
-import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, getAlertDialogObserver } from '../utils';
-import { httpClientWithRefresh } from '../httpClients';
-import { hiddenFormFields } from '../customizations';
-import { useSmartAutoLogout } from '../hooks/useSmartAutoLogout';
-import { PhoneNumberField } from './phoneNumberField';
-import useAdminPermission from '../hooks/useAdminPermission';
-import api from '../api';
-import { CalendarHelper } from './calendarHelper';
-import { CustomBasicToolbar, LoadingMessage } from './styledComponents';
+} from 'react-admin'
+import { getYouthClubOptions, getActiveYouthClubOptions, ageValidator, genderChoices, statusChoices, Status, getAlertDialogObserver } from '../utils'
+import { httpClientWithRefresh } from '../httpClients'
+import { hiddenFormFields } from '../customizations'
+import { useSmartAutoLogout } from '../hooks/useSmartAutoLogout'
+import { PhoneNumberField } from './phoneNumberField'
+import useAdminPermission from '../hooks/useAdminPermission'
+import api from '../api'
+import { CalendarHelper } from './calendarHelper'
+import { CustomBasicToolbar, LoadingMessage } from './styledComponents'
 
-const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'));
+const ExtraEntryLinkComponent = lazy(() => import('./extraEntry/extraEntryLinkWrapper'))
+
+interface YouthClubChoice {
+    id: number
+    name: string
+    active?: boolean
+}
 
 interface JuniorRecord {
-  id: string;
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  phoneNumber: string;
-  status: string;
+    id: string,
+    firstName: string,
+    lastName: string,
+    displayName: string,
+    phoneNumber: string,
+    status: string
 }
 
 // Custom button components in Datagrid need to accept label prop for column headers.
 interface ButtonProps {
-  label?: string;
+    label?: string
 }
 
 const JuniorEditTitle = () => {
-    const record = useRecordContext<JuniorRecord>();
-    if (!record) return null;
-    return <span>{`Muokkaa nuoren tietoja: ${record.firstName} ${record.lastName}`}</span>;
-};
+    const record = useRecordContext<JuniorRecord>()
+    if (!record) return null
+    return <span>{`Muokkaa nuoren tietoja: ${record.firstName} ${record.lastName}`}</span>
+}
 
 const SMSwarning = () => (
     <div style={{paddingTop: '1em', color: 'red'}}>Huom! Nuorelle lähetetään kirjautumislinkki tekstiviestitse, kun tallennat tiedot.</div>
-);
+)
 
 export const JuniorList = (props: ListProps) => {
-    const notify = useNotify();
-    const autoFocusSource = useRef(null);
-    const [youthClubs, setYouthClubs] = useState([]);
-    const smartRefresh = useSmartAutoLogout();
-    const smartActions = (props: any) => <PaginationActions {...props} onPageChange={(e, np) => { smartRefresh(); props.onPageChange(e, np);}} />;
+    const notify = useNotify()
+    const autoFocusSource = useRef<string | null>(null)
+    const [youthClubs, setYouthClubs] = useState<YouthClubChoice[]>([])
+    const smartRefresh = useSmartAutoLogout()
+    const smartActions = (props: any) => <PaginationActions {...props} onPageChange={(e, np) => { smartRefresh(); props.onPageChange(e, np)}} />
     const CustomPagination = (props: any) => <Pagination {...props} ActionsComponent={smartActions} rowsPerPageOptions={[5, 10, 25, 50]} />
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubOptions = await getYouthClubOptions();
-            setYouthClubs(youthClubOptions);
-        };
-        addYouthClubsToState();
-    }, []);
+            const youthClubOptions = await getYouthClubOptions()
+            setYouthClubs(youthClubOptions)
+        }
+        addYouthClubsToState()
+    }, [])
 
     // Since React re-renders after search debounce, the input focus would always be set to the last filter input component with auto focus. Therefore we manually keep track of what was the last input the user typed in to set auto focus correctly. We use useRef and not useState to prevent re-rendering on first keypress.
     const checkAutoFocus = (source: string) => {
-        if (!autoFocusSource.current) return true;
-        return autoFocusSource.current === source;
+        if (!autoFocusSource.current) return true
+        return autoFocusSource.current === source
     }
 
     const setAutoFocus = (source: string) => {
-        autoFocusSource.current = source;
+        autoFocusSource.current = source
     }
 
     // The formatter for home youth club prevents unnecessary warnings before data is actually loaded.
@@ -101,7 +107,7 @@ export const JuniorList = (props: ListProps) => {
             <SelectInput label="Kotinuorisotila" onFocus={smartRefresh} source="homeYouthClub" choices={youthClubs} format={v => youthClubs?.find(c => c.id === v)?.id ?? ''} onChange={() => setAutoFocus("none")} />
             <SelectInput label="Tila" source="status" onFocus={smartRefresh} choices={statusChoices} onChange={() => setAutoFocus("none")} />
         </Filter>
-    );
+    )
 
     const ResendSMSButton = (_props: ButtonProps) => (
         <FunctionField
@@ -113,64 +119,64 @@ export const JuniorList = (props: ListProps) => {
                 </span>
             )}
         />
-    );
+    )
 
-    const QRCodeWithStatusMessage = ({ status, id }) => (
+    const QRCodeWithStatusMessage = ({ status, id }: { status: string, id: string }) => (
         <div style={status === Status.expired ? expiredQrCodeStyle : validQrCodeStyle}>
             <QRCodeSVG value={id} marginSize={4} size={400} />
             <span style={qrCodeMessageStyle}>
                 {status === Status.expired ? 'Edellinen kausi' : 'Kuluva kausi'}
             </span>
         </div>
-    );
+    )
 
     const showQR = async (id: string, status: string, owner: string) => {
         try {
-            const newWindow = window.open('');
+            const newWindow = window.open('')
             if (!newWindow) {
-                alert("Virhe: ponnahdusikkuna estettiin");
-                return;
+                alert("Virhe: ponnahdusikkuna estettiin")
+                return
             }
-            const container = document.createElement('div');
-            newWindow.document.body.appendChild(container);
-            const root = createRoot(container);
+            const container = document.createElement('div')
+            newWindow.document.body.appendChild(container)
+            const root = createRoot(container)
             root.render(
                 <React.StrictMode>
                     <QRCodeWithStatusMessage status={status} id={id} />
                 </React.StrictMode>
-            );
-            setTimeout(() => (newWindow.document.title = `QR-koodi ${owner}`), 0);
+            )
+            setTimeout(() => (newWindow.document.title = `QR-koodi ${owner}`), 0)
         } catch (err) {
-            console.error(err);
-            alert("Virhe QR-koodin luonnissa");
+            console.error(err)
+            alert("Virhe QR-koodin luonnissa")
         }
     }
 
     const PrintQrCodeButton = (_props: ButtonProps) => {
-      const record = useRecordContext<JuniorRecord>();
-      if (!record) return null;
+      const record = useRecordContext<JuniorRecord>()
+      if (!record) return null
       return (
         <Button size="small" variant="contained" onClick={() => showQR(record.id, record.status, `${record.firstName} ${record.lastName}`)}>🔍&nbsp;QR</Button>
-      );
+      )
     }
 
     const resendSMS = async (phoneNumber: string) => {
-        const url = api.junior.loginLink;
+        const url = api.junior.loginLink
         const body = JSON.stringify({
             phoneNumber
-        });
+        })
         const options = {
             method: 'POST',
             body
-        };
+        }
         await httpClientWithRefresh(url, options)
             .then(response => {
                 if (response.statusCode < 200 || response.statusCode >= 300) {
-                    notify(response.message, { type: 'warning' });
+                    notify(response.message, { type: 'warning' })
                 } else {
-                    notify(response.message);
+                    notify(response.message)
                 }
-            });
+            })
     }
 
     return (
@@ -192,18 +198,18 @@ export const JuniorList = (props: ListProps) => {
             </Datagrid>
         </List>
     )
-};
+}
 
 const getDummyPhoneNumber = async (cb: (value: string) => void) => {
-    const url = api.junior.dummynumber;
+    const url = api.junior.dummynumber
     await httpClientWithRefresh(url)
     .then(response => {
-        if (response.message) cb(response.message);
-    });
+        if (response.message) cb(response.message)
+    })
 }
 
 const DummyPhoneNumberButton = ({fieldName}: {fieldName: string}) => {
-    const { setValue } = useFormContext();
+    const { setValue } = useFormContext()
     return (
         <Button style={{ marginTop: '5px' }} variant="contained" color="primary" size="small" onClick={() => getDummyPhoneNumber((value: string) => setValue(fieldName, value, { shouldDirty: true }))}>
             Käytä korvikepuhelinnumeroa
@@ -216,41 +222,41 @@ export const JuniorCreate = (props: CreateProps) => {
         <Create title="Rekisteröi nuori" {...props}>
             <JuniorForm formType="create" />
         </Create>
-    );
+    )
 }
 
 export const JuniorEdit = (props: EditProps) => {
     useEffect(() => {
-        const observer = getAlertDialogObserver('Poista nuori');
+        const observer = getAlertDialogObserver('Poista nuori')
         return () => {
-            observer.disconnect();
+            observer.disconnect()
         }
-    }, []);
+    }, [])
 
     return (
         <Edit title={<JuniorEditTitle />} {...props} mutationMode='pessimistic'>
             <JuniorForm formType="edit" />
         </Edit>
-    );
-};
+    )
+}
 
 
 export const JuniorForm = ({ formType }: { formType: string }) => {
-    const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES);
-    const [youthClubs, setYouthClubs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { isAdmin } = useAdminPermission();
-    const smartRefresh = useSmartAutoLogout();
+    const showExtraEntries = getEnvConfig(ENV_VARS.VITE_ENABLE_EXTRA_ENTRIES)
+    const [youthClubs, setYouthClubs] = useState<YouthClubChoice[]>([])
+    const [loading, setLoading] = useState(true)
+    const { isAdmin } = useAdminPermission()
+    const smartRefresh = useSmartAutoLogout()
 
     useEffect(() => {
         const addYouthClubsToState = async () => {
-            const youthClubOptions = await getActiveYouthClubOptions();
-            const optionsWithNone = [{id: -1, name: ''}, ...youthClubOptions];
-            setYouthClubs(optionsWithNone);
-            setLoading(false);
-        };
-        addYouthClubsToState();
-    }, []);
+            const youthClubOptions = await getActiveYouthClubOptions()
+            const optionsWithNone = [{id: -1, name: ''}, ...youthClubOptions]
+            setYouthClubs(optionsWithNone)
+            setLoading(false)
+        }
+        addYouthClubsToState()
+    }, [])
 
     return (
         <SimpleForm toolbar={<CustomBasicToolbar listPath="/junior" showDelete={formType === 'edit'} />}>
@@ -315,7 +321,7 @@ export const JuniorForm = ({ formType }: { formType: string }) => {
             </FormDataConsumer>}
             </>)}
         </SimpleForm>
-    );
+    )
 }
 
 const qrCodeMessageStyle: CSSProperties = {
@@ -324,24 +330,24 @@ const qrCodeMessageStyle: CSSProperties = {
     fontFamily: 'sans-serif',
     textTransform: 'uppercase',
     margin: '5px'
-};
+}
 
 const qrCodeContainerStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'center',
     width: '400px',
-};
+}
 
 const validQrCodeStyle: CSSProperties = {
     ...qrCodeContainerStyle,
     backgroundColor: '#6bc24a'
-};
+}
 
 const expiredQrCodeStyle: CSSProperties = {
     ...qrCodeContainerStyle,
     backgroundColor: '#f7423a'
-};
+}
 
 const languages = [
   { id: 'fi', name: 'suomi' },
@@ -350,5 +356,5 @@ const languages = [
 ]
 
 function valueOrNull(name: string, visibleValue: any) {
-  return hiddenFormFields.includes(name) ? null : visibleValue;
+  return hiddenFormFields.includes(name) ? null : visibleValue
 }

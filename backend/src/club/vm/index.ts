@@ -1,1 +1,1 @@
-export { ClubViewModel } from './club.vm';
+export { ClubViewModel } from './club.vm'
